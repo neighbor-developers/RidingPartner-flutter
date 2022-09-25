@@ -31,6 +31,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  kakao_flutter_sdk: ^1.1.0
+  flutter_naver_login: ^1.6.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -40,6 +42,8 @@ dependencies:
   http: ^0.13.4
   flutter_config: ^2.0.0
   flutter_dotenv: ^5.0.2
+  firebase_core: ^1.23.0
+  firebase_auth: ^3.10.0
 
 dev_dependencies:
   flutter_test:

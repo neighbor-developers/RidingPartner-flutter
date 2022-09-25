@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "93312283448",
+    "project_id": "riding-partner-flutter",
+    "storage_bucket": "riding-partner-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:93312283448:android:4860c82a321623b54107cd",
+        "android_client_info": {
+          "package_name": "com.neighbor.ridingpartner.ridingpartner_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "93312283448-ljeoavo51oqtfmq5prsplb6ab0c9fesm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4CVWEZ-Vs-NUFLmoNDwGuoD4_Z4vd46w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "93312283448-ljeoavo51oqtfmq5prsplb6ab0c9fesm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "93312283448-78dimjfpvokduhv244k8i07fd2b0qfrc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.neighbor.ridingpartner.ridingpartnerFlutter"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
