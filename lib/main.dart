@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ridingpartner_flutter/login.dart';
+import 'package:ridingpartner_flutter/firebase_options.dart';
 
 void main() {
   runApp(const MyApp());
