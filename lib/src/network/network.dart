@@ -1,7 +1,7 @@
 // import 'dart:developer' as developer;
 // import 'package:http/http.dart' as http;
 // import 'dart:convert';
-import 'package:ridingpartner_flutter/utilities/user_location.dart';
+import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 // import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 //class Network
