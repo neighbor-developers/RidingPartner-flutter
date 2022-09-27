@@ -5,13 +5,13 @@ import 'dart:convert';
 import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 import 'package:ridingpartner_flutter/src/utils/conv_grid_gps.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../utils/weather_int_to_string.dart';
+import '../utils/conv_weather_data.dart';
 import 'dart:developer' as developer;
 
 //class Network
 class Network {
-  final _apiKey = dotenv.env['apiKey']!;
-
+  final String _apiKey = dotenv.env['apiKey']!;
+  final String _path = dotenv.env['path']!;
   final String _endpointUrl = dotenv.env['endPointUrl']!;
   //getWeatherData
   Future<dynamic> getWeatherData() async {
@@ -39,10 +39,9 @@ class Network {
       'nx': gridData['x'],
       'ny': gridData['y']
     }.map((key, value) => MapEntry(key, value.toString()));
-    final requestUrl = Uri.https(_endpointUrl,
-        '/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst', queryParams);
+    final requestUrl = Uri.https(_endpointUrl, _path, queryParams);
     var response = await http.get(requestUrl);
-
+    developer.log(requestUrl.toString());
     if (response.statusCode == 200) {
       try {
         var jsonResponse = jsonDecode(response.body);
@@ -53,10 +52,12 @@ class Network {
           var weatherItem = weatherItmes[i];
           switch (weatherItmes[i].category) {
             case 'PTY':
-              simpleWeatherData.rainType ??= getRainType(weatherItem.fcstValue);
+              simpleWeatherData.rainType ??=
+                  WeatherInfoConverter.getRainType(weatherItem.fcstValue);
               break;
             case 'SKY':
-              simpleWeatherData.skyType ??= getSkyType(weatherItem.fcstValue);
+              simpleWeatherData.skyType ??=
+                  WeatherInfoConverter.getSkyType(weatherItem.fcstValue);
               break;
             case 'T1H':
               simpleWeatherData.temperature ??= weatherItem.fcstValue;
@@ -66,6 +67,7 @@ class Network {
               break;
           }
         }
+        developer.log(simpleWeatherData.temperature.toString());
         return simpleWeatherData;
       } catch (e) {
         return simpleWeatherData;
@@ -78,13 +80,13 @@ class Network {
   redefineBaseTime(baseTime) {
     String h = baseTime.substring(0, 2);
     String m = baseTime.substring(2, 4);
-    int hour = int.parse(h);
+
     int minute = int.parse(m);
-    //기상청 api가 최신 데이터를 못받아오는 일이 잦아 1시간전 데이터를 받아오는 것으로 고정
-    if (hour == 0) {
+    //기상청 api가 최신 데이터를 못받아오는 일이 잦아 약 1시간전 데이터를 받아오는 것으로 고정
+    if (h == '00') {
       h = '23';
     } else {
-      h = (hour - 1).toString();
+      h = (int.parse(h) - 1).toString();
     }
 
     if (minute < 45) {
