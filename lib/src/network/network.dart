@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:ridingpartner_flutter/src/repository/weather_data.dart';
 import 'dart:convert';
 import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 import 'package:ridingpartner_flutter/src/utils/conv_grid_gps.dart';
@@ -20,6 +21,7 @@ class Network {
     final now = DateTime.now();
     final baseDate = DateFormat('yyyyMMdd').format(now);
     final baseTime = DateFormat('HHmm').format(now);
+    developer.log(baseTime);
     final gridData =
         ConvGridGps.gpsToGRID(37.579871128849334, 126.98935225645432);
     final Map<String, String> queryParams = {
@@ -36,17 +38,19 @@ class Network {
     final requestUrl = Uri.https(_endpointUrl,
         '/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst', queryParams);
     developer.log(requestUrl.toString());
-    http.get(requestUrl).then((response) {
-      developer.log("http.get");
-      if (response.statusCode == 200) {
-        String data = response.body;
-        var decodedData = jsonDecode(data);
-        developer.log("decode data : ${decodedData.toString()}");
-        return decodedData;
-      } else {
-        developer.log("http.get error");
-        developer.log(response.statusCode.toString());
-      }
-    });
+    var response = await http.get(requestUrl);
+    developer.log("http.get");
+
+    if (response.statusCode == 200) {
+      developer.log("response.statusCode == 200");
+      var jsonResponse = jsonDecode(response.body);
+      developer.log(jsonResponse.toString());
+      var weatherData = WeatherData.fromJson(jsonResponse);
+      developer.log(weatherData.response!.body!.items!.item![0].fcstValue!);
+      return weatherData;
+    } else {
+      developer.log("http.get error");
+      developer.log(response.statusCode.toString());
+    }
   }
 }
