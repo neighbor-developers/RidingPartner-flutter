@@ -4,7 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'firebase_options.dart';
 import 'login.dart';
-import 'src/network/network.dart';
+import 'src/network/wether_service.dart';
 
 void main() async {
   await dotenv.load(fileName: "assets/config/.env");
