@@ -7,6 +7,8 @@ import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 import 'package:ridingpartner_flutter/src/utils/conv_grid_gps.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../utils/weather_int_to_string.dart';
+
 //class Network
 class Network {
   final _apiKey = dotenv.env['apiKey']!;
@@ -44,10 +46,28 @@ class Network {
     if (response.statusCode == 200) {
       developer.log("response.statusCode == 200");
       var jsonResponse = jsonDecode(response.body);
-      developer.log(jsonResponse.toString());
       var weatherData = WeatherData.fromJson(jsonResponse);
-      developer.log(weatherData.response!.body!.items!.item![0].fcstValue!);
-      return weatherData;
+      var weatherItmes = weatherData.response!.body!.items!.item!;
+      var simpleWeatherData = SimpleWeatherData();
+      for (var i = 0; i < weatherItmes.length; i = i + 6) {
+        var weatherItem = weatherItmes[i];
+        switch (weatherItmes[i].category) {
+          case 'PTY':
+            simpleWeatherData.rainType ??= getRainType(weatherItem.fcstValue);
+            break;
+          case 'SKY':
+            simpleWeatherData.skyType ??= getSkyType(weatherItem.fcstValue);
+            break;
+          case 'T1H':
+            simpleWeatherData.temperature ??= weatherItem.fcstValue;
+            break;
+          case 'REH':
+            simpleWeatherData.humidity ??= weatherItem.fcstValue;
+            break;
+        }
+      }
+      developer.log(simpleWeatherData.rainType.toString());
+      return simpleWeatherData;
     } else {
       developer.log("http.get error");
       developer.log(response.statusCode.toString());

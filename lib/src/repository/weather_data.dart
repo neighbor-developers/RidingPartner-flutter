@@ -1,3 +1,13 @@
+class SimpleWeatherData {
+  String? skyType;
+  String? temperature;
+  String? humidity;
+  String? rainType;
+
+  SimpleWeatherData(
+      {this.skyType, this.temperature, this.humidity, this.rainType});
+}
+
 class WeatherData {
   Response? response;
 
