@@ -12,10 +12,9 @@ class MyLocation {
           desiredAccuracy: LocationAccuracy.low);
       latitude = position.latitude;
       longitude = position.longitude;
-
       developer.log("latitude : $latitude , longitude : $longitude");
     } catch (e) {
-      developer.log("getMyCurrentLocation ${e.toString()}");
+      developer.log("error : getMyCurrentLocation ${e.toString()}");
     }
   }
 }
