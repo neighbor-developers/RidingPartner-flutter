@@ -1,16 +1,18 @@
 import 'dart:developer' as developer;
+import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
-
+import 'package:ridingpartner_flutter/src/utils/http_override.dart';
 import 'firebase_options.dart';
 import 'login.dart';
 import 'src/service/wether_service.dart';
 
 void main() async {
   developer.log("시작은 되니?");
+  HttpOverrides.global = NoCheckCertificateHttpOverrides();
   await dotenv.load(fileName: "assets/config/.env");
   var myNetwork = Network();
   myNetwork.getWeatherData();
