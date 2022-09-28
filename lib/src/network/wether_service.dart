@@ -15,7 +15,7 @@ class Network {
   final String _endpointUrl = dotenv.env['endPointUrl']!;
   //getWeatherData
   Future<dynamic> getWeatherData() async {
-    var simpleWeatherData = SimpleWeatherData();
+    var weather = Weather();
     MyLocation myLocation = MyLocation();
     try {
       await myLocation.getMyCurrentLocation();
@@ -52,28 +52,28 @@ class Network {
           var weatherItem = weatherItmes[i];
           switch (weatherItmes[i].category) {
             case 'PTY':
-              simpleWeatherData.rainType ??=
+              weather.rainType ??=
                   WeatherInfoConverter.getRainType(weatherItem.fcstValue);
               break;
             case 'SKY':
-              simpleWeatherData.skyType ??=
+              weather.skyType ??=
                   WeatherInfoConverter.getSkyType(weatherItem.fcstValue);
               break;
             case 'T1H':
-              simpleWeatherData.temperature ??= weatherItem.fcstValue;
+              weather.temperature ??= weatherItem.fcstValue;
               break;
             case 'REH':
-              simpleWeatherData.humidity ??= weatherItem.fcstValue;
+              weather.humidity ??= weatherItem.fcstValue;
               break;
           }
         }
-        developer.log(simpleWeatherData.temperature.toString());
-        return simpleWeatherData;
+        developer.log(weather.temperature.toString());
+        return weather;
       } catch (e) {
-        return simpleWeatherData;
+        return weather;
       }
     } else {
-      return simpleWeatherData;
+      return weather;
     }
   }
 
