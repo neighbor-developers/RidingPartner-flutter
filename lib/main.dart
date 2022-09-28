@@ -1,12 +1,13 @@
+import 'dart:developer' as developer;
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get/get.dart';
-import 'package:ridingpartner_flutter/src/network/naver_map_service.dart';
+import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
+
 import 'firebase_options.dart';
 import 'login.dart';
-import 'src/network/wether_service.dart';
-import 'dart:developer' as developer;
+import 'src/service/wether_service.dart';
 
 void main() async {
   developer.log("시작은 되니?");
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
           primarySwatch: Colors.blue,

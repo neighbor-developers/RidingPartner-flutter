@@ -1,6 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:ridingpartner_flutter/src/repository/weather_data.dart';
+import 'package:ridingpartner_flutter/src/models/weather.dart';
 import 'dart:convert';
 import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 import 'package:ridingpartner_flutter/src/utils/conv_grid_gps.dart';
