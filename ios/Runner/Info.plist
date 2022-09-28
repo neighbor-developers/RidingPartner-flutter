@@ -7,15 +7,14 @@
 			<dict>
 				<key>CFBundleURLSchemes</key>
 				<array>
-
 					<!-- google login -->
-					<string>google url schemes</string>
+					<string>com.googleusercontent.apps.93312283448-78dimjfpvokduhv244k8i07fd2b0qfrc</string>
 
 					<!-- kakao login -->
 					<string>kakaob50ae09d3f49b62c4fba3b875e1b3458</string>
 
 					<!-- naver login -->
-					<string>socialloginapp</string>
+					<string>ridingpsrtner</string>
 				</array>
 			</dict>
 		</array>

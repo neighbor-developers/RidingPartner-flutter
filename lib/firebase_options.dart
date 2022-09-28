@@ -54,6 +54,7 @@ class DefaultFirebaseOptions {
     appId: '1:93312283448:android:4860c82a321623b54107cd',
     messagingSenderId: '93312283448',
     projectId: 'riding-partner-flutter',
+    databaseURL: 'https://riding-partner-flutter-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'riding-partner-flutter.appspot.com',
   );
 
@@ -62,9 +63,10 @@ class DefaultFirebaseOptions {
     appId: '1:93312283448:ios:8d58951ef8bcd8ce4107cd',
     messagingSenderId: '93312283448',
     projectId: 'riding-partner-flutter',
+    databaseURL: 'https://riding-partner-flutter-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'riding-partner-flutter.appspot.com',
-    iosClientId:
-        '93312283448-78dimjfpvokduhv244k8i07fd2b0qfrc.apps.googleusercontent.com',
+    androidClientId: '93312283448-26i7napgb7r6tvj7dkkmjdj5p2md1bq1.apps.googleusercontent.com',
+    iosClientId: '93312283448-78dimjfpvokduhv244k8i07fd2b0qfrc.apps.googleusercontent.com',
     iosBundleId: 'com.neighbor.ridingpartner.ridingpartnerFlutter',
   );
 }
