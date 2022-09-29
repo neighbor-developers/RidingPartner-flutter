@@ -58,6 +58,7 @@ class _KakaoLoginState extends State<KakaoLogin> {
   Future<void> loginWithCustomToken() async {
     bool isLogin = await signInWithKakao();
     if (isLogin) {
+      // 카카오는 uId로 인증하는듯??
       kakao_flutter.User user = await kakao_flutter.UserApi.instance.me();
       final customToken = await _firebaseAuthSocialLogin.createCustomToken({
         'type': 'naver',
@@ -98,6 +99,7 @@ class _NaverLoginState extends State<NaverLogin> {
     naver_flutter.NaverAccessToken tokenRes =
         await naver_flutter.FlutterNaverLogin.currentAccessToken;
 
+        // 네이버 로그인은 accessToken으로 인증
     final customToken = await _firebaseAuthSocialLogin.createCustomToken({
       'type': 'kakao',
       'uId': result.account.id.toString(),

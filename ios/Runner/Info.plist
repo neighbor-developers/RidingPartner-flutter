@@ -15,7 +15,7 @@
 					<string>kakaob50ae09d3f49b62c4fba3b875e1b3458</string>
 
 					<!-- naver login -->
-					<string>ridingpsrtner</string>
+					<string>ridingPartner</string>
 				</array>
 			</dict>
 		</array>
@@ -27,18 +27,18 @@
 		</array>
 
 		<key>naverServiceAppUrlScheme</key>
-		<string>socialloginapp</string>
+		<string>ridingPartner</string>
 
 		<!-- naver client_id -->
 		<key>naverConsumerKey</key>
-		<string>client-id</string>
+		<string>BPenPrJFNA58FMnODujH</string>
 
 		<!-- naver client_secret -->
 		<key>naverConsumerSecret</key>
-		<string>client-secret</string>
+		<string>Dh1BA99PHE</string>
 
 		<key>naverServiceAppName</key>
-		<string>app_name</string>
+		<string>라이딩 파트너 in 시릉</string>
 
 		<!-- http allows configurations -->
 		<key>NSAppTransportSecurity</key>
