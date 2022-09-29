@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase
     hide EmailAuthProvider, PhoneAuthProvider;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_auth_social_login.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart' as kakao_flutter;
 import 'package:flutter_naver_login/flutter_naver_login.dart' as naver_flutter;
 
