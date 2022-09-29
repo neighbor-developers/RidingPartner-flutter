@@ -6,6 +6,8 @@
 	<string>93312283448-78dimjfpvokduhv244k8i07fd2b0qfrc.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
 	<string>com.googleusercontent.apps.93312283448-78dimjfpvokduhv244k8i07fd2b0qfrc</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>93312283448-26i7napgb7r6tvj7dkkmjdj5p2md1bq1.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyBn1JwEpwqkM0oj9ZBNQXlZ3nOsv7yVXPg</string>
 	<key>GCM_SENDER_ID</key>
@@ -30,5 +32,8 @@
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:93312283448:ios:8d58951ef8bcd8ce4107cd</string>
+	<key>DATABASE_URL</key>
+	<string>https://riding-partner-flutter-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+
 </dict>
 </plist>

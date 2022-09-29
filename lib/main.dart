@@ -5,10 +5,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
+import 'package:ridingpartner_flutter/src/service/wether_service.dart';
 import 'package:ridingpartner_flutter/src/utils/http_override.dart';
+
 import 'firebase_options.dart';
 import 'login.dart';
-import 'src/service/wether_service.dart';
 
 void main() async {
   developer.log("시작은 되니?");
@@ -21,8 +22,8 @@ void main() async {
   developer.log(places.toString());
 
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(const MyApp());
 }
 
