@@ -28,7 +28,7 @@ class Network {
     var baseTime = DateFormat('HHmm').format(now);
     baseTime = redefineBaseTime(baseTime);
     final gridData =
-        ConvGridGps.gpsToGRID(myLocation.longitude, myLocation.latitude);
+        ConvGridGps.gpsToGRID(myLocation.latitude, myLocation.longitude);
     final Map<String, String> queryParams = {
       'serviceKey': _apiKey,
       'pageNo': 1,
