@@ -1,45 +1,7 @@
 class User {
   String? uid;
-  String? nickname;
-  String? thumbnail;
-  String? description;
-  User({
-    this.uid,
-    this.nickname,
-    this.thumbnail,
-    this.description,
-  });
+  String nickname;
+  String email;
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      uid: json['uid'] == null ? '' : json['uid'] as String,
-      nickname: json['nickname'] == null ? '' : json['nickname'] as String,
-      thumbnail: json['thumbnail'] == null ? '' : json['thumbnail'] as String,
-      description:
-          json['description'] == null ? '' : json['description'] as String,
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'uid': uid,
-      'nickname': nickname,
-      'thumbnail': thumbnail,
-      'description': description,
-    };
-  }
-
-  User copyWith({
-    String? uid,
-    String? nickname,
-    String? thumbnail,
-    String? description,
-  }) {
-    return User(
-      uid: uid ?? this.uid,
-      nickname: nickname ?? this.nickname,
-      thumbnail: thumbnail ?? this.thumbnail,
-      description: description ?? this.description,
-    );
-  }
+  User(this.uid, this.nickname, this.email);
 }

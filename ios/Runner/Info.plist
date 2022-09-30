@@ -40,6 +40,21 @@
 		<key>naverServiceAppName</key>
 		<string>라이딩 파트너 in 시릉</string>
 
+		
+		<key>NMFClientId</key>
+		<string>8e3d26kxv8</string>
+		<key>io.flutter.embedded_views_preview</key>
+		<true/>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>		
+			<!-- <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+			<string>[USAGE PERPOSE]</string>
+			<key>NSLocationAlwaysUsageDescription</key>
+			<string>[USAGE PERPOSE]</string>
+			<key>NSLocationWhenInUseUsageDescription</key>
+			<string>[USAGE PERPOSE]</string>
+		 -->
+
 		<!-- http allows configurations -->
 		<key>NSAppTransportSecurity</key>
 		<dict>
