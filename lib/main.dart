@@ -16,14 +16,11 @@ import 'src/service/wether_service.dart';
 
 void main() async {
   developer.log("시작은 되니?");
-  HttpOverrides.global = NoCheckCertificateHttpOverrides();
-  await dotenv.load(fileName: "assets/config/.env");
-  var myNetwork = Network();
-  myNetwork.getWeatherData();
-  var naverMapService = NaverMapService();
-  var places = await naverMapService.getPlaces("Crocodile");
-  developer.log(places.toString());
 
+  // 테스트 환경에서만 사용 실제 출시때는 삭제
+  HttpOverrides.global = NoCheckCertificateHttpOverrides();
+
+  await dotenv.load(fileName: "assets/config/.env");
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
