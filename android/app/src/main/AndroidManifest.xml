@@ -1,11 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.neighbor.ridingpartner.ridingpartner_flutter">
-
    <application
         android:label="ridingpartner_flutter"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
-
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -44,10 +42,6 @@
         <meta-data
             android:name="com.naver.sdk.clientName"
             android:value="@string/client_name" />
-        <meta-data
-            android:name="com.naver.maps.map.CLIENT_ID"
-            android:value="@string/client_id_map" />
                 
     </application>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 </manifest>
