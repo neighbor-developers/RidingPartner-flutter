@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
 import 'package:ridingpartner_flutter/src/service/wether_service.dart';
 import 'package:ridingpartner_flutter/src/utils/http_override.dart';
+import 'package:ridingpartner_flutter/src/utils/naver_map.dart';
 
 import 'firebase_options.dart';
 import 'login.dart';
@@ -48,32 +50,3 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class NaverMapTest extends StatefulWidget {
-  const NaverMapTest({super.key});
-
-  @override
-  _NaverMapTestState createState() => _NaverMapTestState();
-}
-
-class _NaverMapTestState extends State<NaverMapTest> {
-  Completer<NaverMapController> _controller = Completer();
-  MapType _mapType = MapType.Basic;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('NaverMap Test')),
-      body: Container(
-        child: NaverMap(
-          onMapCreated: onMapCreated,
-          mapType: _mapType,
-        ),
-      ),
-    );
-  }
-
-  void onMapCreated(NaverMapController controller) {
-    if (_controller.isCompleted) _controller = Completer();
-    _controller.complete(controller);
-  }
-}

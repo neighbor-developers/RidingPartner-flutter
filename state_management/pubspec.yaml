@@ -1,4 +1,4 @@
-name: ridingpartner_flutter
+name: state_management
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -31,31 +31,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  kakao_flutter_sdk: ^1.1.0
-  flutter_naver_login: ^1.6.0
-  naver_map_plugin: ^0.9.6
-  flutter_kakao_map: ^0.0.4
 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  geolocator: ^7.3.3
-  http: ^0.13.4
-  flutter_config: ^2.0.0
-  flutter_dotenv: ^5.0.2
-  firebase_core: ^1.23.0
-  firebase_auth: ^3.10.0
-  intl: ^0.17.0
-  flutter_provider: ^2.1.0
-  google_sign_in: ^5.4.2
-
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  permission_handler: ^9.2.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -76,8 +60,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  assets:
-    - assets/config/.env
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
