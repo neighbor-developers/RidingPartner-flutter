@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 
+import '../provider/weather_provider.dart';
 import 'map_page.dart';
 import 'weather_page.dart';
 
@@ -18,10 +18,12 @@ class MainRoute extends StatelessWidget {
         children: [
           TextButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return ChangeNotifierProvider.value(
-                    value: WeatherProvider(), child: const WeatherPage());
-              }));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChangeNotifierProvider(
+                          create: (context) => WeatherProvider(),
+                          child: WeatherPage())));
             },
             child: const Text('날씨 페이지'),
           ),

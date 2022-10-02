@@ -29,19 +29,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '라이딩파트너',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          titleTextStyle: TextStyle(color: Colors.black),
+        title: '라이딩파트너',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.white,
+            titleTextStyle: TextStyle(color: Colors.black),
+          ),
         ),
-      ),
-      // initialBinding: InitBinding(),
-      // home: const Root(),
-      home: MultiProvider(providers: [
-        ChangeNotifierProvider(create: (context) => WeatherProvider()),
-      ], child: const MainRoute()),
-    );
+        // initialBinding: InitBinding(),
+        // home: const Root(),
+        home: const MainRoute());
   }
 }
