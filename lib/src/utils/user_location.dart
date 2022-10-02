@@ -9,8 +9,12 @@ class MyLocation {
   factory MyLocation() {
     return _instance;
   }
+
+  initLocation() async =>
+      {developer.log("위치를 가져오는중"), await getMyCurrentLocation()};
+
   MyLocation._internal() {
-    getMyCurrentLocation();
+    initLocation();
   }
 
   Future<void> getMyCurrentLocation() async {

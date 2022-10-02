@@ -9,10 +9,11 @@ import '../utils/conv_weather_data.dart';
 import 'dart:developer' as developer;
 
 //class Network
-class Network {
+class WeatherService {
   final String _apiKey = dotenv.env['apiKey']!;
   final String _path = dotenv.env['path']!;
   final String _endpointUrl = dotenv.env['endPointUrl']!;
+
   //getWeatherData
   Future<dynamic> getWeatherData() async {
     var weather = Weather();
