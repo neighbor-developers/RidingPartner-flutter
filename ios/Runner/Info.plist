@@ -121,6 +121,15 @@
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>위치정보 권한이 필요합니다. (앱을 사용하는 동안에만 위치정보를 수신합니다.)</string>
 		<!-- ios 위치 권한설정 -->
+
+		<key>NSCameraUsageDescription</key>
+        <string>Used to demonstrate image picker plugin</string>
+        <key>NSMicrophoneUsageDescription</key>
+        <string>Used to capture audio for image picker plugin</string>
+        <key>NSCameraUsageDescription</key>
+        <key>NSPhotoLibraryUsageDescription</key>
+        <string>This app needs access to your photos in order to lad them into the app.</string>
+
 	</dict>
 </plist>
 
