@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_provider/flutter_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 
 class WeatherPage extends StatefulWidget {
@@ -11,13 +11,8 @@ class WeatherPage extends StatefulWidget {
 
 class _WeatherPageState extends State<WeatherPage> {
   @override
-  void initState() {
-    super.initState();
-    Provider.of<WeatherProvider>(context, listen: false).getWeather();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    Provider.of<WeatherProvider>(context).getWeather();
     var weather = Provider.of<WeatherProvider>(context).weather;
     var loadingStatus = Provider.of<WeatherProvider>(context).loadingStatus;
     var message = Provider.of<WeatherProvider>(context).message;
