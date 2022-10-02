@@ -2,12 +2,20 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:developer' as developer;
 
 class MyLocation {
-  //위치를 제대로 못 받아올 경우 대비해 기본값으로 서울을 설정
-  double latitude = 37.579871128849334;
-  double longitude = 126.98935225645432;
+  late double? latitude;
+  late double? longitude;
+
+  static final MyLocation _instance = MyLocation._internal();
+  factory MyLocation() {
+    return _instance;
+  }
+  MyLocation._internal() {
+    getMyCurrentLocation();
+  }
 
   Future<void> getMyCurrentLocation() async {
     try {
+      // ignore: unrelated_type_equality_checks
       if (Geolocator.checkPermission() == LocationPermission.denied) {
         Geolocator.requestPermission();
       }
@@ -18,6 +26,8 @@ class MyLocation {
       developer.log("latitude : $latitude , longitude : $longitude");
     } catch (e) {
       developer.log("error : getMyCurrentLocation ${e.toString()}");
+      latitude = 37.579871128849334;
+      longitude = 126.98935225645432;
     }
   }
 }

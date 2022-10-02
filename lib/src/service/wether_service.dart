@@ -17,6 +17,7 @@ class Network {
   Future<dynamic> getWeatherData() async {
     var weather = Weather();
     MyLocation myLocation = MyLocation();
+    developer.log("myLocation called in network");
     try {
       await myLocation.getMyCurrentLocation();
     } catch (e) {
@@ -28,7 +29,7 @@ class Network {
     var baseTime = DateFormat('HHmm').format(now);
     baseTime = redefineBaseTime(baseTime);
     final gridData =
-        ConvGridGps.gpsToGRID(myLocation.latitude, myLocation.longitude);
+        ConvGridGps.gpsToGRID(myLocation.latitude!, myLocation.longitude!);
     final Map<String, String> queryParams = {
       'serviceKey': _apiKey,
       'pageNo': 1,
