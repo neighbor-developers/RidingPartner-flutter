@@ -37,6 +37,6 @@ class MyApp extends StatelessWidget {
         ),
         // initialBinding: InitBinding(),
         // home: const Root(),
-        home: mainRoute());
+        home: const MainRoute());
   }
 }
