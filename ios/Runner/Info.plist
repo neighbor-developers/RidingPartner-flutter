@@ -110,6 +110,23 @@
 		<true/>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
+
+		<key>NSCameraUsageDescription</key>
+        <string>Used to demonstrate image picker plugin</string>
+        <key>NSMicrophoneUsageDescription</key>
+        <string>Used to capture audio for image picker plugin</string>
+        <key>NSCameraUsageDescription</key>
+        <key>NSPhotoLibraryUsageDescription</key>
+        <string>This app needs access to your photos in order to lad them into the app.</string>
+
+        <key>NSLocationWhenInUseUsageDescription</key>
+        <string>Need location when in use</string>
+        <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+        <string>Always and when in use!</string>
+        <key>NSLocationUsageDescription</key>
+        <string>Older devices need location.</string>
+        <key>NSLocationAlwaysUsageDescription</key>
+        <string>Can I have location always?</string>
 	</dict>
 </plist>
 
