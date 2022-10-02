@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
+import 'dart:developer' as developer;
 
-class WeatherPage extends StatefulWidget {
-  const WeatherPage({super.key});
+// ignore: must_be_immutable
+class WeatherPage extends StatelessWidget {
+  WeatherPage({super.key});
+  late WeatherProvider _weatherProvider;
 
-  @override
-  _WeatherPageState createState() => _WeatherPageState();
-}
-
-class _WeatherPageState extends State<WeatherPage> {
   @override
   Widget build(BuildContext context) {
-    Provider.of<WeatherProvider>(context).getWeather();
-    var weather = Provider.of<WeatherProvider>(context).weather;
-    var loadingStatus = Provider.of<WeatherProvider>(context).loadingStatus;
-    var message = Provider.of<WeatherProvider>(context).message;
+    _weatherProvider = Provider.of<WeatherProvider>(context, listen: false);
+    _weatherProvider.getWeather();
+    final weather = _weatherProvider.weather;
+    developer.log('build Call');
 
     return Scaffold(
       appBar: AppBar(),
@@ -23,11 +21,10 @@ class _WeatherPageState extends State<WeatherPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(weather.skyType ?? 'Loading...'),
+            Text(weather.skyType ?? '날씨'),
             Text(weather.temperature ?? '온도'),
             Text(weather.humidity ?? '습도'),
             Text(weather.rainType ?? '비'),
-            Text(message),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
