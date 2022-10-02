@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/utils/http_override.dart';
 import 'firebase_options.dart';
 import 'src/pages/main_route_page.dart';
+import 'src/provider/weather_provider.dart';
 
 void main() async {
   developer.log("시작은 되니?");
@@ -27,16 +29,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.white,
-            titleTextStyle: TextStyle(color: Colors.black),
-          ),
+      title: '라이딩파트너',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          titleTextStyle: TextStyle(color: Colors.black),
         ),
-        // initialBinding: InitBinding(),
-        // home: const Root(),
-        home: mainRoute());
+      ),
+      // initialBinding: InitBinding(),
+      // home: const Root(),
+      home: MultiProvider(providers: [
+        ChangeNotifierProvider(create: (context) => WeatherProvider()),
+      ], child: const MainRoute()),
+    );
   }
 }
