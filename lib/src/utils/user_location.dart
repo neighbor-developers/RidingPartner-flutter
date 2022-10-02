@@ -11,7 +11,7 @@ class MyLocation {
   }
 
   initLocation() async =>
-      {developer.log("위치를 가져오는중"), await getMyCurrentLocation()};
+      {await _cheakPermission(), await getMyCurrentLocation()};
 
   MyLocation._internal() {
     initLocation();
@@ -19,10 +19,6 @@ class MyLocation {
 
   Future<void> getMyCurrentLocation() async {
     try {
-      // ignore: unrelated_type_equality_checks
-      if (Geolocator.checkPermission() == LocationPermission.denied) {
-        Geolocator.requestPermission();
-      }
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
       latitude = position.latitude;
@@ -32,6 +28,30 @@ class MyLocation {
       developer.log("error : getMyCurrentLocation ${e.toString()}");
       latitude = 37.579871128849334;
       longitude = 126.98935225645432;
+    }
+  }
+
+  Future<dynamic> _cheakPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    developer.log("안녕");
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
     }
   }
 }
