@@ -47,6 +47,7 @@ dependencies:
   intl: ^0.17.0
   flutter_provider: ^2.1.0
   google_sign_in: ^5.4.2
+  google_maps_flutter: ^2.2.1
 
 
 dev_dependencies:
