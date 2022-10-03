@@ -12,6 +12,7 @@ class NaverMapService {
     try {
       var place = [Place()];
       final myLocation = MyLocation(); // 자신의 위치를 기반으로 위치 검색
+      myLocation.getMyCurrentLocation();
       final Map<String, String> queryParams = {
         'coords': '${myLocation.longitude},${myLocation.latitude}',
         'query': title,
@@ -59,7 +60,7 @@ class NaverMapService {
       };
 
       if (waypoints!.isNotEmpty) {
-        queryParams['waypoints'] = waypoints!.map(placeToParam).join('|');
+        queryParams['waypoints'] = waypoints.map(placeToParam).join('|');
       }
 
       final requestUrl =

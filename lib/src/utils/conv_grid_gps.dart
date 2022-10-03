@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names, library_prefixes
+
 import 'dart:math' as Math;
 
 class ConvGridGps {
@@ -51,8 +53,9 @@ class ConvGridGps {
       if (yn.abs() <= 0.0) {
         theta = Math.pi * 0.5;
         if (xn < 0.0) theta = -theta;
-      } else
+      } else {
         theta = Math.atan2(xn, yn);
+      }
     }
     var alon = theta / sn + olon;
     rs['lat'] = alat * RADDEG;
