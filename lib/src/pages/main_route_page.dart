@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../provider/weather_provider.dart';
 import 'map_page.dart';
 import 'weather_page.dart';

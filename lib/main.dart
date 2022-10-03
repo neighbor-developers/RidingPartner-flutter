@@ -3,11 +3,9 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/utils/http_override.dart';
 import 'firebase_options.dart';
 import 'src/pages/main_route_page.dart';
-import 'src/provider/weather_provider.dart';
 
 void main() async {
   developer.log("시작은 되니?");

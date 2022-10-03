@@ -10,7 +10,7 @@ class WeatherPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _weatherProvider = Provider.of<WeatherProvider>(context, listen: false);
+    _weatherProvider = Provider.of<WeatherProvider>(context);
     _weatherProvider.getWeather();
     final weather = _weatherProvider.weather;
     developer.log('build Call');
@@ -21,10 +21,10 @@ class WeatherPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(weather.skyType ?? '날씨'),
-            Text(weather.temperature ?? '온도'),
-            Text(weather.humidity ?? '습도'),
-            Text(weather.rainType ?? '비'),
+            Text(weather.skyType ?? '날씨를 가져오고 있습니다.'),
+            Text(weather.temperature ?? ''),
+            Text(weather.humidity ?? ''),
+            Text(weather.rainType ?? ''),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);

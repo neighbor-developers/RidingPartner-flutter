@@ -74,6 +74,7 @@ class WeatherService {
         return weather;
       } catch (e) {
         developer.log('getWeatherData 오류');
+        developer.log(e.toString());
         return weather;
       }
     } else {
