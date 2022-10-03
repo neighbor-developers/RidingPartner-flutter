@@ -6,7 +6,7 @@ import '../models/weather.dart';
 enum LoadingStatus { completed, searching, empty }
 
 class WeatherProvider with ChangeNotifier {
-  WeatherService weatherRepository = WeatherService();
+  WeatherService weatherServie = WeatherService();
 
   Weather _weather = Weather();
   Weather get weather => _weather;
@@ -20,8 +20,7 @@ class WeatherProvider with ChangeNotifier {
   Future<void> getWeather() async {
     try {
       _loadingStatus = LoadingStatus.searching;
-      notifyListeners();
-      final weather = await weatherRepository.getWeatherData();
+      final weather = await weatherServie.getWeatherData();
       if (weather == null) {
         _loadingStatus = LoadingStatus.empty;
         _message = 'Could not find weather. Please try again.';

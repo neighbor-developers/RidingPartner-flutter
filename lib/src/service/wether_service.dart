@@ -48,11 +48,12 @@ class WeatherService {
       try {
         var jsonResponse = jsonDecode(response.body);
         var weatherData = WeatherData.fromJson(jsonResponse);
-        var weatherItmes = weatherData.response!.body!.items!.item!;
+        var weatherItems = weatherData.response!.body!.items!.item!;
 
-        for (var i = 0; i < weatherItmes.length; i += 6) {
-          var weatherItem = weatherItmes[i];
-          switch (weatherItmes[i].category) {
+        for (var i = 0; i < weatherItems.length; i += 6) {
+          var weatherItem = weatherItems[i];
+
+          switch (weatherItem.category) {
             case 'PTY':
               weather.rainType ??=
                   WeatherInfoConverter.getRainType(weatherItem.fcstValue);
@@ -72,6 +73,8 @@ class WeatherService {
         developer.log(weather.temperature.toString());
         return weather;
       } catch (e) {
+        developer.log('getWeatherData 오류');
+        developer.log(e.toString());
         return weather;
       }
     } else {
