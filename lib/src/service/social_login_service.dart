@@ -5,12 +5,16 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart' as kakao_flutter;
 import 'package:flutter_naver_login/flutter_naver_login.dart' as naver_flutter;
 
 import 'firebase_auth_social_login.dart';
+import 'dart:developer' as developer;
 
 class SocialLogin {
   final _firebaseAuthSocialLogin = FirebaseAuthSocialLogin();
 
   // kakao
   Future<User?> signInWithKakao() async {
+    kakao_flutter.KakaoSdk.init(
+        nativeAppKey: 'b50ae09d3f49b62c4fba3b875e1b3458');
+
     if (await kakao_flutter.isKakaoTalkInstalled()) {
       try {
         await kakao_flutter.UserApi.instance.loginWithKakaoTalk();
@@ -77,10 +81,9 @@ class SocialLogin {
   }
 
   Future<User?> siginInwithGoogle() async {
-    final GoogleSignInAccount googleUser =
-        GoogleSignIn().signIn() as GoogleSignInAccount;
+    final googleUser = await GoogleSignIn().signIn();
     final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+        await googleUser!.authentication;
 
     final OAuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
@@ -90,6 +93,7 @@ class SocialLogin {
     UserCredential result =
         await FirebaseAuth.instance.signInWithCredential(credential);
     if (result.user != null) {
+      developer.log(result.user.toString());
       return result.user;
     } else {
       return null;

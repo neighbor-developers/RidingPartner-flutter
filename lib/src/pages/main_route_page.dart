@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/weather_provider.dart';
@@ -53,6 +54,12 @@ class MainRoute extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => WeatherPage()));
             },
             child: const Text('추천경로 페이지'),
+          ),
+          TextButton(
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+            },
+            child: const Text('로그아웃'),
           )
         ],
       ),
