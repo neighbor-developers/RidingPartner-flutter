@@ -5,7 +5,6 @@ import 'dart:developer' as developer;
 
 // ignore: must_be_immutable
 class WeatherPage extends StatelessWidget {
-  WeatherPage({super.key});
   late WeatherProvider _weatherProvider;
 
   @override

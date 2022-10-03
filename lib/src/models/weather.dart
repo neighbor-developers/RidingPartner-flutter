@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_new, prefer_collection_literals, unnecessary_this
+
 class Weather {
   String? skyType;
   String? temperature;
@@ -13,15 +15,14 @@ class WeatherData {
   WeatherData({this.response});
 
   WeatherData.fromJson(Map<String, dynamic> json) {
-    response = json['response'] != null
-        ? new Response.fromJson(json['response'])
-        : null;
+    response =
+        json['response'] != null ? Response.fromJson(json['response']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.response != null) {
-      data['response'] = this.response!.toJson();
+      data['response'] = response!.toJson();
     }
     return data;
   }
