@@ -17,23 +17,21 @@ class AuthProvider with ChangeNotifier {
 
   void _setUser(User? user) {
     _user = user;
-    // _setUserIsNull();
     notifyListeners();
   }
 
   void prepareUser() {
     _user = fAuth.currentUser;
-    // _setUserIsNull();
+    _setUserIsNull();
   }
 
-  // void _setUserIsNull() {
-  //   if (_user == null) {
-  //     _userIsNull = false;
-  //   } else {
-  //     _userIsNull = true;
-  //   }
-  //   notifyListeners();
-  // }
+  void _setUserIsNull() {
+    if (_user == null) {
+      _userIsNull = false;
+    } else {
+      _userIsNull = true;
+    }
+  }
 
   signInWithKakao() async {
     User? user = await socialLogin.signInWithKakao();

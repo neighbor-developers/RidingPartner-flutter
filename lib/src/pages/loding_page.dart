@@ -1,15 +1,32 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/pages/main_route_page.dart';
 import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
-import 'dart:developer' as developer;
 
-class LodingPage extends StatelessWidget {
-  const LodingPage({super.key});
+class LodingPage extends StatefulWidget {
+  const LodingPage({Key? key}) : super(key: key);
+
+  @override
+  _LodingPage createState() => _LodingPage();
+}
+
+class _LodingPage extends State<LodingPage> {
+  late AuthProvider _authProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    _authProvider.prepareUser();
+
+    if (_authProvider.user != null) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MainRoute()),
+          (route) => false);
+    }
+  }
 
   // 로딩페이지와 동시에 사용할까 생각중
   // 페이지 들어오는 순간 2초로딩과 provider를 통한 유저 확인.
@@ -20,19 +37,13 @@ class LodingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _authProvider = Provider.of<AuthProvider>(context);
-    _authProvider.prepareUser();
-    User? _user = _authProvider.user;
-
-    Future.delayed(Duration(milliseconds: 2500), () {
-      if (_user != null) {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => MainRoute()),
-            (route) => false);
-      }
-    });
-
+    _authProvider = Provider.of<AuthProvider>(context);
+    if (_authProvider.user != null) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MainRoute()),
+          (route) => false);
+    }
     return Scaffold(
       body: Column(children: [
         CupertinoButton(

@@ -31,6 +31,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
         create: (context) => AuthProvider(),
-        child: MaterialApp(home: LodingPage()));
+        child: const MaterialApp(home: LodingPage()));
   }
 }
