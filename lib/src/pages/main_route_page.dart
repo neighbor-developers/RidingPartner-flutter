@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ridingpartner_flutter/src/pages/loding_page.dart';
 import '../provider/weather_provider.dart';
 import 'map_page.dart';
 import 'weather_page.dart';
@@ -58,8 +59,11 @@ class MainRoute extends StatelessWidget {
           TextButton(
             onPressed: () {
               FirebaseAuth.instance.signOut();
+              print('로그아웃');
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => LodingPage()));
             },
-            child: const Text('로그아웃'),
+            child: const Text('로그아웃 및 재로그인'),
           )
         ],
       ),

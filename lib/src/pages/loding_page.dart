@@ -26,8 +26,10 @@ class LodingPage extends StatelessWidget {
 
     Future.delayed(Duration(milliseconds: 2500), () {
       if (_user != null) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => MainRoute()));
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => MainRoute()),
+            (route) => false);
       }
     });
 
