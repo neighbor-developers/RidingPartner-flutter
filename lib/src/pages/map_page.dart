@@ -44,16 +44,31 @@ class MapSampleState extends State<MapSample> {
             child: Column(
               children: <Widget>[
                 FloatingActionButton.extended(
+                  heroTag: 'backBtn',
                   onPressed: _goBackToMain,
                   label: const Text('돌아가기'),
                   icon: const Icon(Icons.directions_boat),
                 ),
-                const TextField(
-                  decoration: InputDecoration(
-                    hintText: '검색어를 입력하세요',
-                    border: OutlineInputBorder(),
+                Row(children: [
+                  const SizedBox(
+                    width: 300,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: '출발지',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
                   ),
-                ),
+                  SizedBox(
+                    width: 100,
+                    child: FloatingActionButton.extended(
+                      heroTag: 'searchBtn',
+                      onPressed: _goBackToMain,
+                      label: const Text('검색'),
+                      icon: const Icon(Icons.search),
+                    ),
+                  ),
+                ]),
               ],
             ),
           ),
