@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart' as kakao_flutter;
 import 'package:flutter_naver_login/flutter_naver_login.dart' as naver_flutter;
-
 import 'firebase_auth_social_login.dart';
 import 'dart:developer' as developer;
 
@@ -13,7 +13,7 @@ class SocialLogin {
   // kakao
   Future<User?> signInWithKakao() async {
     kakao_flutter.KakaoSdk.init(
-        nativeAppKey: 'b50ae09d3f49b62c4fba3b875e1b3458');
+        nativeAppKey: dotenv.env['KAKAO_NATIVE_APP_KEY']!);
 
     if (await kakao_flutter.isKakaoTalkInstalled()) {
       try {
