@@ -32,7 +32,6 @@ class WeatherProvider with ChangeNotifier {
     } catch (e) {
       _loadingStatus = LoadingStatus.empty;
       _message = 'Could not find weather. Please try again.';
-      notifyListeners();
     }
   }
 }

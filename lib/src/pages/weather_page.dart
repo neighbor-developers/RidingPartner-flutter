@@ -3,15 +3,23 @@ import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 import 'dart:developer' as developer;
 
-// ignore: must_be_immutable
-class WeatherPage extends StatelessWidget {
-  late WeatherProvider _weatherProvider;
+class WeatherPage extends StatefulWidget {
+  const WeatherPage({Key? key}) : super(key: key);
+
+  @override
+  _WeatherPage createState() => _WeatherPage();
+}
+
+class _WeatherPage extends State<WeatherPage> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<WeatherProvider>(context, listen: false).getWeather();
+  }
 
   @override
   Widget build(BuildContext context) {
-    _weatherProvider = Provider.of<WeatherProvider>(context);
-    _weatherProvider.getWeather();
-    final weather = _weatherProvider.weather;
+    final weather = Provider.of<WeatherProvider>(context).weather;
     developer.log('build Call');
 
     return Scaffold(
