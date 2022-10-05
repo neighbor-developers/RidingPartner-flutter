@@ -23,7 +23,6 @@ class _LodingPageState extends State<LodingPage> {
   void initState() {
     super.initState();
     connectivityResult = Connectivity().checkConnectivity();
-    Future.delayed(Duration(milliseconds: 2500));
   }
 
   // 로딩페이지와 동시에 사용할까 생각중
@@ -32,24 +31,25 @@ class _LodingPageState extends State<LodingPage> {
     _authProvider = Provider.of<AuthProvider>(context);
     _authProvider.prepareUser();
     User? _user = _authProvider.user;
-
-    if (_user != null) {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => MainRoute()),
-          (route) => false);
-    } else {
-      if (connectivityResult == ConnectivityResult.none) {
-        Fluttertoast.showToast(
-            msg: "wifi 상태를 확인해주세요", toastLength: Toast.LENGTH_SHORT);
-      } else {}
-    }
+    Future.delayed(Duration(milliseconds: 2500), () {
+      if (_user != null) {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => MainRoute()),
+            (route) => false);
+      } else {
+        if (connectivityResult == ConnectivityResult.none) {
+          Fluttertoast.showToast(
+              msg: "wifi 상태를 확인해주세요", toastLength: Toast.LENGTH_SHORT);
+        } else {}
+      }
+    });
 
     return Scaffold(
       body: Column(children: [
         _kakaoLoginButton(),
         _naverLoginButton(),
-        _googleLoginButton()
+        _googleLoginButton(),
       ]),
       appBar: AppBar(backgroundColor: Color.fromARGB(255, 25, 245, 83)),
     );
@@ -61,9 +61,10 @@ class _LodingPageState extends State<LodingPage> {
         child: Visibility(
             visible: _authProvider.userIsNull,
             child: CupertinoButton(
-                onPressed: _authProvider.signInWithNaver(),
+                onPressed: () {
+                  _authProvider.signInWithNaver();
+                },
                 color: Color.fromRGBO(62, 200, 76, 1),
-                // ignore: prefer_const_constructors
                 child: Text('네이버 로그인',
                     style: TextStyle(
                       fontSize: 15,
@@ -77,7 +78,9 @@ class _LodingPageState extends State<LodingPage> {
         child: Visibility(
             visible: _authProvider.userIsNull,
             child: CupertinoButton(
-                onPressed: _authProvider.signInWithNaver(),
+                onPressed: () {
+                  _authProvider.signInWithKakao();
+                },
                 color: Colors.yellow,
                 // ignore: prefer_const_constructors
                 child: Text('카카오 로그인',
@@ -93,7 +96,9 @@ class _LodingPageState extends State<LodingPage> {
         child: Visibility(
             visible: _authProvider.userIsNull,
             child: CupertinoButton(
-                onPressed: _authProvider.signInWithNaver(),
+                onPressed: () {
+                  _authProvider.signInWithGoogle();
+                },
                 color: Color.fromARGB(255, 255, 255, 255),
                 child: Text('구글 로그인',
                     style: TextStyle(

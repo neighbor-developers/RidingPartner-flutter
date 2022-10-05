@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/pages/loding_page.dart';
+import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
 import '../provider/weather_provider.dart';
 import 'map_page.dart';
 import 'weather_page.dart';
@@ -64,8 +65,8 @@ class MainRoute extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => ChangeNotifierProvider(
-                          create: (context) => WeatherProvider(),
-                          child: WeatherPage())));
+                          create: (context) => AuthProvider(),
+                          child: LodingPage())));
             },
             child: const Text('로그아웃 및 재로그인'),
           )

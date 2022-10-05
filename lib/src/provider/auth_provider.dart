@@ -28,9 +28,9 @@ class AuthProvider with ChangeNotifier {
 
   void _setUserIsNull() {
     if (_user == null) {
-      _userIsNull = false;
-    } else {
       _userIsNull = true;
+    } else {
+      _userIsNull = false;
     }
     notifyListeners();
   }
