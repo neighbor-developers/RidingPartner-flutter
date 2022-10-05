@@ -60,8 +60,12 @@ class MainRoute extends StatelessWidget {
             onPressed: () {
               FirebaseAuth.instance.signOut();
               print('로그아웃');
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => LodingPage()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChangeNotifierProvider(
+                          create: (context) => WeatherProvider(),
+                          child: WeatherPage())));
             },
             child: const Text('로그아웃 및 재로그인'),
           )
