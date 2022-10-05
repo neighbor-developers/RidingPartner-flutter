@@ -10,10 +10,11 @@ class AuthProvider with ChangeNotifier {
 
   final FirebaseAuth fAuth = FirebaseAuth.instance;
   User? _user;
-  bool _userIsNull = true;
-
   User? get user => _user;
+
+  bool _userIsNull = true;
   bool get userIsNull => _userIsNull;
+  _setUserIsNull() => _userIsNull = _user == null;
 
   void _setUser(User? user) {
     _user = user;
@@ -24,15 +25,6 @@ class AuthProvider with ChangeNotifier {
   void prepareUser() {
     _user = fAuth.currentUser;
     _setUserIsNull();
-  }
-
-  void _setUserIsNull() {
-    if (_user == null) {
-      _userIsNull = true;
-    } else {
-      _userIsNull = false;
-    }
-    notifyListeners();
   }
 
   signInWithKakao() async {
