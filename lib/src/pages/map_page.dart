@@ -14,6 +14,7 @@ class MapSample extends StatefulWidget {
 
 class MapSampleState extends State<MapSample> {
   final Completer<GoogleMapController> _controller = Completer();
+  var _myController;
   static final CameraPosition _initLocation = CameraPosition(
     target: LatLng(37.5665, 126.9780),
     zoom: 14.4746,
@@ -38,6 +39,7 @@ class MapSampleState extends State<MapSample> {
             initialCameraPosition: _initLocation,
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
+              _myController = controller;
             },
             myLocationButtonEnabled: true,
             myLocationEnabled: true,
@@ -69,7 +71,14 @@ class MapSampleState extends State<MapSample> {
                       heroTag: 'searchBtn',
                       onPressed: () async {
                         await mapSearchProvider.setSearchResult("시청");
-                        _visibility = true;
+                        final GoogleMapController controller =
+                            await _controller.future;
+                        controller.animateCamera(CameraUpdate.newCameraPosition(
+                          const CameraPosition(
+                            target: LatLng(37.4, 126.7),
+                            zoom: 14.4746,
+                          ),
+                        ));
                       },
                       label: const Text('검색'),
                       icon: const Icon(Icons.search),
