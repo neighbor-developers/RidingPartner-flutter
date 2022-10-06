@@ -36,7 +36,7 @@ class _LodingPageState extends State<LodingPage> {
     _authProvider = Provider.of<AuthProvider>(context);
 
     Future.delayed(const Duration(milliseconds: 2500), () {
-      if (!_authProvider.userIsNull) {
+      if (_authProvider.user != null) {
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => MainRoute()),
@@ -63,7 +63,7 @@ class _LodingPageState extends State<LodingPage> {
     return SizedBox(
         width: MediaQuery.of(context).size.width,
         child: Visibility(
-            visible: _authProvider.userIsNull,
+            visible: _authProvider.user == null,
             child: CupertinoButton(
                 onPressed: () {
                   _authProvider.signInWithNaver();
@@ -80,7 +80,7 @@ class _LodingPageState extends State<LodingPage> {
     return SizedBox(
         width: MediaQuery.of(context).size.width,
         child: Visibility(
-            visible: _authProvider.userIsNull,
+            visible: _authProvider.user == null,
             child: CupertinoButton(
                 onPressed: () {
                   _authProvider.signInWithKakao();
@@ -98,7 +98,7 @@ class _LodingPageState extends State<LodingPage> {
     return SizedBox(
         width: MediaQuery.of(context).size.width,
         child: Visibility(
-            visible: _authProvider.userIsNull,
+            visible: _authProvider.user == null,
             child: CupertinoButton(
                 onPressed: () {
                   _authProvider.signInWithGoogle();

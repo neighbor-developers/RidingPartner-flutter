@@ -12,19 +12,13 @@ class AuthProvider with ChangeNotifier {
   User? _user;
   User? get user => _user;
 
-  bool _userIsNull = true;
-  bool get userIsNull => _userIsNull;
-  _setUserIsNull() => _userIsNull = _user == null;
-
   void _setUser(User? user) {
     _user = user;
-    _setUserIsNull();
     notifyListeners();
   }
 
   void prepareUser() {
     _user = fAuth.currentUser;
-    _setUserIsNull();
   }
 
   signInWithKakao() async {
