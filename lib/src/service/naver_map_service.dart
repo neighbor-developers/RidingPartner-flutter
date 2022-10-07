@@ -12,7 +12,7 @@ class NaverMapService {
     try {
       var place = [Place()];
       final myLocation = MyLocation(); // 자신의 위치를 기반으로 위치 검색
-      myLocation.getMyCurrentLocation();
+      await myLocation.getMyCurrentLocation();
       final Map<String, String> queryParams = {
         'coords': '${myLocation.longitude},${myLocation.latitude}',
         'query': title,
@@ -20,6 +20,8 @@ class NaverMapService {
 
       final requestUrl =
           Uri.https(_naverMapUrl, '/v5/api/instantSearch', queryParams);
+
+      developer.log(requestUrl.toString());
       var response = await http.get(requestUrl);
       developer.log(requestUrl.toString());
 
