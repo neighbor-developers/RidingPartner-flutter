@@ -9,6 +9,7 @@ import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart
 class RidingProvider with ChangeNotifier {
   final Distance _calDistance = const Distance();
   final FirebaseDatabaseService _firebaseDb = FirebaseDatabaseService();
+  late Position _position;
 
   String _ridingDate = "";
   late int _startTime; // 라이딩 시작 타임스탬프
@@ -55,6 +56,20 @@ class RidingProvider with ChangeNotifier {
       }
       notifyListeners();
     }));
+
+    //  Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.high)
+    //     .listen((pos) {
+    //   pos = _position;
+    // });
+    // _befLatLng = LatLng(_position.latitude, _position.longitude);
+
+    // _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
+    //   _time++; // 1초마다 noti, 3초마다 데이터 계산
+    //   if (_time / 3 == 0) {
+    //     calRecord(_position);
+    //   }
+    //   notifyListeners();
+    // }));
   }
 
   void calRecord(Position position) {
