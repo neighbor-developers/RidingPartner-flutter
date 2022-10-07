@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/pages/loding_page.dart';
+import 'package:ridingpartner_flutter/src/provider/map_search_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
 import '../provider/weather_provider.dart';
 import 'map_page.dart';
@@ -31,8 +32,12 @@ class MainRoute extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MapSample()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChangeNotifierProvider(
+                          create: (context) => MapSearchProvider(),
+                          child: MapSample())));
             },
             child: const Text('map 페이지'),
           ),
