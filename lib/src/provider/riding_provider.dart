@@ -44,32 +44,19 @@ class RidingProvider with ChangeNotifier {
     }
     saveRidingRecord(); //파이어베이스 저장 시작
 
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    _befLatLng = LatLng(position.latitude, position.longitude); // 시작 위치 선언
+    Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.high)
+        .listen((pos) {
+      _position = pos;
+    });
+    _befLatLng = LatLng(_position.latitude, _position.longitude);
 
     _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
       _time++; // 1초마다 noti, 3초마다 데이터 계산
       if (_time / 3 == 0) {
-        Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-            .then((value) => {calRecord(value)});
+        calRecord(_position);
       }
       notifyListeners();
     }));
-
-    //  Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.high)
-    //     .listen((pos) {
-    //   pos = _position;
-    // });
-    // _befLatLng = LatLng(_position.latitude, _position.longitude);
-
-    // _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
-    //   _time++; // 1초마다 noti, 3초마다 데이터 계산
-    //   if (_time / 3 == 0) {
-    //     calRecord(_position);
-    //   }
-    //   notifyListeners();
-    // }));
   }
 
   void calRecord(Position position) {
