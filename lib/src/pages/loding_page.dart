@@ -3,9 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:ridingpartner_flutter/src/pages/main_route_page.dart';
+import 'package:ridingpartner_flutter/src/pages/home_page.dart';
 import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
-import 'dart:developer' as developer;
+import 'package:ridingpartner_flutter/src/provider/bottom_navigation_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/map_search_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/route_list_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 
 class LodingPage extends StatefulWidget {
   const LodingPage({super.key});
@@ -39,7 +42,17 @@ class _LodingPageState extends State<LodingPage> {
       if (_authProvider.user != null) {
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => MainRoute()),
+            MaterialPageRoute(
+                builder: (context) => MultiProvider(providers: [
+                      ChangeNotifierProvider(
+                          create: (context) => WeatherProvider()),
+                      ChangeNotifierProvider(
+                          create: (context) => RouteListProvider()),
+                      ChangeNotifierProvider(
+                          create: (context) => BottomNavigationProvider()),
+                      ChangeNotifierProvider(
+                          create: (context) => MapSearchProvider()),
+                    ], child: HomePage())),
             (route) => false);
       } else {
         if (connectivityResult == ConnectivityResult.none) {
