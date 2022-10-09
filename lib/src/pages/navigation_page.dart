@@ -10,12 +10,9 @@ import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import '../models/place.dart';
 
 class NavigationPage extends StatefulWidget {
-  final Place start;
-  final Place destination;
   final List<Place>? waypoints;
 
-  const NavigationPage(this.start, this.destination, this.waypoints,
-      {super.key});
+  const NavigationPage(this.waypoints, {super.key});
 
   @override
   State<NavigationPage> createState() => _NavigationPageState();
@@ -29,18 +26,15 @@ class _NavigationPageState extends State<NavigationPage> {
   void initState() {
     super.initState();
     _navigationProvider = Provider.of<NavigationProvider>(context);
-    _navigationProvider.getRoute(
-        widget.start, widget.destination, widget.waypoints);
-    _navigationProvider.polyline(
-        widget.start, widget.destination, widget.waypoints);
+    _navigationProvider.getRoute(widget.waypoints!);
 
-    initCameraPosition = LatLng(
-        ((widget.start.latitude as double) +
-                (widget.destination.latitude as double)) /
-            2,
-        ((widget.start.longitude as double) +
-                (widget.destination.latitude as double)) /
-            2);
+    // initCameraPosition = LatLng(
+    //     ((.latitude as double) +
+    //             (widget.destination.latitude as double)) /
+    //         2,
+    //     ((widget.start.longitude as double) +
+    //             (widget.destination.latitude as double)) /
+    //         2);
   }
 
   @override
