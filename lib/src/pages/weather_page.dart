@@ -20,7 +20,7 @@ class _WeatherPage extends State<WeatherPage> {
   @override
   Widget build(BuildContext context) {
     final weather = Provider.of<WeatherProvider>(context).weather;
-    developer.log('build Call');
+    developer.log('weather build');
 
     return Scaffold(
       appBar: AppBar(),

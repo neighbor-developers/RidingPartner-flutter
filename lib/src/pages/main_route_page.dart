@@ -4,8 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/pages/loding_page.dart';
 import 'package:ridingpartner_flutter/src/provider/map_search_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
+import '../provider/route_list_provider.dart';
 import '../provider/weather_provider.dart';
 import 'map_page.dart';
+import 'recommended_route_page.dart';
 import 'weather_page.dart';
 
 class MainRoute extends StatelessWidget {
@@ -57,8 +59,12 @@ class MainRoute extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => WeatherPage()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChangeNotifierProvider(
+                          create: (context) => RouteListProvider(),
+                          child: RecommendedRoutePage())));
             },
             child: const Text('추천경로 페이지'),
           ),
