@@ -45,8 +45,8 @@ class _NavigationPageState extends State<NavigationPage> {
     Set<Marker> markers = widget.course
         .map((course) => Marker(
             markerId: MarkerId(course.title ?? ""),
-            position:
-                LatLng(course.latitude as double, course.longitude as double)))
+            position: LatLng(double.parse(course.latitude!),
+                double.parse(course.longitude!))))
         .toSet();
 
     void _setController() async {
