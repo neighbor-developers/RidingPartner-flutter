@@ -42,7 +42,7 @@ class RidingProvider with ChangeNotifier {
       _ridingDate =
           DateFormat('yy/MM/dd - HH:mm:ss').format(DateTime.now()); //format변경
     }
-    saveRidingRecord(); //파이어베이스 저장 시작
+    _saveRidingRecord(); //파이어베이스 저장 시작
 
     Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.high)
         .listen((pos) {
@@ -53,13 +53,13 @@ class RidingProvider with ChangeNotifier {
     _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
       _time++; // 1초마다 noti, 3초마다 데이터 계산
       if (_time / 3 == 0) {
-        calRecord(_position);
+        _calRecord(_position);
       }
       notifyListeners();
     }));
   }
 
-  void calRecord(Position position) {
+  void _calRecord(Position position) {
     num distance = _calDistance.as(
         LengthUnit.Kilometer,
         LatLng(_befLatLng.latitude, _befLatLng.longitude),
@@ -70,7 +70,7 @@ class RidingProvider with ChangeNotifier {
     _speed = distance / 3 * 3600; // k/h
   }
 
-  Future<void> saveRidingRecord() async {
+  Future<void> _saveRidingRecord() async {
     _saveTimer = Timer.periodic(Duration(minutes: 1), ((timer) {
       _firebaseDb.saveRealTimeRecord(
           _ridingDate, _time, _sumDistance); //1분마다 실시간 저장
