@@ -1,13 +1,9 @@
-
-
-
-
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:ridingpartner_flutter/src/models/marker.dart';
+
 
 class RentalMap extends StatefulWidget{
   const RentalMap({super.key});
