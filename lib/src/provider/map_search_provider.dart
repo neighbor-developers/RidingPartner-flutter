@@ -13,8 +13,8 @@ class MapSearchProvider extends ChangeNotifier {
   Place? _startPoint;
   Place? get startPoint => _startPoint;
 
-  Place? _EndPoint;
-  Place? get EndPoint => _EndPoint;
+  Place? _endPoint;
+  Place? get endPoint => _endPoint;
 
   setStartPoint(Place place) {
     _startPoint = place;
@@ -22,7 +22,7 @@ class MapSearchProvider extends ChangeNotifier {
   }
 
   setEndPoint(Place place) {
-    _EndPoint = place;
+    _endPoint = place;
     notifyListeners();
   }
 
