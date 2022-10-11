@@ -14,16 +14,16 @@ class NaverMapService {
       final myLocation = MyLocation(); // 자신의 위치를 기반으로 위치 검색
       await myLocation.getMyCurrentLocation();
       final Map<String, String> queryParams = {
-        'coords': '${myLocation.longitude},${myLocation.latitude}',
+        'coords': '${myLocation.latitude},${myLocation.longitude}',
         'query': title,
       };
 
       final requestUrl =
           Uri.https(_naverMapUrl, '/v5/api/instantSearch', queryParams);
 
-      developer.log(requestUrl.toString());
+      developer.log("1 ${requestUrl.toString()}");
       var response = await http.get(requestUrl);
-      developer.log(requestUrl.toString());
+      developer.log("2 ${requestUrl.toString()}");
 
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);

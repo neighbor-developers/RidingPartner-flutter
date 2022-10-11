@@ -1,5 +1,3 @@
-
-
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
@@ -11,17 +9,16 @@ import 'map_page.dart';
 
 // https://funncy.github.io/flutter/2020/07/21/flutter-google-map-marker/
 
-class RidingMap extends StatefulWidget{
-  const RidingMap ({super.key});
+class RidingMap extends StatefulWidget {
+  const RidingMap({super.key});
 
   @override
   State<RidingMap> createState() => RidingMapState();
 }
 
-
-class RidingMapState extends State<RidingMap>{
+class RidingMapState extends State<RidingMap> {
   final Completer<GoogleMapController> _controller = Completer();
-  var text ="라이딩 시작하기";
+  var text = "라이딩 시작하기";
   var init = false;
   var style = ElevatedButton.styleFrom(
     primary: Colors.red,
@@ -37,119 +34,90 @@ class RidingMapState extends State<RidingMap>{
     );
 
     return Scaffold(
-      body: Stack(
-        //textDirection: ,
-        children: <Widget>[
-          GoogleMap(
+        body: Stack(
+      //textDirection: ,
+      children: <Widget>[
+        GoogleMap(
           mapType: MapType.normal,
-            //markers: Set.from(_markers),
-            initialCameraPosition: _initLocation,
-            onMapCreated: (GoogleMapController controller) {
-              _controller.complete(controller);
-            },
-            myLocationButtonEnabled: true,
-            myLocationEnabled: true,
-          ),
-          Positioned(
-            // 위치 지정하기
-            child: FractionallySizedBox(
+          //markers: Set.from(_markers),
+          initialCameraPosition: _initLocation,
+          onMapCreated: (GoogleMapController controller) {
+            _controller.complete(controller);
+          },
+          myLocationButtonEnabled: true,
+          myLocationEnabled: true,
+        ),
+        Positioned(
+          // 위치 지정하기
+          child: FractionallySizedBox(
               alignment: Alignment.bottomLeft,
               widthFactor: 0.4,
               heightFactor: 0.2,
               child: Container(
-                color: Colors. white,
+                color: Colors.white,
                 child: Column(
                   children: <Widget>[
-                    Row(
-                        children: <Widget> [
-                          Padding(
-                              padding: EdgeInsets.all(5),
-                              child: SizedBox(
-                                  child: Text(
-                                      "${provider.speed}",
-                                      style: TextStyle(fontSize: 23)
-                                  )
-                              )),
-                          //Spacer(flex: ),
-                          const Text("속도")]
-                    ),
-                    Row(
-                        children: <Widget> [
-                          Padding(
-                              padding: EdgeInsets.all(5),
-                              child: SizedBox(
-                                  child: Text(
-                                      "${provider.distance}km",
-                                      style: TextStyle(fontSize: 23)
-                                  )
-                              )),
-                          Text(
-                              "거리"
-                          )]
-                    ),
-                    Row(
-                        children: <Widget> [
-                          Padding(
-                              padding: EdgeInsets.all(5),
-                              child: SizedBox(
-                                  child: Text(
-                                      "${provider.speed}km/h",
-                                      style: TextStyle(fontSize: 23)
-                                  )
-                              )),
-                          Text(
-                              "평균속도"
-                          )]
-                    ),
-                    Row(
-                        children: <Widget> [
-                          Padding(
-                            padding: EdgeInsets.all(5),
-                            child: SizedBox(
-                                child: Text(
-                                    "${provider.time}",
-                                    style: TextStyle(fontSize: 23)
-                                )
-                            ),
-                          ),
-                          Text("시간")
-                        ]
-                    )
-
+                    Row(children: <Widget>[
+                      Padding(
+                          padding: EdgeInsets.all(5),
+                          child: SizedBox(
+                              child: Text("${provider.speed}",
+                                  style: TextStyle(fontSize: 23)))),
+                      //Spacer(flex: ),
+                      const Text("속도")
+                    ]),
+                    Row(children: <Widget>[
+                      Padding(
+                          padding: EdgeInsets.all(5),
+                          child: SizedBox(
+                              child: Text("${provider.distance}km",
+                                  style: TextStyle(fontSize: 23)))),
+                      Text("거리")
+                    ]),
+                    Row(children: <Widget>[
+                      Padding(
+                          padding: EdgeInsets.all(5),
+                          child: SizedBox(
+                              child: Text("${provider.speed}km/h",
+                                  style: TextStyle(fontSize: 23)))),
+                      Text("평균속도")
+                    ]),
+                    Row(children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(5),
+                        child: SizedBox(
+                            child: Text("${provider.time}",
+                                style: TextStyle(fontSize: 23))),
+                      ),
+                      Text("시간")
+                    ])
                   ],
                 ),
-              )
-          ),
-
-          ),
-          Positioned(
-              bottom: 10,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.red,
-                  onPrimary: Colors.white,
-                ),
-                onPressed: (){
-                  changeButton(init);
-                },
-                child: Text(text),
-            )
-          ),
-          Positioned(
+              )),
+        ),
+        Positioned(
+            bottom: 10,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Colors.red,
+                onPrimary: Colors.white,
+              ),
+              onPressed: () {
+                changeButton(init);
+              },
+              child: Text(text),
+            )),
+        Positioned(
             bottom: 10,
             child: Row(
-            children: [
-
-          ],
-          )
-          )
-        ],
-      )
-    );
+              children: [],
+            ))
+      ],
+    ));
   }
 
-  void changeButton(bool state){
-    if(state == false){
+  void changeButton(bool state) {
+    if (state == false) {
       RidingProvider().startRiding(state);
       init == true;
       text = "라이딩 중단";
@@ -157,8 +125,7 @@ class RidingMapState extends State<RidingMap>{
         primary: Colors.red,
         onPrimary: Colors.white,
       );
-    }
-    else{
+    } else {
       RidingProvider().startRiding(true);
       style = ElevatedButton.styleFrom(
         primary: Colors.blue,
