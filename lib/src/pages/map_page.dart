@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/models/place.dart';
+import 'package:ridingpartner_flutter/src/pages/weather_page.dart';
 import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 import 'dart:developer' as developer;
 import '../provider/map_search_provider.dart';
@@ -59,6 +60,28 @@ class MapSampleState extends State<MapSample> {
             child: Column(
               children: <Widget>[
                 FloatingActionButton.extended(
+                    label: const Text('안내시작'),
+                    heroTag: 'navigateStartBtn',
+                    onPressed: () {
+                      if (mapSearchProvider.startPoint == null ||
+                          mapSearchProvider.endPoint == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('출발지와 도착지를 입력해주세요.'),
+                          ),
+                        );
+                        return;
+                      } else {
+                        // Navigator.push(
+                        // context,
+                        // MaterialPageRoute(
+                        // builder: (context) => WeatherPage(Place mapSearchProvider.startPoint, Place mapSearchProvider.endPoint)));
+                        developer.log("안내시작");
+                      }
+                    },
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
+                    backgroundColor: Colors.green),
+                FloatingActionButton.extended(
                   heroTag: 'backBtn',
                   onPressed: _goBackToMain,
                   label: const Text('돌아가기'),
@@ -80,8 +103,17 @@ class MapSampleState extends State<MapSample> {
                     child: FloatingActionButton.extended(
                       heroTag: 'startPointSearchBtn',
                       onPressed: () async {
-                        await mapSearchProvider.setStartPointSearchResult(
-                            _startPointTextController.text);
+                        if (_startPointTextController.text.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('출발지를 입력해주세요.'),
+                            ),
+                          );
+                          return;
+                        } else {
+                          await mapSearchProvider.setStartPointSearchResult(
+                              _startPointTextController.text);
+                        }
                       },
                       label: const Text('검색'),
                       icon: const Icon(Icons.search),
@@ -104,8 +136,17 @@ class MapSampleState extends State<MapSample> {
                     child: FloatingActionButton.extended(
                       heroTag: 'endPointSearchBtn',
                       onPressed: () async {
-                        await mapSearchProvider.setEndPointSearchResult(
-                            _endPointTextController.text);
+                        if (_endPointTextController.text.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('도착지를 입력해주세요.'),
+                            ),
+                          );
+                          return;
+                        } else {
+                          await mapSearchProvider.setEndPointSearchResult(
+                              _endPointTextController.text);
+                        }
                       },
                       label: const Text('검색'),
                       icon: const Icon(Icons.search),

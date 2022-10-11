@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ridingpartner_flutter/src/models/place.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 import 'dart:developer' as developer;
 
 class WeatherPage extends StatefulWidget {
-  const WeatherPage({Key? key}) : super(key: key);
+  const WeatherPage(Type place, Place? endPoint, {Key? key}) : super(key: key);
 
   @override
   _WeatherPage createState() => _WeatherPage();
@@ -28,7 +29,7 @@ class _WeatherPage extends State<WeatherPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(weather.skyType ?? '날씨를 가져오고 있습니다.'),
+            Text(weather.skyType ?? '날씨를 불러오고 있습니다.'),
             Text(weather.temperature ?? ''),
             Text(weather.humidity ?? ''),
             Text(weather.rainType ?? ''),
