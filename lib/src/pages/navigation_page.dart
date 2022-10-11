@@ -9,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 
 import '../models/place.dart';
 
@@ -24,46 +25,63 @@ class NavigationPage extends StatefulWidget {
 class _NavigationPageState extends State<NavigationPage> {
   late NavigationProvider _navigationProvider;
   Completer<GoogleMapController> _controller = Completer();
+  late LatLng initCameraPosition;
+  late Set<Marker> markers;
 
   @override
   void initState() {
-    super.initState();
     _navigationProvider =
         Provider.of<NavigationProvider>(context, listen: false);
-    _navigationProvider.getRoute(widget.course);
+    setMapComponent();
+
+    super.initState();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    Position? position = _navigationProvider.position;
-    LatLng initCameraPosition = LatLng(
-        position?.latitude ??
-            0 + double.parse(widget.course.last.latitude!) / 2,
-        (position?.latitude ??
-            0 + double.parse(widget.course.last.longitude!) / 2));
+  setMapComponent() async {
+    await _navigationProvider.getRoute(widget.course);
+    initCameraPosition = LatLng(
+        _navigationProvider.position!.latitude +
+            double.parse(widget.course.last.latitude!) / 2,
+        (_navigationProvider.position!.latitude +
+            double.parse(widget.course.last.longitude!) / 2));
 
-    Set<Marker> markers = widget.course
+    markers = widget.course
         .map((course) => Marker(
             markerId: MarkerId(course.title ?? ""),
             position: LatLng(double.parse(course.latitude!),
                 double.parse(course.longitude!))))
         .toSet();
 
+    markers.add(Marker(
+        markerId: MarkerId("currentPosition"),
+        position: LatLng(_navigationProvider.position!.latitude,
+            _navigationProvider.position!.longitude)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Position? position = Provider.of<NavigationProvider>(context).position;
+    RidingProvider _ridingProvider = Provider.of<RidingProvider>(context);
+
     void _setController() async {
       GoogleMapController _googleMapController = await _controller.future;
-      _navigationProvider.addListener(() {
+
+      if (_ridingProvider.state != "before") {
         _googleMapController.animateCamera(CameraUpdate.newCameraPosition(
             CameraPosition(
                 target: LatLng(position!.latitude, position.longitude))));
-      });
-      markers.add(Marker(
-          markerId: MarkerId("currentPosition"),
-          position: LatLng(position!.latitude, position.longitude)));
+        markers.removeWhere((element) => element.markerId == "currentPosition");
+        markers.add(Marker(
+            markerId: MarkerId("currentPosition"),
+            position: LatLng(position.latitude, position.longitude)));
+      }
     }
+
+    _setController();
 
     return Scaffold(
         appBar: AppBar(),
-        body: _navigationProvider.position == null
+        body: _navigationProvider.route == null
             ? const Center(
                 child: Text('Loading'),
               )

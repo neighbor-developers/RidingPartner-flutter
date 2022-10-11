@@ -6,10 +6,13 @@ import 'package:intl/intl.dart';
 import 'package:latlong/latlong.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
 
+enum RidingState { before, riding, pause, stop }
+
 class RidingProvider with ChangeNotifier {
   final Distance _calDistance = const Distance();
   final FirebaseDatabaseService _firebaseDb = FirebaseDatabaseService();
   late Position _position;
+  RidingState _ridingState = RidingState.before;
 
   String _ridingDate = "";
   late int _startTime; // 라이딩 시작 타임스탬프
@@ -30,9 +33,11 @@ class RidingProvider with ChangeNotifier {
   num get distance => _sumDistance;
   num get speed => _speed;
   int get time => _time;
+  RidingState get state => _ridingState;
 
   Future<void> startRiding(bool re) async {
     _befTime = DateTime.now().millisecondsSinceEpoch; // 이전 시간 저장용
+    _ridingState = RidingState.riding;
 
     if (re) {
       // 재시작일때
@@ -78,6 +83,7 @@ class RidingProvider with ChangeNotifier {
   }
 
   void stopAndSaveRiding() {
+    _ridingState = RidingState.stop;
     _timer.cancel();
     _saveTimer.cancel();
     _endTime = DateTime.now().millisecondsSinceEpoch;
@@ -90,6 +96,7 @@ class RidingProvider with ChangeNotifier {
   }
 
   void pauseRiding() {
+    _ridingState = RidingState.pause;
     _timer.cancel();
     _saveTimer.cancel();
     _pauseTime = DateTime.now().millisecondsSinceEpoch;
