@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 class Place {
   String? id;
   String? title;
@@ -20,8 +22,9 @@ class NaverPlaceData {
   Meta? meta;
   List<NaverPlace>? place;
   List<All>? all;
+  List<Address>? address;
 
-  NaverPlaceData({this.meta, this.place, this.all});
+  NaverPlaceData({this.meta, this.place, this.all, this.address});
 
   NaverPlaceData.fromJson(Map<String, dynamic> json) {
     meta = json['meta'] != null ? Meta.fromJson(json['meta']) : null;
@@ -31,12 +34,20 @@ class NaverPlaceData {
         place!.add(NaverPlace.fromJson(v));
       });
     }
-    if (json['all'] != null) {
-      all = <All>[];
-      json['all'].forEach((v) {
-        all!.add(All.fromJson(v));
+    if (json['address'] != null) {
+      address = <Address>[];
+      json['address'].forEach((v) {
+        address!.add(Address.fromJson(v));
       });
+      developer.log("address called");
     }
+    // if (json['all'] != null) {
+    //   all = <All>[];
+    //   json['all'].forEach((v) {
+    //     all!.add(All.fromJson(v));
+    //   });
+    //   developer.log("address 2 called");
+    // }
   }
 
   Map<String, dynamic> toJson() {
@@ -51,6 +62,43 @@ class NaverPlaceData {
       data['all'] = all!.map((v) => v.toJson()).toList();
     }
     return data;
+  }
+}
+
+class Address {
+  String? type;
+  String? id;
+  String? title;
+  String? x;
+  String? y;
+  double? dist;
+  double? totalScore;
+  String? fullAddress;
+  String? shortAddress;
+
+  Address(
+      {this.type,
+      this.id,
+      this.title,
+      this.x,
+      this.y,
+      this.dist,
+      this.totalScore,
+      this.fullAddress,
+      this.shortAddress});
+
+  Address.fromJson(Map<String, dynamic> json) {
+    developer.log("4 address from json called");
+    type = json['type'];
+    id = json['id'];
+    title = json['title'];
+    x = json['x'];
+    y = json['y'];
+    dist = json['dist'];
+    totalScore = json['totalScore'];
+    fullAddress = json['fullAddress'];
+    shortAddress = json['fullAddress'];
+    developer.log("4 address from json finished${fullAddress}");
   }
 }
 

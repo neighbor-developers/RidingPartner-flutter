@@ -27,16 +27,34 @@ class NaverMapService {
 
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
+
+        developer.log("3 ");
         var placeData = NaverPlaceData.fromJson(jsonResponse);
-        place = placeData.place!
-            .map<Place>((place) => Place(
-                id: place.id,
-                title: place.title,
-                latitude: place.y,
-                longitude: place.x,
-                jibunAddress: place.jibunAddress,
-                roadAddress: place.roadAddress))
-            .toList();
+
+        if (placeData.place != null) {
+          developer.log("place called");
+          place = placeData.place!
+              .map<Place>((place) => Place(
+                  id: place.id,
+                  title: place.title,
+                  latitude: place.y,
+                  longitude: place.x,
+                  jibunAddress: place.jibunAddress,
+                  roadAddress: place.roadAddress))
+              .toList();
+        }
+        if (place.isEmpty) {
+          developer.log("else called");
+          place = placeData.address!
+              .map<Place>((address) => Place(
+                  id: address.id,
+                  title: address.title,
+                  latitude: address.y,
+                  longitude: address.x,
+                  jibunAddress: address.fullAddress,
+                  roadAddress: address.fullAddress))
+              .toList();
+        }
 
         return place;
       } else {
