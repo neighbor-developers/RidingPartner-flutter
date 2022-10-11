@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/pages/loding_page.dart';
 import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/http_override.dart';
+import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 import 'firebase_options.dart';
 import 'src/pages/main_route_page.dart';
 
@@ -17,6 +18,7 @@ void main() async {
   HttpOverrides.global = NoCheckCertificateHttpOverrides();
 
   await dotenv.load(fileName: "assets/config/.env");
+  await MyLocation().getMyCurrentLocation();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
