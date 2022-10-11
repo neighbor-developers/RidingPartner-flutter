@@ -34,7 +34,7 @@ class NavigationProvider extends RidingProvider {
 
   Guide get goalPoint => _goalPoint;
   Position? get position => _position;
-  List<Place> get ridingCourse => _ridingCourse;
+  List<Guide>? get route => _route;
   google_map.GoogleMapController get googleCon => _googleMapController;
 
   Future<void> getRoute(List<Place> course) async {
