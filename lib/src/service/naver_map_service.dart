@@ -10,7 +10,7 @@ class NaverMapService {
 
   Future<List<Place>?> getPlaces(String title) async {
     try {
-      var place = [Place()];
+      var place = <Place>[];
       final myLocation = MyLocation(); // 자신의 위치를 기반으로 위치 검색
       await myLocation.getMyCurrentLocation();
       final Map<String, String> queryParams = {

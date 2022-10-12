@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/pages/map_page.dart';
 import 'package:ridingpartner_flutter/src/pages/recommended_route_page.dart';
+import 'package:ridingpartner_flutter/src/pages/riding_page.dart';
 import 'package:ridingpartner_flutter/src/pages/weather_page.dart';
 import 'package:ridingpartner_flutter/src/provider/bottom_navigation_provider.dart';
 
@@ -20,7 +21,7 @@ class HomePage extends StatelessWidget {
           RecommendedRoutePage(),
           WeatherPage(),
           MapSample(),
-          RecommendedRoutePage(),
+          RidingPage(),
         ].elementAt(_bottomNavigationProvider.currentPage),
       ),
       bottomNavigationBar: BottomNavigationBar(

@@ -7,6 +7,8 @@ class Place {
   String? longitude;
   String? jibunAddress;
   String? roadAddress;
+  String? description;
+  String? image;
 
   Place({
     this.id,
@@ -15,6 +17,8 @@ class Place {
     this.longitude,
     this.jibunAddress,
     this.roadAddress,
+    this.description,
+    this.image,
   });
 }
 
