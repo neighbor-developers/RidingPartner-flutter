@@ -40,11 +40,11 @@ class RidingProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> startRiding(bool re) async {
+  Future<void> startRiding() async {
     _befTime = DateTime.now().millisecondsSinceEpoch; // 이전 시간 저장용
     setRidingState(RidingState.riding);
 
-    if (re) {
+    if (_ridingState == RidingState.pause) {
       // 재시작일때
       _restartTime = _befTime;
     } else {
