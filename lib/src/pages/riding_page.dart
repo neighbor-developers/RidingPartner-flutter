@@ -16,12 +16,6 @@ class RidingPage extends StatelessWidget {
   final Completer<GoogleMapController> _controller = Completer();
   late RidingProvider _ridingProvider;
 
-  var text = "라이딩 시작하기";
-  var init = false;
-  var style = ElevatedButton.styleFrom(
-    primary: Colors.red,
-    onPrimary: Colors.white,
-  );
  // 이건 왜 에러가 뜰까? RidingState state = _ridingProvider.ridingState;
   @override
   Widget build(BuildContext context) {
@@ -31,8 +25,8 @@ class RidingPage extends StatelessWidget {
     );
 
     _ridingProvider = Provider.of<RidingProvider>(context);
-    // _ridingProvider.ridingState라고 안 하고 Provider.of를 쓴 이유가 뭘까?
-    RidingState state = Provider.of<RidingProvider>(context).ridingState;
+
+    RidingState state = Provider.of<RidingProvider>(context).state;
 
     return Scaffold(
         body: Stack(
@@ -97,66 +91,67 @@ class RidingPage extends StatelessWidget {
               )),
         ),
 
-        Positioned(
+        Positioned.fill(
             bottom: 10,
-            child: Row(
-              children: [
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: changeButton(state)
+            )
+        )
 
-              ],
-            ))
       ],
     ));
   }
 
-  ElevatedButton changeButton(RidingState state) {
+  Widget changeButton(RidingState state) {
     if (state == RidingState.before) {
       return ElevatedButton(
-        style: style,
+        style: ElevatedButton.styleFrom(
+        primary: Colors.red,
+        onPrimary: Colors.white,
+        ),
         onPressed: () {
           _ridingProvider.startRiding();
-          init = true;
         },
-        child: Text(text),
+        child: Text("라이딩 시작하기"),
       );
     }
     else if(state == RidingState.riding){
       return ElevatedButton(
-        style: style,
+        style: ElevatedButton.styleFrom(
+        primary: Colors.blue,
+        onPrimary: Colors.white,
+        ),
         onPressed: () {
-          if(_ridingProvider.ridingState == RidingState.before){
-            text = "라이딩 중단";
-            style = ElevatedButton.styleFrom(
-              primary: Colors.blue,
-              onPrimary: Colors.white,
-            );
-            _ridingProvider.startRiding();
-            init = true;
-          }
-          else if(_ridingProvider.ridingState == RidingState.riding){
-
-          }
+            _ridingProvider.pauseRiding();
         },
-        child: Text(text),
+        child: Text("라이딩 중단"),
       );
     }
-    else{
-      return ElevatedButton(
-        style: style,
-        onPressed: () {
-          if(_ridingProvider.ridingState == RidingState.before){
-            text = "라이딩 중단";
-            style = ElevatedButton.styleFrom(
+   else{
+      return Row(
+        children:[
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
               primary: Colors.blue,
               onPrimary: Colors.white,
-            );
-            //_ridingProvider.startRiding(init);
-            init = true;
-          }
-          else if(_ridingProvider.ridingState == RidingState.riding){
-
-          }
-        },
-        child: Text(text),
+            ),
+            onPressed: () {
+              _ridingProvider.startRiding();
+            },
+            child: Text("이어서 라이딩하기"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.blue,
+              onPrimary: Colors.white,
+            ),
+            onPressed: () {
+              _ridingProvider.stopAndSaveRiding();
+            },
+            child: Text("저장"),
+          )
+        ]
       );
     }
   }

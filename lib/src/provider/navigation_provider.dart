@@ -56,7 +56,7 @@ class NavigationProvider extends RidingProvider {
     _polyline();
   }
 
-  Future<void> startRiding(bool re) async {
+  Future<void> startRiding() async {
     Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.high)
         .listen((pos) {
       _position = pos;
