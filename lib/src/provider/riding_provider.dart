@@ -35,9 +35,14 @@ class RidingProvider with ChangeNotifier {
   int get time => _time;
   RidingState get state => _ridingState;
 
+  setRidingState(RidingState state) {
+    _ridingState = state;
+    notifyListeners();
+  }
+
   Future<void> startRiding(bool re) async {
     _befTime = DateTime.now().millisecondsSinceEpoch; // 이전 시간 저장용
-    _ridingState = RidingState.riding;
+    setRidingState(RidingState.riding);
 
     if (re) {
       // 재시작일때
@@ -83,7 +88,7 @@ class RidingProvider with ChangeNotifier {
   }
 
   void stopAndSaveRiding() {
-    _ridingState = RidingState.stop;
+    setRidingState(RidingState.stop);
     _timer.cancel();
     _saveTimer.cancel();
     _endTime = DateTime.now().millisecondsSinceEpoch;
@@ -96,7 +101,7 @@ class RidingProvider with ChangeNotifier {
   }
 
   void pauseRiding() {
-    _ridingState = RidingState.pause;
+    setRidingState(RidingState.pause);
     _timer.cancel();
     _saveTimer.cancel();
     _pauseTime = DateTime.now().millisecondsSinceEpoch;
