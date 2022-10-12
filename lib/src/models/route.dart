@@ -1,3 +1,13 @@
+import 'place.dart';
+
+class Route {
+  String? title;
+  String? description;
+  String? image;
+  String? routeImage;
+  List<Place>? route;
+}
+
 class NaverRouteData {
   List<Routes>? routes;
 
