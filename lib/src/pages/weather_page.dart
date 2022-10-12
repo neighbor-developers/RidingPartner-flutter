@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ridingpartner_flutter/src/models/place.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 import 'dart:developer' as developer;
 
 class WeatherPage extends StatefulWidget {
-  const WeatherPage(Type place, Place? endPoint, {Key? key}) : super(key: key);
+  const WeatherPage() : super();
 
   @override
   _WeatherPage createState() => _WeatherPage();
