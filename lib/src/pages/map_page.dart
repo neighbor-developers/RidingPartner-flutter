@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/models/place.dart';
-import 'package:ridingpartner_flutter/src/pages/weather_page.dart';
+import 'package:ridingpartner_flutter/src/pages/navigation_page.dart';
+import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 import 'dart:developer' as developer;
 import '../provider/map_search_provider.dart';
+import '../provider/riding_provider.dart';
+import 'riding_page.dart';
 
 class MapSample extends StatefulWidget {
   const MapSample({super.key});
@@ -19,8 +22,8 @@ class MapSampleState extends State<MapSample> {
   final Completer<GoogleMapController> _controller = Completer();
   final _startPointTextController = TextEditingController();
   final _endPointTextController = TextEditingController();
-  var _initLocation = const CameraPosition(
-    target: LatLng(37.5665, 126.9780),
+  var _initLocation = CameraPosition(
+    target: LatLng(MyLocation().latitude!, MyLocation().longitude!),
     zoom: 14.4746,
   );
   final List<Marker> _markers = [];
@@ -72,11 +75,28 @@ class MapSampleState extends State<MapSample> {
                         );
                         return;
                       } else {
-                        // Navigator.push(
-                        // context,
-                        // MaterialPageRoute(
-                        // builder: (context) => WeatherPage(Place mapSearchProvider.startPoint, Place mapSearchProvider.endPoint)));
                         developer.log("안내시작");
+                        final returnList = [
+                          mapSearchProvider.endPoint!,
+                          mapSearchProvider.startPoint!
+                        ];
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    ChangeNotifierProxyProvider<
+                                        MapSearchProvider, NavigationProvider>(
+                                      create: (_) => NavigationProvider(),
+                                      update: (_, mapSearchProvider,
+                                          navigationProvider) {
+                                        navigationProvider!.startPoint =
+                                            mapSearchProvider.startPoint!;
+                                        navigationProvider.endPoint =
+                                            mapSearchProvider.endPoint!;
+                                        return navigationProvider;
+                                      },
+                                      child: NavigationPage(returnList),
+                                    )));
                       }
                     },
                     materialTapTargetSize: MaterialTapTargetSize.padded,

@@ -18,6 +18,8 @@ class NavigationProvider extends RidingProvider {
   final NaverMapService _naverMapService = NaverMapService();
   Position? _position;
   final Distance _calDistance = const Distance();
+  late Place startPoint;
+  late Place endPoint;
 
   late List<Place> _ridingCourse;
   List<Guide>? _route;

@@ -19,7 +19,7 @@ class NavigationPage extends StatefulWidget {
   const NavigationPage(this.course, {super.key});
 
   @override
-  State<NavigationPage> createState() => _NavigationPageState();
+  State<NavigationPage> createState() => _NavigationPageState(); //1
 }
 
 class _NavigationPageState extends State<NavigationPage> {
@@ -30,8 +30,7 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   void initState() {
-    _navigationProvider =
-        Provider.of<NavigationProvider>(context, listen: false);
+    _navigationProvider = NavigationProvider(); //2
     setMapComponent();
 
     super.initState();
@@ -60,8 +59,8 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    Position? position = Provider.of<NavigationProvider>(context).position;
-    RidingProvider _ridingProvider = Provider.of<RidingProvider>(context);
+    Position? position = _navigationProvider.position;
+    RidingProvider _ridingProvider = RidingProvider(); //3
 
     void _setController() async {
       GoogleMapController _googleMapController = await _controller.future;
