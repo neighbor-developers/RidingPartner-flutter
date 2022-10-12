@@ -7,6 +7,7 @@ import 'package:ridingpartner_flutter/src/pages/home_page.dart';
 import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/bottom_navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/map_search_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/route_list_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 
@@ -52,6 +53,8 @@ class _LodingPageState extends State<LodingPage> {
                           create: (context) => BottomNavigationProvider()),
                       ChangeNotifierProvider(
                           create: (context) => MapSearchProvider()),
+                      ChangeNotifierProvider(
+                          create: (context) => RidingProvider())
                     ], child: HomePage())),
             (route) => false);
       } else {
