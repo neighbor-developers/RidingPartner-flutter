@@ -1,13 +1,9 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as google_map;
-import 'package:intl/intl.dart';
-import 'package:latlong/latlong.dart';
-
+import 'package:latlong2/latlong.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
