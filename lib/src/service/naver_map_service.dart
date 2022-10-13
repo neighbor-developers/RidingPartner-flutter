@@ -69,7 +69,7 @@ class NaverMapService {
   Future<List<Guide>?> getRoute(
       Place start, Place destination, List<Place>? waypoints) async {
     try {
-      var guides = [Guide()];
+      List<Guide> guides = [];
 
       String placeToParam(Place place) =>
           '${place.longitude},placeid=${place.latitude},name=${place.id}';
@@ -97,10 +97,13 @@ class NaverMapService {
               .expand((leg) => leg.steps!)
               .map((step) => step.guide!)
               .toList();
+        } else {
+          print("routeData.routes = null");
         }
 
         return guides;
       } else {
+        print("가이드 잘 안왔음");
         return guides;
       }
     } catch (e) {
