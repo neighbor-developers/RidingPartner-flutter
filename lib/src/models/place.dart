@@ -20,6 +20,17 @@ class Place {
     this.description,
     this.image,
   });
+
+  factory Place.fromDB(db) => Place(
+        id: db?["id"],
+        title: db?["title"],
+        latitude: db?["latitude"],
+        longitude: db?["longitude"],
+        jibunAddress: db?["jibunAddress"],
+        roadAddress: db?["roadAddress"],
+        description: db?["description"],
+        image: db?["image"],
+      );
 }
 
 class NaverPlaceData {

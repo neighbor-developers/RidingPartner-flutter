@@ -4,8 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong/latlong.dart';
-import 'package:ridingpartner_flutter/src/models/riding_record.dart';
-import 'package:ridingpartner_flutter/src/pages/riding_page.dart';
+import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
 
 enum RidingState { before, riding, pause, stop }
@@ -54,7 +53,7 @@ class RidingProvider with ChangeNotifier {
       _ridingDate =
           DateFormat('yy/MM/dd - HH:mm:ss').format(DateTime.now()); //format변경
     }
-    _saveRidingRecord(); //파이어베이스 저장 시작
+    _saveRecord(); //파이어베이스 저장 시작
 
     Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.high)
         .listen((pos) {
@@ -82,9 +81,10 @@ class RidingProvider with ChangeNotifier {
     _speed = distance / 3 * 3600; // k/h
   }
 
-  Future<void> _saveRidingRecord() async {
+  Future<void> _saveRecord() async {
     _saveTimer = Timer.periodic(Duration(minutes: 1), ((timer) {
-      RidingRecord record = RidingRecord(_sumDistance, _ridingDate, _time, 0);
+      Record record = Record(
+          distance: _sumDistance, date: _ridingDate, timestamp: _time, kcal: 0);
       _firebaseDb.saveRecordFirebaseDb(record);
     }));
   }
@@ -99,7 +99,8 @@ class RidingProvider with ChangeNotifier {
     } else {
       _time = (_pauseTime - _startTime) + (_endTime - _restartTime);
     }
-    RidingRecord record = RidingRecord(_sumDistance, _ridingDate, _time, 0);
+    Record record = Record(
+        distance: _sumDistance, date: _ridingDate, timestamp: _time, kcal: 0);
     _firebaseDb.saveRecordFirebaseDb(record);
   }
 
