@@ -44,6 +44,7 @@ dependencies:
   flutter_dotenv: ^5.0.2
   firebase_core: ^1.23.0
   firebase_auth: ^3.10.0
+  cloud_firestore: ^3.5.1
   intl: ^0.17.0
   google_sign_in: ^5.4.2
   google_maps_flutter: ^2.2.1
@@ -56,6 +57,7 @@ dependencies:
   
 
   shared_preferences: ^2.0.15
+  firebase_database: ^9.1.7
 
 
 dev_dependencies:

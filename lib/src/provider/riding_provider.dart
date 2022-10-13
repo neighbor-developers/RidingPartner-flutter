@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong/latlong.dart';
+import 'package:ridingpartner_flutter/src/models/riding_record.dart';
+import 'package:ridingpartner_flutter/src/pages/riding_page.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
 
 enum RidingState { before, riding, pause, stop }
@@ -82,8 +84,8 @@ class RidingProvider with ChangeNotifier {
 
   Future<void> _saveRidingRecord() async {
     _saveTimer = Timer.periodic(Duration(minutes: 1), ((timer) {
-      _firebaseDb.saveRealTimeRecord(
-          _ridingDate, _time, _sumDistance); //1분마다 실시간 저장
+      RidingRecord record = RidingRecord(_sumDistance, _ridingDate, _time, 0);
+      _firebaseDb.saveRecordFirebaseDb(record);
     }));
   }
 
@@ -97,7 +99,8 @@ class RidingProvider with ChangeNotifier {
     } else {
       _time = (_pauseTime - _startTime) + (_endTime - _restartTime);
     }
-    _firebaseDb.saveRealTimeRecord(_ridingDate, _time, _sumDistance);
+    RidingRecord record = RidingRecord(_sumDistance, _ridingDate, _time, 0);
+    _firebaseDb.saveRecordFirebaseDb(record);
   }
 
   void pauseRiding() {
