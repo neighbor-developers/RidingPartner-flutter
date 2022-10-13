@@ -43,26 +43,35 @@ class NavigationProvider extends RidingProvider {
     _position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     Place startPlace = Place(
-        id: null,
-        title: "내 위치",
-        latitude: _position!.latitude.toString(),
-        longitude: _position!.longitude.toString(),
-        jibunAddress: null,
-        roadAddress: null);
+      id: null,
+      title: "내 위치",
+      latitude: _position!.latitude.toString(),
+      longitude: _position!.longitude.toString(),
+      jibunAddress: null,
+    );
 
     _route =
         await _naverMapService.getRoute(startPlace, _finalDestination, course);
-
+    if (_route != null) {
+      if (_route!.length == 1) {
+        _goalPoint = _route![0];
+        _nextPoint = null;
+      } else {
+        _goalPoint = _route![0];
+        _nextPoint = _route![1];
+      }
+    }
     _polyline();
   }
 
-  Future<void> startRiding() async {
+  Future<void> startNavigation() async {
     Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.high)
         .listen((pos) {
       _position = pos;
     });
 
     _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
+      print("1초1초1초");
       _calToPoint();
       notifyListeners();
     }));
@@ -76,12 +85,11 @@ class NavigationProvider extends RidingProvider {
         ?.map((p) => double.parse(p))
         .toList();
 
-    num distanceToPoint = _calDistance.as(
-        LengthUnit.Meter,
-        LatLng(_position!.latitude, _position!.longitude),
-        LatLng(point![0], point[1]));
-
     if (nextPoint != null) {
+      num distanceToPoint = _calDistance.as(
+          LengthUnit.Meter,
+          LatLng(_position!.latitude, _position!.longitude),
+          LatLng(point![0], point[1]));
       // 마지막 지점이 아닐때
       num distanceToNextPoint = _calDistance.as(
           LengthUnit.Meter,
@@ -161,22 +169,23 @@ class NavigationProvider extends RidingProvider {
 
   void _polyline() async {
     List<PolylineWayPoint>? waypoint = _route
-        ?.map((route) => PolylineWayPoint(location: route.turnPoint.toString()))
+        ?.map((route) => PolylineWayPoint(location: route.turnPoint ?? ""))
         .toList();
 
     PolylinePoints polylinePoints = PolylinePoints();
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        dotenv.env['googleApiKey']!,
-        PointLatLng(
-            _position!.latitude as double, _position!.longitude as double),
-        PointLatLng(_finalDestination.latitude as double,
-            _finalDestination.longitude as double),
-        wayPoints: waypoint ?? List.empty());
+    // PolylineResult result = [];
+    //await polylinePoints.getRouteBetweenCoordinates(
+    //     dotenv.env['googleApiKey']!,
+    //     PointLatLng(
+    //         _position!.latitude, _position!.longitude as double),
+    //     PointLatLng(_finalDestination.latitude as double,
+    //         double.parse(_finalDestination.longitude)),
+    //     wayPoints: waypoint ?? List.empty());
 
-    if (result.points.isNotEmpty) {
-      result.points.forEach((element) => polylineCoordinates
-          .add(google_map.LatLng(element.latitude, element.longitude)));
-    }
+    // if (result.points.isNotEmpty) {
+    //   result.points.forEach((element) => polylineCoordinates
+    //       .add(google_map.LatLng(element.latitude, element.longitude)));
+    // }
 
     notifyListeners();
   }
