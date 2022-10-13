@@ -79,7 +79,7 @@ class NaverMapService {
         'destination': placeToParam(destination),
       };
 
-      if (waypoints!.isNotEmpty) {
+      if (waypoints != null) {
         queryParams['waypoints'] = waypoints.map(placeToParam).join('|');
       }
 
@@ -91,11 +91,13 @@ class NaverMapService {
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
         var routeData = NaverRouteData.fromJson(jsonResponse);
-        guides = routeData.routes!
-            .expand<Legs>((rou) => rou.legs!)
-            .expand((leg) => leg.steps!)
-            .map((step) => step.guide!)
-            .toList();
+        if (routeData.routes != null) {
+          guides = routeData.routes!
+              .expand<Legs>((rou) => rou.legs!)
+              .expand((leg) => leg.steps!)
+              .map((step) => step.guide!)
+              .toList();
+        }
 
         return guides;
       } else {
