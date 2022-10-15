@@ -48,8 +48,6 @@ class RidingProvider with ChangeNotifier {
   Future<void> startRiding() async {
     _befTime = DateTime.now().millisecondsSinceEpoch; // 이전 시간 저장용
     setRidingState(RidingState.riding);
-    _position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
 
     if (_ridingState == RidingState.pause) {
       // 재시작일때
@@ -59,25 +57,23 @@ class RidingProvider with ChangeNotifier {
       _ridingDate =
           DateFormat('yy/MM/dd - HH:mm:ss').format(DateTime.now()); //format변경
     }
-    if (_position != null) {
-      _befLatLng = LatLng(_position!.latitude, _position!.longitude);
-      _saveRecord(); //파이어베이스 저장 시작
 
-      _positionStream.controller.stream.listen((pos) {
-        _position = pos;
-      });
-      _stopwatch.start();
+    _positionStream.controller.stream.listen((pos) {
+      if (_position == null) {
+        _befLatLng = LatLng(pos.latitude, pos.longitude);
+      }
+      _position = pos;
+    });
+    _stopwatch.start();
 
-      _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
-        _calRecord(_position!);
-        notifyListeners();
-        _time = _stopwatch.elapsed;
-        if (_time.inSeconds / 60 == 0) {
-          // 1분q
-          _saveRecord();
-        }
-      }));
-    }
+    _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
+      _calRecord(_position!);
+      notifyListeners();
+      _time = _stopwatch.elapsed;
+      if (_time.inSeconds / 60 == 0) {
+        _saveRecord();
+      }
+    }));
   }
 
   void _calRecord(Position position) {
@@ -91,7 +87,7 @@ class RidingProvider with ChangeNotifier {
     _speed = distance / 3 * 3600; // k/h
   }
 
-  Future<void> _saveRecord() async {
+  void _saveRecord() async {
     Record record = Record(
         distance: _sumDistance,
         date: _ridingDate,

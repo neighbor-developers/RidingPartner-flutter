@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as google_map;
@@ -18,15 +19,15 @@ class NavigationProvider extends RidingProvider {
 
   final PositionStream _positionStream = PositionStream();
 
-  late List<Place> _ridingCourse;
+  List<Place> _ridingCourse = [];
   List<Guide>? _route;
   List<google_map.LatLng> _polylineCoordinates = [];
   List<google_map.LatLng> get polylineCoordinates => _polylineCoordinates;
 
   late Guide _goalPoint;
   late Place _goalDestination;
-  late Guide? _nextPoint;
-  late Place? _nextDestination;
+  Guide? _nextPoint;
+  Place? _nextDestination;
   late Place _finalDestination;
 
   late google_map.GoogleMapController _googleMapController;
@@ -50,9 +51,9 @@ class NavigationProvider extends RidingProvider {
 
     _route =
         await _naverMapService.getRoute(startPlace, _finalDestination, course);
+
     if (_route != null) {
       print("루트 사이즈 : ${_route!.length.toString()}");
-      print(_route!.toList().toString());
       if (_route!.length == 1) {
         _goalPoint = _route![0];
         _nextPoint = null;
@@ -67,7 +68,6 @@ class NavigationProvider extends RidingProvider {
   }
 
   Future<void> startNavigation() async {
-    print("a");
     _positionStream.controller.stream.listen((pos) {
       _position = pos;
     });
@@ -174,19 +174,17 @@ class NavigationProvider extends RidingProvider {
         .toList();
 
     PolylinePoints polylinePoints = PolylinePoints();
-    // PolylineResult result = [];
-    //await polylinePoints.getRouteBetweenCoordinates(
-    //     dotenv.env['googleApiKey']!,
-    //     PointLatLng(
-    //         _position!.latitude, _position!.longitude as double),
-    //     PointLatLng(_finalDestination.latitude as double,
-    //         double.parse(_finalDestination.longitude)),
-    //     wayPoints: waypoint ?? List.empty());
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        dotenv.env['googleApiKey']!,
+        PointLatLng(_position!.latitude, _position!.longitude),
+        PointLatLng(double.parse(_finalDestination.latitude!),
+            double.parse(_finalDestination.longitude!)),
+        wayPoints: waypoint ?? List.empty());
 
-    // if (result.points.isNotEmpty) {
-    //   result.points.forEach((element) => polylineCoordinates
-    //       .add(google_map.LatLng(element.latitude, element.longitude)));
-    // }
+    if (result.points.isNotEmpty) {
+      result.points.forEach((element) => polylineCoordinates
+          .add(google_map.LatLng(element.latitude, element.longitude)));
+    }
 
     notifyListeners();
   }
