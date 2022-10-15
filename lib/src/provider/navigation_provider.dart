@@ -9,11 +9,14 @@ import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
 
 import '../models/place.dart';
+import '../models/position_stream.dart';
 
 class NavigationProvider extends RidingProvider {
   final NaverMapService _naverMapService = NaverMapService();
   Position? _position;
   final Distance _calDistance = const Distance();
+
+  final PositionStream _positionStream = PositionStream();
 
   late List<Place> _ridingCourse;
   List<Guide>? _route;
@@ -25,7 +28,7 @@ class NavigationProvider extends RidingProvider {
   late Guide? _nextPoint;
   late Place? _nextDestination;
   late Place _finalDestination;
-  late Timer _timer;
+
   late google_map.GoogleMapController _googleMapController;
 
   Guide get goalPoint => _goalPoint;
@@ -39,16 +42,17 @@ class NavigationProvider extends RidingProvider {
     _position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     Place startPlace = Place(
-      id: null,
-      title: "내 위치",
-      latitude: _position!.latitude.toString(),
-      longitude: _position!.longitude.toString(),
-      jibunAddress: null,
-    );
+        id: null,
+        title: "내 위치",
+        latitude: _position!.latitude.toString(),
+        longitude: _position!.longitude.toString(),
+        jibunAddress: null);
 
     _route =
         await _naverMapService.getRoute(startPlace, _finalDestination, course);
     if (_route != null) {
+      print("루트 사이즈 : ${_route!.length.toString()}");
+      print(_route!.toList().toString());
       if (_route!.length == 1) {
         _goalPoint = _route![0];
         _nextPoint = null;
@@ -56,18 +60,19 @@ class NavigationProvider extends RidingProvider {
         _goalPoint = _route![0];
         _nextPoint = _route![1];
       }
+    } else {
+      print("루트 : null");
     }
     _polyline();
   }
 
   Future<void> startNavigation() async {
-    Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.high)
-        .listen((pos) {
+    print("a");
+    _positionStream.controller.stream.listen((pos) {
       _position = pos;
     });
 
-    _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
-      print("1초1초1초");
+    Timer.periodic(Duration(seconds: 1), ((timer) {
       _calToPoint();
       notifyListeners();
     }));

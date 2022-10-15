@@ -1,6 +1,6 @@
 class Record {
   num? distance;
-  num? timestamp;
+  int? timestamp;
   String? date;
   double? kcal;
 
