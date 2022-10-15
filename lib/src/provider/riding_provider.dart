@@ -3,15 +3,20 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
-import 'package:latlong/latlong.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
+
+import '../models/position_stream.dart';
 
 enum RidingState { before, riding, pause, stop }
 
 class RidingProvider with ChangeNotifier {
   final Distance _calDistance = const Distance();
+  final PositionStream _positionStream = PositionStream();
   final FirebaseDatabaseService _firebaseDb = FirebaseDatabaseService();
-  late Position _position;
+
+  Position? _position;
   RidingState _ridingState = RidingState.before;
 
   String _ridingDate = "";
@@ -22,17 +27,17 @@ class RidingProvider with ChangeNotifier {
 
   late LatLng _befLatLng;
 
-  late Timer _timer;
-  late Timer _saveTimer;
+  Timer? _timer;
+  final Stopwatch _stopwatch = Stopwatch();
   late int _befTime;
 
   num _sumDistance = 0.0; // 총거리
   num _speed = 0.0; // 순간 속도
-  int _time = 0; // 라이딩 누적 시간
+  Duration _time = Duration.zero; // 라이딩 누적 시간
 
   num get distance => _sumDistance;
   num get speed => _speed;
-  int get time => _time;
+  Duration get time => _time;
   RidingState get state => _ridingState;
 
   setRidingState(RidingState state) {
@@ -52,20 +57,22 @@ class RidingProvider with ChangeNotifier {
       _ridingDate =
           DateFormat('yy/MM/dd - HH:mm:ss').format(DateTime.now()); //format변경
     }
-    _saveRidingRecord(); //파이어베이스 저장 시작
 
-    Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.high)
-        .listen((pos) {
+    _positionStream.controller.stream.listen((pos) {
+      if (_position == null) {
+        _befLatLng = LatLng(pos.latitude, pos.longitude);
+      }
       _position = pos;
     });
-    _befLatLng = LatLng(_position.latitude, _position.longitude);
+    _stopwatch.start();
 
     _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
-      _time++; // 1초마다 noti, 3초마다 데이터 계산
-      if (_time / 3 == 0) {
-        _calRecord(_position);
-      }
+      _calRecord(_position!);
       notifyListeners();
+      _time = _stopwatch.elapsed;
+      if (_time.inSeconds / 60 == 0) {
+        _saveRecord();
+      }
     }));
   }
 
@@ -80,30 +87,32 @@ class RidingProvider with ChangeNotifier {
     _speed = distance / 3 * 3600; // k/h
   }
 
-  Future<void> _saveRidingRecord() async {
-    _saveTimer = Timer.periodic(Duration(minutes: 1), ((timer) {
-      _firebaseDb.saveRealTimeRecord(
-          _ridingDate, _time, _sumDistance); //1분마다 실시간 저장
-    }));
+  void _saveRecord() async {
+    Record record = Record(
+        distance: _sumDistance,
+        date: _ridingDate,
+        timestamp: _time.inSeconds,
+        kcal: 0);
+    _firebaseDb.saveRecordFirebaseDb(record);
   }
 
   void stopAndSaveRiding() {
     setRidingState(RidingState.stop);
-    _timer.cancel();
-    _saveTimer.cancel();
-    _endTime = DateTime.now().millisecondsSinceEpoch;
-    if (_restartTime != 0) {
-      _time = _endTime - _startTime;
-    } else {
-      _time = (_pauseTime - _startTime) + (_endTime - _restartTime);
-    }
-    _firebaseDb.saveRealTimeRecord(_ridingDate, _time, _sumDistance);
+    _stopwatch.stop();
+    _timer?.cancel();
+
+    Record record = Record(
+        distance: _sumDistance,
+        date: _ridingDate,
+        timestamp: _time.inSeconds,
+        kcal: 0);
+    _firebaseDb.saveRecordFirebaseDb(record);
   }
 
   void pauseRiding() {
     setRidingState(RidingState.pause);
-    _timer.cancel();
-    _saveTimer.cancel();
+    _stopwatch.stop();
+    _timer?.cancel();
     _pauseTime = DateTime.now().millisecondsSinceEpoch;
   }
 }

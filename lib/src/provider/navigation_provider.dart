@@ -1,18 +1,16 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as google_map;
-import 'package:intl/intl.dart';
-import 'package:latlong/latlong.dart';
-
+import 'package:latlong2/latlong.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
 
 import '../models/place.dart';
+import '../models/position_stream.dart';
 
 class NavigationProvider extends RidingProvider {
   final NaverMapService _naverMapService = NaverMapService();
@@ -23,17 +21,19 @@ class NavigationProvider extends RidingProvider {
   late Place startPoint;
   late Place endPoint;
 
-  late List<Place> _ridingCourse;
+  final PositionStream _positionStream = PositionStream();
+
+  List<Place> _ridingCourse = [];
   List<Guide>? _route;
   List<google_map.LatLng> _polylineCoordinates = [];
   List<google_map.LatLng> get polylineCoordinates => _polylineCoordinates;
 
   late Guide _goalPoint;
   late Place _goalDestination;
-  late Guide? _nextPoint;
-  late Place? _nextDestination;
+  Guide? _nextPoint;
+  Place? _nextDestination;
   late Place _finalDestination;
-  late Timer _timer;
+
   late google_map.GoogleMapController _googleMapController;
 
   Guide get goalPoint => _goalPoint;
@@ -51,22 +51,32 @@ class NavigationProvider extends RidingProvider {
         title: "내 위치",
         latitude: _position!.latitude.toString(),
         longitude: _position!.longitude.toString(),
-        jibunAddress: null,
-        roadAddress: null);
+        jibunAddress: null);
 
     _route =
         await _naverMapService.getRoute(startPlace, _finalDestination, course);
 
+    if (_route != null) {
+      print("루트 사이즈 : ${_route!.length.toString()}");
+      if (_route!.length == 1) {
+        _goalPoint = _route![0];
+        _nextPoint = null;
+      } else {
+        _goalPoint = _route![0];
+        _nextPoint = _route![1];
+      }
+    } else {
+      print("루트 : null");
+    }
     _polyline();
   }
 
-  Future<void> startRiding() async {
-    Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.high)
-        .listen((pos) {
+  Future<void> startNavigation() async {
+    _positionStream.controller.stream.listen((pos) {
       _position = pos;
     });
 
-    _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
+    Timer.periodic(Duration(seconds: 1), ((timer) {
       _calToPoint();
       notifyListeners();
     }));
@@ -80,12 +90,11 @@ class NavigationProvider extends RidingProvider {
         ?.map((p) => double.parse(p))
         .toList();
 
-    num distanceToPoint = _calDistance.as(
-        LengthUnit.Meter,
-        LatLng(_position!.latitude, _position!.longitude),
-        LatLng(point![0], point[1]));
-
     if (nextPoint != null) {
+      num distanceToPoint = _calDistance.as(
+          LengthUnit.Meter,
+          LatLng(_position!.latitude, _position!.longitude),
+          LatLng(point![0], point[1]));
       // 마지막 지점이 아닐때
       num distanceToNextPoint = _calDistance.as(
           LengthUnit.Meter,
@@ -165,16 +174,15 @@ class NavigationProvider extends RidingProvider {
 
   void _polyline() async {
     List<PolylineWayPoint>? waypoint = _route
-        ?.map((route) => PolylineWayPoint(location: route.turnPoint.toString()))
+        ?.map((route) => PolylineWayPoint(location: route.turnPoint ?? ""))
         .toList();
 
     PolylinePoints polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         dotenv.env['googleApiKey']!,
-        PointLatLng(
-            _position!.latitude as double, _position!.longitude as double),
-        PointLatLng(_finalDestination.latitude as double,
-            _finalDestination.longitude as double),
+        PointLatLng(_position!.latitude, _position!.longitude),
+        PointLatLng(double.parse(_finalDestination.latitude!),
+            double.parse(_finalDestination.longitude!)),
         wayPoints: waypoint ?? List.empty());
 
     if (result.points.isNotEmpty) {

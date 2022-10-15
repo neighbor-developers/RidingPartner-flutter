@@ -1,11 +1,20 @@
-import 'place.dart';
-
 class Route {
   String? title;
   String? description;
   String? image;
   String? routeImage;
-  List<Place>? route;
+  List<String>? route;
+
+  Route(
+      {this.title, this.description, this.image, this.routeImage, this.route});
+
+  factory Route.fromDB(db) => Route(
+        title: db?["title"],
+        description: db?["description"],
+        image: db?["image"],
+        routeImage: db?["routeImage"],
+        route: List<String>.from(db?["route"]),
+      );
 }
 
 class NaverRouteData {

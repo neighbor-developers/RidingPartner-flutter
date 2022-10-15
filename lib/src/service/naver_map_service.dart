@@ -69,7 +69,7 @@ class NaverMapService {
   Future<List<Guide>?> getRoute(
       Place start, Place destination, List<Place>? waypoints) async {
     try {
-      var guides = [Guide()];
+      List<Guide> guides = [];
 
       String placeToParam(Place place) =>
           '${place.longitude},placeid=${place.latitude},name=${place.id}';
@@ -79,7 +79,7 @@ class NaverMapService {
         'destination': placeToParam(destination),
       };
 
-      if (waypoints!.isNotEmpty) {
+      if (waypoints != null) {
         queryParams['waypoints'] = waypoints.map(placeToParam).join('|');
       }
 
@@ -91,14 +91,19 @@ class NaverMapService {
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
         var routeData = NaverRouteData.fromJson(jsonResponse);
-        guides = routeData.routes!
-            .expand<Legs>((rou) => rou.legs!)
-            .expand((leg) => leg.steps!)
-            .map((step) => step.guide!)
-            .toList();
+        if (routeData.routes != null) {
+          guides = routeData.routes!
+              .expand<Legs>((rou) => rou.legs!)
+              .expand((leg) => leg.steps!)
+              .map((step) => step.guide!)
+              .toList();
+        } else {
+          print("routeData.routes = null");
+        }
 
         return guides;
       } else {
+        print("가이드 잘 안왔음");
         return guides;
       }
     } catch (e) {

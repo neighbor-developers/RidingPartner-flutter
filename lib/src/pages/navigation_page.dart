@@ -38,11 +38,17 @@ class _NavigationPageState extends State<NavigationPage> {
 
   setMapComponent() async {
     await _navigationProvider.getRoute(widget.course);
-    initCameraPosition = LatLng(
-        _navigationProvider.position!.latitude +
-            double.parse(widget.course.last.latitude!) / 2,
-        (_navigationProvider.position!.latitude +
-            double.parse(widget.course.last.longitude!) / 2));
+
+    if (_navigationProvider.position != null) {
+      initCameraPosition = LatLng(
+          (_navigationProvider.position!.latitude +
+                  double.parse(widget.course.last.latitude!)) /
+              2,
+          (_navigationProvider.position!.longitude) +
+              double.parse(widget.course.last.longitude!) / 2);
+    } else {
+      initCameraPosition = LatLng(37.339985, 126.733378);
+    }
 
     markers = widget.course
         .map((course) => Marker(
@@ -62,17 +68,21 @@ class _NavigationPageState extends State<NavigationPage> {
     Position? position = _navigationProvider.position;
     RidingProvider _ridingProvider = RidingProvider(); //3
 
-    void _setController() async {
-      GoogleMapController _googleMapController = await _controller.future;
+    Position? position = _navigationProvider.position;
 
-      if (_ridingProvider.state != "before") {
-        _googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-            CameraPosition(
-                target: LatLng(position!.latitude, position.longitude))));
-        markers.removeWhere((element) => element.markerId == "currentPosition");
-        markers.add(Marker(
-            markerId: MarkerId("currentPosition"),
-            position: LatLng(position.latitude, position.longitude)));
+    void _setController() async {
+      if (true) {
+        GoogleMapController _googleMapController = await _controller.future;
+        if (position != null) {
+          _googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+              CameraPosition(
+                  target: LatLng(position.latitude, position.longitude))));
+          markers
+              .removeWhere((element) => element.markerId == "currentPosition");
+          markers.add(Marker(
+              markerId: MarkerId("currentPosition"),
+              position: LatLng(position.latitude, position.longitude)));
+        }
       }
     }
 
@@ -82,14 +92,14 @@ class _NavigationPageState extends State<NavigationPage> {
         appBar: AppBar(),
         body: _navigationProvider.route == null
             ? const Center(
-                child: Text('Loading'),
+                child: CircularProgressIndicator(),
               )
             : Stack(
                 children: <Widget>[
                   GoogleMap(
                       mapType: MapType.normal,
                       initialCameraPosition:
-                          CameraPosition(target: initCameraPosition),
+                          CameraPosition(target: initCameraPosition, zoom: 13),
                       polylines: {
                         Polyline(
                             polylineId: PolylineId("route"),
@@ -101,7 +111,20 @@ class _NavigationPageState extends State<NavigationPage> {
                       myLocationButtonEnabled: true,
                       myLocationEnabled: true,
                       markers: markers),
-                  Container()
+                  Container(
+                    child: SizedBox(
+                      width: 100,
+                      child: FloatingActionButton.extended(
+                        heroTag: 'endPointSearchBtn',
+                        onPressed: () {
+                          _ridingProvider.startRiding();
+                          _navigationProvider.startNavigation();
+                        },
+                        label: const Text('라이딩 시작'),
+                        icon: const Icon(Icons.search),
+                      ),
+                    ),
+                  )
                 ],
               ));
   }
