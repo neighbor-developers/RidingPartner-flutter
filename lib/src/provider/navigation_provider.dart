@@ -14,8 +14,12 @@ import '../models/position_stream.dart';
 
 class NavigationProvider extends RidingProvider {
   final NaverMapService _naverMapService = NaverMapService();
+  //make constructer with one Place type parameter
+  NavigationProvider(this.startPoint, this.endPoint);
   Position? _position;
   final Distance _calDistance = const Distance();
+  late Place startPoint;
+  late Place endPoint;
 
   final PositionStream _positionStream = PositionStream();
 
