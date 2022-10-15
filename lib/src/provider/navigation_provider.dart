@@ -16,6 +16,8 @@ class NavigationProvider extends RidingProvider {
   final NaverMapService _naverMapService = NaverMapService();
   //make constructer with one Place type parameter
   NavigationProvider(this.startPoint, this.endPoint);
+  //make constructer without parameter
+  NavigationProvider.empty();
   Position? _position;
   final Distance _calDistance = const Distance();
   late Place startPoint;

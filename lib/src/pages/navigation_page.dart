@@ -68,8 +68,6 @@ class _NavigationPageState extends State<NavigationPage> {
     Position? position = _navigationProvider.position;
     RidingProvider _ridingProvider = RidingProvider(); //3
 
-    Position? position = _navigationProvider.position;
-
     void _setController() async {
       if (true) {
         GoogleMapController _googleMapController = await _controller.future;
