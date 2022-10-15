@@ -83,18 +83,10 @@ class MapSampleState extends State<MapSample> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    ChangeNotifierProxyProvider<
-                                        MapSearchProvider, NavigationProvider>(
-                                      create: (_) => NavigationProvider(),
-                                      update: (_, mapSearchProvider,
-                                          navigationProvider) {
-                                        navigationProvider!.startPoint =
-                                            mapSearchProvider.startPoint!;
-                                        navigationProvider.endPoint =
-                                            mapSearchProvider.endPoint!;
-                                        return navigationProvider;
-                                      },
+                                builder: (context) => ChangeNotifierProvider(
+                                      create: (context) => NavigationProvider(
+                                          mapSearchProvider.startPoint!,
+                                          mapSearchProvider.endPoint!),
                                       child: NavigationPage(returnList),
                                     )));
                       }
