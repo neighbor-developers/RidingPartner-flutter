@@ -6,7 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/user_location.dart';
-import 'map_page.dart';
+import 'map_search_page.dart';
 
 // https://funncy.github.io/flutter/2020/07/21/flutter-google-map-marker/
 

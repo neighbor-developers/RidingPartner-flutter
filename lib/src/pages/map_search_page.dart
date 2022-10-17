@@ -11,14 +11,14 @@ import '../provider/map_search_provider.dart';
 import '../provider/riding_provider.dart';
 import 'riding_page.dart';
 
-class MapSample extends StatefulWidget {
-  const MapSample({super.key});
+class MapSearchPage extends StatefulWidget {
+  const MapSearchPage({super.key});
 
   @override
-  State<MapSample> createState() => MapSampleState();
+  State<MapSearchPage> createState() => MapSampleState();
 }
 
-class MapSampleState extends State<MapSample> {
+class MapSampleState extends State<MapSearchPage> {
   final Completer<GoogleMapController> _controller = Completer();
   final _startPointTextController = TextEditingController();
   final _endPointTextController = TextEditingController();
