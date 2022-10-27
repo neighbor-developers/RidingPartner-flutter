@@ -10,16 +10,14 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
-
+import 'dart:developer' as developer;
 import '../models/place.dart';
 
 class NavigationPage extends StatefulWidget {
   final List<Place> course;
-
-  const NavigationPage(this.course, {super.key});
-
+  const NavigationPage(this.course);
   @override
-  State<NavigationPage> createState() => _NavigationPageState();
+  State<NavigationPage> createState() => _NavigationPageState(); //1
 }
 
 class _NavigationPageState extends State<NavigationPage> {
@@ -34,8 +32,9 @@ class _NavigationPageState extends State<NavigationPage> {
   void initState() {
     _navigationProvider =
         Provider.of<NavigationProvider>(context, listen: false);
-    setMapComponent();
+    developer.log(_navigationProvider.endPoint.title ?? "endPoint is null");
 
+    setMapComponent();
     super.initState();
   }
 

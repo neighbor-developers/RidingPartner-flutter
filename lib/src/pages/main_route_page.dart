@@ -8,7 +8,7 @@ import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
 import '../provider/riding_provider.dart';
 import '../provider/route_list_provider.dart';
 import '../provider/weather_provider.dart';
-import 'map_page.dart';
+import 'map_search_page.dart';
 import 'recommended_route_page.dart';
 import 'weather_page.dart';
 
@@ -41,7 +41,7 @@ class MainRoute extends StatelessWidget {
                   MaterialPageRoute(
                       builder: (context) => ChangeNotifierProvider(
                           create: (context) => MapSearchProvider(),
-                          child: MapSample())));
+                          child: MapSearchPage())));
             },
             child: const Text('map 페이지'),
           ),
