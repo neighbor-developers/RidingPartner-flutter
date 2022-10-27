@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/pages/navigation_page.dart';
@@ -24,14 +25,8 @@ class RidingPage extends StatelessWidget {
   // 이건 왜 에러가 뜰까? RidingState state = _ridingProvider.ridingState;
   @override
   Widget build(BuildContext context) {
-    var _initLocation = CameraPosition(
-      target: LatLng(MyLocation().latitude!, MyLocation().longitude!),
-      zoom: 12.6,
-    );
-
-    _ridingProvider = Provider.of<RidingProvider>(context);
-    // _ridingProvider.ridingState라고 안 하고 Provider.of를 쓴 이유가 뭘까?
-    RidingState state = Provider.of<RidingProvider>(context).state;
+    var _initLocation = _ridingProvider = Provider.of<RidingProvider>(context);
+    Position? position = _ridingProvider.position;
 
     return Scaffold(
         body: Stack(
@@ -40,12 +35,22 @@ class RidingPage extends StatelessWidget {
         GoogleMap(
           mapType: MapType.normal,
           //markers: Set.from(_markers),
-          initialCameraPosition: _initLocation,
+          initialCameraPosition: CameraPosition(
+            target:
+                LatLng(position?.latitude ?? 0.0, position?.longitude ?? 0.0),
+            zoom: 12.6,
+          ),
           onMapCreated: (GoogleMapController controller) {
             _controller.complete(controller);
           },
           myLocationButtonEnabled: true,
           myLocationEnabled: true,
+          markers: {
+            Marker(
+                markerId: MarkerId("myPosition"),
+                position: LatLng(
+                    position?.latitude ?? 0.0, position?.longitude ?? 0.0))
+          },
         ),
         Positioned(
           // 위치 지정하기
@@ -107,6 +112,39 @@ class RidingPage extends StatelessWidget {
   }
 
   Widget changeButton(RidingState state) {
+    switch (state) {
+      case RidingState.before:
+        {
+          ridingButtonText = "라이딩 시작하기";
+          ridingButtonStyle = ElevatedButton.styleFrom(
+            primary: Colors.blue,
+            onPrimary: Colors.white,
+          );
+          break;
+        }
+      case RidingState.riding:
+        {
+          ridingButtonText = "라이딩 중단";
+          ridingButtonStyle = ElevatedButton.styleFrom(
+            primary: Colors.blue,
+            onPrimary: Colors.white,
+          );
+          break;
+        }
+
+      case RidingState.pause:
+        {
+          ridingButtonText = "이어서 진행";
+          ridingButtonStyle = ElevatedButton.styleFrom(
+            primary: Colors.blue,
+            onPrimary: Colors.white,
+          );
+          break;
+        }
+      default:
+        ridingButtonText = "";
+    }
+
     return Row(children: [
       ElevatedButton(
         style: ridingButtonStyle,

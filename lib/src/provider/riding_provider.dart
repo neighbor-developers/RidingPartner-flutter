@@ -39,6 +39,7 @@ class RidingProvider with ChangeNotifier {
   num get speed => _speed;
   Duration get time => _time;
   RidingState get state => _ridingState;
+  Position? get position => _position;
 
   setRidingState(RidingState state) {
     _ridingState = state;
