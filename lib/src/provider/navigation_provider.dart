@@ -16,6 +16,7 @@ class NavigationProvider extends RidingProvider {
   final NaverMapService _naverMapService = NaverMapService();
   Position? _position;
   final Distance _calDistance = const Distance();
+  RidingState _ridingState = RidingState.before;
 
   final PositionStream _positionStream = PositionStream();
 
@@ -29,12 +30,23 @@ class NavigationProvider extends RidingProvider {
   Guide? _nextPoint;
   Place? _nextDestination;
   late Place _finalDestination;
+  Timer? _timer;
 
   late google_map.GoogleMapController _googleMapController;
 
   Guide get goalPoint => _goalPoint;
   Position? get position => _position;
   List<Guide>? get route => _route;
+  RidingState get ridingState => _ridingState;
+
+  void setState(RidingState state) {
+    _ridingState = state;
+    if (state == RidingState.pause) {
+      _timer?.cancel();
+    }
+    notifyListeners();
+  }
+
   google_map.GoogleMapController get googleCon => _googleMapController;
 
   Future<void> getRoute(List<Place> course) async {
@@ -68,11 +80,12 @@ class NavigationProvider extends RidingProvider {
   }
 
   Future<void> startNavigation() async {
+    setState(RidingState.riding);
     _positionStream.controller.stream.listen((pos) {
       _position = pos;
     });
 
-    Timer.periodic(Duration(seconds: 1), ((timer) {
+    _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
       _calToPoint();
       notifyListeners();
     }));

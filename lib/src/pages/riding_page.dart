@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:ridingpartner_flutter/src/pages/navigation_page.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 import 'map_page.dart';
@@ -16,17 +17,17 @@ class RidingPage extends StatelessWidget {
   final Completer<GoogleMapController> _controller = Completer();
   late RidingProvider _ridingProvider;
 
-  var text = "라이딩 시작하기";
-  var init = false;
-  var style = ElevatedButton.styleFrom(
+  String ridingButtonText = "";
+  ButtonStyle ridingButtonStyle = ElevatedButton.styleFrom(
     primary: Colors.red,
     onPrimary: Colors.white,
   );
+  var init = false;
   // 이건 왜 에러가 뜰까? RidingState state = _ridingProvider.ridingState;
   @override
   Widget build(BuildContext context) {
     var _initLocation = CameraPosition(
-      target: LatLng(MyLocation().latitude!!, MyLocation().longitude!!),
+      target: LatLng(MyLocation().latitude!, MyLocation().longitude!),
       zoom: 12.6,
     );
 
@@ -99,59 +100,42 @@ class RidingPage extends StatelessWidget {
         Positioned(
             bottom: 10,
             child: Row(
-              children: [],
+              children: [
+                changeButton(_ridingProvider.state),
+              ],
             ))
       ],
     ));
   }
 
   Widget changeButton(RidingState state) {
-    if (state == RidingState.before) {
-      return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          primary: Colors.red,
-          onPrimary: Colors.white,
-        ),
+    return Row(children: [
+      ElevatedButton(
+        style: ridingButtonStyle,
         onPressed: () {
-          _ridingProvider.startRiding();
-        },
-        child: Text("라이딩 시작하기"),
-      );
-    } else if (state == RidingState.riding) {
-      return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          primary: Colors.blue,
-          onPrimary: Colors.white,
-        ),
-        onPressed: () {
-          if (_ridingProvider.state == RidingState.before) {
-            text = "라이딩 중단";
-            style = ElevatedButton.styleFrom(
-              primary: Colors.blue,
-              onPrimary: Colors.white,
-            );
+          if (state == RidingState.before || state == RidingState.pause) {
             _ridingProvider.startRiding();
-            init = true;
-          } else if (_ridingProvider.state == RidingState.riding) {}
+          } else if (state == RidingState.riding) {
+            _ridingProvider.pauseRiding();
+          }
         },
-        child: Text("라이딩 중단"),
+        child: Text(ridingButtonText),
+      ),
+      saveButton(state)
+    ]);
+  }
+
+  Widget saveButton(RidingState state) {
+    if (state == RidingState.pause) {
+      return ElevatedButton(
+        style: ridingButtonStyle,
+        onPressed: () {
+          _ridingProvider.stopAndSaveRiding();
+        },
+        child: Text("라이딩 완료"),
       );
     } else {
-      return ElevatedButton(
-        style: style,
-        onPressed: () {
-          if (_ridingProvider.state == RidingState.before) {
-            text = "라이딩 중단";
-            style = ElevatedButton.styleFrom(
-              primary: Colors.blue,
-              onPrimary: Colors.white,
-            );
-            //_ridingProvider.startRiding(init);
-            init = true;
-          } else if (_ridingProvider.state == RidingState.riding) {}
-        },
-        child: Text(text),
-      );
+      return Spacer(flex: 0);
     }
   }
 }

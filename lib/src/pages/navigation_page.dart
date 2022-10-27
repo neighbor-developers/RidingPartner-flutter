@@ -24,6 +24,8 @@ class NavigationPage extends StatefulWidget {
 
 class _NavigationPageState extends State<NavigationPage> {
   late NavigationProvider _navigationProvider;
+  late RidingProvider _ridingProvider;
+
   Completer<GoogleMapController> _controller = Completer();
   late LatLng initCameraPosition;
   late Set<Marker> markers;
@@ -40,17 +42,6 @@ class _NavigationPageState extends State<NavigationPage> {
   setMapComponent() async {
     await _navigationProvider.getRoute(widget.course);
 
-    if (_navigationProvider.position != null) {
-      initCameraPosition = LatLng(
-          (_navigationProvider.position!.latitude +
-                  double.parse(widget.course.last.latitude!)) /
-              2,
-          (_navigationProvider.position!.longitude) +
-              double.parse(widget.course.last.longitude!) / 2);
-    } else {
-      initCameraPosition = LatLng(37.339985, 126.733378);
-    }
-
     markers = widget.course
         .map((course) => Marker(
             markerId: MarkerId(course.title ?? ""),
@@ -58,36 +49,85 @@ class _NavigationPageState extends State<NavigationPage> {
                 double.parse(course.longitude!))))
         .toSet();
 
-    markers.add(Marker(
-        markerId: MarkerId("currentPosition"),
-        position: LatLng(_navigationProvider.position!.latitude,
-            _navigationProvider.position!.longitude)));
+    if (_navigationProvider.position != null) {
+      initCameraPosition = LatLng(
+          (_navigationProvider.position!.latitude +
+                  double.parse(widget.course.last.latitude!)) /
+              2,
+          (_navigationProvider.position!.longitude) +
+              double.parse(widget.course.last.longitude!) / 2);
+
+      markers.add(Marker(
+          markerId: MarkerId("currentPosition"),
+          position: LatLng(_navigationProvider.position!.latitude,
+              _navigationProvider.position!.longitude)));
+    } else {
+      initCameraPosition = LatLng(37.339985, 126.733378);
+    }
   }
+
+  String ridingButtonText = "";
+  ButtonStyle ridingButtonStyle = ElevatedButton.styleFrom(
+    primary: Colors.red,
+    onPrimary: Colors.white,
+  );
 
   @override
   Widget build(BuildContext context) {
     _navigationProvider = Provider.of<NavigationProvider>(context);
-    RidingProvider _ridingProvider = Provider.of<RidingProvider>(context);
+    _ridingProvider = Provider.of<RidingProvider>(context);
 
     Position? position = _navigationProvider.position;
 
-    void _setController() async {
-      if (true) {
-        GoogleMapController _googleMapController = await _controller.future;
-        if (position != null) {
-          _googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-              CameraPosition(
-                  target: LatLng(position.latitude, position.longitude))));
-          markers
-              .removeWhere((element) => element.markerId == "currentPosition");
-          markers.add(Marker(
-              markerId: MarkerId("currentPosition"),
-              position: LatLng(position.latitude, position.longitude)));
+    switch (_ridingProvider.state) {
+      case RidingState.before:
+        {
+          ridingButtonText = "안내 시작하기";
+          ridingButtonStyle = ElevatedButton.styleFrom(
+            primary: Colors.blue,
+            onPrimary: Colors.white,
+          );
+          break;
         }
+      case RidingState.riding:
+        {
+          ridingButtonText = "안내 중단";
+          ridingButtonStyle = ElevatedButton.styleFrom(
+            primary: Colors.blue,
+            onPrimary: Colors.white,
+          );
+          break;
+        }
+
+      case RidingState.pause:
+        {
+          ridingButtonText = "이어서 진행";
+          ridingButtonStyle = ElevatedButton.styleFrom(
+            primary: Colors.blue,
+            onPrimary: Colors.white,
+          );
+          break;
+        }
+      default:
+        ridingButtonText = "";
+    }
+
+    void _setController() async {
+      GoogleMapController _googleMapController = await _controller.future;
+      if (position != null) {
+        _googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+            CameraPosition(
+                target: LatLng(position.latitude, position.longitude))));
+        markers.removeWhere((element) => element.markerId == "currentPosition");
+        markers.add(Marker(
+            markerId: MarkerId("currentPosition"),
+            position: LatLng(position.latitude, position.longitude)));
       }
     }
 
-    _setController();
+    if (_navigationProvider.state != RidingState.before) {
+      _setController();
+    }
 
     return Scaffold(
         appBar: AppBar(),
@@ -112,21 +152,47 @@ class _NavigationPageState extends State<NavigationPage> {
                       myLocationButtonEnabled: true,
                       myLocationEnabled: true,
                       markers: markers),
-                  Container(
-                    child: SizedBox(
-                      width: 100,
-                      child: FloatingActionButton.extended(
-                        heroTag: 'endPointSearchBtn',
-                        onPressed: () {
-                          _ridingProvider.startRiding();
-                          _navigationProvider.startNavigation();
-                        },
-                        label: const Text('라이딩 시작'),
-                        icon: const Icon(Icons.search),
-                      ),
-                    ),
-                  )
+                  changeButton(_navigationProvider.state),
+                  guideWidget()
                 ],
               ));
+  }
+
+  Widget guideWidget() {
+    return Text(_navigationProvider.route?.first.content ?? "");
+  }
+
+  Widget changeButton(RidingState state) {
+    return Row(children: [
+      ElevatedButton(
+        style: ridingButtonStyle,
+        onPressed: () {
+          if (state == RidingState.before || state == RidingState.pause) {
+            _ridingProvider.startRiding();
+            _navigationProvider.startNavigation();
+          } else if (state == RidingState.riding) {
+            _ridingProvider.pauseRiding();
+            _navigationProvider.setState(RidingState.pause);
+          }
+        },
+        child: Text(ridingButtonText),
+      ),
+      saveButton(state)
+    ]);
+  }
+
+  Widget saveButton(RidingState state) {
+    if (state == RidingState.pause) {
+      return ElevatedButton(
+        style: ridingButtonStyle,
+        onPressed: () {
+          _ridingProvider.stopAndSaveRiding();
+          _navigationProvider.setState(RidingState.pause);
+        },
+        child: Text("라이딩 완료"),
+      );
+    } else {
+      return Spacer(flex: 0);
+    }
   }
 }
