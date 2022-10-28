@@ -14,8 +14,6 @@ import 'dart:developer' as developer;
 import '../models/place.dart';
 
 class NavigationPage extends StatefulWidget {
-  final List<Place> course;
-  const NavigationPage(this.course);
   @override
   State<NavigationPage> createState() => _NavigationPageState(); //1
 }
@@ -32,16 +30,15 @@ class _NavigationPageState extends State<NavigationPage> {
   void initState() {
     _navigationProvider =
         Provider.of<NavigationProvider>(context, listen: false);
-    developer.log(_navigationProvider.endPoint.title ?? "endPoint is null");
 
     setMapComponent();
     super.initState();
   }
 
   setMapComponent() async {
-    await _navigationProvider.getRoute(widget.course);
+    await _navigationProvider.getRoute();
 
-    markers = widget.course
+    markers = _navigationProvider.course
         .map((course) => Marker(
             markerId: MarkerId(course.title ?? ""),
             position: LatLng(double.parse(course.latitude!),
@@ -51,10 +48,10 @@ class _NavigationPageState extends State<NavigationPage> {
     if (_navigationProvider.position != null) {
       initCameraPosition = LatLng(
           (_navigationProvider.position!.latitude +
-                  double.parse(widget.course.last.latitude!)) /
+                  double.parse(_navigationProvider.course.last.latitude!)) /
               2,
           (_navigationProvider.position!.longitude) +
-              double.parse(widget.course.last.longitude!) / 2);
+              double.parse(_navigationProvider.course.last.longitude!) / 2);
 
       markers.add(Marker(
           markerId: MarkerId("currentPosition"),
@@ -77,39 +74,6 @@ class _NavigationPageState extends State<NavigationPage> {
     _ridingProvider = Provider.of<RidingProvider>(context);
 
     Position? position = _navigationProvider.position;
-
-    switch (_ridingProvider.state) {
-      case RidingState.before:
-        {
-          ridingButtonText = "안내 시작하기";
-          ridingButtonStyle = ElevatedButton.styleFrom(
-            primary: Colors.blue,
-            onPrimary: Colors.white,
-          );
-          break;
-        }
-      case RidingState.riding:
-        {
-          ridingButtonText = "안내 중단";
-          ridingButtonStyle = ElevatedButton.styleFrom(
-            primary: Colors.blue,
-            onPrimary: Colors.white,
-          );
-          break;
-        }
-
-      case RidingState.pause:
-        {
-          ridingButtonText = "이어서 진행";
-          ridingButtonStyle = ElevatedButton.styleFrom(
-            primary: Colors.blue,
-            onPrimary: Colors.white,
-          );
-          break;
-        }
-      default:
-        ridingButtonText = "";
-    }
 
     void _setController() async {
       GoogleMapController _googleMapController = await _controller.future;
@@ -162,6 +126,38 @@ class _NavigationPageState extends State<NavigationPage> {
   }
 
   Widget changeButton(RidingState state) {
+    switch (_ridingProvider.state) {
+      case RidingState.before:
+        {
+          ridingButtonText = "안내 시작하기";
+          ridingButtonStyle = ElevatedButton.styleFrom(
+            primary: Colors.blue,
+            onPrimary: Colors.white,
+          );
+          break;
+        }
+      case RidingState.riding:
+        {
+          ridingButtonText = "안내 중단";
+          ridingButtonStyle = ElevatedButton.styleFrom(
+            primary: Colors.blue,
+            onPrimary: Colors.white,
+          );
+          break;
+        }
+
+      case RidingState.pause:
+        {
+          ridingButtonText = "이어서 진행";
+          ridingButtonStyle = ElevatedButton.styleFrom(
+            primary: Colors.blue,
+            onPrimary: Colors.white,
+          );
+          break;
+        }
+      default:
+        ridingButtonText = "";
+    }
     return Row(children: [
       ElevatedButton(
         style: ridingButtonStyle,

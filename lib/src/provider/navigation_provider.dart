@@ -15,18 +15,17 @@ import '../models/position_stream.dart';
 class NavigationProvider extends RidingProvider {
   final NaverMapService _naverMapService = NaverMapService();
   //make constructer with one Place type parameter
-  NavigationProvider(this.startPoint, this.endPoint);
+  NavigationProvider(this._ridingCourse);
   //make constructer without parameter
   NavigationProvider.empty();
+
   Position? _position;
   final Distance _calDistance = const Distance();
   RidingState _ridingState = RidingState.before;
-  late Place startPoint;
-  late Place endPoint;
 
   final PositionStream _positionStream = PositionStream();
 
-  List<Place> _ridingCourse = [];
+  late List<Place> _ridingCourse;
   List<Guide>? _route;
   List<google_map.LatLng> _polylineCoordinates = [];
   List<google_map.LatLng> get polylineCoordinates => _polylineCoordinates;
@@ -44,6 +43,7 @@ class NavigationProvider extends RidingProvider {
   Position? get position => _position;
   List<Guide>? get route => _route;
   RidingState get ridingState => _ridingState;
+  List<Place> get course => _ridingCourse;
 
   void setState(RidingState state) {
     _ridingState = state;
@@ -55,9 +55,8 @@ class NavigationProvider extends RidingProvider {
 
   google_map.GoogleMapController get googleCon => _googleMapController;
 
-  Future<void> getRoute(List<Place> course) async {
-    _ridingCourse = course;
-    _finalDestination = course.last;
+  Future<void> getRoute() async {
+    _finalDestination = _ridingCourse.last;
     _position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     Place startPlace = Place(
@@ -67,8 +66,8 @@ class NavigationProvider extends RidingProvider {
         longitude: _position!.longitude.toString(),
         jibunAddress: null);
 
-    _route =
-        await _naverMapService.getRoute(startPlace, _finalDestination, course);
+    _route = await _naverMapService.getRoute(
+        startPlace, _finalDestination, _ridingCourse);
 
     if (_route != null) {
       print("루트 사이즈 : ${_route!.length.toString()}");
@@ -123,7 +122,7 @@ class NavigationProvider extends RidingProvider {
         // 2의 경우
         // c + am
         _calToDestination(); // 다음 경유지 계산해서 만약 다음 경유지가 더 가까우면 사용자 입력 받아서 다음경유지로 안내
-        getRoute(_ridingCourse);
+        getRoute();
       } else {
         if (distanceToPoint <= 10 ||
             distanceToPoint > distanceToNextPoint + 10) {

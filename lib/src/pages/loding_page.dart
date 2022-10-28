@@ -48,8 +48,6 @@ class _LodingPageState extends State<LodingPage> {
                 builder: (context) => MultiProvider(providers: [
                       ChangeNotifierProvider(
                           create: (context) => WeatherProvider()),
-                      // ChangeNotifierProvider(
-                      //     create: (context) => NavigationProvider.empty()),
                       ChangeNotifierProvider(
                           create: (context) => RouteListProvider()),
                       ChangeNotifierProvider(

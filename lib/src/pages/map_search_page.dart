@@ -20,6 +20,7 @@ class MapSearchPage extends StatefulWidget {
 
 class MapSampleState extends State<MapSearchPage> {
   final Completer<GoogleMapController> _controller = Completer();
+
   final _startPointTextController = TextEditingController();
   final _endPointTextController = TextEditingController();
   var _initLocation = CameraPosition(
@@ -62,182 +63,139 @@ class MapSampleState extends State<MapSearchPage> {
             alignment: Alignment.topRight,
             child: Column(
               children: <Widget>[
-                FloatingActionButton.extended(
-                    label: const Text('안내시작'),
-                    heroTag: 'navigateStartBtn',
-                    onPressed: () {
-                      if (mapSearchProvider.startPoint == null ||
-                          mapSearchProvider.endPoint == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('출발지와 도착지를 입력해주세요.'),
-                          ),
-                        );
-                        return;
-                      } else {
-                        developer.log("안내시작");
-                        final returnList = [
-                          mapSearchProvider.endPoint!,
-                          mapSearchProvider.startPoint!
-                        ];
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ChangeNotifierProvider(
-                                      create: (context) => NavigationProvider(
-                                          mapSearchProvider.startPoint!,
-                                          mapSearchProvider.endPoint!),
-                                      child: NavigationPage(returnList),
-                                    )));
-                      }
-                    },
-                    materialTapTargetSize: MaterialTapTargetSize.padded,
-                    backgroundColor: Colors.green),
+                startNav(mapSearchProvider),
                 FloatingActionButton.extended(
                   heroTag: 'backBtn',
                   onPressed: _goBackToMain,
                   label: const Text('돌아가기'),
                   icon: const Icon(Icons.directions_boat),
                 ),
-                Row(children: [
-                  SizedBox(
-                    width: 300,
-                    child: TextField(
-                      controller: _startPointTextController,
-                      decoration: const InputDecoration(
-                        hintText: '출발지',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 100,
-                    child: FloatingActionButton.extended(
-                      heroTag: 'startPointSearchBtn',
-                      onPressed: () async {
-                        if (_startPointTextController.text.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('출발지를 입력해주세요.'),
-                            ),
-                          );
-                          return;
-                        } else {
-                          await mapSearchProvider.setStartPointSearchResult(
-                              _startPointTextController.text);
-                        }
-                      },
-                      label: const Text('검색'),
-                      icon: const Icon(Icons.search),
-                    ),
-                  ),
-                ]),
-                Row(children: [
-                  SizedBox(
-                    width: 300,
-                    child: TextField(
-                      controller: _endPointTextController,
-                      decoration: const InputDecoration(
-                        hintText: '도착지',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 100,
-                    child: FloatingActionButton.extended(
-                      heroTag: 'endPointSearchBtn',
-                      onPressed: () async {
-                        if (_endPointTextController.text.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('도착지를 입력해주세요.'),
-                            ),
-                          );
-                          return;
-                        } else {
-                          await mapSearchProvider.setEndPointSearchResult(
-                              _endPointTextController.text);
-                        }
-                      },
-                      label: const Text('검색'),
-                      icon: const Icon(Icons.search),
-                    ),
-                  ),
-                ]),
-                Flexible(
-                  child: ListView.builder(
-                    itemCount: mapSearchProvider.startPointSearchResult.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return ListTile(
-                          title: Text(mapSearchProvider
-                              .startPointSearchResult[index].title!),
-                          onTap: () async {
-                            final GoogleMapController controller =
-                                await _controller.future;
-                            _startPointTextController.text = mapSearchProvider
-                                .startPointSearchResult[index].title!;
-                            controller
-                                .animateCamera(CameraUpdate.newCameraPosition(
-                              CameraPosition(
-                                target: LatLng(
-                                    double.parse(mapSearchProvider
-                                        .startPointSearchResult[index]
-                                        .latitude!),
-                                    double.parse(mapSearchProvider
-                                        .startPointSearchResult[index]
-                                        .longitude!)),
-                                zoom: 20,
-                              ),
-                            ));
-                            _updatePosition(mapSearchProvider
-                                .startPointSearchResult[index]);
-                            mapSearchProvider.setStartPoint(mapSearchProvider
-                                .startPointSearchResult[index]);
-                            mapSearchProvider.clearStartPointSearchResult();
-                          });
-                    },
-                  ),
-                ),
-                Flexible(
-                  child: ListView.builder(
-                    itemCount: mapSearchProvider.endPointSearchResult.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return ListTile(
-                          title: Text(mapSearchProvider
-                              .endPointSearchResult[index].title!),
-                          onTap: () async {
-                            final GoogleMapController controller =
-                                await _controller.future;
-                            _endPointTextController.text = mapSearchProvider
-                                .endPointSearchResult[index].title!;
-                            controller
-                                .animateCamera(CameraUpdate.newCameraPosition(
-                              CameraPosition(
-                                target: LatLng(
-                                    double.parse(mapSearchProvider
-                                        .endPointSearchResult[index].latitude!),
-                                    double.parse(mapSearchProvider
-                                        .endPointSearchResult[index]
-                                        .longitude!)),
-                                zoom: 20,
-                              ),
-                            ));
-                            _updatePosition(
-                                mapSearchProvider.endPointSearchResult[index]);
-                            mapSearchProvider.setEndPoint(
-                                mapSearchProvider.endPointSearchResult[index]);
-                            mapSearchProvider.clearEndPointSearchResult();
-                          });
-                    },
-                  ),
-                ),
+                searchBox(mapSearchProvider, "출발지", _startPointTextController),
+                searchBox(mapSearchProvider, "도착지", _endPointTextController),
+                placeList(mapSearchProvider, "출발지",
+                    mapSearchProvider.startPointSearchResult),
+                placeList(mapSearchProvider, "도착지",
+                    mapSearchProvider.endPointSearchResult),
               ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  Widget placeList(
+      MapSearchProvider mapSearchProvider, String type, List<Place> list) {
+    return Flexible(
+      child: ListView.builder(
+        itemCount: list.length,
+        itemBuilder: (BuildContext context, int index) {
+          return ListTile(
+              title: Text(list[index].title!),
+              onTap: () async {
+                final GoogleMapController controller = await _controller.future;
+                _startPointTextController.text = list[index].title!;
+                controller.animateCamera(CameraUpdate.newCameraPosition(
+                  CameraPosition(
+                    target: LatLng(double.parse(list[index].latitude!),
+                        double.parse(list[index].longitude!)),
+                    zoom: 20,
+                  ),
+                ));
+                _updatePosition(list[index]);
+                if (type == "출발지") {
+                  mapSearchProvider.setStartPoint(list[index]);
+                  mapSearchProvider.clearStartPointSearchResult();
+                } else {
+                  mapSearchProvider.setEndPoint(list[index]);
+                  mapSearchProvider.clearEndPointSearchResult();
+                }
+              });
+        },
+      ),
+    );
+  }
+
+  Widget searchBox(MapSearchProvider mapSearchProvider, String type,
+      TextEditingController textController) {
+    return Row(children: [
+      SizedBox(
+        width: 300,
+        child: TextField(
+          controller: textController,
+          decoration: InputDecoration(
+            hintText: type,
+            border: OutlineInputBorder(),
+          ),
+        ),
+      ),
+      SizedBox(
+        width: 100,
+        child: FloatingActionButton.extended(
+          heroTag: 'placeSearchBtn',
+          onPressed: () async {
+            if (textController.text.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('$type를 입력해주세요.'),
+                ),
+              );
+              return;
+            } else {
+              if (type == "출발지") {
+                await mapSearchProvider
+                    .setStartPointSearchResult(textController.text);
+              } else {
+                await mapSearchProvider
+                    .setEndPointSearchResult(textController.text);
+              }
+            }
+          },
+          label: const Text('검색'),
+          icon: const Icon(Icons.search),
+        ),
+      ),
+    ]);
+  }
+
+  Widget startNav(MapSearchProvider mapSearchProvider) {
+    return FloatingActionButton.extended(
+        label: const Text('안내시작'),
+        heroTag: 'navigateStartBtn',
+        onPressed: () {
+          if (mapSearchProvider.startPoint == null ||
+              mapSearchProvider.endPoint == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('출발지와 도착지를 입력해주세요.'),
+              ),
+            );
+            return;
+          } else {
+            developer.log("안내시작");
+            final returnList = [
+              mapSearchProvider.endPoint!,
+              mapSearchProvider.startPoint!
+            ];
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MultiProvider(
+                          providers: [
+                            ChangeNotifierProvider(
+                                create: (context) => NavigationProvider([
+                                      mapSearchProvider.startPoint!,
+                                      mapSearchProvider.endPoint!
+                                    ])),
+                            ChangeNotifierProvider(
+                                create: (context) => RidingProvider())
+                          ],
+                          child: NavigationPage(),
+                        )));
+          }
+        },
+        materialTapTargetSize: MaterialTapTargetSize.padded,
+        backgroundColor: Colors.green);
   }
 
   void _updatePosition(Place position) {
