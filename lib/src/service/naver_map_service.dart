@@ -72,21 +72,22 @@ class NaverMapService {
       List<Guide> guides = [];
 
       String placeToParam(Place place) =>
-          '${place.longitude},placeid=${place.latitude},name=${place.id}';
+          '${place.longitude},${place.latitude},placeid=${place.id},name=${place.id}';
 
       final Map<String, String> queryParams = {
         'start': placeToParam(start),
         'destination': placeToParam(destination),
       };
 
-      if (waypoints != null) {
+      if (waypoints != null && waypoints.isNotEmpty) {
         queryParams['waypoints'] = waypoints.map(placeToParam).join('|');
       }
 
       final requestUrl =
           Uri.https(_naverMapUrl, 'v5/api/dir/findbicycle', queryParams);
-      var response = await http.get(requestUrl);
+
       developer.log(requestUrl.toString());
+      var response = await http.get(requestUrl);
 
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
