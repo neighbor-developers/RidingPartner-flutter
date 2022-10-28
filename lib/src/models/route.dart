@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 class Route {
+  String? id;
   String? title;
   String? description;
   String? image;
@@ -6,15 +9,32 @@ class Route {
   List<String>? route;
 
   Route(
-      {this.title, this.description, this.image, this.routeImage, this.route});
+      {this.id,
+      this.title,
+      this.description,
+      this.image,
+      this.routeImage,
+      this.route});
 
   factory Route.fromDB(db) => Route(
+        id: db?["id"],
         title: db?["title"],
         description: db?["description"],
         image: db?["image"],
         routeImage: db?["routeImage"],
-        route: List<String>.from(db?["route"]),
+        route: List<String>.from(json.decode(db?['route'])),
       );
+
+  Map<String, dynamic> toDB() {
+    return {
+      if (id != null) "id": id,
+      if (title != null) "title": title,
+      if (description != null) "description": description,
+      if (image != null) "image": image,
+      if (routeImage != null) "routeImage": routeImage,
+      if (route != null) "route": json.encode(route),
+    };
+  }
 }
 
 class NaverRouteData {

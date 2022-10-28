@@ -42,13 +42,7 @@ class FireStoreService {
       return snapshot.docs.where((docs) => docs.exists).map((docs) {
         final data = docs.data();
 
-        return Route(
-          title: data["title"],
-          description: data["description"],
-          image: data["image"],
-          routeImage: data["routeImage"],
-          route: List<String>.from(docs.data()["route"]),
-        );
+        return Route.fromDB(data);
       }).toList();
     } catch (e) {
       developer.log(e.toString());
@@ -67,6 +61,26 @@ class FireStoreService {
     } catch (e) {
       developer.log(e.toString());
       return Route();
+    }
+  }
+
+  Future<String> setRoutes(List<Route> routes) async {
+    try {
+      // db에 routes 를 저장하기전 정보를 담아두는 곳
+      // 여러 작업을 수행할때 실패확률을 줄여주고 에러추적도 쉬움
+      final batch = db.batch();
+      final routesDB = db.collection("routes");
+
+      for (var route in routes) {
+        batch.set(routesDB.doc(route.title), route.toDB());
+      }
+
+      // 데이터 쓰기 작업
+      await batch.commit();
+      return "성공";
+    } catch (e) {
+      developer.log(e.toString());
+      return "실패";
     }
   }
 }
