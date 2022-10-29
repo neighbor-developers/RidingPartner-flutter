@@ -50,8 +50,9 @@ class _NavigationPageState extends State<NavigationPage> {
           (_navigationProvider.position!.latitude +
                   double.parse(_navigationProvider.course.last.latitude!)) /
               2,
-          (_navigationProvider.position!.longitude) +
-              double.parse(_navigationProvider.course.last.longitude!) / 2);
+          ((_navigationProvider.position!.longitude) +
+                  double.parse(_navigationProvider.course.last.longitude!)) /
+              2);
 
       markers.add(Marker(
           markerId: MarkerId("currentPosition"),
@@ -60,6 +61,7 @@ class _NavigationPageState extends State<NavigationPage> {
     } else {
       initCameraPosition = LatLng(37.339985, 126.733378);
     }
+    print(initCameraPosition);
   }
 
   String ridingButtonText = "";
@@ -77,10 +79,12 @@ class _NavigationPageState extends State<NavigationPage> {
 
     void _setController() async {
       GoogleMapController _googleMapController = await _controller.future;
+      print("hello");
       if (position != null) {
         _googleMapController.animateCamera(CameraUpdate.newCameraPosition(
             CameraPosition(
-                target: LatLng(position.latitude, position.longitude))));
+                target: LatLng(position.latitude, position.longitude),
+                zoom: 20)));
         markers.removeWhere((element) => element.markerId == "currentPosition");
         markers.add(Marker(
             markerId: MarkerId("currentPosition"),
@@ -88,7 +92,7 @@ class _NavigationPageState extends State<NavigationPage> {
       }
     }
 
-    if (_navigationProvider.state != RidingState.before) {
+    if (_navigationProvider.ridingState != RidingState.before) {
       _setController();
     }
 
@@ -107,6 +111,7 @@ class _NavigationPageState extends State<NavigationPage> {
                       polylines: {
                         Polyline(
                             polylineId: PolylineId("route"),
+                            width: 5,
                             points: _navigationProvider.polylineCoordinates)
                       },
                       onMapCreated: (GoogleMapController controller) {
@@ -187,7 +192,7 @@ class _NavigationPageState extends State<NavigationPage> {
         child: Text("라이딩 완료"),
       );
     } else {
-      return Spacer(flex: 0);
+      return Spacer(flex: 1);
     }
   }
 }

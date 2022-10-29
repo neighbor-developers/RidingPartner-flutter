@@ -72,10 +72,16 @@ class MapSampleState extends State<MapSearchPage> {
                 ),
                 searchBox(mapSearchProvider, "출발지", _startPointTextController),
                 searchBox(mapSearchProvider, "도착지", _endPointTextController),
-                placeList(mapSearchProvider, "출발지",
-                    mapSearchProvider.startPointSearchResult),
-                placeList(mapSearchProvider, "도착지",
-                    mapSearchProvider.endPointSearchResult),
+                placeList(
+                    mapSearchProvider,
+                    "출발지",
+                    mapSearchProvider.startPointSearchResult,
+                    _startPointTextController),
+                placeList(
+                    mapSearchProvider,
+                    "도착지",
+                    mapSearchProvider.endPointSearchResult,
+                    _endPointTextController),
               ],
             ),
           ),
@@ -84,8 +90,8 @@ class MapSampleState extends State<MapSearchPage> {
     );
   }
 
-  Widget placeList(
-      MapSearchProvider mapSearchProvider, String type, List<Place> list) {
+  Widget placeList(MapSearchProvider mapSearchProvider, String type,
+      List<Place> list, TextEditingController textController) {
     return Flexible(
       child: ListView.builder(
         itemCount: list.length,
@@ -94,7 +100,7 @@ class MapSampleState extends State<MapSearchPage> {
               title: Text(list[index].title!),
               onTap: () async {
                 final GoogleMapController controller = await _controller.future;
-                _startPointTextController.text = list[index].title!;
+                textController.text = list[index].title!;
                 controller.animateCamera(CameraUpdate.newCameraPosition(
                   CameraPosition(
                     target: LatLng(double.parse(list[index].latitude!),
@@ -132,7 +138,7 @@ class MapSampleState extends State<MapSearchPage> {
       SizedBox(
         width: 100,
         child: FloatingActionButton.extended(
-          heroTag: 'placeSearchBtn',
+          heroTag: '${type}placeSearchBtn',
           onPressed: () async {
             if (textController.text.isEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(

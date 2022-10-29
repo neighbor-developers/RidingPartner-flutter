@@ -40,6 +40,9 @@
 		<key>naverServiceAppName</key>
 		<string>라이딩 파트너 in 시릉</string>
 
+		<key>googleMapApiKey</key>
+		<string>AIzaSyARG3LSKycrXF8VAYBX52hC0XcOwH_x_Rc</string>
+
 		<!-- http allows configurations -->
 		<key>NSAppTransportSecurity</key>
 		<dict>

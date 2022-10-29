@@ -56,9 +56,13 @@ class NavigationProvider extends RidingProvider {
   google_map.GoogleMapController get googleCon => _googleMapController;
 
   Future<void> getRoute() async {
+    _goalDestination = _ridingCourse.first;
     _finalDestination = _ridingCourse.last;
+    _nextDestination = _ridingCourse.elementAt(1);
+
     _position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
+
     Place startPlace = Place(
         id: null,
         title: "내 위치",
@@ -108,20 +112,22 @@ class NavigationProvider extends RidingProvider {
       num distanceToPoint = _calDistance.as(
           LengthUnit.Meter,
           LatLng(_position!.latitude, _position!.longitude),
-          LatLng(point![0], point[1]));
+          LatLng(point![1], point[0]));
+
       // 마지막 지점이 아닐때
       num distanceToNextPoint = _calDistance.as(
           LengthUnit.Meter,
           LatLng(_position!.latitude, _position!.longitude),
-          LatLng(nextPoint[0], nextPoint[1]));
+          LatLng(nextPoint[1], nextPoint[0]));
 
       num distancePointToPoint = _calDistance.as(LengthUnit.Meter,
-          LatLng(point[0], point[1]), LatLng(nextPoint[0], nextPoint[1]));
+          LatLng(point[1], point[0]), LatLng(nextPoint[1], nextPoint[0]));
 
-      if (distanceToPoint > distancePointToPoint + 10) {
+      if (distanceToPoint > distancePointToPoint + 1000) {
         // 2의 경우
         // c + am
         _calToDestination(); // 다음 경유지 계산해서 만약 다음 경유지가 더 가까우면 사용자 입력 받아서 다음경유지로 안내
+        print("1의 경우");
         getRoute();
       } else {
         if (distanceToPoint <= 10 ||
@@ -170,6 +176,7 @@ class NavigationProvider extends RidingProvider {
         LatLng(_position!.latitude, _position!.longitude),
         LatLng(double.parse(_goalDestination.latitude!),
             double.parse(_goalDestination.longitude!)));
+    print(_position.toString());
 
     num distanceToNextDestination = _calDistance.as(
         LengthUnit.Meter,
@@ -190,20 +197,13 @@ class NavigationProvider extends RidingProvider {
     List<PolylineWayPoint>? waypoint = _route
         ?.map((route) => PolylineWayPoint(location: route.turnPoint ?? ""))
         .toList();
+    List<google_map.LatLng> b = [];
 
-    PolylinePoints polylinePoints = PolylinePoints();
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        dotenv.env['googleApiKey']!,
-        PointLatLng(_position!.latitude, _position!.longitude),
-        PointLatLng(double.parse(_finalDestination.latitude!),
-            double.parse(_finalDestination.longitude!)),
-        wayPoints: waypoint ?? List.empty());
-
-    if (result.points.isNotEmpty) {
-      result.points.forEach((element) => polylineCoordinates
-          .add(google_map.LatLng(element.latitude, element.longitude)));
-    }
-
+    waypoint?.forEach((element) {
+      List<String> a = element.location.split(',');
+      polylineCoordinates
+          .add(google_map.LatLng(double.parse(a[1]), double.parse(a[0])));
+    });
     notifyListeners();
   }
 }

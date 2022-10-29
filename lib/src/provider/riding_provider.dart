@@ -27,7 +27,7 @@ class RidingProvider with ChangeNotifier {
 
   late LatLng _befLatLng;
 
-  Timer? _timer;
+  late Timer _timer;
   final Stopwatch _stopwatch = Stopwatch();
   late int _befTime;
 
@@ -68,7 +68,9 @@ class RidingProvider with ChangeNotifier {
     _stopwatch.start();
 
     _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
-      _calRecord(_position!);
+      if (_position != null) {
+        _calRecord(_position!);
+      }
       notifyListeners();
       _time = _stopwatch.elapsed;
       if (_time.inSeconds / 60 == 0) {
@@ -100,7 +102,7 @@ class RidingProvider with ChangeNotifier {
   void stopAndSaveRiding() {
     setRidingState(RidingState.stop);
     _stopwatch.stop();
-    _timer?.cancel();
+    _timer.cancel();
 
     Record record = Record(
         distance: _sumDistance,
@@ -113,7 +115,7 @@ class RidingProvider with ChangeNotifier {
   void pauseRiding() {
     setRidingState(RidingState.pause);
     _stopwatch.stop();
-    _timer?.cancel();
+    _timer.cancel();
     _pauseTime = DateTime.now().millisecondsSinceEpoch;
   }
 }
