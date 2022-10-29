@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -8,8 +9,8 @@ import 'package:ridingpartner_flutter/src/pages/loding_page.dart';
 import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/http_override.dart';
 import 'package:ridingpartner_flutter/src/utils/user_location.dart';
+
 import 'firebase_options.dart';
-import 'src/pages/main_route_page.dart';
 
 void main() async {
   developer.log("시작은 되니?");
@@ -33,6 +34,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
         create: (context) => AuthProvider(),
-        child: MaterialApp(home: LodingPage()));
+        child: const MaterialApp(home: LodingPage()));
   }
 }
