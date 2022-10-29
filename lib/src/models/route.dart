@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-class Route {
+class RidingRoute {
   String? id;
   String? title;
   String? description;
@@ -8,7 +8,7 @@ class Route {
   String? routeImage;
   List<String>? route;
 
-  Route(
+  RidingRoute(
       {this.id,
       this.title,
       this.description,
@@ -16,7 +16,7 @@ class Route {
       this.routeImage,
       this.route});
 
-  factory Route.fromDB(db) => Route(
+  factory RidingRoute.fromDB(db) => RidingRoute(
         id: db?["id"],
         title: db?["title"],
         description: db?["description"],

@@ -35,36 +35,36 @@ class FireStoreService {
     }
   }
 
-  Future<List<Route>> getRoutes() async {
+  Future<List<RidingRoute>> getRoutes() async {
     try {
       final snapshot = await db.collection("routes").get();
 
       return snapshot.docs.where((docs) => docs.exists).map((docs) {
         final data = docs.data();
 
-        return Route.fromDB(data);
+        return RidingRoute.fromDB(data);
       }).toList();
     } catch (e) {
       developer.log(e.toString());
-      return <Route>[];
+      return <RidingRoute>[];
     }
   }
 
-  Future<Route> getRoute(String title) async {
+  Future<RidingRoute> getRoute(String title) async {
     try {
       final snapshot = await db.collection("routes").doc(title).get();
 
       if (snapshot.exists) {
-        return Route.fromDB(snapshot.data());
+        return RidingRoute.fromDB(snapshot.data());
       }
       throw Exception("getRoute: snapshot not exist");
     } catch (e) {
       developer.log(e.toString());
-      return Route();
+      return RidingRoute();
     }
   }
 
-  Future<String> setRoutes(List<Route> routes) async {
+  Future<String> setRoutes(List<RidingRoute> routes) async {
     try {
       // db에 routes 를 저장하기전 정보를 담아두는 곳
       // 여러 작업을 수행할때 실패확률을 줄여주고 에러추적도 쉬움
