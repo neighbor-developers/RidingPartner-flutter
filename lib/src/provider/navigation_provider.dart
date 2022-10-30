@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
@@ -12,7 +13,7 @@ import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
 import '../models/place.dart';
 import '../models/position_stream.dart';
 
-class NavigationProvider extends RidingProvider {
+class NavigationProvider with ChangeNotifier {
   final NaverMapService _naverMapService = NaverMapService();
   //make constructer with one Place type parameter
   NavigationProvider(this._ridingCourse);
@@ -27,8 +28,8 @@ class NavigationProvider extends RidingProvider {
 
   late List<Place> _ridingCourse;
   List<Guide>? _route;
-  List<google_map.LatLng> _polylineCoordinates = [];
-  List<google_map.LatLng> get polylineCoordinates => _polylineCoordinates;
+  List<google_map.LatLng> _polylinePoints = [];
+  List<google_map.LatLng> get polylinePoints => _polylinePoints;
 
   late Guide _goalPoint;
   late Place _goalDestination;
@@ -36,8 +37,6 @@ class NavigationProvider extends RidingProvider {
   Place? _nextDestination;
   late Place _finalDestination;
   Timer? _timer;
-
-  late google_map.GoogleMapController _googleMapController;
 
   Guide get goalPoint => _goalPoint;
   Position? get position => _position;
@@ -52,8 +51,6 @@ class NavigationProvider extends RidingProvider {
     }
     notifyListeners();
   }
-
-  google_map.GoogleMapController get googleCon => _googleMapController;
 
   Future<void> getRoute() async {
     _goalDestination = _ridingCourse.first;
@@ -96,6 +93,7 @@ class NavigationProvider extends RidingProvider {
 
     _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
       _calToPoint();
+      _polyline();
       notifyListeners();
     }));
   }
@@ -123,7 +121,7 @@ class NavigationProvider extends RidingProvider {
       num distancePointToPoint = _calDistance.as(LengthUnit.Meter,
           LatLng(point[1], point[0]), LatLng(nextPoint[1], nextPoint[0]));
 
-      if (distanceToPoint > distancePointToPoint + 1000) {
+      if (distanceToPoint > distancePointToPoint + 10) {
         // 2의 경우
         // c + am
         _calToDestination(); // 다음 경유지 계산해서 만약 다음 경유지가 더 가까우면 사용자 입력 받아서 다음경유지로 안내
@@ -193,17 +191,18 @@ class NavigationProvider extends RidingProvider {
     }
   }
 
-  void _polyline() async {
-    List<PolylineWayPoint>? waypoint = _route
+  void _polyline() {
+    List<PolylineWayPoint>? turnPoints = _route
         ?.map((route) => PolylineWayPoint(location: route.turnPoint ?? ""))
         .toList();
-    List<google_map.LatLng> b = [];
+    List<google_map.LatLng> pointLatLngs = [];
 
-    waypoint?.forEach((element) {
+    turnPoints?.forEach((element) {
       List<String> a = element.location.split(',');
-      polylineCoordinates
+      pointLatLngs
           .add(google_map.LatLng(double.parse(a[1]), double.parse(a[0])));
     });
-    notifyListeners();
+
+    _polylinePoints = pointLatLngs;
   }
 }

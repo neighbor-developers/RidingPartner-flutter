@@ -84,7 +84,7 @@ class _NavigationPageState extends State<NavigationPage> {
         _googleMapController.animateCamera(CameraUpdate.newCameraPosition(
             CameraPosition(
                 target: LatLng(position.latitude, position.longitude),
-                zoom: 20)));
+                zoom: 17)));
         markers.removeWhere((element) => element.markerId == "currentPosition");
         markers.add(Marker(
             markerId: MarkerId("currentPosition"),
@@ -112,7 +112,7 @@ class _NavigationPageState extends State<NavigationPage> {
                         Polyline(
                             polylineId: PolylineId("route"),
                             width: 5,
-                            points: _navigationProvider.polylineCoordinates)
+                            points: _navigationProvider.polylinePoints)
                       },
                       onMapCreated: (GoogleMapController controller) {
                         _controller.complete(controller);
@@ -120,7 +120,7 @@ class _NavigationPageState extends State<NavigationPage> {
                       myLocationButtonEnabled: true,
                       myLocationEnabled: true,
                       markers: markers),
-                  changeButton(_navigationProvider.state),
+                  changeButton(_navigationProvider.ridingState),
                   guideWidget()
                 ],
               ));
