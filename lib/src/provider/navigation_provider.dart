@@ -94,7 +94,6 @@ class NavigationProvider with ChangeNotifier {
     _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
       _calToPoint();
       _polyline();
-      notifyListeners();
     }));
   }
 
@@ -204,5 +203,6 @@ class NavigationProvider with ChangeNotifier {
     });
 
     _polylinePoints = pointLatLngs;
+    notifyListeners();
   }
 }
