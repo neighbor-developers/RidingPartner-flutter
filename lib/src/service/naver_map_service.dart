@@ -72,7 +72,7 @@ class NaverMapService {
       List<Guide> guides = [];
 
       String placeToParam(Place place) =>
-          '${place.longitude},${place.latitude},placeid=${place.id},name=${place.id}';
+          '${place.longitude},${place.latitude},placeid=${place.id},name=${place.title}';
 
       final Map<String, String> queryParams = {
         'start': placeToParam(start),

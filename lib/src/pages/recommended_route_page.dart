@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
 import 'package:ridingpartner_flutter/src/pages/navigation_page.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/route_list_provider.dart';
 
 class RecommendedRoutePage extends StatefulWidget {
@@ -57,10 +58,16 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ChangeNotifierProvider(
-                              create: (context) =>
-                                  NavigationProvider(placeList),
-                              child: NavigationPage())));
+                          builder: (context) => MultiProvider(
+                                providers: [
+                                  ChangeNotifierProvider(
+                                      create: (context) =>
+                                          NavigationProvider(placeList)),
+                                  ChangeNotifierProvider(
+                                      create: (context) => RidingProvider())
+                                ],
+                                child: NavigationPage(),
+                              )));
                 },
               ),
               ElevatedButton(
