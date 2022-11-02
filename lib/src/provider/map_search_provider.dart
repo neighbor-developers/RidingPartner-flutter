@@ -4,6 +4,8 @@ import '../service/naver_map_service.dart';
 import 'dart:developer' as developer;
 
 class MapSearchProvider extends ChangeNotifier {
+  var isStartSearching = false;
+  var isEndSearching = false;
   List<Place> _startPointSearchResult = [];
   List<Place> get startPointSearchResult => _startPointSearchResult;
 
@@ -28,21 +30,33 @@ class MapSearchProvider extends ChangeNotifier {
 
   setStartPointSearchResult(String title) async {
     _startPointSearchResult = (await NaverMapService().getPlaces(title)) ?? [];
+    if (_startPointSearchResult.length > 0) {
+      isStartSearching = true;
+    } else {
+      isStartSearching = false;
+    }
     notifyListeners();
   }
 
   setEndPointSearchResult(String title) async {
     _endPointSearchResult = (await NaverMapService().getPlaces(title)) ?? [];
+    if (_endPointSearchResult.length > 0) {
+      isEndSearching = true;
+    } else {
+      isEndSearching = false;
+    }
     notifyListeners();
   }
 
   clearStartPointSearchResult() {
     _startPointSearchResult = [];
+    isStartSearching = false;
     notifyListeners();
   }
 
   clearEndPointSearchResult() {
     _endPointSearchResult = [];
+    isEndSearching = false;
     notifyListeners();
   }
 }

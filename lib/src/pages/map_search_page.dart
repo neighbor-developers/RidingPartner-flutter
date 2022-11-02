@@ -9,7 +9,6 @@ import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 import 'dart:developer' as developer;
 import '../provider/map_search_provider.dart';
 import '../provider/riding_provider.dart';
-import 'riding_page.dart';
 
 class MapSearchPage extends StatefulWidget {
   const MapSearchPage({super.key});
@@ -41,6 +40,9 @@ class MapSampleState extends State<MapSearchPage> {
     super.dispose();
   }
 
+  //implement search route
+  void _searchRoute() {}
+
   @override
   Widget build(BuildContext context) {
     final mapSearchProvider = Provider.of<MapSearchProvider>(context);
@@ -63,28 +65,31 @@ class MapSampleState extends State<MapSearchPage> {
             alignment: Alignment.topRight,
             child: Column(
               children: <Widget>[
-                startNav(mapSearchProvider),
-                FloatingActionButton.extended(
-                  heroTag: 'backBtn',
-                  onPressed: _goBackToMain,
-                  label: const Text('돌아가기'),
-                  icon: const Icon(Icons.directions_boat),
-                ),
                 searchBox(mapSearchProvider, "출발지", _startPointTextController),
                 searchBox(mapSearchProvider, "도착지", _endPointTextController),
+                startNav(mapSearchProvider),
+              ],
+            ),
+          ),
+          Visibility(
+              visible: mapSearchProvider.isStartSearching,
+              child: Row(children: [
                 placeList(
                     mapSearchProvider,
                     "출발지",
                     mapSearchProvider.startPointSearchResult,
-                    _startPointTextController),
-                placeList(
-                    mapSearchProvider,
-                    "도착지",
-                    mapSearchProvider.endPointSearchResult,
-                    _endPointTextController),
-              ],
-            ),
-          ),
+                    _startPointTextController)
+              ])),
+          Visibility(
+            visible: mapSearchProvider.isEndSearching,
+            child: Row(children: [
+              placeList(
+                  mapSearchProvider,
+                  "도착지",
+                  mapSearchProvider.endPointSearchResult,
+                  _endPointTextController)
+            ]),
+          )
         ],
       ),
     );
@@ -92,7 +97,7 @@ class MapSampleState extends State<MapSearchPage> {
 
   Widget placeList(MapSearchProvider mapSearchProvider, String type,
       List<Place> list, TextEditingController textController) {
-    return Flexible(
+    return Expanded(
       child: ListView.builder(
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index) {
