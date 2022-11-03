@@ -61,7 +61,7 @@ class MapSampleState extends State<MapSearchPage> {
             myLocationEnabled: true,
           ),
           Container(
-            margin: const EdgeInsets.only(top: 60, right: 10),
+            margin: const EdgeInsets.only(top: 60, right: 5),
             alignment: Alignment.topRight,
             child: Column(
               children: <Widget>[
@@ -101,27 +101,30 @@ class MapSampleState extends State<MapSearchPage> {
       child: ListView.builder(
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-              title: Text(list[index].title!),
-              onTap: () async {
-                final GoogleMapController controller = await _controller.future;
-                textController.text = list[index].title!;
-                controller.animateCamera(CameraUpdate.newCameraPosition(
-                  CameraPosition(
-                    target: LatLng(double.parse(list[index].latitude!),
-                        double.parse(list[index].longitude!)),
-                    zoom: 20,
-                  ),
-                ));
-                _updatePosition(list[index]);
-                if (type == "출발지") {
-                  mapSearchProvider.setStartPoint(list[index]);
-                  mapSearchProvider.clearStartPointSearchResult();
-                } else {
-                  mapSearchProvider.setEndPoint(list[index]);
-                  mapSearchProvider.clearEndPointSearchResult();
-                }
-              });
+          return Card(
+              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+              child: ListTile(
+                  title: Text(list[index].title!),
+                  onTap: () async {
+                    final GoogleMapController controller =
+                        await _controller.future;
+                    textController.text = list[index].title!;
+                    controller.animateCamera(CameraUpdate.newCameraPosition(
+                      CameraPosition(
+                        target: LatLng(double.parse(list[index].latitude!),
+                            double.parse(list[index].longitude!)),
+                        zoom: 20,
+                      ),
+                    ));
+                    _updatePosition(list[index]);
+                    if (type == "출발지") {
+                      mapSearchProvider.setStartPoint(list[index]);
+                      mapSearchProvider.clearStartPointSearchResult();
+                    } else {
+                      mapSearchProvider.setEndPoint(list[index]);
+                      mapSearchProvider.clearEndPointSearchResult();
+                    }
+                  }));
         },
       ),
     );
@@ -222,10 +225,6 @@ class MapSampleState extends State<MapSearchPage> {
       ),
     );
     setState(() {});
-  }
-
-  Future<void> _goBackToMain() async {
-    Navigator.pop(context);
   }
 
   void _initLoaction() async {
