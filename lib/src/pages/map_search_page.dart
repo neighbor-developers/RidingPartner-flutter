@@ -22,6 +22,10 @@ class MapSampleState extends State<MapSearchPage> {
 
   final _startPointTextController = TextEditingController();
   final _endPointTextController = TextEditingController();
+
+  FocusNode startFocusNode = FocusNode();
+  FocusNode endFocusNode = FocusNode();
+
   var _initLocation = CameraPosition(
     target: LatLng(MyLocation().latitude!, MyLocation().longitude!),
     zoom: 14.4746,
@@ -30,6 +34,11 @@ class MapSampleState extends State<MapSearchPage> {
   @override
   void initState() {
     super.initState();
+    startFocusNode.addListener(() {
+      if (startFocusNode.hasFocus) {
+        setState(() {});
+      }
+    });
     _initLoaction();
   }
 
@@ -39,9 +48,6 @@ class MapSampleState extends State<MapSearchPage> {
     _endPointTextController.dispose();
     super.dispose();
   }
-
-  //implement search route
-  void _searchRoute() {}
 
   @override
   Widget build(BuildContext context) {
@@ -61,35 +67,44 @@ class MapSampleState extends State<MapSearchPage> {
             myLocationEnabled: true,
           ),
           Container(
-            margin: const EdgeInsets.only(top: 60, right: 5),
-            alignment: Alignment.topRight,
+            margin: const EdgeInsets.only(top: 60),
+            alignment: Alignment.topCenter,
             child: Column(
               children: <Widget>[
                 searchBox(mapSearchProvider, "출발지", _startPointTextController),
                 searchBox(mapSearchProvider, "도착지", _endPointTextController),
+                const SizedBox(
+                  height: 500,
+                ),
                 startNav(mapSearchProvider),
               ],
             ),
           ),
-          Visibility(
-              visible: mapSearchProvider.isStartSearching,
-              child: Row(children: [
-                placeList(
-                    mapSearchProvider,
-                    "출발지",
-                    mapSearchProvider.startPointSearchResult,
-                    _startPointTextController)
-              ])),
-          Visibility(
-            visible: mapSearchProvider.isEndSearching,
-            child: Row(children: [
-              placeList(
-                  mapSearchProvider,
-                  "도착지",
-                  mapSearchProvider.endPointSearchResult,
-                  _endPointTextController)
-            ]),
-          )
+          Container(
+              alignment: Alignment.topCenter,
+              margin: const EdgeInsets.only(top: 120, left: 40, right: 40),
+              child: Visibility(
+                  visible: mapSearchProvider.isStartSearching,
+                  child: Row(children: [
+                    placeList(
+                        mapSearchProvider,
+                        "출발지",
+                        mapSearchProvider.startPointSearchResult,
+                        _startPointTextController)
+                  ]))),
+          Container(
+              alignment: Alignment.topCenter,
+              margin: const EdgeInsets.only(top: 190, left: 40, right: 40),
+              child: Visibility(
+                visible: mapSearchProvider.isEndSearching,
+                child: Row(children: [
+                  placeList(
+                      mapSearchProvider,
+                      "도착지",
+                      mapSearchProvider.endPointSearchResult,
+                      _endPointTextController)
+                ]),
+              )),
         ],
       ),
     );
@@ -102,7 +117,7 @@ class MapSampleState extends State<MapSearchPage> {
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index) {
           return Card(
-              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
               child: ListTile(
                   title: Text(list[index].title!),
                   onTap: () async {
@@ -132,41 +147,19 @@ class MapSampleState extends State<MapSearchPage> {
 
   Widget searchBox(MapSearchProvider mapSearchProvider, String type,
       TextEditingController textController) {
-    return Row(children: [
+    FocusNode textFocus = FocusNode();
+    return Column(children: [
       SizedBox(
-        width: 300,
+        height: 70,
+        width: MediaQuery.of(context).size.width - 100,
         child: TextField(
+          focusNode: textFocus,
+          onChanged: (value) => mapSearchProvider.searchPlace(value, type),
           controller: textController,
           decoration: InputDecoration(
             hintText: type,
             border: OutlineInputBorder(),
           ),
-        ),
-      ),
-      SizedBox(
-        width: 100,
-        child: FloatingActionButton.extended(
-          heroTag: '${type}placeSearchBtn',
-          onPressed: () async {
-            if (textController.text.isEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('$type를 입력해주세요.'),
-                ),
-              );
-              return;
-            } else {
-              if (type == "출발지") {
-                await mapSearchProvider
-                    .setStartPointSearchResult(textController.text);
-              } else {
-                await mapSearchProvider
-                    .setEndPointSearchResult(textController.text);
-              }
-            }
-          },
-          label: const Text('검색'),
-          icon: const Icon(Icons.search),
         ),
       ),
     ]);
@@ -187,10 +180,6 @@ class MapSampleState extends State<MapSearchPage> {
             return;
           } else {
             developer.log("안내시작");
-            final returnList = [
-              mapSearchProvider.endPoint!,
-              mapSearchProvider.startPoint!
-            ];
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -218,7 +207,7 @@ class MapSampleState extends State<MapSearchPage> {
     }
     _markers.add(
       Marker(
-        markerId: MarkerId('1'),
+        markerId: const MarkerId('1'),
         position: LatLng(double.parse(position.latitude!),
             double.parse(position.longitude!)),
         draggable: true,
@@ -237,8 +226,7 @@ class MapSampleState extends State<MapSearchPage> {
     _markers.add(Marker(
         markerId: const MarkerId("1"),
         draggable: true,
-        onTap: () => print("Marker!"),
+        onTap: () => {},
         position: LatLng(myLocation.latitude!, myLocation.longitude!)));
-    developer.log("init Location called");
   }
 }

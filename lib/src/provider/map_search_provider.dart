@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ridingpartner_flutter/src/models/place.dart';
 import '../service/naver_map_service.dart';
-import 'dart:developer' as developer;
 
 class MapSearchProvider extends ChangeNotifier {
   var isStartSearching = false;
@@ -28,9 +27,17 @@ class MapSearchProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  searchPlace(value, type) async {
+    if (type == '출발지') {
+      setStartPointSearchResult(value);
+    } else {
+      setEndPointSearchResult(value);
+    }
+  }
+
   setStartPointSearchResult(String title) async {
     _startPointSearchResult = (await NaverMapService().getPlaces(title)) ?? [];
-    if (_startPointSearchResult.length > 0) {
+    if (_startPointSearchResult.isNotEmpty) {
       isStartSearching = true;
     } else {
       isStartSearching = false;
@@ -40,7 +47,7 @@ class MapSearchProvider extends ChangeNotifier {
 
   setEndPointSearchResult(String title) async {
     _endPointSearchResult = (await NaverMapService().getPlaces(title)) ?? [];
-    if (_endPointSearchResult.length > 0) {
+    if (_endPointSearchResult.isNotEmpty) {
       isEndSearching = true;
     } else {
       isEndSearching = false;
