@@ -22,10 +22,6 @@ class MapSampleState extends State<MapSearchPage> {
 
   final _startPointTextController = TextEditingController();
   final _endPointTextController = TextEditingController();
-
-  FocusNode startFocusNode = FocusNode();
-  FocusNode endFocusNode = FocusNode();
-
   var _initLocation = CameraPosition(
     target: LatLng(MyLocation().latitude!, MyLocation().longitude!),
     zoom: 14.4746,
@@ -34,11 +30,6 @@ class MapSampleState extends State<MapSearchPage> {
   @override
   void initState() {
     super.initState();
-    startFocusNode.addListener(() {
-      if (startFocusNode.hasFocus) {
-        setState(() {});
-      }
-    });
     _initLoaction();
   }
 
@@ -147,13 +138,11 @@ class MapSampleState extends State<MapSearchPage> {
 
   Widget searchBox(MapSearchProvider mapSearchProvider, String type,
       TextEditingController textController) {
-    FocusNode textFocus = FocusNode();
     return Column(children: [
       SizedBox(
         height: 70,
         width: MediaQuery.of(context).size.width - 100,
         child: TextField(
-          focusNode: textFocus,
           onChanged: (value) => mapSearchProvider.searchPlace(value, type),
           controller: textController,
           decoration: InputDecoration(
