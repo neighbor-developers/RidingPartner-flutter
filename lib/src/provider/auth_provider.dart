@@ -37,6 +37,12 @@ class AuthProvider with ChangeNotifier {
     _setUser(user);
   }
 
+  signInWithApple() async {
+    User? user = await socialLogin.siginInwithApple();
+    developer.log(user.toString());
+    _setUser(user);
+  }
+
   signOut() async {
     await fAuth.signOut();
     _setUser(null);

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -71,6 +73,7 @@ class _LodingPageState extends State<LodingPage> {
         _kakaoLoginButton(),
         _naverLoginButton(),
         _googleLoginButton(),
+        _appleLoginButton()
       ]),
       appBar: AppBar(backgroundColor: Color.fromARGB(255, 25, 245, 83)),
     );
@@ -126,5 +129,26 @@ class _LodingPageState extends State<LodingPage> {
                       fontSize: 15,
                       color: Colors.black87,
                     )))));
+  }
+
+  Widget _appleLoginButton() {
+    if (Platform.isIOS) {
+      return SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: Visibility(
+              visible: _authProvider.user == null,
+              child: CupertinoButton(
+                  onPressed: () {
+                    _authProvider.signInWithApple();
+                  },
+                  color: Color.fromARGB(255, 2, 2, 2),
+                  child: Text('애플 로그인',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.white,
+                      )))));
+    } else {
+      return Column();
+    }
   }
 }

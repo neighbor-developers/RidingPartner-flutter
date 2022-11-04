@@ -1,4 +1,3 @@
-import 'dart:js';
 import 'package:flutter/material.dart';
 
 Future<bool> backDialog(BuildContext context, String text) async {
