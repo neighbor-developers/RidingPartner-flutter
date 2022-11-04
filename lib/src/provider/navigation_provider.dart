@@ -67,6 +67,23 @@ class NavigationProvider with ChangeNotifier {
         longitude: _position!.longitude.toString(),
         jibunAddress: null);
 
+    num distanceToCourseStart = _calDistance.as(
+        LengthUnit.Meter,
+        LatLng(_position!.latitude, _position!.longitude),
+        LatLng(double.parse(_ridingCourse.first.latitude!),
+            double.parse(_ridingCourse.first.longitude!)));
+
+    num distanceToCourseLast = _calDistance.as(
+        LengthUnit.Meter,
+        LatLng(_position!.latitude, _position!.longitude),
+        LatLng(double.parse(_ridingCourse.last.latitude!),
+            double.parse(_ridingCourse.last.longitude!)));
+
+    // 출발지보다 도착지가 더 가까울때 반대로 안내
+    if (distanceToCourseLast < distanceToCourseStart) {
+      _ridingCourse = List.from(_ridingCourse.reversed);
+    }
+
     _route = await _naverMapService.getRoute(
         startPlace, _finalDestination, _ridingCourse);
 
@@ -93,7 +110,6 @@ class NavigationProvider with ChangeNotifier {
 
     _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
       _calToPoint();
-      _polyline();
     }));
   }
 
@@ -124,7 +140,6 @@ class NavigationProvider with ChangeNotifier {
         // 2의 경우
         // c + am
         _calToDestination(); // 다음 경유지 계산해서 만약 다음 경유지가 더 가까우면 사용자 입력 받아서 다음경유지로 안내
-        print("1의 경우");
         getRoute();
       } else {
         if (distanceToPoint <= 10 ||
@@ -135,10 +150,12 @@ class NavigationProvider with ChangeNotifier {
             _route!.removeAt(0);
             _goalPoint = _route![0]; //
             _nextPoint = null;
+            _polylinePoints.removeAt(0);
           } else {
             _route!.removeAt(0);
             _goalPoint = _route![0]; //
             _nextPoint = _route![1];
+            _polylinePoints.removeAt(0);
           }
         }
       }
