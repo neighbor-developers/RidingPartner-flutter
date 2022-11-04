@@ -1,19 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
-import 'dart:developer' as developer;
-import '../models/place.dart';
+import 'package:ridingpartner_flutter/src/widgets/dialog.dart';
 
 class NavigationPage extends StatefulWidget {
+  const NavigationPage({super.key});
+
   @override
   State<NavigationPage> createState() => _NavigationPageState(); //1
 }
@@ -84,7 +81,7 @@ class _NavigationPageState extends State<NavigationPage> {
         _googleMapController.animateCamera(CameraUpdate.newCameraPosition(
             CameraPosition(
                 target: LatLng(position.latitude, position.longitude),
-                zoom: 17)));
+                zoom: 19)));
         markers.removeWhere((element) => element.markerId == "currentPosition");
         markers.add(Marker(
             markerId: MarkerId("currentPosition"),
@@ -96,34 +93,44 @@ class _NavigationPageState extends State<NavigationPage> {
       _setController();
     }
 
-    return Scaffold(
-        appBar: AppBar(),
-        body: _navigationProvider.route == null
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : Stack(
-                children: <Widget>[
-                  GoogleMap(
-                      mapType: MapType.normal,
-                      initialCameraPosition:
-                          CameraPosition(target: initCameraPosition, zoom: 13),
-                      polylines: {
-                        Polyline(
-                            polylineId: PolylineId("route"),
-                            width: 5,
-                            points: _navigationProvider.polylinePoints)
-                      },
-                      onMapCreated: (GoogleMapController controller) {
-                        _controller.complete(controller);
-                      },
-                      myLocationButtonEnabled: true,
-                      myLocationEnabled: true,
-                      markers: markers),
-                  changeButton(_navigationProvider.ridingState),
-                  guideWidget()
-                ],
-              ));
+    return WillPopScope(
+        child: Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                  onPressed: () {
+                    backDialog(context, "안내를 중단하시겠습니까?");
+                  },
+                  icon: Icon(Icons.arrow_back)),
+            ),
+            body: _navigationProvider.route == null
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Stack(
+                    children: <Widget>[
+                      GoogleMap(
+                          mapType: MapType.normal,
+                          initialCameraPosition: CameraPosition(
+                              target: initCameraPosition, zoom: 13),
+                          polylines: {
+                            Polyline(
+                                polylineId: PolylineId("route"),
+                                width: 5,
+                                points: _navigationProvider.polylinePoints)
+                          },
+                          onMapCreated: (GoogleMapController controller) {
+                            _controller.complete(controller);
+                          },
+                          myLocationButtonEnabled: true,
+                          myLocationEnabled: true,
+                          markers: markers),
+                      changeButton(_navigationProvider.ridingState),
+                      guideWidget()
+                    ],
+                  )),
+        onWillPop: () {
+          return backDialog(context, "안내를 중단하시겠습니까?");
+        });
   }
 
   Widget guideWidget() {
