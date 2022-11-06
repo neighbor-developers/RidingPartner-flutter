@@ -35,24 +35,6 @@ class _WeatherPage extends State<WeatherPage> {
             Text(weather.temperature ?? ''),
             Text(weather.humidity ?? ''),
             Text(weather.rainType ?? ''),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Go back!'),
-            ),
-            TextButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ChangeNotifierProvider(
-                            create: (context) => AuthProvider(),
-                            child: const MaterialApp(home: LodingPage()))));
-              },
-              child: const Text('logOut'),
-            ),
           ],
         ),
       ),

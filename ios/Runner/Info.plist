@@ -127,7 +127,7 @@
         <key>NSMicrophoneUsageDescription</key>
         <string>Used to capture audio for image picker plugin</string>
         <key>NSCameraUsageDescription</key>
-        <string>This app needs access to your photos in order to lad them into the app.</string>
+        <string>임시 스트링</string>
         <key>NSPhotoLibraryUsageDescription</key>
         <string>This app needs access to your photos in order to lad them into the app.</string>
 
