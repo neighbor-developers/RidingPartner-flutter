@@ -64,8 +64,8 @@ class MapSampleState extends State<MapSearchPage> {
               children: <Widget>[
                 searchBox(mapSearchProvider, "출발지", _startPointTextController),
                 searchBox(mapSearchProvider, "도착지", _endPointTextController),
-                const SizedBox(
-                  height: 500,
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.5,
                 ),
                 startNav(mapSearchProvider),
               ],
@@ -73,7 +73,10 @@ class MapSampleState extends State<MapSearchPage> {
           ),
           Container(
               alignment: Alignment.topCenter,
-              margin: const EdgeInsets.only(top: 120, left: 40, right: 40),
+              width: MediaQuery.of(context).size.width - 100,
+              margin: const EdgeInsets.only(
+                top: 120,
+              ),
               child: Visibility(
                   visible: mapSearchProvider.isStartSearching,
                   child: Row(children: [
@@ -85,7 +88,10 @@ class MapSampleState extends State<MapSearchPage> {
                   ]))),
           Container(
               alignment: Alignment.topCenter,
-              margin: const EdgeInsets.only(top: 190, left: 40, right: 40),
+              width: MediaQuery.of(context).size.width - 100,
+              margin: const EdgeInsets.only(
+                top: 190,
+              ),
               child: Visibility(
                 visible: mapSearchProvider.isEndSearching,
                 child: Row(children: [
