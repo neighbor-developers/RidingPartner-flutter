@@ -11,6 +11,7 @@ import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
 
 import '../models/position_stream.dart';
+import 'dart:developer' as developer;
 
 enum RidingState { before, riding, pause, stop }
 
@@ -81,7 +82,7 @@ class RidingProvider with ChangeNotifier {
     });
     _stopwatch.start();
 
-    _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
+    _timer = Timer.periodic(Duration(milliseconds: 10), ((timer) {
       if (_position != null) {
         _calRecord(_position!);
       }
@@ -123,6 +124,7 @@ class RidingProvider with ChangeNotifier {
         date: _ridingDate,
         timestamp: _time.inSeconds,
         kcal: 0);
+    developer.log(_ridingDate.toString());
     _firebaseDb.saveRecordFirebaseDb(record);
   }
 

@@ -8,6 +8,8 @@ import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 
 import '../provider/riding_result_provider.dart';
+import 'dart:developer' as developer;
+
 
 
 
@@ -87,37 +89,37 @@ class RidingPage extends StatelessWidget {
                   children: <Widget>[
                     Row(children: <Widget>[
                       Padding(
-                          padding: EdgeInsets.all(5),
+                          padding: const EdgeInsets.all(5),
                           child: SizedBox(
                               child: Text("${_ridingProvider.speed}",
-                                  style: TextStyle(fontSize: 23)))),
+                                  style: const TextStyle(fontSize: 23)))),
                       //Spacer(flex: ),
                       const Text("속도")
                     ]),
                     Row(children: <Widget>[
                       Padding(
-                          padding: EdgeInsets.all(5),
+                          padding: const EdgeInsets.all(5),
                           child: SizedBox(
                               child: Text("${_ridingProvider.distance}km",
-                                  style: TextStyle(fontSize: 23)))),
-                      Text("거리")
+                                  style: const TextStyle(fontSize: 23)))),
+                      const Text("거리")
                     ]),
                     Row(children: <Widget>[
                       Padding(
-                          padding: EdgeInsets.all(5),
+                          padding: const EdgeInsets.all(5),
                           child: SizedBox(
                               child: Text("${_ridingProvider.speed}km/h",
-                                  style: TextStyle(fontSize: 23)))),
-                      Text("평균속도")
+                                  style: const TextStyle(fontSize: 23)))),
+                      const Text("평균속도")
                     ]),
                     Row(children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.all(5),
+                        padding: const EdgeInsets.all(5),
                         child: SizedBox(
-                            child: Text("${_ridingProvider.time}",
-                                style: TextStyle(fontSize: 23))),
+                            child: Text("${_ridingProvider.time}".substring(0, 7),
+                                style: const TextStyle(fontSize: 23))),
                       ),
-                      Text("시간")
+                      const Text("시간")
                     ])
                   ],
                 ),
@@ -186,6 +188,7 @@ class RidingPage extends StatelessWidget {
 
   Widget saveButton(RidingState state, String ridingDate, BuildContext context) {
     if (state == RidingState.pause) {
+      // ridingDate 널체크 필요? 일단 미란이 만들고 확인해보기
       return ElevatedButton(
         style: ridingButtonStyle,
         onPressed: () {
@@ -193,19 +196,17 @@ class RidingPage extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => MultiProvider(
-                    providers: [
+                  builder: (context) =>
                       ChangeNotifierProvider(
                           create: (context) =>
-                              RidingResultProvider()),
-                    ],
-                    child: RecordPage(ridingDate),
-                  )));
+                              RidingResultProvider(),
+                          child: RecordPage(ridingDate)),
+                  ));
         },
-        child: Text("라이딩 완료"),
+        child: const Text("라이딩 완료"),
       );
     } else {
-      return Spacer(flex: 1);
+      return Column();
     }
   }
 }
