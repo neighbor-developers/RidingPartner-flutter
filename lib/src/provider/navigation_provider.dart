@@ -37,12 +37,14 @@ class NavigationProvider with ChangeNotifier {
   Place? _nextDestination;
   late Place _finalDestination;
   Timer? _timer;
+  LatLng? _nextLatLng;
 
   Guide get goalPoint => _goalPoint;
   Position? get position => _position;
   List<Guide>? get route => _route;
   RidingState get ridingState => _ridingState;
   List<Place> get course => _ridingCourse;
+  LatLng? get nextLatLng => _nextLatLng;
 
   void setState(RidingState state) {
     _ridingState = state;
@@ -96,6 +98,7 @@ class NavigationProvider with ChangeNotifier {
         _goalPoint = _route![0];
         _nextPoint = _route![1];
       }
+      _nextLatLng = latLngFromGuide(_nextPoint);
     } else {
       print("루트 : null");
     }
@@ -114,27 +117,19 @@ class NavigationProvider with ChangeNotifier {
   }
 
   void _calToPoint() {
-    List<double>? point = (_goalPoint.turnPoint?.split(','))
-        ?.map((p) => double.parse(p))
-        .toList();
-    List<double>? nextPoint = (_nextPoint?.turnPoint?.split(','))
-        ?.map((p) => double.parse(p))
-        .toList();
+    LatLng? point = latLngFromGuide(_goalPoint);
+    _nextLatLng = latLngFromGuide(_nextPoint);
 
-    if (nextPoint != null) {
-      num distanceToPoint = _calDistance.as(
-          LengthUnit.Meter,
-          LatLng(_position!.latitude, _position!.longitude),
-          LatLng(point![1], point[0]));
+    if (_nextLatLng != null) {
+      num distanceToPoint = _calDistance.as(LengthUnit.Meter,
+          LatLng(_position!.latitude, _position!.longitude), point!);
 
       // 마지막 지점이 아닐때
-      num distanceToNextPoint = _calDistance.as(
-          LengthUnit.Meter,
-          LatLng(_position!.latitude, _position!.longitude),
-          LatLng(nextPoint[1], nextPoint[0]));
+      num distanceToNextPoint = _calDistance.as(LengthUnit.Meter,
+          LatLng(_position!.latitude, _position!.longitude), _nextLatLng!);
 
-      num distancePointToPoint = _calDistance.as(LengthUnit.Meter,
-          LatLng(point[1], point[0]), LatLng(nextPoint[1], nextPoint[0]));
+      num distancePointToPoint =
+          _calDistance.as(LengthUnit.Meter, point, _nextLatLng!);
 
       if (distanceToPoint > distancePointToPoint + 10) {
         // 2의 경우
@@ -190,7 +185,6 @@ class NavigationProvider with ChangeNotifier {
         LatLng(_position!.latitude, _position!.longitude),
         LatLng(double.parse(_goalDestination.latitude!),
             double.parse(_goalDestination.longitude!)));
-    print(_position.toString());
 
     num distanceToNextDestination = _calDistance.as(
         LengthUnit.Meter,
@@ -221,5 +215,19 @@ class NavigationProvider with ChangeNotifier {
 
     _polylinePoints = pointLatLngs;
     notifyListeners();
+  }
+
+  LatLng? latLngFromGuide(Guide? guide) {
+    if (guide != null) {
+      List<double>? a =
+          (guide.turnPoint?.split(','))?.map((p) => double.parse(p)).toList();
+      if (a == null) {
+        return null;
+      } else {
+        return LatLng(a.elementAt(1), a.elementAt(0));
+      }
+    } else {
+      return null;
+    }
   }
 }
