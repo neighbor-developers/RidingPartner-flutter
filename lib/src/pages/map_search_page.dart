@@ -58,8 +58,8 @@ class MapSampleState extends State<MapSearchPage> {
             myLocationEnabled: true,
           ),
           Container(
-            margin: const EdgeInsets.only(top: 60),
-            alignment: Alignment.topCenter,
+            margin: const EdgeInsets.only(top: 60, left: 60),
+            alignment: Alignment.topLeft,
             child: Column(
               children: <Widget>[
                 searchBox(mapSearchProvider, "출발지", _startPointTextController),
@@ -72,14 +72,12 @@ class MapSampleState extends State<MapSearchPage> {
             ),
           ),
           Container(
-              alignment: Alignment.topCenter,
-              width: MediaQuery.of(context).size.width - 100,
-              margin: const EdgeInsets.only(
-                top: 120,
-              ),
+              alignment: Alignment.topLeft,
+              width: MediaQuery.of(context).size.width - 80,
+              margin: const EdgeInsets.only(top: 120, left: 50),
               child: Visibility(
                   visible: mapSearchProvider.isStartSearching,
-                  child: Row(children: [
+                  child: Column(children: [
                     placeList(
                         mapSearchProvider,
                         "출발지",
@@ -87,14 +85,12 @@ class MapSampleState extends State<MapSearchPage> {
                         _startPointTextController)
                   ]))),
           Container(
-              alignment: Alignment.topCenter,
-              width: MediaQuery.of(context).size.width - 100,
-              margin: const EdgeInsets.only(
-                top: 190,
-              ),
+              alignment: Alignment.topLeft,
+              width: MediaQuery.of(context).size.width - 80,
+              margin: const EdgeInsets.only(top: 190, left: 50),
               child: Visibility(
                 visible: mapSearchProvider.isEndSearching,
-                child: Row(children: [
+                child: Column(children: [
                   placeList(
                       mapSearchProvider,
                       "도착지",
@@ -109,7 +105,7 @@ class MapSampleState extends State<MapSearchPage> {
 
   Widget placeList(MapSearchProvider mapSearchProvider, String type,
       List<Place> list, TextEditingController textController) {
-    return Expanded(
+    return Flexible(
       child: ListView.builder(
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index) {
@@ -117,6 +113,7 @@ class MapSampleState extends State<MapSearchPage> {
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
               child: ListTile(
                   title: Text(list[index].title!),
+                  subtitle: Text(list[index].jibunAddress ?? ''),
                   onTap: () async {
                     final GoogleMapController controller =
                         await _controller.future;
