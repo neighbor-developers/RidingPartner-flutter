@@ -1,7 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart' as google_map;
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
@@ -16,10 +19,13 @@ class RidingProvider with ChangeNotifier {
   final PositionStream _positionStream = PositionStream();
   final FirebaseDatabaseService _firebaseDb = FirebaseDatabaseService();
 
+
   Position? _position;
   RidingState _ridingState = RidingState.before;
 
   String _ridingDate = "";
+  String get ridingDate => _ridingDate;
+
   late int _startTime; // 라이딩 시작 타임스탬프
   late int _endTime; // 라이딩 중단 타임스탬프
   late int _restartTime = 0; // 라이딩 시작 타임스탬프
@@ -30,6 +36,12 @@ class RidingProvider with ChangeNotifier {
   late Timer _timer;
   final Stopwatch _stopwatch = Stopwatch();
   late int _befTime;
+
+  //final 붙여도 되나?
+  List<google_map.LatLng> _polylineCoordinates = [];
+  List<google_map.LatLng> get polylineCoordinates => _polylineCoordinates;
+  PolylinePoints polylinePoints = PolylinePoints();
+
 
   num _sumDistance = 0.0; // 총거리
   num _speed = 0.0; // 순간 속도
@@ -64,6 +76,8 @@ class RidingProvider with ChangeNotifier {
         _befLatLng = LatLng(pos.latitude, pos.longitude);
       }
       _position = pos;
+      _polylineCoordinates.add(google_map.LatLng(_position!.latitude, _position!.longitude));
+      //addPolyline();
     });
     _stopwatch.start();
 
@@ -118,4 +132,15 @@ class RidingProvider with ChangeNotifier {
     _timer.cancel();
     _pauseTime = DateTime.now().millisecondsSinceEpoch;
   }
+
+/*  void addPolyline(){
+    google_map.Polyline poliline = google_map.Polyline(
+      polylineId: const google_map.PolylineId("poly"),
+      color: Colors.blue,
+      points: polylineCoordinates
+    );
+    polylines.add();
+
+    notifyListeners();
+  }*/
 }
