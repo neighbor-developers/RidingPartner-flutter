@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -22,9 +23,14 @@ class _NavigationPageState extends State<NavigationPage> {
   Completer<GoogleMapController> _controller = Completer();
   late LatLng initCameraPosition;
   late Set<Marker> markers;
+  late String? userProfile;
+  double bearing = 180;
 
   @override
   void initState() {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    userProfile = auth.currentUser?.photoURL;
+
     _navigationProvider =
         Provider.of<NavigationProvider>(context, listen: false);
 
@@ -78,10 +84,19 @@ class _NavigationPageState extends State<NavigationPage> {
       GoogleMapController _googleMapController = await _controller.future;
       print("hello");
       if (position != null) {
+        if (_navigationProvider.nextLatLng != null) {
+          bearing = Geolocator.bearingBetween(
+              position.latitude,
+              position.longitude,
+              _navigationProvider.nextLatLng!.latitude,
+              _navigationProvider.nextLatLng!.longitude);
+        }
         _googleMapController.animateCamera(CameraUpdate.newCameraPosition(
             CameraPosition(
                 target: LatLng(position.latitude, position.longitude),
-                zoom: 19)));
+                zoom: 19,
+                bearing: bearing)));
+
         markers.removeWhere((element) => element.markerId == "currentPosition");
         markers.add(Marker(
             markerId: MarkerId("currentPosition"),
@@ -109,21 +124,23 @@ class _NavigationPageState extends State<NavigationPage> {
                 : Stack(
                     children: <Widget>[
                       GoogleMap(
-                          mapType: MapType.normal,
-                          initialCameraPosition: CameraPosition(
-                              target: initCameraPosition, zoom: 13),
-                          polylines: {
-                            Polyline(
-                                polylineId: PolylineId("route"),
-                                width: 5,
-                                points: _navigationProvider.polylinePoints)
-                          },
-                          onMapCreated: (GoogleMapController controller) {
-                            _controller.complete(controller);
-                          },
-                          myLocationButtonEnabled: true,
-                          myLocationEnabled: true,
-                          markers: markers),
+                        mapType: MapType.normal,
+                        initialCameraPosition: CameraPosition(
+                            target: initCameraPosition, zoom: 13),
+                        polylines: {
+                          Polyline(
+                              polylineId: PolylineId("route"),
+                              width: 5,
+                              points: _navigationProvider.polylinePoints)
+                        },
+                        onMapCreated: (GoogleMapController controller) {
+                          _controller.complete(controller);
+                        },
+                        myLocationButtonEnabled: true,
+                        myLocationEnabled: true,
+                        markers: markers,
+                        compassEnabled: false,
+                      ),
                       changeButton(_navigationProvider.ridingState),
                       guideWidget()
                     ],
@@ -199,7 +216,7 @@ class _NavigationPageState extends State<NavigationPage> {
         child: Text("라이딩 완료"),
       );
     } else {
-      return Spacer(flex: 1);
+      return Column();
     }
   }
 }
