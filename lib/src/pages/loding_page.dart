@@ -42,7 +42,7 @@ class _LodingPageState extends State<LodingPage> {
   Widget build(BuildContext context) {
     _authProvider = Provider.of<AuthProvider>(context);
 
-    Future.delayed(const Duration(milliseconds: 2500), () {
+    Future.delayed(const Duration(milliseconds: 1500), () {
       if (_authProvider.user != null) {
         Navigator.pushAndRemoveUntil(
             context,
@@ -68,15 +68,34 @@ class _LodingPageState extends State<LodingPage> {
       }
     });
 
-    return Scaffold(
-      body: Column(children: [
-        _kakaoLoginButton(),
-        _naverLoginButton(),
-        _googleLoginButton(),
-        _appleLoginButton()
-      ]),
-      appBar: AppBar(backgroundColor: Color.fromARGB(255, 25, 245, 83)),
-    );
+    return Container(
+        width: double.infinity,
+        height: double.infinity,
+        alignment: Alignment.center,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/images/loading_background.png'),
+              fit: BoxFit.cover),
+        ),
+        child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 30.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  "RIDING PARTNER\nIN SIHEUNG",
+                  style: TextStyle(
+                      backgroundColor: null,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontSize: 30),
+                  textAlign: TextAlign.center,
+                ),
+                _kakaoLoginButton(),
+                _naverLoginButton(),
+                _googleLoginButton(),
+                _appleLoginButton()
+              ],
+            )));
   }
 
   Widget _naverLoginButton() {

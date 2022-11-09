@@ -105,7 +105,7 @@ class SocialLogin {
         await FirebaseAuth.instance.signInWithCredential(credential);
     if (result.user != null) {
       developer.log(result.user.toString());
-      print('로그인');
+      saveUserInfo(result.user!);
       return result.user;
     } else {
       return null;
