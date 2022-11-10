@@ -7,24 +7,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:ridingpartner_flutter/src/provider/map_search_provider.dart';
 import 'package:ridingpartner_flutter/main.dart';
+import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  test('address length sholud be bigger than 1', () async {
+    final address =
+        await MapSearchProvider().getMyLocationAddress(126.9784147, 37.5666805);
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    final length = address.toString();
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(length, '서울 중구 태평로1가 31');
   });
 }

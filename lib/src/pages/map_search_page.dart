@@ -43,6 +43,7 @@ class MapSampleState extends State<MapSearchPage> {
   @override
   Widget build(BuildContext context) {
     final mapSearchProvider = Provider.of<MapSearchProvider>(context);
+    var myLocation = '내 위치';
 
     return Scaffold(
       body: Stack(
@@ -53,6 +54,11 @@ class MapSampleState extends State<MapSearchPage> {
             initialCameraPosition: _initLocation,
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
+              mapSearchProvider
+                  .getMyLocationAddress()
+                  .then((value) => {mapSearchProvider.setMyLocation(value)})
+                  .catchError((error) => '내 위치를 불러오지 못했어요' + error.toString());
+              ;
             },
             myLocationButtonEnabled: true,
             myLocationEnabled: true,
@@ -105,7 +111,7 @@ class MapSampleState extends State<MapSearchPage> {
 
   Widget placeList(MapSearchProvider mapSearchProvider, String type,
       List<Place> list, TextEditingController textController) {
-    return Flexible(
+    return Expanded(
       child: ListView.builder(
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index) {
@@ -146,6 +152,7 @@ class MapSampleState extends State<MapSearchPage> {
         height: 70,
         width: MediaQuery.of(context).size.width - 100,
         child: TextField(
+          onTap: () => {},
           onChanged: (value) => mapSearchProvider.searchPlace(value, type),
           controller: textController,
           decoration: InputDecoration(
@@ -155,6 +162,14 @@ class MapSampleState extends State<MapSearchPage> {
         ),
       ),
     ]);
+  }
+
+  Widget testButton(MapSearchProvider mapSearchProvider) {
+    return FloatingActionButton.extended(
+        onPressed: () {
+          mapSearchProvider.getMyLocationAddress();
+        },
+        label: Text("test"));
   }
 
   Widget startNav(MapSearchProvider mapSearchProvider) {
