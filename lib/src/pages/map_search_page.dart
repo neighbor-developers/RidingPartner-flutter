@@ -31,6 +31,18 @@ class MapSampleState extends State<MapSearchPage> {
   @override
   void initState() {
     super.initState();
+    _startPointFocusNode.addListener(() {
+      if (!_startPointFocusNode.hasFocus) {
+        Provider.of<MapSearchProvider>(context, listen: false)
+            .clearStartPointSearchResult();
+      }
+    });
+    _endPointFocusNode.addListener(() {
+      if (!_endPointFocusNode.hasFocus) {
+        Provider.of<MapSearchProvider>(context, listen: false)
+            .clearEndPointSearchResult();
+      }
+    });
     _initLoaction();
   }
 
@@ -167,7 +179,7 @@ class MapSampleState extends State<MapSearchPage> {
         width: MediaQuery.of(context).size.width - 100,
         child: TextField(
           focusNode: focusNode,
-          onTap: () => {},
+          onTap: () => {mapSearchProvider.setMyLocationOnly(type)},
           onChanged: (value) => mapSearchProvider.searchPlace(value, type),
           controller: textController,
           decoration: InputDecoration(

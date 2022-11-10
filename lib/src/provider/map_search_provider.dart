@@ -85,6 +85,19 @@ class MapSearchProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  setMyLocationOnly(type) {
+    if (type == '출발지') {
+      _startPointSearchResult = [];
+      _startPointSearchResult.add(_myLocation!);
+      isStartSearching = true;
+    } else {
+      _endPointSearchResult = [];
+      _endPointSearchResult.add(_myLocation!);
+      isEndSearching = true;
+    }
+    notifyListeners();
+  }
+
   setMyLocation(address) async {
     List<Place> tmpResult = (await NaverMapService().getPlaces(address)) ?? [];
     _myLocation = tmpResult[0];
