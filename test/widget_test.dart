@@ -13,11 +13,10 @@ import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 
 void main() {
   test('address length sholud be bigger than 1', () async {
-    final address =
-        await MapSearchProvider().getMyLocationAddress(126.9784147, 37.5666805);
+    final address = await MapSearchProvider().getMyLocationAddress();
 
-    final length = address.toString();
+    final adrstr = address.toString();
 
-    expect(length, '서울 중구 태평로1가 31');
+    expect(adrstr, '서울 중구 태평로1가 31');
   });
 }
