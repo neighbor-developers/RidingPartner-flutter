@@ -24,7 +24,6 @@ class MapSearchProvider extends ChangeNotifier {
   Place? get endPoint => _endPoint;
 
   Place? _myLocation;
-  Place? get myLocation => _myLocation;
 
   setStartPoint(Place place) {
     _startPoint = place;
@@ -64,6 +63,9 @@ class MapSearchProvider extends ChangeNotifier {
     _startPointSearchResult = (await NaverMapService().getPlaces(title)) ?? [];
     if (_startPointSearchResult.isNotEmpty) {
       isStartSearching = true;
+      if (_myLocation != null) {
+        _startPointSearchResult.insert(0, _myLocation!);
+      }
     } else {
       isStartSearching = false;
     }
@@ -74,6 +76,9 @@ class MapSearchProvider extends ChangeNotifier {
     _endPointSearchResult = (await NaverMapService().getPlaces(title)) ?? [];
     if (_endPointSearchResult.isNotEmpty) {
       isEndSearching = true;
+      if (_myLocation != null) {
+        _endPointSearchResult.insert(0, _myLocation!);
+      }
     } else {
       isEndSearching = false;
     }
@@ -83,7 +88,7 @@ class MapSearchProvider extends ChangeNotifier {
   setMyLocation(address) async {
     List<Place> tmpResult = (await NaverMapService().getPlaces(address)) ?? [];
     _myLocation = tmpResult[0];
-    developer.log(tmpResult[2].title.toString());
+    _myLocation!.title = "내 위치";
     notifyListeners();
   }
 

@@ -19,7 +19,8 @@ class MapSearchPage extends StatefulWidget {
 
 class MapSampleState extends State<MapSearchPage> {
   final Completer<GoogleMapController> _controller = Completer();
-
+  FocusNode _startPointFocusNode = FocusNode();
+  FocusNode _endPointFocusNode = FocusNode();
   final _startPointTextController = TextEditingController();
   final _endPointTextController = TextEditingController();
   var _initLocation = CameraPosition(
@@ -68,8 +69,10 @@ class MapSampleState extends State<MapSearchPage> {
             alignment: Alignment.topLeft,
             child: Column(
               children: <Widget>[
-                searchBox(mapSearchProvider, "출발지", _startPointTextController),
-                searchBox(mapSearchProvider, "도착지", _endPointTextController),
+                searchBox(mapSearchProvider, "출발지", _startPointTextController,
+                    _startPointFocusNode),
+                searchBox(mapSearchProvider, "도착지", _endPointTextController,
+                    _endPointFocusNode),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.5,
                 ),
@@ -120,10 +123,21 @@ class MapSampleState extends State<MapSearchPage> {
               child: ListTile(
                   title: Text(list[index].title!),
                   subtitle: Text(list[index].jibunAddress ?? ''),
+                  textColor: setTextColor(index),
                   onTap: () async {
                     final GoogleMapController controller =
                         await _controller.future;
-                    textController.text = list[index].title!;
+                    if (index == 0) {
+                      textController.text =
+                          '${list[index].title!}: ${list[index].jibunAddress!}';
+                    } else {
+                      textController.text = list[index].title!;
+                    }
+                    if (type == "출발지") {
+                      FocusScope.of(context).requestFocus(_endPointFocusNode);
+                    } else {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    }
                     controller.animateCamera(CameraUpdate.newCameraPosition(
                       CameraPosition(
                         target: LatLng(double.parse(list[index].latitude!),
@@ -146,12 +160,13 @@ class MapSampleState extends State<MapSearchPage> {
   }
 
   Widget searchBox(MapSearchProvider mapSearchProvider, String type,
-      TextEditingController textController) {
+      TextEditingController textController, FocusNode focusNode) {
     return Column(children: [
       SizedBox(
         height: 70,
         width: MediaQuery.of(context).size.width - 100,
         child: TextField(
+          focusNode: focusNode,
           onTap: () => {},
           onChanged: (value) => mapSearchProvider.searchPlace(value, type),
           controller: textController,
@@ -162,6 +177,13 @@ class MapSampleState extends State<MapSearchPage> {
         ),
       ),
     ]);
+  }
+
+  Color setTextColor(index) {
+    if (index == 0) {
+      return Colors.lightBlue;
+    }
+    return Colors.black;
   }
 
   Widget testButton(MapSearchProvider mapSearchProvider) {
