@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
+import '../utils/custom_marker.dart';
 
 import '../models/position_stream.dart';
 import 'dart:developer' as developer;
@@ -54,6 +56,8 @@ class RidingProvider with ChangeNotifier {
   RidingState get state => _ridingState;
   Position? get position => _position;
 
+  late Uint8List customIcon;
+
   setRidingState(RidingState state) {
     _ridingState = state;
     notifyListeners();
@@ -71,6 +75,8 @@ class RidingProvider with ChangeNotifier {
       _ridingDate =
           DateFormat('yy/MM/dd - HH:mm:ss').format(DateTime.now()); //format변경
     }
+
+    setCustomMapPin();
 
     _positionStream.controller.stream.listen((pos) {
       if (_position == null) {
@@ -145,4 +151,7 @@ class RidingProvider with ChangeNotifier {
 
     notifyListeners();
   }*/
+  void setCustomMapPin() async{
+    customIcon = await CustomMarker().getBytesFromAsset("path", 130);
+  }
 }

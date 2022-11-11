@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -8,6 +9,7 @@ import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 
 import '../provider/riding_result_provider.dart';
+import '../utils/custom_marker.dart';
 import 'dart:developer' as developer;
 
 
@@ -73,6 +75,7 @@ class RidingPage extends StatelessWidget {
           markers: {
             Marker(
                 markerId: const MarkerId("currentLocation"),
+                icon: BitmapDescriptor.fromBytes(RidingProvider().customIcon),
                 position: LatLng(_ridingProvider.position?.latitude ?? 37.343991285297, _ridingProvider.position?.longitude ?? 126.74729588817)
             )
           },

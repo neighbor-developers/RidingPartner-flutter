@@ -32,7 +32,7 @@ class _CameraExampleState extends State<CameraExample> {
         height: MediaQuery.of(context).size.width,
         child: Center(
             child: _image == null
-                ? Text('No image selected.')
+                ? const Text('No image selected.')
                 : Image.file(File(_image!.path))));
   }
 
