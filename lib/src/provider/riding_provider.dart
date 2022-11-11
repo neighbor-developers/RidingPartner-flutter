@@ -57,6 +57,7 @@ class RidingProvider with ChangeNotifier {
   Position? get position => _position;
 
   late Uint8List customIcon;
+  google_map.BitmapDescriptor pictureIcon = google_map.BitmapDescriptor.defaultMarker;
 
   setRidingState(RidingState state) {
     _ridingState = state;
@@ -76,7 +77,7 @@ class RidingProvider with ChangeNotifier {
           DateFormat('yy/MM/dd - HH:mm:ss').format(DateTime.now()); //format변경
     }
 
-    setCustomMapPin();
+    setCustomMarker();
 
     _positionStream.controller.stream.listen((pos) {
       if (_position == null) {
@@ -151,7 +152,11 @@ class RidingProvider with ChangeNotifier {
 
     notifyListeners();
   }*/
-  void setCustomMapPin() async{
+  void setCustomMarker() async{
     customIcon = await CustomMarker().getBytesFromAsset("path", 130);
+  }
+
+  void setPictureMarker(){
+    pictureIcon = CustomMarker().getPictuerMarker("");
   }
 }

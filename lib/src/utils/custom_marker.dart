@@ -22,6 +22,14 @@ class CustomMarker{
         .asUint8List();
   }
 
+  BitmapDescriptor getPictuerMarker(String path){
+    BitmapDescriptor pictureIcon = BitmapDescriptor.defaultMarker ;
+    BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, path)
+        .then((icon){
+        pictureIcon = icon;
+      },
+    );
 
-
+    return pictureIcon;
+  }
 }
