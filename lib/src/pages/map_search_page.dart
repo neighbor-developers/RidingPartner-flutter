@@ -19,7 +19,8 @@ class MapSearchPage extends StatefulWidget {
 
 class MapSampleState extends State<MapSearchPage> {
   final Completer<GoogleMapController> _controller = Completer();
-
+  FocusNode _startPointFocusNode = FocusNode();
+  FocusNode _endPointFocusNode = FocusNode();
   final _startPointTextController = TextEditingController();
   final _endPointTextController = TextEditingController();
   var _initLocation = CameraPosition(
@@ -30,6 +31,18 @@ class MapSampleState extends State<MapSearchPage> {
   @override
   void initState() {
     super.initState();
+    _startPointFocusNode.addListener(() {
+      if (!_startPointFocusNode.hasFocus) {
+        Provider.of<MapSearchProvider>(context, listen: false)
+            .clearStartPointSearchResult();
+      }
+    });
+    _endPointFocusNode.addListener(() {
+      if (!_endPointFocusNode.hasFocus) {
+        Provider.of<MapSearchProvider>(context, listen: false)
+            .clearEndPointSearchResult();
+      }
+    });
     _initLoaction();
   }
 
@@ -43,6 +56,7 @@ class MapSampleState extends State<MapSearchPage> {
   @override
   Widget build(BuildContext context) {
     final mapSearchProvider = Provider.of<MapSearchProvider>(context);
+    var myLocation = '내 위치';
 
     return Scaffold(
       body: Stack(
@@ -53,17 +67,24 @@ class MapSampleState extends State<MapSearchPage> {
             initialCameraPosition: _initLocation,
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
+              mapSearchProvider
+                  .getMyLocationAddress()
+                  .then((value) => {mapSearchProvider.setMyLocation(value)})
+                  .catchError((error) => '내 위치를 불러오지 못했어요' + error.toString());
+              ;
             },
             myLocationButtonEnabled: true,
             myLocationEnabled: true,
           ),
           Container(
-            margin: const EdgeInsets.only(top: 60),
-            alignment: Alignment.topCenter,
+            margin: const EdgeInsets.only(top: 60, left: 60),
+            alignment: Alignment.topLeft,
             child: Column(
               children: <Widget>[
-                searchBox(mapSearchProvider, "출발지", _startPointTextController),
-                searchBox(mapSearchProvider, "도착지", _endPointTextController),
+                searchBox(mapSearchProvider, "출발지", _startPointTextController,
+                    _startPointFocusNode),
+                searchBox(mapSearchProvider, "도착지", _endPointTextController,
+                    _endPointFocusNode),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.5,
                 ),
@@ -72,14 +93,12 @@ class MapSampleState extends State<MapSearchPage> {
             ),
           ),
           Container(
-              alignment: Alignment.topCenter,
-              width: MediaQuery.of(context).size.width - 100,
-              margin: const EdgeInsets.only(
-                top: 120,
-              ),
+              alignment: Alignment.topLeft,
+              width: MediaQuery.of(context).size.width - 80,
+              margin: const EdgeInsets.only(top: 120, left: 50),
               child: Visibility(
                   visible: mapSearchProvider.isStartSearching,
-                  child: Row(children: [
+                  child: Column(children: [
                     placeList(
                         mapSearchProvider,
                         "출발지",
@@ -87,14 +106,12 @@ class MapSampleState extends State<MapSearchPage> {
                         _startPointTextController)
                   ]))),
           Container(
-              alignment: Alignment.topCenter,
-              width: MediaQuery.of(context).size.width - 100,
-              margin: const EdgeInsets.only(
-                top: 190,
-              ),
+              alignment: Alignment.topLeft,
+              width: MediaQuery.of(context).size.width - 80,
+              margin: const EdgeInsets.only(top: 190, left: 50),
               child: Visibility(
                 visible: mapSearchProvider.isEndSearching,
-                child: Row(children: [
+                child: Column(children: [
                   placeList(
                       mapSearchProvider,
                       "도착지",
@@ -117,10 +134,22 @@ class MapSampleState extends State<MapSearchPage> {
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
               child: ListTile(
                   title: Text(list[index].title!),
+                  subtitle: Text(list[index].jibunAddress ?? ''),
+                  textColor: setTextColor(index),
                   onTap: () async {
                     final GoogleMapController controller =
                         await _controller.future;
-                    textController.text = list[index].title!;
+                    if (index == 0) {
+                      textController.text =
+                          '${list[index].title!}: ${list[index].jibunAddress!}';
+                    } else {
+                      textController.text = list[index].title!;
+                    }
+                    if (type == "출발지") {
+                      FocusScope.of(context).requestFocus(_endPointFocusNode);
+                    } else {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    }
                     controller.animateCamera(CameraUpdate.newCameraPosition(
                       CameraPosition(
                         target: LatLng(double.parse(list[index].latitude!),
@@ -143,12 +172,14 @@ class MapSampleState extends State<MapSearchPage> {
   }
 
   Widget searchBox(MapSearchProvider mapSearchProvider, String type,
-      TextEditingController textController) {
+      TextEditingController textController, FocusNode focusNode) {
     return Column(children: [
       SizedBox(
         height: 70,
         width: MediaQuery.of(context).size.width - 100,
         child: TextField(
+          focusNode: focusNode,
+          onTap: () => {mapSearchProvider.setMyLocationOnly(type)},
           onChanged: (value) => mapSearchProvider.searchPlace(value, type),
           controller: textController,
           decoration: InputDecoration(
@@ -158,6 +189,21 @@ class MapSampleState extends State<MapSearchPage> {
         ),
       ),
     ]);
+  }
+
+  Color setTextColor(index) {
+    if (index == 0) {
+      return Colors.lightBlue;
+    }
+    return Colors.black;
+  }
+
+  Widget testButton(MapSearchProvider mapSearchProvider) {
+    return FloatingActionButton.extended(
+        onPressed: () {
+          mapSearchProvider.getMyLocationAddress();
+        },
+        label: Text("test"));
   }
 
   Widget startNav(MapSearchProvider mapSearchProvider) {

@@ -59,6 +59,7 @@ dependencies:
   dollar_gesture_recognizer: ^0.0.2
   background_locator_2: ^2.0.5
   sign_in_with_apple: ^4.2.0
+  # screen: ^0.0.5
 
   shared_preferences: ^2.0.15
   firebase_database: ^9.1.7
@@ -94,6 +95,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/config/.env
+    - assets/images/loading_background.png
     - assets/img
 
   # An image asset can refer to one or more resolution-specific "variants", see

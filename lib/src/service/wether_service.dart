@@ -26,9 +26,12 @@ class WeatherService {
     }
     //get the current time
     final now = DateTime.now();
-    final baseDate = DateFormat('yyyyMMdd').format(now);
+    var baseDate = DateFormat('yyyyMMdd').format(now);
     var baseTime = DateFormat('HHmm').format(now);
     baseTime = redefineBaseTime(baseTime);
+    if (baseTime.substring(0, 2) == '23') {
+      baseDate = DateFormat('yyyyMMdd').format(now.subtract(Duration(days: 1)));
+    }
     final gridData =
         ConvGridGps.gpsToGRID(myLocation.latitude!, myLocation.longitude!);
     final Map<String, String> queryParams = {
