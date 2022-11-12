@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
 
@@ -28,7 +30,7 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
     Widget imageBox(image) => Container(
         padding: const EdgeInsets.only(right: 20),
         width: 80,
-        child: Image.network(image));
+        child: Image.asset(image));
 
     void routeDialog(RidingRoute route) => showDialog(
         context: context,
@@ -44,7 +46,7 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Image.network(route.image!),
+                Image.asset(route.image!),
                 Text(route.description!),
               ],
             ),
@@ -80,7 +82,7 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
           );
         });
 
-    Widget routeListWidget() {
+    Widget routeListWidget2() {
       if (state == RouteListState.searching) {
         return Container(
           height: 100,
@@ -120,6 +122,56 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
                 )),
             separatorBuilder: (BuildContext context, int index) =>
                 const Divider(),
+          ),
+        );
+      }
+    }
+
+    Widget routeListWidget() {
+      if (state == RouteListState.searching) {
+        return Container(
+          height: 100,
+          alignment: Alignment.center,
+          child: const Text(
+            'Loding',
+            style: TextStyle(fontSize: 30),
+          ),
+        );
+      } else if (state == RouteListState.empty) {
+        return Container(
+          height: 100,
+          alignment: Alignment.center,
+          child: const Text(
+            'Empty',
+            style: TextStyle(fontSize: 30),
+          ),
+        );
+      } else {
+        final routeList = routeListProvider.routeList;
+        return SingleChildScrollView(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(
+              2,
+              (index) => Expanded(
+                child: Column(
+                  children: List.generate(
+                    routeList.length ~/ 2,
+                    (jndex) => Container(
+                      height: 200,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.white),
+                          color: Colors.primaries[
+                              Random().nextInt(Colors.primaries.length)]),
+                      child: Image.asset(
+                        routeList[jndex * 2 + index].image!,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ).toList(),
+                ),
+              ),
+            ).toList(),
           ),
         );
       }

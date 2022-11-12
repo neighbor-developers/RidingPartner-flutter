@@ -38,6 +38,13 @@
         "routeImage": "assets/images/places/red_lighthouse.jpeg",
         "description": "시흥 순환 코스",
         "route": ["고잔역 4호선", "반달섬", "거북섬", "오이도빨간등대", "물왕호수", "고잔역 4호선"]
+    },
+    {
+        "id": "6",
+        "title": "테스트용",
+        "image": "assets/images/places/wolgot_port.jpeg",
+        "routeImage": "assets/images/places/wolgot_port.jpeg",
+        "description": "테스트용",
+        "route": ["고잔역 4호선", "반달섬", "거북섬", "오이도빨간등대", "물왕호수", "고잔역 4호선"]
     }
-    
 ]
