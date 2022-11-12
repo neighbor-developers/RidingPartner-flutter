@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'dart:convert';
 
 class Place {
   String? id;
@@ -21,6 +22,17 @@ class Place {
     this.image,
   });
 
+  factory Place.fromJson(Map<String, dynamic> json) => Place(
+        id: json["id"],
+        title: json["title"],
+        latitude: json["latitude"],
+        longitude: json["longitude"],
+        jibunAddress: json["jibunAddress"],
+        roadAddress: json["roadAddress"],
+        description: json["description"],
+        image: json["image"],
+      );
+
   factory Place.fromDB(db) => Place(
         id: db?["id"],
         title: db?["title"],
@@ -31,6 +43,19 @@ class Place {
         description: db?["description"],
         image: db?["image"],
       );
+}
+
+class PlaceList {
+  final List<Place>? places;
+  PlaceList({this.places});
+
+  factory PlaceList.fromJson(String jsonString) {
+    List<dynamic> listFromJson = json.decode(jsonString);
+    List<Place> places = <Place>[];
+
+    places = listFromJson.map((place) => Place.fromJson(place)).toList();
+    return PlaceList(places: places);
+  }
 }
 
 class NaverPlaceData {
