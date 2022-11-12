@@ -1,13 +1,19 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart' as google_map;
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
+import '../utils/custom_marker.dart';
 
 import '../models/position_stream.dart';
+import 'dart:developer' as developer;
 
 enum RidingState { before, riding, pause, stop }
 
@@ -16,10 +22,13 @@ class RidingProvider with ChangeNotifier {
   final PositionStream _positionStream = PositionStream();
   final FirebaseDatabaseService _firebaseDb = FirebaseDatabaseService();
 
+
   Position? _position;
   RidingState _ridingState = RidingState.before;
 
   String _ridingDate = "";
+  String get ridingDate => _ridingDate;
+
   late int _startTime; // 라이딩 시작 타임스탬프
   late int _endTime; // 라이딩 중단 타임스탬프
   late int _restartTime = 0; // 라이딩 시작 타임스탬프
@@ -31,6 +40,12 @@ class RidingProvider with ChangeNotifier {
   final Stopwatch _stopwatch = Stopwatch();
   late int _befTime;
 
+  //final 붙여도 되나?
+  List<google_map.LatLng> _polylineCoordinates = [];
+  List<google_map.LatLng> get polylineCoordinates => _polylineCoordinates;
+  PolylinePoints polylinePoints = PolylinePoints();
+
+
   num _sumDistance = 0.0; // 총거리
   num _speed = 0.0; // 순간 속도
   Duration _time = Duration.zero; // 라이딩 누적 시간
@@ -40,6 +55,9 @@ class RidingProvider with ChangeNotifier {
   Duration get time => _time;
   RidingState get state => _ridingState;
   Position? get position => _position;
+
+  late Uint8List customIcon;
+  google_map.BitmapDescriptor pictureIcon = google_map.BitmapDescriptor.defaultMarker;
 
   setRidingState(RidingState state) {
     _ridingState = state;
@@ -59,15 +77,19 @@ class RidingProvider with ChangeNotifier {
           DateFormat('yy/MM/dd - HH:mm:ss').format(DateTime.now()); //format변경
     }
 
+    setCustomMarker();
+
     _positionStream.controller.stream.listen((pos) {
       if (_position == null) {
         _befLatLng = LatLng(pos.latitude, pos.longitude);
       }
       _position = pos;
+      _polylineCoordinates.add(google_map.LatLng(_position!.latitude, _position!.longitude));
+      //addPolyline();
     });
     _stopwatch.start();
 
-    _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
+    _timer = Timer.periodic(Duration(milliseconds: 10), ((timer) {
       if (_position != null) {
         _calRecord(_position!);
       }
@@ -109,6 +131,7 @@ class RidingProvider with ChangeNotifier {
         date: _ridingDate,
         timestamp: _time.inSeconds,
         kcal: 0);
+    developer.log(_ridingDate.toString());
     _firebaseDb.saveRecordFirebaseDb(record);
   }
 
@@ -117,5 +140,23 @@ class RidingProvider with ChangeNotifier {
     _stopwatch.stop();
     _timer.cancel();
     _pauseTime = DateTime.now().millisecondsSinceEpoch;
+  }
+
+/*  void addPolyline(){
+    google_map.Polyline poliline = google_map.Polyline(
+      polylineId: const google_map.PolylineId("poly"),
+      color: Colors.blue,
+      points: polylineCoordinates
+    );
+    polylines.add();
+
+    notifyListeners();
+  }*/
+  void setCustomMarker() async{
+    customIcon = await CustomMarker().getBytesFromAsset("path", 130);
+  }
+
+  void setPictureMarker(){
+    pictureIcon = CustomMarker().getPictuerMarker("");
   }
 }
