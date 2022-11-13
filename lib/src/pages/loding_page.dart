@@ -13,6 +13,7 @@ import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/place_list_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/route_list_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/sights_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 
 class LodingPage extends StatefulWidget {
@@ -49,20 +50,22 @@ class _LodingPageState extends State<LodingPage> {
             context,
             MaterialPageRoute(
                 builder: (context) => MultiProvider(providers: [
-                      ChangeNotifierProvider(
-                          create: (context) => WeatherProvider()),
-                      ChangeNotifierProvider(
-                          create: (context) => RouteListProvider()),
-                      ChangeNotifierProvider(
-                          create: (context) => BottomNavigationProvider()),
-                      ChangeNotifierProvider(
-                          create: (context) => MapSearchProvider()),
-                      ChangeNotifierProvider(
-                          create: (context) => RidingProvider()),
-                      ChangeNotifierProvider(
-                          create: (context) => PlaceListProvider())
-                    ], child: HomePage())),
-            (route) => false);
+                  ChangeNotifierProvider(
+                      create: (context) => SightsProvider()),
+                  ChangeNotifierProvider(
+                      create: (context) => WeatherProvider()),
+                  ChangeNotifierProvider(
+                      create: (context) => RouteListProvider()),
+                  ChangeNotifierProvider(
+                      create: (context) => BottomNavigationProvider()),
+                  ChangeNotifierProvider(
+                      create: (context) => MapSearchProvider()),
+                  ChangeNotifierProvider(
+                      create: (context) => RidingProvider()),
+                  ChangeNotifierProvider(
+                      create: (context) => PlaceListProvider())
+                ], child: HomePage())),
+                (route) => false);
       } else {
         if (connectivityResult == ConnectivityResult.none) {
           Fluttertoast.showToast(

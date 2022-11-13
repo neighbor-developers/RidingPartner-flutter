@@ -11,7 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class CustomMarker{
 
 
-  // width로 사이즈 조절
+  // 마커 asset 아이콘으로 넣기, width로 사이즈 조절
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
     ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
@@ -22,6 +22,7 @@ class CustomMarker{
         .asUint8List();
   }
 
+  // 마커 사진으로 넣기
   BitmapDescriptor getPictuerMarker(String path){
     BitmapDescriptor pictureIcon = BitmapDescriptor.defaultMarker ;
     BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, path)
@@ -32,4 +33,6 @@ class CustomMarker{
 
     return pictureIcon;
   }
+
+  // 마커 링크 사진으로 넣기
 }

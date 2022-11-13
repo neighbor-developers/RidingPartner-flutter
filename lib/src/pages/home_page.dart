@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/pages/map_search_page.dart';
 import 'package:ridingpartner_flutter/src/pages/navigation_page.dart';
 import 'package:ridingpartner_flutter/src/pages/recommended_route_page.dart';
-import 'package:ridingpartner_flutter/src/pages/rental_map.dart';
+import 'package:ridingpartner_flutter/src/pages/sights_page.dart';
 import 'package:ridingpartner_flutter/src/pages/riding_page.dart';
 import 'package:ridingpartner_flutter/src/pages/weather_page.dart';
 import 'package:ridingpartner_flutter/src/provider/bottom_navigation_provider.dart';
@@ -21,7 +21,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: [
-          RentalMap(),
+          SightsPage(),
           RecommendedRoutePage(),
           WeatherPage(),
           MapSearchPage(),
@@ -32,7 +32,7 @@ class HomePage extends StatelessWidget {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.pedal_bike),
-              label: '대여소',
+              label: '명소',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.flag),
