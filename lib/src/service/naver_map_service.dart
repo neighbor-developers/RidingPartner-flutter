@@ -66,10 +66,12 @@ class NaverMapService {
     }
   }
 
-  Future<List<Guide>?> getRoute(
+  Future<Map<String, dynamic>?> getRoute(
       Place start, Place destination, List<Place>? waypoints) async {
     try {
       List<Guide> guides = [];
+      List<int> distances = [];
+      int sumDistance = 0;
 
       String placeToParam(Place place) =>
           '${place.longitude},${place.latitude},placeid=${place.id},name=${place.title}';
@@ -98,14 +100,26 @@ class NaverMapService {
               .expand((leg) => leg.steps!)
               .map((step) => step.guide!)
               .toList();
+          distances = routeData.routes!
+              .expand<Legs>((rou) => rou.legs!)
+              .expand((leg) => leg.steps!)
+              .map((step) => step.summary!.distance!)
+              .toList();
+
+          sumDistance = routeData.routes![0].summary!.distance!;
         } else {
           print("routeData.routes = null");
         }
+        Map<String, dynamic> routes = {
+          'sumdistance': sumDistance,
+          'guides': guides,
+          'distances': distances
+        };
 
-        return guides;
+        return routes;
       } else {
         print("가이드 잘 안왔음");
-        return guides;
+        return null;
       }
     } catch (e) {
       developer.log(e.toString());

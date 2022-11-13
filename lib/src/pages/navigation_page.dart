@@ -234,7 +234,7 @@ class _NavigationPageState extends State<NavigationPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "거리 : ${_ridingProvider.distance.toString()}, 속도 : ${_ridingProvider.speed.toString()}",
+            "남은거리 : ${_navigationProvider.remainedDistance.toString()}, 속도 : ${_ridingProvider.speed.toString()}",
             style: TextStyle(fontSize: 20),
           )
         ],

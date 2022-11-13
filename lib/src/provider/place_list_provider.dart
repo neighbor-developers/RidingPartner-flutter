@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ridingpartner_flutter/src/models/place.dart';
 
 class PlaceListProvider with ChangeNotifier {

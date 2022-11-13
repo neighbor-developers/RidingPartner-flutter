@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
@@ -28,6 +29,7 @@ class NavigationProvider with ChangeNotifier {
 
   late List<Place> _ridingCourse;
   List<Guide>? _route;
+  List<int> _distances = [];
   List<google_map.LatLng> _polylinePoints = [];
   List<google_map.LatLng> get polylinePoints => _polylinePoints;
 
@@ -37,6 +39,9 @@ class NavigationProvider with ChangeNotifier {
   Place? _nextDestination;
   late Place _finalDestination;
   Timer? _timer;
+  int getRouteTimer = 0;
+  int _remainedDistance = 0;
+
   LatLng? _nextLatLng;
 
   Guide get goalPoint => _goalPoint;
@@ -45,6 +50,7 @@ class NavigationProvider with ChangeNotifier {
   RidingState get ridingState => _ridingState;
   List<Place> get course => _ridingCourse;
   LatLng? get nextLatLng => _nextLatLng;
+  int get remainedDistance => _remainedDistance;
 
   void setState(RidingState state) {
     _ridingState = state;
@@ -55,6 +61,7 @@ class NavigationProvider with ChangeNotifier {
   }
 
   Future<void> getRoute() async {
+    getRouteTimer = 0;
     _goalDestination = _ridingCourse.first;
     _finalDestination = _ridingCourse.last;
     _nextDestination = _ridingCourse.elementAt(1);
@@ -86,8 +93,16 @@ class NavigationProvider with ChangeNotifier {
       _ridingCourse = List.from(_ridingCourse.reversed);
     }
 
-    _route = await _naverMapService.getRoute(
+    Map<String, dynamic>? response = await _naverMapService.getRoute(
         startPlace, _finalDestination, _ridingCourse);
+    if (response != null) {
+      _route = response['guides'];
+      _remainedDistance = response['sumdistance'];
+      _distances = response['distances'];
+    } else {
+      _route = null;
+      _distances = [];
+    }
 
     if (_route != null) {
       print("루트 사이즈 : ${_route!.length.toString()}");
@@ -99,6 +114,9 @@ class NavigationProvider with ChangeNotifier {
         _nextPoint = _route![1];
       }
       _nextLatLng = latLngFromGuide(_nextPoint);
+      // _route.forEach((element) {
+      //   _remainedDistance += element.
+      // })
     } else {
       print("루트 : null");
     }
@@ -111,8 +129,11 @@ class NavigationProvider with ChangeNotifier {
       _position = pos;
     });
 
+    // Screen.keepOn(true);
+
     _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
       _calToPoint();
+      getRouteTimer++;
     }));
   }
 
@@ -135,7 +156,9 @@ class NavigationProvider with ChangeNotifier {
         // 2의 경우
         // c + am
         _calToDestination(); // 다음 경유지 계산해서 만약 다음 경유지가 더 가까우면 사용자 입력 받아서 다음경유지로 안내
-        getRoute();
+        if (getRouteTimer > 10) {
+          getRoute();
+        }
       } else {
         if (distanceToPoint <= 10 ||
             distanceToPoint > distanceToNextPoint + 10) {
@@ -146,11 +169,15 @@ class NavigationProvider with ChangeNotifier {
             _goalPoint = _route![0]; //
             _nextPoint = null;
             _polylinePoints.removeAt(0);
+            _remainedDistance -= _distances.last;
+            _distances.removeLast();
           } else {
             _route!.removeAt(0);
             _goalPoint = _route![0]; //
             _nextPoint = _route![1];
             _polylinePoints.removeAt(0);
+            _remainedDistance -= _distances.last;
+            _distances.removeLast();
           }
         }
       }
@@ -199,6 +226,11 @@ class NavigationProvider with ChangeNotifier {
         _ridingCourse.removeAt(0);
       }
     }
+  }
+
+  void stopNavigation() {
+    setState(RidingState.pause);
+    _timer?.cancel();
   }
 
   void _polyline() {
