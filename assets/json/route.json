@@ -2,42 +2,49 @@
     {
         "id": "1",
         "title": "한국공학대학교 통학로",
-        "image": "https://newsimg.sedaily.com/2022/03/24/263JJA8UBV_1.jpg",
-        "routeImage": "https://newsimg.sedaily.com/2022/03/24/263JJA8UBV_1.jpg",
+        "image": "assets/images/places/tukorea.jpeg",
+        "routeImage": "assets/images/places/tukorea.jpeg",
         "description": "한국공학대 통학로",
         "route": ["정왕역", "한국공학대학교"]
     },
     {
         "id": "2",
         "title": "그린웨이",
-        "image": "http://siheung.grandculture.net/siheung/popup/multimedia/GC069P00738",
-        "routeImage": "http://siheung.grandculture.net/siheung/popup/multimedia/GC069P00738",
+        "image": "assets/images/places/lotus_flower_theme_park.jpeg",
+        "routeImage": "assets/images/places/lotus_flower_theme_park.jpeg",
         "description": "그린웨이",
         "route": ["물왕호수", "연꽃테마파크", "갯골생태공원"]
     },
     {
         "id": "3",
         "title": "오이도 해안도로",
-        "image": "http://bbkk.kr/d/t/47/4762_%EB%A9%94%EC%9D%B8%EC%82%AC%EC%A7%84.jpg",
-        "routeImage": "http://bbkk.kr/d/t/47/4762_%EB%A9%94%EC%9D%B8%EC%82%AC%EC%A7%84.jpg",
+        "image": "assets/images/places/okgu_park.jpeg",
+        "routeImage": "assets/images/places/okgu_park.jpeg",
         "description": "오이도 해안도로",
         "route": ["오이도역", "배곧생명공원", "옥구공원", "오이도빨간등대", "거북섬", "반달섬"]
     },
     {
         "id": "4",
         "title": "시화 방조제",
-        "image": "http://siheung.grandculture.net/siheung/popup/multimedia/GC069P00228",
-        "routeImage": "http://siheung.grandculture.net/siheung/popup/multimedia/GC069P00228",
+        "image": "assets/images/places/sihwa_seawall.jpeg",
+        "routeImage": "assets/images/places/sihwa_seawall.jpeg",
         "description": "시화 방조제",
         "route": ["오이도역", "배곧생명공원", "옥구공원", "오이도빨간등대", "시화방조제", "대부도공원"]
     },
     {
         "id": "5",
         "title": "시흥 순환 코스",
-        "image": "https://w.namu.la/s/b5bae0cc6cc738b0761e7ba3154a5c391f7cda9f84f2851287000184fed814245c8417870b1aeece064345d61c5bb9ef4b759194ee8bd915213748bf57f5dac32f05077dc99298e74bc0bc56435d07f7adf024a271c292413211ad81bd90b88d4424c87fae2c8b11dc02a810d46375f5",
-        "routeImage": "https://w.namu.la/s/b5bae0cc6cc738b0761e7ba3154a5c391f7cda9f84f2851287000184fed814245c8417870b1aeece064345d61c5bb9ef4b759194ee8bd915213748bf57f5dac32f05077dc99298e74bc0bc56435d07f7adf024a271c292413211ad81bd90b88d4424c87fae2c8b11dc02a810d46375f5",
+        "image": "assets/images/places/red_lighthouse.jpeg",
+        "routeImage": "assets/images/places/red_lighthouse.jpeg",
         "description": "시흥 순환 코스",
         "route": ["고잔역 4호선", "반달섬", "거북섬", "오이도빨간등대", "물왕호수", "고잔역 4호선"]
+    },
+    {
+        "id": "6",
+        "title": "테스트용",
+        "image": "assets/images/places/wolgot_port.jpeg",
+        "routeImage": "assets/images/places/wolgot_port.jpeg",
+        "description": "테스트용",
+        "route": ["고잔역 4호선", "반달섬", "거북섬", "오이도빨간등대", "물왕호수", "고잔역 4호선"]
     }
-    
 ]

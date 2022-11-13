@@ -2,7 +2,7 @@
     {
         "id": "11591658",
         "title": "한국공학대학교",
-        "image": "https://newsimg.sedaily.com/2022/03/24/263JJA8UBV_1.jpg",
+        "image": "assets/images/places/tukorea.jpeg",
         "latitude": "37.3400342",
         "longitude": "126.7335061",
         "jibunAddress": "경기도 시흥시 정왕동 2121-1 한국공학대학교",
@@ -12,7 +12,7 @@
     {
         "id": "18253566",
         "title": "정왕역",
-        "image": "http://siheung.grandculture.net/siheung/popup/multimedia/GC069P00630",
+        "image": "assets/images/places/jeongwang_station.jpeg",
         "latitude": "37.3515042",
         "longitude": "126.7405867",
         "jibunAddress": "경기도 시흥시 정왕동",
@@ -21,7 +21,7 @@
     {
         "id": "1869342267",
         "title": "오이도빨간등대",
-        "image": "http://bbkk.kr/d/t/47/4762_%EB%A9%94%EC%9D%B8%EC%82%AC%EC%A7%84.jpg",
+        "image": "assets/images/places/red_lighthouse.jpeg",
         "latitude": "37.3456389",
         "longitude": "126.6875524",
         "jibunAddress": "경기도 시흥시 정왕동 2043",
@@ -31,7 +31,7 @@
     {
         "id": "13143571",
         "title": "연꽃테마파크",
-        "image": "http://siheung.grandculture.net/siheung/popup/multimedia/GC069P00087",
+        "image": "assets/images/places/lotus_flower_theme_park.jpeg",
         "latitude": "37.4023275",
         "longitude": "126.8072473",
         "jibunAddress": "경기도 시흥시 하중동 271",
@@ -41,7 +41,7 @@
     {
         "id": "13491058",
         "title": "물왕호수",
-        "image": "http://siheung.grandculture.net/siheung/popup/multimedia/GC069P00738",
+        "image": "assets/images/places/waterking_lake.jpeg",
         "latitude": "37.3823899",
         "longitude": "126.8343379",
         "jibunAddress": "경기도 시흥시 물왕동",
@@ -50,7 +50,7 @@
     {
         "id": "11622429",
         "title": "옥구공원",
-        "image": "http://siheung.grandculture.net/siheung/popup/multimedia/GC069P01701",
+        "image": "assets/images/places/okgu_park.jpeg",
         "latitude": "37.3555974",
         "longitude": "126.7120024",
         "jibunAddress": "경기도 시흥시 정왕동 2138",
@@ -60,7 +60,7 @@
     {
         "id": "13491554",
         "title": "월곶포구",
-        "image": "http://siheung.grandculture.net/siheung/popup/multimedia/GC069P01418",
+        "image": "assets/images/places/wolgot_port.jpeg",
         "latitude": "37.3869561",
         "longitude": "126.7383671",
         "jibunAddress": "경기도 시흥시 월곶동",
@@ -69,7 +69,7 @@
     {
         "id": "1199341197",
         "title": "갯골생태공원",
-        "image": "http://siheung.grandculture.net/siheung/popup/multimedia/GC069P01386",
+        "image": "assets/images/places/gaetgol_park.jpeg",
         "latitude": "37.3889771",
         "longitude": "126.7804387",
         "jibunAddress": "경기도 시흥시 장곡동",
@@ -78,7 +78,7 @@
     {
         "id": "37310952",
         "title": "배곧생명공원",
-        "image": "http://siheung.grandculture.net/siheung/popup/multimedia/GC069P00123",
+        "image": "assets/images/places/baegot_park.jpeg",
         "latitude": "37.3720949",
         "longitude": "126.7217521",
         "jibunAddress": "경기도 시흥시 정왕동 2506",
@@ -88,7 +88,7 @@
     {
         "id": "1903881322",
         "title": "거북섬",
-        "image": "http://siheung.grandculture.net/siheung/popup/multimedia/GC069P00123",
+        "image": "assets/images/places/turtle_island.jpeg",
         "latitude": "37.3214043",
         "longitude": "126.6793288",
         "jibunAddress": "경기도 시흥시 정왕동 2724",
@@ -98,7 +98,7 @@
     {
         "id": "35795149",
         "title": "반달섬",
-        "image": "http://www.biz-m.kr/mntbiz/file/201707/2017071901001311900063621.jpg",
+        "image": "assets/images/places/halfmoon_island.jpeg",
         "latitude": "37.3000201",
         "longitude": "126.7381704",
         "jibunAddress": "경기도 안산시 단원구 성곡동",
@@ -107,7 +107,7 @@
     {
         "id": "19029247",
         "title": "시화방조제",
-        "image": "http://siheung.grandculture.net/siheung/popup/multimedia/GC069P00228",
+        "image": "assets/images/places/sihwa_seawall.jpeg",
         "latitude": "37.3093672",
         "longitude": "126.6063404",
         "jibunAddress": "경기도 안산시 단원구 대부동동",
@@ -116,7 +116,7 @@
     {
         "id": "19029571",
         "title": "대부도공원",
-        "image": "https://tong.visitkorea.or.kr/cms/resource/51/2863951_image2_1.JPG",
+        "image": "assets/images/places/daebu_island.jpeg",
         "latitude": "37.2902425",
         "longitude": "126.5792887",
         "jibunAddress": "경기도 안산시 단원구 대부북동 1984",
@@ -126,7 +126,7 @@
     {
         "id": "13479320",
         "title": "고잔역 4호선",
-        "image": "https://mblogthumb-phinf.pstatic.net/MjAyMDAyMjBfOTUg/MDAxNTgyMTg2OTUwNzA2.YAZ1QblRswGK0oSMkVWRU57jYhybjZfdu_mpfQIStpsg.5O9LWYTXITAybpFQimUDn-T_0vf5V0VTESkBo3lScIUg.JPEG.cityansan/SE-fd1695ce-3e1a-44c4-a3e9-c1b6731e01ca.jpg?type=w800",
+        "image": "assets/images/places/gojan_station.jpeg",
         "latitude": "37.3168245",
         "longitude": "126.8234083",
         "jibunAddress": "경기도 안산시 단원구 고잔동 453-53",
@@ -136,7 +136,7 @@
     {
         "id": "19009887",
         "title": "화정천",
-        "image": "https://mblogthumb-phinf.pstatic.net/20160218_114/ansan-love_1455758289834RnDK8_JPEG/DSC_1001.JPG?type=w800",
+        "image": "assets/images/places/hwajeong_river.jpeg",
         "latitude": "37.3119297",
         "longitude": "126.8209368",
         "jibunAddress": "경기도 안산시 단원구 초지동",
@@ -145,10 +145,19 @@
     {
         "id": "36480728",
         "title": "소래습지생태공원",
-        "image": "https://www.incheon.go.kr/humanframe/theme/park/assets/image/contents/sorae00.png",
+        "image": "assets/images/places/sorae_park.png",
         "latitude": "37.4134966",
         "longitude": "126.7475643",
         "jibunAddress": "인천광역시 남동구 논현동 1-55",
         "description": "소래습지생태공원은 갯벌, 갯골과 폐염전 지역을 다양한 생물 군락지 및 철새 도래지로 복원시키기 위한 공원 조성 사업을 2009년 5월 완료하여, 습지 내 각종 해양생물을 관찰하고, 천일염을 생산했던 시설물과 자료를 볼 수 있는 전시관이 있으며, 직접 천일염 생산 및 습지 내 사는 다양한 동, 식물을 탐구해 볼 수 있는 자연학습장과 광활한 갈대 및 풍차, 산책로, 쉼터 등이 마련되어 있어, 시민의 편안한 휴식공간으로 활용되고 있다.\n[출처] 인천광역시"
+    },
+    {
+        "id": "18249566",
+        "title": "오이도역",
+        "image": "assets/images/places/oido_station.jpeg",
+        "latitude": "37.3624987",
+        "longitude": "126.7370000",
+        "jibunAddress": "경기도 시흥시 정왕동 878",
+        "description": "오이도역"
     }
 ]
