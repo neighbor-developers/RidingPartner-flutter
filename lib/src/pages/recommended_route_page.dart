@@ -20,6 +20,7 @@ class RecommendedRoutePage extends StatefulWidget {
 class RecommendedRoutePageState extends State<StatefulWidget> {
   @override
   Widget build(BuildContext context) {
+    const NUMBER_OF_COLUMNS = 2;
     final routeListProvider = Provider.of<RouteListProvider>(context);
     final state = routeListProvider.state;
 
@@ -82,93 +83,61 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
           );
         });
 
-    Widget routeListWidget2() {
-      if (state == RouteListState.searching) {
-        return Container(
+    Widget messageWidget(String message) => Container(
           height: 100,
           alignment: Alignment.center,
-          child: const Text(
-            'Loding',
+          child: Text(
+            message,
             style: TextStyle(fontSize: 30),
           ),
         );
-      } else if (state == RouteListState.empty) {
-        return Container(
-          height: 100,
-          alignment: Alignment.center,
-          child: const Text(
-            'Empty',
-            style: TextStyle(fontSize: 30),
+
+    Widget listBox(RidingRoute route) => Container(
+          height: 200,
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.white),
+              color:
+                  Colors.primaries[Random().nextInt(Colors.primaries.length)]),
+          child: Image.asset(
+            route.image!,
+            fit: BoxFit.cover,
           ),
         );
-      } else {
-        final routeList = routeListProvider.routeList;
-        return Flexible(
-          fit: FlexFit.tight,
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-            itemCount: routeList.length,
-            itemBuilder: (BuildContext context, int index) => InkWell(
-                onTap: () {
-                  routeDialog(routeList[index]);
-                },
-                child: SizedBox(
-                  height: 50,
-                  child: Row(children: [
-                    imageBox(routeList[index].image!),
-                    Text(routeList[index].title!,
-                        style: const TextStyle(fontSize: 17))
-                  ]),
-                )),
-            separatorBuilder: (BuildContext context, int index) =>
-                const Divider(),
+
+    Widget listCard(RidingRoute route) => Card(
+          semanticContainer: true,
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          elevation: 5,
+          margin: const EdgeInsets.all(10),
+          child: Image.asset(
+            route.image!,
+            fit: BoxFit.fill,
+            height: 150,
           ),
         );
-      }
-    }
 
     Widget routeListWidget() {
       if (state == RouteListState.searching) {
-        return Container(
-          height: 100,
-          alignment: Alignment.center,
-          child: const Text(
-            'Loding',
-            style: TextStyle(fontSize: 30),
-          ),
-        );
+        return messageWidget("Loading");
       } else if (state == RouteListState.empty) {
-        return Container(
-          height: 100,
-          alignment: Alignment.center,
-          child: const Text(
-            'Empty',
-            style: TextStyle(fontSize: 30),
-          ),
-        );
+        return messageWidget("Loading");
       } else {
         final routeList = routeListProvider.routeList;
         return SingleChildScrollView(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: List.generate(
-              2,
+              NUMBER_OF_COLUMNS,
               (index) => Expanded(
                 child: Column(
                   children: List.generate(
-                    routeList.length ~/ 2,
-                    (jndex) => Container(
-                      height: 200,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white),
-                          color: Colors.primaries[
-                              Random().nextInt(Colors.primaries.length)]),
-                      child: Image.asset(
-                        routeList[jndex * 2 + index].image!,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ).toList(),
+                          routeList.length ~/ NUMBER_OF_COLUMNS,
+                          (jndex) => listCard(
+                              routeList[jndex * NUMBER_OF_COLUMNS + index]))
+                      .toList(),
                 ),
               ),
             ).toList(),
