@@ -5,9 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:ridingpartner_flutter/src/pages/home_page.dart';
+import 'package:ridingpartner_flutter/src/pages/bottom_nav.dart';
 import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/bottom_navigation_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/map_search_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/place_list_provider.dart';
@@ -50,22 +51,24 @@ class _LodingPageState extends State<LodingPage> {
             context,
             MaterialPageRoute(
                 builder: (context) => MultiProvider(providers: [
-                  ChangeNotifierProvider(
-                      create: (context) => SightsProvider()),
-                  ChangeNotifierProvider(
-                      create: (context) => WeatherProvider()),
-                  ChangeNotifierProvider(
-                      create: (context) => RouteListProvider()),
-                  ChangeNotifierProvider(
-                      create: (context) => BottomNavigationProvider()),
-                  ChangeNotifierProvider(
-                      create: (context) => MapSearchProvider()),
-                  ChangeNotifierProvider(
-                      create: (context) => RidingProvider()),
-                  ChangeNotifierProvider(
-                      create: (context) => PlaceListProvider())
-                ], child: HomePage())),
-                (route) => false);
+                      ChangeNotifierProvider(
+                          create: (context) => SightsProvider()),
+                      ChangeNotifierProvider(
+                          create: (context) => WeatherProvider()),
+                      ChangeNotifierProvider(
+                          create: (context) => RouteListProvider()),
+                      ChangeNotifierProvider(
+                          create: (context) => BottomNavigationProvider()),
+                      ChangeNotifierProvider(
+                          create: (context) => MapSearchProvider()),
+                      ChangeNotifierProvider(
+                          create: (context) => RidingProvider()),
+                      ChangeNotifierProvider(
+                          create: (context) => PlaceListProvider()),
+                      ChangeNotifierProvider(
+                          create: (context) => HomeRecordProvider())
+                    ], child: BottomNavigation())),
+            (route) => false);
       } else {
         if (connectivityResult == ConnectivityResult.none) {
           Fluttertoast.showToast(
