@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
+import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
 import '../utils/custom_marker.dart';
 
 import '../models/position_stream.dart';
@@ -21,7 +22,6 @@ class RidingProvider with ChangeNotifier {
   final Distance _calDistance = const Distance();
   final PositionStream _positionStream = PositionStream();
   final FirebaseDatabaseService _firebaseDb = FirebaseDatabaseService();
-
 
   Position? _position;
   RidingState _ridingState = RidingState.before;
@@ -45,7 +45,6 @@ class RidingProvider with ChangeNotifier {
   List<google_map.LatLng> get polylineCoordinates => _polylineCoordinates;
   PolylinePoints polylinePoints = PolylinePoints();
 
-
   num _sumDistance = 0.0; // 총거리
   num _speed = 0.0; // 순간 속도
   Duration _time = Duration.zero; // 라이딩 누적 시간
@@ -57,7 +56,8 @@ class RidingProvider with ChangeNotifier {
   Position? get position => _position;
 
   late Uint8List customIcon;
-  google_map.BitmapDescriptor pictureIcon = google_map.BitmapDescriptor.defaultMarker;
+  google_map.BitmapDescriptor pictureIcon =
+      google_map.BitmapDescriptor.defaultMarker;
 
   setRidingState(RidingState state) {
     _ridingState = state;
@@ -84,7 +84,8 @@ class RidingProvider with ChangeNotifier {
         _befLatLng = LatLng(pos.latitude, pos.longitude);
       }
       _position = pos;
-      _polylineCoordinates.add(google_map.LatLng(_position!.latitude, _position!.longitude));
+      _polylineCoordinates
+          .add(google_map.LatLng(_position!.latitude, _position!.longitude));
       //addPolyline();
     });
     _stopwatch.start();
@@ -114,11 +115,12 @@ class RidingProvider with ChangeNotifier {
 
   void _saveRecord() async {
     Record record = Record(
-        distance: _sumDistance,
+        distance: _sumDistance.toDouble(),
         date: _ridingDate,
         timestamp: _time.inSeconds,
         kcal: 0);
     _firebaseDb.saveRecordFirebaseDb(record);
+    PreferenceUtils.saveRecordPref(record);
   }
 
   void stopAndSaveRiding() {
@@ -127,12 +129,13 @@ class RidingProvider with ChangeNotifier {
     _timer.cancel();
 
     Record record = Record(
-        distance: _sumDistance,
+        distance: _sumDistance.toDouble(),
         date: _ridingDate,
         timestamp: _time.inSeconds,
         kcal: 0);
     developer.log(_ridingDate.toString());
     _firebaseDb.saveRecordFirebaseDb(record);
+    PreferenceUtils.saveRecordPref(record);
   }
 
   void pauseRiding() {
@@ -152,11 +155,11 @@ class RidingProvider with ChangeNotifier {
 
     notifyListeners();
   }*/
-  void setCustomMarker() async{
+  void setCustomMarker() async {
     customIcon = await CustomMarker().getBytesFromAsset("path", 130);
   }
 
-  void setPictureMarker(){
+  void setPictureMarker() {
     pictureIcon = CustomMarker().getPictuerMarker("");
   }
 }
