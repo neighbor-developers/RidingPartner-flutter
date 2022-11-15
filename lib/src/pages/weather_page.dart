@@ -31,13 +31,33 @@ class _WeatherPage extends State<WeatherPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(weather.skyType ?? '날씨를 불러오고 있습니다.'),
-            Text(weather.temperature ?? ''),
-            Text(weather.humidity ?? ''),
-            Text(weather.rainType ?? ''),
+            Text('${weather.condition}'),
+            Text(getWeatherIcon(weather.conditionId ?? 1)),
+            Text(weather.temp.toString()),
+            Text(weather.humidity.toString()),
           ],
         ),
       ),
     );
+  }
+
+  String getWeatherIcon(int condition) {
+    if (condition < 300) {
+      return '🌩';
+    } else if (condition < 400) {
+      return '🌧';
+    } else if (condition < 600) {
+      return '☔️';
+    } else if (condition < 700) {
+      return '☃️';
+    } else if (condition < 800) {
+      return '🌫';
+    } else if (condition == 800) {
+      return '☀️';
+    } else if (condition <= 804) {
+      return '☁️';
+    } else {
+      return '🤷‍';
+    }
   }
 }
