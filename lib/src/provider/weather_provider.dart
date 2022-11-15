@@ -30,6 +30,7 @@ class WeatherProvider with ChangeNotifier {
       weather.conditionId = weatherData['weather'][0]['id'];
       weather.humidity = weatherData['main']['humidity'];
       weather.temp = weatherData['main']['temp'];
+      weather.temp = (weather.temp! * 10).roundToDouble() / 10;
     }
 
     notifyListeners();

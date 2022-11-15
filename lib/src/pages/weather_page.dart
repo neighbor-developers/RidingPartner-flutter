@@ -31,10 +31,10 @@ class _WeatherPage extends State<WeatherPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${weather.condition}'),
-            Text(getWeatherIcon(weather.conditionId ?? 1)),
-            Text(weather.temp.toString()),
-            Text(weather.humidity.toString()),
+            Text(
+                '${weather.condition} ${getWeatherIcon(weather.conditionId ?? 1)}'),
+            Text('현재 온도 : ${weather.temp}'),
+            Text('습도 : ${weather.humidity}'),
           ],
         ),
       ),
