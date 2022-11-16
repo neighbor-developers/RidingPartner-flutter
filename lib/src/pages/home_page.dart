@@ -1,61 +1,105 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ridingpartner_flutter/src/pages/map_search_page.dart';
-import 'package:ridingpartner_flutter/src/pages/navigation_page.dart';
-import 'package:ridingpartner_flutter/src/pages/recommended_route_page.dart';
-import 'package:ridingpartner_flutter/src/pages/rental_map.dart';
-import 'package:ridingpartner_flutter/src/pages/riding_page.dart';
-import 'package:ridingpartner_flutter/src/pages/weather_page.dart';
-import 'package:ridingpartner_flutter/src/provider/bottom_navigation_provider.dart';
+import 'package:ridingpartner_flutter/src/pages/loding_page.dart';
+import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
+import 'dart:developer' as developer;
 
-import '../models/place.dart';
+class HomePage extends StatefulWidget {
+  const HomePage() : super();
 
-class HomePage extends StatelessWidget {
-  HomePage({Key? key}) : super(key: key);
-  late BottomNavigationProvider _bottomNavigationProvider;
+  @override
+  State<HomePage> createState() => _HomePage();
+}
+
+class _HomePage extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<WeatherProvider>(context, listen: false).getWeather();
+    Provider.of<HomeRecordProvider>(context, listen: false).getRecord();
+  }
 
   @override
   Widget build(BuildContext context) {
-    _bottomNavigationProvider = Provider.of<BottomNavigationProvider>(context);
+    final weather = Provider.of<WeatherProvider>(context).weather;
+    final record = Provider.of<HomeRecordProvider>(context).ridingRecord;
+    developer.log('weather build');
 
     return Scaffold(
-      body: SafeArea(
-        child: [
-          RentalMap(),
-          RecommendedRoutePage(),
-          WeatherPage(),
-          MapSearchPage(),
-          RidingPage(),
-        ].elementAt(_bottomNavigationProvider.currentPage),
+      appBar: AppBar(),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            children: [
+              Text(
+                  '${weather.condition} ${getWeatherIcon(weather.conditionId ?? 800)}'),
+              Text('현재 온도 : ${weather.temp}'),
+              Text('습도 : ${weather.humidity}'),
+            ],
+          ),
+          lastRecord(),
+          recordGragh(),
+          recommendWidget()
+        ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.pedal_bike),
-              label: '대여소',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.flag),
-              label: '추천경로',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: '홈',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.map),
-              label: '지도',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: '설정',
-            ),
-          ],
-          currentIndex: _bottomNavigationProvider.currentPage,
-          selectedItemColor: Colors.lightGreen,
-          onTap: (index) {
-            _bottomNavigationProvider.setCurrentPage(index);
-          }),
     );
+  }
+
+  Widget lastRecord() {
+    return Container();
+  }
+
+  Widget recordGragh() {
+    return Container();
+  }
+
+  Widget recommendWidget() {
+    return Container(
+      child: Row(
+        children: [recommendRoute(), recommendRoute()],
+      ),
+    );
+  }
+
+  // 임시
+  Widget recommendRoute() {
+    return Card(
+      semanticContainer: true,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      elevation: 5,
+      margin: const EdgeInsets.all(10),
+      child: Image.asset(
+        'assets/images/places/lotus_flower_theme_park.jpeg',
+        fit: BoxFit.fill,
+        height: 150,
+      ),
+    );
+  }
+
+  String getWeatherIcon(int condition) {
+    if (condition < 300) {
+      return '🌩';
+    } else if (condition < 400) {
+      return '🌧';
+    } else if (condition < 600) {
+      return '☔️';
+    } else if (condition < 700) {
+      return '☃️';
+    } else if (condition < 800) {
+      return '🌫';
+    } else if (condition == 800) {
+      return '☀️';
+    } else if (condition <= 804) {
+      return '☁️';
+    } else {
+      return '🤷‍';
+    }
   }
 }

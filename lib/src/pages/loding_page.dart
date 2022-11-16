@@ -5,13 +5,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:ridingpartner_flutter/src/pages/home_page.dart';
+import 'package:ridingpartner_flutter/src/pages/bottom_nav.dart';
 import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/bottom_navigation_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/map_search_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/place_list_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/route_list_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/sights_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 
 class LodingPage extends StatefulWidget {
@@ -49,6 +52,8 @@ class _LodingPageState extends State<LodingPage> {
             MaterialPageRoute(
                 builder: (context) => MultiProvider(providers: [
                       ChangeNotifierProvider(
+                          create: (context) => SightsProvider()),
+                      ChangeNotifierProvider(
                           create: (context) => WeatherProvider()),
                       ChangeNotifierProvider(
                           create: (context) => RouteListProvider()),
@@ -57,8 +62,12 @@ class _LodingPageState extends State<LodingPage> {
                       ChangeNotifierProvider(
                           create: (context) => MapSearchProvider()),
                       ChangeNotifierProvider(
-                          create: (context) => RidingProvider())
-                    ], child: HomePage())),
+                          create: (context) => RidingProvider()),
+                      ChangeNotifierProvider(
+                          create: (context) => PlaceListProvider()),
+                      ChangeNotifierProvider(
+                          create: (context) => HomeRecordProvider())
+                    ], child: BottomNavigation())),
             (route) => false);
       } else {
         if (connectivityResult == ConnectivityResult.none) {

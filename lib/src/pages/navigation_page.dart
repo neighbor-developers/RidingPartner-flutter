@@ -122,6 +122,7 @@ class _NavigationPageState extends State<NavigationPage> {
                     child: CircularProgressIndicator(),
                   )
                 : Stack(
+                    alignment: Alignment.bottomCenter,
                     children: <Widget>[
                       GoogleMap(
                         mapType: MapType.normal,
@@ -141,8 +142,15 @@ class _NavigationPageState extends State<NavigationPage> {
                         markers: markers,
                         compassEnabled: false,
                       ),
-                      changeButton(_navigationProvider.ridingState),
-                      guideWidget()
+                      Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Column(children: [
+                            record(),
+                            changeButton(_navigationProvider.ridingState)
+                          ])),
+                      Positioned(top: 0, child: guideWidget())
                     ],
                   )),
         onWillPop: () {
@@ -151,7 +159,20 @@ class _NavigationPageState extends State<NavigationPage> {
   }
 
   Widget guideWidget() {
-    return Text(_navigationProvider.route?.first.content ?? "");
+    return Container(
+        color: Color.fromARGB(178, 194, 194, 194),
+        padding: EdgeInsets.all(20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('assets/icons/icon_right.png',
+                width: 30, height: 30, fit: BoxFit.cover),
+            Text(
+              _navigationProvider.route?.first.content ?? "",
+              style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            )
+          ],
+        ));
   }
 
   Widget changeButton(RidingState state) {
@@ -187,22 +208,38 @@ class _NavigationPageState extends State<NavigationPage> {
       default:
         ridingButtonText = "";
     }
-    return Row(children: [
-      ElevatedButton(
-        style: ridingButtonStyle,
-        onPressed: () {
-          if (state == RidingState.before || state == RidingState.pause) {
-            _ridingProvider.startRiding();
-            _navigationProvider.startNavigation();
-          } else if (state == RidingState.riding) {
-            _ridingProvider.pauseRiding();
-            _navigationProvider.setState(RidingState.pause);
-          }
-        },
-        child: Text(ridingButtonText),
+    return Container(
+        padding: const EdgeInsets.all(10),
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          ElevatedButton(
+            style: ridingButtonStyle,
+            onPressed: () {
+              if (state == RidingState.before || state == RidingState.pause) {
+                _ridingProvider.startRiding();
+                _navigationProvider.startNavigation();
+              } else if (state == RidingState.riding) {
+                _ridingProvider.pauseRiding();
+                _navigationProvider.stopNavigation();
+              }
+            },
+            child: Text(ridingButtonText),
+          ),
+          saveButton(state)
+        ]));
+  }
+
+  Widget record() {
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "남은거리 : ${_navigationProvider.remainedDistance.toString()}, 속도 : ${_ridingProvider.speed.toString()}",
+            style: TextStyle(fontSize: 20),
+          )
+        ],
       ),
-      saveButton(state)
-    ]);
+    );
   }
 
   Widget saveButton(RidingState state) {

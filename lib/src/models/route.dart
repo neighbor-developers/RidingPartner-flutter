@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 class RidingRoute {
   String? id;
@@ -16,6 +17,14 @@ class RidingRoute {
       this.routeImage,
       this.route});
 
+  factory RidingRoute.fromJson(Map<String, dynamic> json) => RidingRoute(
+        id: json["id"],
+        title: json["title"],
+        description: json["description"],
+        image: json["image"],
+        routeImage: json["routeImage"],
+        route: List<String>.from(json['route']),
+      );
   factory RidingRoute.fromDB(db) => RidingRoute(
         id: db?["id"],
         title: db?["title"],
@@ -34,6 +43,19 @@ class RidingRoute {
       if (routeImage != null) "routeImage": routeImage,
       if (route != null) "route": json.encode(route),
     };
+  }
+}
+
+class RouteList {
+  final List<RidingRoute>? routes;
+  RouteList({this.routes});
+
+  factory RouteList.fromJson(String jsonString) {
+    List<dynamic> listFromJson = json.decode(jsonString);
+
+    List<RidingRoute> routes = <RidingRoute>[];
+    routes = listFromJson.map((route) => RidingRoute.fromJson(route)).toList();
+    return RouteList(routes: routes);
   }
 }
 

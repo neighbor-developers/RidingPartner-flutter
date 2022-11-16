@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
+import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
 
 class FirebaseDatabaseService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   String? _uId;
 
   saveRecordFirebaseDb(Record record) async {
@@ -17,17 +19,8 @@ class FirebaseDatabaseService {
         .set(record)
         .then((_) => {developer.log("firebase 기록 저장 성공 $record")})
         .catchError((onError) {
-      saveRecordSharedPref(record);
+      PreferenceUtils.saveRecordPref(record);
     });
-  }
-
-  saveRecordSharedPref(Record record) async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-
-    pref.setString("${record.date}/date", record.date!);
-    pref.setDouble("${record.date}/distance", record.distance!.toDouble());
-    pref.setInt("${record.timestamp}/date", record.timestamp!.toInt());
-    pref.setString("${record.timestamp}/kcal", record.kcal.toString());
   }
 
   Future<Record> getRecord(String ridingDate) async {
@@ -44,7 +37,7 @@ class FirebaseDatabaseService {
     }
   }
 
-  Future<List<Record>> getRecords() async {
+  Future<List<Record>?> getAllRecords() async {
     try {
       DatabaseReference ref = _database.ref("$_uId");
       final DataSnapshot snapshot = await ref.get();
@@ -52,12 +45,12 @@ class FirebaseDatabaseService {
       if (!snapshot.exists) {
         Map<dynamic, dynamic> map = snapshot.value as Map<dynamic, dynamic>;
         return map.values.map(Record.fromDB).toList();
+      } else {
+        return <Record>[];
       }
-
-      throw Exception("getRecords: snapshot not exist");
     } catch (e) {
       developer.log(e.toString());
-      return <Record>[];
+      return null;
     }
   }
 }

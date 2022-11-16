@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
 import 'package:ridingpartner_flutter/src/service/firestore_service.dart';
 
@@ -18,8 +19,11 @@ class RouteListProvider with ChangeNotifier {
   Future<void> getRouteList() async {
     try {
       if (_state == RouteListState.searching) {
-        _routeList = await FireStoreService().getRoutes();
-
+        // _routeList = await FireStoreService().getRoutes();
+        final routeFromJsonFile =
+            await rootBundle.loadString('assets/json/route.json');
+        _routeList =
+            RouteList.fromJson(routeFromJsonFile).routes ?? <RidingRoute>[];
         if (_routeList.isEmpty) {
           _state = RouteListState.empty;
         } else {

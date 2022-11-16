@@ -7,6 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/pages/loding_page.dart';
 import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
+import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
 import 'package:ridingpartner_flutter/src/utils/http_override.dart';
 import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 
@@ -22,6 +23,7 @@ void main() async {
   await MyLocation().getMyCurrentLocation();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await PreferenceUtils.init();
 
   runApp(const MyApp());
 }

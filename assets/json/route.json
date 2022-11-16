@@ -1,0 +1,50 @@
+[
+    {
+        "id": "1",
+        "title": "한국공학대학교 통학로",
+        "image": "assets/images/places/tukorea.jpeg",
+        "routeImage": "assets/images/places/tukorea.jpeg",
+        "description": "한국공학대 통학로",
+        "route": ["정왕역", "한국공학대학교"]
+    },
+    {
+        "id": "2",
+        "title": "그린웨이",
+        "image": "assets/images/places/lotus_flower_theme_park.jpeg",
+        "routeImage": "assets/images/places/lotus_flower_theme_park.jpeg",
+        "description": "그린웨이",
+        "route": ["물왕호수", "연꽃테마파크", "갯골생태공원"]
+    },
+    {
+        "id": "3",
+        "title": "오이도 해안도로",
+        "image": "assets/images/places/okgu_park.jpeg",
+        "routeImage": "assets/images/places/okgu_park.jpeg",
+        "description": "오이도 해안도로",
+        "route": ["오이도역", "배곧생명공원", "옥구공원", "오이도빨간등대", "거북섬", "반달섬"]
+    },
+    {
+        "id": "4",
+        "title": "시화 방조제",
+        "image": "assets/images/places/sihwa_seawall.jpeg",
+        "routeImage": "assets/images/places/sihwa_seawall.jpeg",
+        "description": "시화 방조제",
+        "route": ["오이도역", "배곧생명공원", "옥구공원", "오이도빨간등대", "시화방조제", "대부도공원"]
+    },
+    {
+        "id": "5",
+        "title": "시흥 순환 코스",
+        "image": "assets/images/places/red_lighthouse.jpeg",
+        "routeImage": "assets/images/places/red_lighthouse.jpeg",
+        "description": "시흥 순환 코스",
+        "route": ["고잔역 4호선", "반달섬", "거북섬", "오이도빨간등대", "물왕호수", "고잔역 4호선"]
+    },
+    {
+        "id": "6",
+        "title": "테스트용",
+        "image": "assets/images/places/wolgot_port.jpeg",
+        "routeImage": "assets/images/places/wolgot_port.jpeg",
+        "description": "테스트용",
+        "route": ["고잔역 4호선", "반달섬", "거북섬", "오이도빨간등대", "물왕호수", "고잔역 4호선"]
+    }
+]

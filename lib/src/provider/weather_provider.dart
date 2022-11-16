@@ -6,9 +6,7 @@ import '../models/weather.dart';
 enum LoadingStatus { completed, searching, empty }
 
 class WeatherProvider with ChangeNotifier {
-  WeatherService weatherServie = WeatherService();
-
-  Weather _weather = Weather();
+  final Weather _weather = Weather();
   Weather get weather => _weather;
 
   LoadingStatus _loadingStatus = LoadingStatus.empty;
@@ -17,21 +15,44 @@ class WeatherProvider with ChangeNotifier {
   String _message = "Loading...";
   String get message => _message;
 
+  final OpenWeatherService _openWeatherService = OpenWeatherService();
+
   Future<void> getWeather() async {
-    try {
-      _loadingStatus = LoadingStatus.searching;
-      final weather = await weatherServie.getWeatherData();
-      if (weather == null) {
-        _loadingStatus = LoadingStatus.empty;
-        _message = 'Could not find weather. Please try again.';
-      } else {
-        _loadingStatus = LoadingStatus.completed;
-        _weather = weather;
-      }
-      notifyListeners();
-    } catch (e) {
+    _loadingStatus = LoadingStatus.searching;
+
+    final weatherData = await _openWeatherService.getWeather();
+    if (weatherData == null) {
       _loadingStatus = LoadingStatus.empty;
       _message = 'Could not find weather. Please try again.';
+    } else {
+      _loadingStatus = LoadingStatus.completed;
+      weather.condition = weatherData['weather'][0]['main'];
+      weather.conditionId = weatherData['weather'][0]['id'];
+      weather.humidity = weatherData['main']['humidity'];
+      weather.temp = weatherData['main']['temp'];
+      weather.temp = (weather.temp! * 10).roundToDouble() / 10;
     }
+
+    notifyListeners();
   }
+
+  // WeatherService weatherServie = WeatherService();
+  // Future<void> getWeather() async {
+  //   try {
+  //     _loadingStatus = LoadingStatus.searching;
+  //     final weather = await weatherServie.getWeatherData();
+  //     if (weather == null) {
+  //       _loadingStatus = LoadingStatus.empty;
+  //       _message = 'Could not find weather. Please try again.';
+  //     } else {
+  //       _loadingStatus = LoadingStatus.completed;
+  //       _weather = weather;
+  //     }
+  //     notifyListeners();
+  //   } catch (e) {
+  //     _loadingStatus = LoadingStatus.empty;
+  //     _message = 'Could not find weather. Please try again.';
+  //   }
+  // }
+
 }
