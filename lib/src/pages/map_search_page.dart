@@ -63,6 +63,10 @@ class MapSampleState extends State<MapSearchPage> {
         children: <Widget>[
           GoogleMap(
             mapType: MapType.normal,
+            onTap: (latlng) {
+              _startPointFocusNode.unfocus();
+              _endPointFocusNode.unfocus();
+            },
             markers: Set.from(_markers),
             initialCameraPosition: _initLocation,
             onMapCreated: (GoogleMapController controller) {
@@ -85,8 +89,14 @@ class MapSampleState extends State<MapSearchPage> {
                     _startPointFocusNode),
                 searchBox(mapSearchProvider, "도착지", _endPointTextController,
                     _endPointFocusNode),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.5,
+                GestureDetector(
+                  onTap: () {
+                    _startPointFocusNode.unfocus();
+                    _endPointFocusNode.unfocus();
+                  },
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.5,
+                  ),
                 ),
                 startNav(mapSearchProvider),
               ],
@@ -126,7 +136,7 @@ class MapSampleState extends State<MapSearchPage> {
 
   Widget placeList(MapSearchProvider mapSearchProvider, String type,
       List<Place> list, TextEditingController textController) {
-    return Expanded(
+    return Flexible(
       child: ListView.builder(
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index) {
