@@ -4,15 +4,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart' as kakao_flutter;
 import 'package:flutter_naver_login/flutter_naver_login.dart' as naver_flutter;
+import 'package:ridingpartner_flutter/src/network/network_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-import 'firebase_auth_social_login.dart';
 import 'dart:developer' as developer;
 
 class SocialLogin {
-  final _firebaseAuthSocialLogin = FirebaseAuthSocialLogin();
-
   // kakao
   Future<User?> signInWithKakao() async {
     kakao_flutter.KakaoSdk.init(
@@ -84,8 +82,7 @@ class SocialLogin {
 
   Future<User> loginWithUser(Map<String, dynamic> user) async {
     // 카카오는 uId로 인증하는듯??
-
-    final customToken = await _firebaseAuthSocialLogin.createCustomToken(user);
+    final customToken = await NetworkHelper().post("", user);
     var credencial =
         await FirebaseAuth.instance.signInWithCustomToken(customToken);
     return credencial.user!;

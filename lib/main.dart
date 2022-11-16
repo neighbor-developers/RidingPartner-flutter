@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:ridingpartner_flutter/src/network/network_helper.dart';
 import 'package:ridingpartner_flutter/src/pages/loding_page.dart';
 import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
 import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
@@ -24,6 +25,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await PreferenceUtils.init();
+  NetworkHelper();
 
   runApp(const MyApp());
 }
