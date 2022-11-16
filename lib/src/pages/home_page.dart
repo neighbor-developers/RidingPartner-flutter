@@ -8,7 +8,7 @@ import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 import 'dart:developer' as developer;
 
 class HomePage extends StatefulWidget {
-  const HomePage() : super();
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePage();

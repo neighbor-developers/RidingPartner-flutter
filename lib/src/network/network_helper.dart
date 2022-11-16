@@ -1,18 +1,25 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 
-class NetWorkHelper {
-  final String url;
-  NetWorkHelper(this.url);
+class NetworkHelper {
+  static final NetworkHelper _instance = NetworkHelper._internal();
+  factory NetworkHelper() => _instance;
+  NetworkHelper._internal();
 
-  Future getData() async {
+  Future getData(String url) async {
     http.Response response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      String data = response.body;
-      return jsonDecode(data);
+      return jsonDecode(response.body);
     } else {
       print(response.statusCode);
     }
+  }
+
+  Future post(String url, Map<String, dynamic> user) async {
+    final Response response = await Dio().post(url, data: user);
+
+    return response.data;
   }
 }

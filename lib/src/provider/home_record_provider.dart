@@ -11,7 +11,7 @@ class HomeRecordProvider extends ChangeNotifier {
       FirebaseDatabaseService();
 
   late List<Record>? _ridingRecord;
-  Record? _lastRecord = null;
+  Record? _lastRecord;
   late Record? _prefRecord;
 
   List<Record>? get ridingRecord => _ridingRecord;

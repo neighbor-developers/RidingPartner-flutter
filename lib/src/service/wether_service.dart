@@ -22,9 +22,8 @@ class OpenWeatherService {
       developer.log("error : getLocation ${e.toString()}");
     }
 
-    NetWorkHelper netWorkHelper = NetWorkHelper(
+    final weatherData = NetworkHelper().getData(
         '$_baseUrl?lat=${myLocation.latitude}&lon=${myLocation.longitude}&appid=$_apiKey&units=metric');
-    final weatherData = netWorkHelper.getData();
     return weatherData;
   }
 }
