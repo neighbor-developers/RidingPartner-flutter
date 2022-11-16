@@ -67,7 +67,9 @@ class NavigationProvider with ChangeNotifier {
     _nextDestination = _ridingCourse.elementAt(1);
 
     _position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+        timeLimit: Duration(seconds: 5),
+        forceAndroidLocationManager: true,
+        desiredAccuracy: LocationAccuracy.bestForNavigation);
 
     Place startPlace = Place(
         id: null,
