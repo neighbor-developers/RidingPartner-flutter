@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,7 @@ class SightsPage extends StatelessWidget{
     if (state == MarkerListState.searching) {
       sightsProvider.getRouteList();
     }
+
     return Scaffold(
         body: GoogleMap(
           mapType: MapType.normal,
