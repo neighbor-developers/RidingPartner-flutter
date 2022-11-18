@@ -65,6 +65,7 @@ dependencies:
   firebase_database: ^9.1.7
   latlong2: ^0.8.1
   dio: ^4.0.6
+  flutter_cache_manager: ^3.3.0
 
 dev_dependencies:
   flutter_test:
