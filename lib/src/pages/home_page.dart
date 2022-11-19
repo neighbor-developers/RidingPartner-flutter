@@ -25,7 +25,7 @@ class _HomePage extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final weather = Provider.of<WeatherProvider>(context).weather;
-    final record = Provider.of<HomeRecordProvider>(context).ridingRecord;
+    // final record = Provider.of<HomeRecordProvider>(context).ridingRecord;
     developer.log('weather build');
 
     return Scaffold(
