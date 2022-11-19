@@ -1,9 +1,6 @@
-
 import 'dart:developer';
 import 'dart:typed_data';
 import 'dart:ui';
-
-
 
 import 'package:file/src/interface/file.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,9 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
-class CustomMarker{
-
-
+class CustomMarker {
   // 마커 asset 아이콘으로 넣기, width로 사이즈 조절
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
@@ -27,25 +22,13 @@ class CustomMarker{
         .asUint8List();
   }
 
-
-  BitmapDescriptor getPictuerMarker(String path){
-    BitmapDescriptor pictureIcon = BitmapDescriptor.defaultMarker;
-
-    BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, path)
-        .then((icon){
-      pictureIcon = icon;
-      log("1 $icon");
-      log("2 "+pictureIcon.toString());
-    },
-    );
-    log(pictureIcon.toString());
-
-    return pictureIcon;
-  }
+  Future<BitmapDescriptor> getPictuerMarker(String path) =>
+      BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, path);
 
   // 마커 링크 사진으로 넣기
-  Future<BitmapDescriptor> getUrlMarker(String path, int width)async{
-    final File markerImageFile = await DefaultCacheManager().getSingleFile(path);
+  Future<BitmapDescriptor> getUrlMarker(String path, int width) async {
+    final File markerImageFile =
+        await DefaultCacheManager().getSingleFile(path);
     final Uint8List markerImageBytes = await markerImageFile.readAsBytes();
     log(markerImageBytes.toString());
     final Codec markerImageCodec = await instantiateImageCodec(
@@ -60,6 +43,5 @@ class CustomMarker{
     final Uint8List? resizedMarkerImageBytes = byteData?.buffer.asUint8List();
 
     return BitmapDescriptor.fromBytes(resizedMarkerImageBytes!);
-
   }
 }

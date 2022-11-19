@@ -155,11 +155,11 @@ class RidingProvider with ChangeNotifier {
 
     notifyListeners();
   }*/
-  void setCustomMarker() async {
+  Future<void> setCustomMarker() async {
     customIcon = await CustomMarker().getBytesFromAsset("path", 130);
   }
 
-  void setPictureMarker() {
-    pictureIcon = CustomMarker().getPictuerMarker("");
+  Future<void> setPictureMarker() async {
+    pictureIcon = await CustomMarker().getPictuerMarker("");
   }
 }
