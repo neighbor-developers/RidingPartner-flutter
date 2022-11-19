@@ -237,10 +237,10 @@ class MapSampleState extends State<MapSearchPage> {
                     builder: (context) => MultiProvider(
                           providers: [
                             ChangeNotifierProvider(
-                                create: (context) => NavigationProvider([
+                                create: (context) => NavigationProvider.p([
                                       mapSearchProvider.startPoint!,
                                       mapSearchProvider.endPoint!
-                                    ])),
+                                    ], mapSearchProvider.myPosition)),
                             ChangeNotifierProvider(
                                 create: (context) => RidingProvider())
                           ],

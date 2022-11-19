@@ -7,9 +7,11 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as google_map;
 import 'package:latlong2/latlong.dart';
+import 'package:ridingpartner_flutter/main.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
+import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 
 import '../models/place.dart';
 import '../models/position_stream.dart';
@@ -17,6 +19,7 @@ import '../models/position_stream.dart';
 class NavigationProvider with ChangeNotifier {
   final NaverMapService _naverMapService = NaverMapService();
   //make constructer with one Place type parameter
+  NavigationProvider.p(this._ridingCourse, this._position);
   NavigationProvider(this._ridingCourse);
   //make constructer without parameter
   NavigationProvider.empty();
@@ -66,10 +69,9 @@ class NavigationProvider with ChangeNotifier {
     _finalDestination = _ridingCourse.last;
     _nextDestination = _ridingCourse.elementAt(1);
 
-    _position = await Geolocator.getCurrentPosition(
-        timeLimit: Duration(seconds: 5),
-        forceAndroidLocationManager: true,
-        desiredAccuracy: LocationAccuracy.bestForNavigation);
+    // MyLocation mylocation = MyLocation();
+    // await mylocation.getMyCurrentLocation();
+    _position ??= await Geolocator.getCurrentPosition();
 
     Place startPlace = Place(
         id: null,

@@ -4,6 +4,7 @@ import 'dart:developer' as developer;
 class MyLocation {
   late double? latitude;
   late double? longitude;
+  late Position? position;
 
   static final MyLocation _instance = MyLocation._internal();
   factory MyLocation() {
@@ -44,10 +45,10 @@ class MyLocation {
 
   Future<void> getMyCurrentLocation() async {
     try {
-      Position position = await Geolocator.getCurrentPosition(
+      position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
-      latitude = position.latitude;
-      longitude = position.longitude;
+      latitude = position!.latitude;
+      longitude = position!.longitude;
       developer.log("latitude : $latitude , longitude : $longitude");
     } catch (e) {
       developer.log("error : getMyCurrentLocation ${e.toString()}");

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:ridingpartner_flutter/src/models/place.dart';
@@ -11,6 +12,7 @@ class MapSearchProvider extends ChangeNotifier {
   var isStartSearching = false;
   var isEndSearching = false;
   final kakaoKey = dotenv.env['KAKAO_REST_API_KEY'];
+
   List<Place> _startPointSearchResult = [];
   List<Place> get startPointSearchResult => _startPointSearchResult;
 
@@ -24,6 +26,8 @@ class MapSearchProvider extends ChangeNotifier {
   Place? get endPoint => _endPoint;
 
   Place? _myLocation;
+  Position? _myPosition;
+  Position? get myPosition => _myPosition;
 
   setStartPoint(Place place) {
     _startPoint = place;
@@ -46,6 +50,7 @@ class MapSearchProvider extends ChangeNotifier {
   Future<String> getMyLocationAddress() async {
     final myLocation = MyLocation();
     myLocation.getMyCurrentLocation();
+    _myPosition = myLocation.position;
     final lat = myLocation.latitude;
     final lon = myLocation.longitude;
     final url =
