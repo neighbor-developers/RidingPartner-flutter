@@ -7,9 +7,9 @@ class PlaceListProvider with ChangeNotifier {
   List<Place> get placeList => _placeList;
 
   Future<void> getPlaceList() async {
-    final routeFromJsonFile =
+    final placeFromJsonFile =
         await rootBundle.loadString('assets/json/place.json');
-    _placeList = PlaceList.fromJson(routeFromJsonFile).places ?? <Place>[];
+    _placeList = PlaceList.fromJson(placeFromJsonFile).places ?? <Place>[];
     notifyListeners();
   }
 }
