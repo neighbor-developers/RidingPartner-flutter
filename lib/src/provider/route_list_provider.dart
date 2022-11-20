@@ -1,3 +1,5 @@
+import 'dart:js_util';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
@@ -36,6 +38,19 @@ class RouteListProvider with ChangeNotifier {
     }
   }
 
-  Future<List<Place>> getPlaceList(List<String> placeList) =>
-      Future.wait(placeList.map((place) => fireStore.getPlace(place)));
+  // Future<List<Place>> getPlaceList(List<String> lis) async{
+  //   final placeFromJsonFile =
+  //       await rootBundle.loadString('assets/json/place.json');
+  //   placeList = PlaceList.fromJson(routeFromJsonFile).places ?? <Place>[];
+  //   Future.wait(placeList.map((place) => fireStore.getPlace(place)));
+  // }
+  Future<List<Place>> getPlaceList(List<String> route) async {
+    final placeStringFromJsonFile =
+        await rootBundle.loadString('assets/json/place.json');
+    final placeListFromJsonFile =
+        PlaceList.fromJson(placeStringFromJsonFile).places ?? <Place>[];
+    return placeListFromJsonFile
+        .where((place) => route.contains(place.title))
+        .toList();
+  }
 }

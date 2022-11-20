@@ -17,8 +17,8 @@ class NetworkHelper {
     }
   }
 
-  Future post(String url, Map<String, dynamic> user) async {
-    final Response response = await Dio().post(url, data: user);
+  Future post(String url, Map<String, dynamic> query) async {
+    final Response response = await Dio().post(url, data: query);
 
     return response.data;
   }

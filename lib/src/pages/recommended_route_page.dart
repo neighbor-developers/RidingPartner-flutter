@@ -104,24 +104,24 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
           ),
         );
 
-    Widget listCard(RidingRoute route) => Card(
-        semanticContainer: true,
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        elevation: 5,
+    Widget listCard(RidingRoute route) => Container(
+        height: 150,
         margin: const EdgeInsets.all(10),
-        child: InkWell(
-          onTap: () {
-            routeDialog(route);
-          },
-          child: Image.asset(
-            route.image!,
-            fit: BoxFit.fill,
-            height: 150,
-          ),
-        ));
+        child: Card(
+            semanticContainer: true,
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: InkWell(
+              onTap: () {
+                routeDialog(route);
+              },
+              child: Image.asset(
+                route.image!,
+                fit: BoxFit.fill,
+              ),
+            )));
 
     Widget routeListWidget() {
       if (state == RouteListState.searching) {
