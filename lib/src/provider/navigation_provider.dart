@@ -44,6 +44,7 @@ class NavigationProvider with ChangeNotifier {
   Timer? _timer;
   int getRouteTimer = 0;
   int _remainedDistance = 0;
+  int _totalDistance = 0;
 
   LatLng? _nextLatLng;
 
@@ -54,6 +55,7 @@ class NavigationProvider with ChangeNotifier {
   List<Place> get course => _ridingCourse;
   LatLng? get nextLatLng => _nextLatLng;
   int get remainedDistance => _remainedDistance;
+  int get totalDistance => _totalDistance;
 
   void setState(RidingState state) {
     _ridingState = state;
@@ -72,7 +74,7 @@ class NavigationProvider with ChangeNotifier {
     try {
       _position ??= await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.best,
-          timeLimit: Duration(minutes: 1));
+          timeLimit: Duration(seconds: 5));
     } catch (e) {
       print(e.toString());
       MyLocation().cheakPermission();
@@ -103,15 +105,20 @@ class NavigationProvider with ChangeNotifier {
       _ridingCourse = List.from(_ridingCourse.reversed);
     }
 
-    Map<String, dynamic>? response = await _naverMapService.getRoute(
-        startPlace, _finalDestination, _ridingCourse);
+    Map<String, dynamic>? response = await _naverMapService
+        .getRoute(startPlace, _finalDestination, _ridingCourse)
+        .catchError((onError) {
+      return null;
+    });
     if (response != null) {
       _route = response['guides'];
       _remainedDistance = response['sumdistance'];
+      _totalDistance = response['sumdistance'];
       _distances = response['distances'];
     } else {
       _route = null;
       _distances = [];
+      return;
     }
 
     if (_route != null) {
