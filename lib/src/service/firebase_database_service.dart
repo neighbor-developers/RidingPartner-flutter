@@ -7,20 +7,16 @@ import 'dart:developer' as developer;
 
 class FirebaseDatabaseService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  String? _uId;
+  final String? _uId = FirebaseAuth.instance.currentUser?.uid;
 
   saveRecordFirebaseDb(Record record) async {
-    _uId = _auth.currentUser?.uid;
-
     DatabaseReference ref = _database.ref("$_uId/${record.date}");
     await ref
         .set({
           "date": record.date,
           "distance": record.distance,
           "timestamp": record.timestamp,
-          "kcal": record.kcal
+          "topSpeed": record.topSpeed
         })
         .then((_) => {developer.log("firebase 기록 저장 성공 $record")})
         .catchError((onError) {
@@ -48,10 +44,13 @@ class FirebaseDatabaseService {
       DatabaseReference ref = _database.ref("$_uId");
       final DataSnapshot snapshot = await ref.get();
 
-      if (!snapshot.exists) {
-        Map<dynamic, dynamic> map = snapshot.value as Map<dynamic, dynamic>;
+      if (snapshot.exists) {
+        print("데이터 있음");
+        Map<dynamic, dynamic> map = snapshot.value as Map<String, dynamic>;
+        final a = map;
         return map.values.map(Record.fromDB).toList();
       } else {
+        print("데이터 없음");
         return <Record>[];
       }
     } catch (e) {

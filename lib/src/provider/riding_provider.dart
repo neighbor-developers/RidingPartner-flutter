@@ -45,12 +45,13 @@ class RidingProvider with ChangeNotifier {
   List<google_map.LatLng> get polylineCoordinates => _polylineCoordinates;
   PolylinePoints polylinePoints = PolylinePoints();
 
-  num _sumDistance = 0.0; // 총거리
-  num _speed = 0.0; // 순간 속도
+  double _sumDistance = 0.0; // 총거리
+  double _speed = 0.0; // 순간 속도
+  double _topSpeed = 0.0;
   Duration _time = Duration.zero; // 라이딩 누적 시간
 
-  num get distance => _sumDistance;
-  num get speed => _speed;
+  double get distance => _sumDistance;
+  double get speed => _speed;
   Duration get time => _time;
   RidingState get state => _ridingState;
   Position? get position => _position;
@@ -90,7 +91,7 @@ class RidingProvider with ChangeNotifier {
     });
     _stopwatch.start();
 
-    _timer = Timer.periodic(Duration(milliseconds: 10), ((timer) {
+    _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
       if (_position != null) {
         _calRecord(_position!);
       }
@@ -111,6 +112,9 @@ class RidingProvider with ChangeNotifier {
 
     _sumDistance += distance; // km
     _speed = distance / 3 * 3600; // k/h
+    if (_topSpeed < _speed) {
+      _topSpeed = _speed;
+    }
   }
 
   void _saveRecord() async {
@@ -118,7 +122,7 @@ class RidingProvider with ChangeNotifier {
         distance: _sumDistance.toDouble(),
         date: _ridingDate,
         timestamp: _time.inSeconds,
-        kcal: 0);
+        topSpeed: _topSpeed);
     _firebaseDb.saveRecordFirebaseDb(record);
     PreferenceUtils.saveRecordPref(record);
   }
@@ -132,7 +136,7 @@ class RidingProvider with ChangeNotifier {
         distance: _sumDistance.toDouble(),
         date: _ridingDate,
         timestamp: _time.inSeconds,
-        kcal: 0);
+        topSpeed: _topSpeed);
     developer.log(_ridingDate.toString());
     _firebaseDb.saveRecordFirebaseDb(record);
     PreferenceUtils.saveRecordPref(record);

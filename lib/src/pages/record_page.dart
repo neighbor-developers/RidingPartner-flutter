@@ -80,7 +80,7 @@ class RecordPage extends StatelessWidget {
             Row(children: [Text("주행 시간"), Text("평균 속도")]),
             Row(children: [
               Text("${_record.distance!}km"),
-              Text("${_record.kcal!}")
+              Text("${_record.topSpeed!}")
             ]),
             Row(children: [Text("주행 거리"), Text("소모 칼로리")]),
             Container(height: 1.0, width: 500.0, color: Colors.grey)

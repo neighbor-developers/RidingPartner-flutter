@@ -31,7 +31,7 @@ class BottomNavigation extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.pedal_bike),
+              icon: Icon(Icons.add_location_sharp),
               label: '명소',
             ),
             BottomNavigationBarItem(
@@ -47,12 +47,12 @@ class BottomNavigation extends StatelessWidget {
               label: '지도',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
+              icon: Icon(Icons.pedal_bike),
               label: '설정',
             ),
           ],
           currentIndex: _bottomNavigationProvider.currentPage,
-          selectedItemColor: Colors.lightGreen,
+          selectedItemColor: Colors.indigo.shade900,
           unselectedItemColor: Colors.grey,
           onTap: (index) {
             _bottomNavigationProvider.setCurrentPage(index);

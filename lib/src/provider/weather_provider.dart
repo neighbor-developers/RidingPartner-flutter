@@ -6,7 +6,8 @@ import '../models/weather.dart';
 enum LoadingStatus { completed, searching, empty }
 
 class WeatherProvider with ChangeNotifier {
-  final Weather _weather = Weather();
+  final Weather _weather =
+      Weather(temp: 20, condition: "Clouds", conditionId: 200, humidity: 50);
   Weather get weather => _weather;
 
   LoadingStatus _loadingStatus = LoadingStatus.empty;
