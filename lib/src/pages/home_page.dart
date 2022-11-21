@@ -43,7 +43,6 @@ class _HomePage extends State<HomePage> {
           ),
           lastRecord(),
           recordGragh(),
-          recommendWidget()
         ],
       ),
     );
@@ -65,9 +64,7 @@ class _HomePage extends State<HomePage> {
     );
   }
 
-  // 임시
-  Widget recommendRoute() {
-    return Card(
+  Widget recommendRoute() => Card(
       semanticContainer: true,
       clipBehavior: Clip.antiAliasWithSaveLayer,
       shape: RoundedRectangleBorder(
@@ -75,13 +72,14 @@ class _HomePage extends State<HomePage> {
       ),
       elevation: 5,
       margin: const EdgeInsets.all(10),
-      child: Image.asset(
-        'assets/images/places/lotus_flower_theme_park.jpeg',
-        fit: BoxFit.fill,
-        height: 150,
-      ),
-    );
-  }
+      child: InkWell(
+        onTap: () {},
+        child: Image.asset(
+          'assets/images/places/lotus_flower_theme_park.jpeg',
+          fit: BoxFit.fill,
+          height: 150,
+        ),
+      ));
 
   String getWeatherIcon(int condition) {
     if (condition < 300) {

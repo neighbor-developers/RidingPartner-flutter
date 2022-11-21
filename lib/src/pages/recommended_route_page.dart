@@ -28,11 +28,6 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
       routeListProvider.getRouteList();
     }
 
-    Widget imageBox(image) => Container(
-        padding: const EdgeInsets.only(right: 20),
-        width: 80,
-        child: Image.asset(image));
-
     void routeDialog(RidingRoute route) => showDialog(
         context: context,
         //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
@@ -92,26 +87,12 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
           ),
         );
 
-    Widget listBox(RidingRoute route) => Container(
-          height: 200,
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.white),
-              color:
-                  Colors.primaries[Random().nextInt(Colors.primaries.length)]),
-          child: Image.asset(
-            route.image!,
-            fit: BoxFit.cover,
-          ),
-        );
-
     Widget listCard(RidingRoute route) => Container(
-        height: 150,
-        margin: const EdgeInsets.all(10),
         child: Card(
             semanticContainer: true,
             clipBehavior: Clip.antiAliasWithSaveLayer,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(5.0),
             ),
             child: InkWell(
               onTap: () {
@@ -130,23 +111,18 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
         return messageWidget("Loading");
       } else {
         final routeList = routeListProvider.routeList;
-        return SingleChildScrollView(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: List.generate(
-              NUMBER_OF_COLUMNS,
-              (index) => Expanded(
-                child: Column(
-                  children: List.generate(
-                          routeList.length ~/ NUMBER_OF_COLUMNS,
-                          (jndex) => listCard(
-                              routeList[jndex * NUMBER_OF_COLUMNS + index]))
-                      .toList(),
-                ),
-              ),
-            ).toList(),
-          ),
-        );
+        return Expanded(
+            child: GridView.builder(
+                scrollDirection: Axis.vertical,
+                padding: const EdgeInsets.all(10),
+                itemCount: routeList.length,
+                itemBuilder: (BuildContext context, index) =>
+                    listCard(routeList[index]),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 1 / 1,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10)));
       }
     }
 

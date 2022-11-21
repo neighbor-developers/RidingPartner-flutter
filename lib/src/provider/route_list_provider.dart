@@ -1,5 +1,3 @@
-import 'dart:js_util';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
