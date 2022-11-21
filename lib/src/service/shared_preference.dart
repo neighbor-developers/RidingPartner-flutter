@@ -10,13 +10,13 @@ class PreferenceUtils {
   static saveRecordPref(Record record) {
     setString("date", record.date!);
     setDouble("distance", record.distance!.toDouble());
-    setInt("ridingTime", record.timestamp!.toInt());
+    setInt("timeStamp", record.timestamp!.toInt());
   }
 
   static Record? getRecordFromPref() {
     double? distance = getDouble("distance");
     String? date = getString("date");
-    int? time = getInt("ridingTime");
+    int? time = getInt("timeStamp");
 
     if (distance == null) {
       return null;

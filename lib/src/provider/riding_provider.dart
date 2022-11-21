@@ -74,10 +74,10 @@ class RidingProvider with ChangeNotifier {
     } else {
       _startTime = _befTime;
       _ridingDate =
-          DateFormat('yy/MM/dd - HH:mm:ss').format(DateTime.now()); //format변경
+          DateFormat('yy:MM:dd HH:mm').format(DateTime.now()); //format변경
     }
 
-    setCustomMarker();
+    // setCustomMarker();
 
     _positionStream.controller.stream.listen((pos) {
       if (_position == null) {
@@ -155,11 +155,11 @@ class RidingProvider with ChangeNotifier {
 
     notifyListeners();
   }*/
-  Future<void> setCustomMarker() async {
-    customIcon = await CustomMarker().getBytesFromAsset("path", 130);
-  }
+  // Future<void> setCustomMarker() async {
+  //   customIcon = await CustomMarker().getBytesFromAsset("path", 130);
+  // }
 
-  Future<void> setPictureMarker() async {
-    pictureIcon = await CustomMarker().getPictuerMarker("");
-  }
+  // Future<void> setPictureMarker() async {
+  //   pictureIcon = await CustomMarker().getPictuerMarker("");
+  // }
 }

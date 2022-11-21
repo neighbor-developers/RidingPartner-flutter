@@ -16,11 +16,17 @@ class FirebaseDatabaseService {
 
     DatabaseReference ref = _database.ref("$_uId/${record.date}");
     await ref
-        .set(record)
+        .set({
+          "date": record.date,
+          "distance": record.distance,
+          "timestamp": record.timestamp,
+          "kcal": record.kcal
+        })
         .then((_) => {developer.log("firebase 기록 저장 성공 $record")})
         .catchError((onError) {
-      PreferenceUtils.saveRecordPref(record);
-    });
+          print(onError.toString());
+        });
+    PreferenceUtils.saveRecordPref(record);
   }
 
   Future<Record> getRecord(String ridingDate) async {
