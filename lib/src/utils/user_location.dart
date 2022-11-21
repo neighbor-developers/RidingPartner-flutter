@@ -12,13 +12,13 @@ class MyLocation {
   }
 
   initLocation() async =>
-      {await _cheakPermission(), await getMyCurrentLocation()};
+      {await cheakPermission(), await getMyCurrentLocation()};
 
   MyLocation._internal() {
     initLocation();
   }
 
-  Future<void> _cheakPermission() async {
+  Future<void> cheakPermission() async {
     bool serviceEnabled;
     LocationPermission permission;
 

@@ -69,9 +69,15 @@ class NavigationProvider with ChangeNotifier {
     _finalDestination = _ridingCourse.last;
     _nextDestination = _ridingCourse.elementAt(1);
 
-    // MyLocation mylocation = MyLocation();
-    // await mylocation.getMyCurrentLocation();
-    _position ??= await Geolocator.getCurrentPosition();
+    try {
+      _position ??= await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.best,
+          timeLimit: Duration(minutes: 1));
+    } catch (e) {
+      print(e.toString());
+      MyLocation().cheakPermission();
+      _position = await Geolocator.getLastKnownPosition();
+    }
 
     Place startPlace = Place(
         id: null,
