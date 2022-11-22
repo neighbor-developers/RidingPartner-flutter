@@ -10,9 +10,9 @@ class HomeRecordProvider extends ChangeNotifier {
   final FirebaseDatabaseService _firebaseDatabaseService =
       FirebaseDatabaseService();
 
-  late List<Record>? _ridingRecord;
-  late Record? _lastRecord;
-  late Record? _prefRecord;
+  List<Record>? _ridingRecord;
+  Record? _lastRecord;
+  Record? _prefRecord;
 
   List<Record>? get ridingRecord => _ridingRecord;
   Record? get lastRecord => _lastRecord;
@@ -39,7 +39,7 @@ class HomeRecordProvider extends ChangeNotifier {
         break;
       default:
         _recordState = RecordState.success;
-        if (_prefRecord != _ridingRecord!.last && _prefRecord != null) {
+        if (_prefRecord != _ridingRecord?.last && _prefRecord != null) {
           saveRecord(_prefRecord!);
         }
     }
