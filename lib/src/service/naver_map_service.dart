@@ -7,12 +7,15 @@ import '../models/route.dart';
 
 class NaverMapService {
   final String _naverMapUrl = "map.naver.com";
+  NaverMapService();
 
   Future<List<Place>?> getPlaces(String title) async {
     try {
       var place = <Place>[];
       final myLocation = MyLocation(); // 자신의 위치를 기반으로 위치 검색
-      await myLocation.getMyCurrentLocation();
+      if (myLocation.latitude == null || myLocation.longitude == null) {
+        await myLocation.getMyCurrentLocation();
+      }
       final Map<String, String> queryParams = {
         'coords': '${myLocation.latitude},${myLocation.longitude}',
         'query': title,

@@ -19,18 +19,23 @@ class MapSearchPage extends StatefulWidget {
 
 class MapSampleState extends State<MapSearchPage> {
   final Completer<GoogleMapController> _controller = Completer();
-  FocusNode _startPointFocusNode = FocusNode();
-  FocusNode _endPointFocusNode = FocusNode();
-  final _startPointTextController = TextEditingController();
-  final _endPointTextController = TextEditingController();
+  late FocusNode _startPointFocusNode;
+  late FocusNode _endPointFocusNode;
+  var _startPointTextController;
+  var _endPointTextController;
   var _initLocation = CameraPosition(
     target: LatLng(MyLocation().latitude!, MyLocation().longitude!),
     zoom: 14.4746,
   );
   final List<Marker> _markers = [];
+
   @override
   void initState() {
     super.initState();
+    _endPointTextController = TextEditingController();
+    _startPointTextController = TextEditingController();
+    _endPointFocusNode = FocusNode();
+    _startPointFocusNode = FocusNode();
     _startPointFocusNode.addListener(() {
       if (!_startPointFocusNode.hasFocus) {
         Provider.of<MapSearchProvider>(context, listen: false)
@@ -231,7 +236,7 @@ class MapSampleState extends State<MapSearchPage> {
             return;
           } else {
             developer.log("안내시작");
-            Navigator.push(
+            Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
                     builder: (context) => MultiProvider(
@@ -245,7 +250,8 @@ class MapSampleState extends State<MapSearchPage> {
                                 create: (context) => RidingProvider())
                           ],
                           child: NavigationPage(),
-                        )));
+                        )),
+                (route) => false);
           }
         },
         materialTapTargetSize: MaterialTapTargetSize.padded,
@@ -253,9 +259,7 @@ class MapSampleState extends State<MapSearchPage> {
   }
 
   void _updatePosition(Place position) {
-    if (_markers[0] != null) {
-      _markers.removeAt(0);
-    }
+    _markers.clear();
     _markers.add(
       Marker(
         markerId: const MarkerId('1'),

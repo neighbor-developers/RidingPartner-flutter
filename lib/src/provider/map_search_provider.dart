@@ -11,6 +11,7 @@ import 'dart:developer' as developer;
 class MapSearchProvider extends ChangeNotifier {
   var isStartSearching = false;
   var isEndSearching = false;
+  final NaverMapService _naverMapService = NaverMapService();
   final kakaoKey = dotenv.env['KAKAO_REST_API_KEY'];
 
   List<Place> _startPointSearchResult = [];
@@ -65,7 +66,7 @@ class MapSearchProvider extends ChangeNotifier {
   }
 
   setStartPointSearchResult(String title) async {
-    _startPointSearchResult = (await NaverMapService().getPlaces(title)) ?? [];
+    _startPointSearchResult = (await _naverMapService.getPlaces(title)) ?? [];
     if (_startPointSearchResult.isNotEmpty) {
       isStartSearching = true;
       if (_myLocation != null) {
@@ -78,7 +79,7 @@ class MapSearchProvider extends ChangeNotifier {
   }
 
   setEndPointSearchResult(String title) async {
-    _endPointSearchResult = (await NaverMapService().getPlaces(title)) ?? [];
+    _endPointSearchResult = (await _naverMapService.getPlaces(title)) ?? [];
     if (_endPointSearchResult.isNotEmpty) {
       isEndSearching = true;
       if (_myLocation != null) {
@@ -104,7 +105,7 @@ class MapSearchProvider extends ChangeNotifier {
   }
 
   setMyLocation(address) async {
-    List<Place> tmpResult = (await NaverMapService().getPlaces(address)) ?? [];
+    List<Place> tmpResult = (await _naverMapService.getPlaces(address)) ?? [];
     _myLocation = tmpResult[0];
     _myLocation!.title = "내 위치";
     notifyListeners();

@@ -29,6 +29,8 @@ class RidingProvider with ChangeNotifier {
   String _ridingDate = "";
   String get ridingDate => _ridingDate;
 
+  bool isDisposed = false;
+
   late int _startTime; // 라이딩 시작 타임스탬프
   late int _endTime; // 라이딩 중단 타임스탬프
   late int _restartTime = 0; // 라이딩 시작 타임스탬프
@@ -65,6 +67,14 @@ class RidingProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  @override
+  void dispose() {
+    isDisposed = true;
+    _positionStream.dispose();
+    _stopwatch.stop();
+    super.dispose();
+  }
+
   Future<void> startRiding() async {
     _befTime = DateTime.now().millisecondsSinceEpoch; // 이전 시간 저장용
     setRidingState(RidingState.riding);
@@ -97,6 +107,7 @@ class RidingProvider with ChangeNotifier {
           _calRecord(_position!);
         }
       }
+      if (isDisposed) return;
       notifyListeners();
       _time = _stopwatch.elapsed;
       if (_time.inSeconds / 60 == 0) {
