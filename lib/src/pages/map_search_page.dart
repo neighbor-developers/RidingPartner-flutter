@@ -19,10 +19,10 @@ class MapSearchPage extends StatefulWidget {
 
 class MapSampleState extends State<MapSearchPage> {
   final Completer<GoogleMapController> _controller = Completer();
-  FocusNode _startPointFocusNode = FocusNode();
-  FocusNode _endPointFocusNode = FocusNode();
-  final _startPointTextController = TextEditingController();
-  final _endPointTextController = TextEditingController();
+  late FocusNode _startPointFocusNode;
+  late FocusNode _endPointFocusNode;
+  var _startPointTextController;
+  var _endPointTextController;
   var _initLocation = CameraPosition(
     target: LatLng(MyLocation().latitude!, MyLocation().longitude!),
     zoom: 14.4746,
@@ -31,6 +31,10 @@ class MapSampleState extends State<MapSearchPage> {
   @override
   void initState() {
     super.initState();
+    _endPointTextController = TextEditingController();
+    _startPointTextController = TextEditingController();
+    _endPointFocusNode = FocusNode();
+    _startPointFocusNode = FocusNode();
     _startPointFocusNode.addListener(() {
       if (!_startPointFocusNode.hasFocus) {
         Provider.of<MapSearchProvider>(context, listen: false)
@@ -48,6 +52,7 @@ class MapSampleState extends State<MapSearchPage> {
 
   @override
   void dispose() {
+    Provider.of<MapSearchProvider>(context, listen: false).dispose();
     _startPointTextController.dispose();
     _endPointTextController.dispose();
     super.dispose();
