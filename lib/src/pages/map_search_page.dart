@@ -28,6 +28,7 @@ class MapSampleState extends State<MapSearchPage> {
     zoom: 14.4746,
   );
   final List<Marker> _markers = [];
+
   @override
   void initState() {
     super.initState();
@@ -52,7 +53,6 @@ class MapSampleState extends State<MapSearchPage> {
 
   @override
   void dispose() {
-    Provider.of<MapSearchProvider>(context, listen: false).dispose();
     _startPointTextController.dispose();
     _endPointTextController.dispose();
     super.dispose();
@@ -236,7 +236,7 @@ class MapSampleState extends State<MapSearchPage> {
             return;
           } else {
             developer.log("안내시작");
-            Navigator.push(
+            Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
                     builder: (context) => MultiProvider(
@@ -250,7 +250,8 @@ class MapSampleState extends State<MapSearchPage> {
                                 create: (context) => RidingProvider())
                           ],
                           child: NavigationPage(),
-                        )));
+                        )),
+                (route) => false);
           }
         },
         materialTapTargetSize: MaterialTapTargetSize.padded,
@@ -258,9 +259,7 @@ class MapSampleState extends State<MapSearchPage> {
   }
 
   void _updatePosition(Place position) {
-    if (_markers[0] != null) {
-      _markers.removeAt(0);
-    }
+    _markers.clear();
     _markers.add(
       Marker(
         markerId: const MarkerId('1'),
