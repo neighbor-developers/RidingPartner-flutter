@@ -3,24 +3,18 @@ import 'package:ridingpartner_flutter/src/service/wether_service.dart';
 
 import '../models/weather.dart';
 
-enum LoadingStatus { completed, searching, empty }
+enum WeatherState { completed, searching, empty }
 
 class WeatherProvider with ChangeNotifier {
-  final Weather _weather =
-      Weather(temp: 20, condition: "Clouds", conditionId: 200, humidity: 50);
+  final Weather _weather = Weather();
   Weather get weather => _weather;
 
-  LoadingStatus _loadingStatus = LoadingStatus.empty;
-  LoadingStatus get loadingStatus => _loadingStatus;
-
-  String _message = "Loading...";
-  String get message => _message;
+  WeatherState _loadingStatus = WeatherState.searching;
+  WeatherState get loadingStatus => _loadingStatus;
 
   final OpenWeatherService _openWeatherService = OpenWeatherService();
 
   Future<void> getWeather() async {
-    _loadingStatus = LoadingStatus.searching;
-
     try {
       final result = await _openWeatherService.getWeather();
 
@@ -28,10 +22,9 @@ class WeatherProvider with ChangeNotifier {
         final weatherData = result.response;
 
         if (weatherData == null) {
-          _loadingStatus = LoadingStatus.empty;
-          _message = 'Could not find weather. Please try again.';
+          _loadingStatus = WeatherState.empty;
         } else {
-          _loadingStatus = LoadingStatus.completed;
+          _loadingStatus = WeatherState.completed;
           weather.condition = weatherData['weather'][0]['main'];
           weather.conditionId = weatherData['weather'][0]['id'];
           weather.humidity = weatherData['main']['humidity'];
@@ -40,8 +33,7 @@ class WeatherProvider with ChangeNotifier {
         }
       }
     } catch (e) {
-      _loadingStatus = LoadingStatus.empty;
-      _message = 'Could not find weather. Please try again.';
+      _loadingStatus = WeatherState.empty;
     }
 
     notifyListeners();

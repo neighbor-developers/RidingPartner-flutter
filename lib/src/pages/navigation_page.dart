@@ -9,9 +9,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:ridingpartner_flutter/src/pages/record_page.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/riding_result_provider.dart';
 import 'package:ridingpartner_flutter/src/widgets/dialog.dart';
+import 'package:screen/screen.dart';
+// import 'package:screen/screen.dart';
 
 class NavigationPage extends StatefulWidget {
   const NavigationPage({super.key});
@@ -246,14 +250,35 @@ class _NavigationPageState extends State<NavigationPage> {
                 color: Colors.white,
                 fontSize: 13.0),
             onTap: () {
+              screenKeepOff();
               _ridingProvider.stopAndSaveRiding();
               _navigationProvider.setState(RidingState.stop);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChangeNotifierProvider(
+                            create: (context) => RidingResultProvider(
+                                _ridingProvider.ridingDate),
+                            child: RecordPage(),
+                          )));
             },
           )
         ],
       );
     } else {
       return null;
+    }
+  }
+
+  void screenKeepOn() async {
+    if (!(await Screen.isKeptOn)) {
+      Screen.keepOn(true);
+    }
+  }
+
+  void screenKeepOff() async {
+    if (await Screen.isKeptOn) {
+      Screen.keepOn(false);
     }
   }
 
@@ -265,6 +290,7 @@ class _NavigationPageState extends State<NavigationPage> {
           onPressed: () {
             _ridingProvider.startRiding();
             _navigationProvider.startNavigation();
+            screenKeepOn();
           },
           child: Text('시작'),
         ),

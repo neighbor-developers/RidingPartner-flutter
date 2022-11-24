@@ -39,6 +39,15 @@ class FirebaseDatabaseService {
     }
   }
 
+  Future<void> delRecord() async {
+    DatabaseReference ref = _database.ref("$_uId");
+    try {
+      return await ref.remove();
+    } catch (e) {
+      return;
+    }
+  }
+
   Future<List<Record>?> getAllRecords() async {
     try {
       DatabaseReference ref = _database.ref("$_uId");
@@ -51,9 +60,10 @@ class FirebaseDatabaseService {
         return map.values.map(Record.fromDB).toList();
       } else {
         print("데이터 없음");
-        return <Record>[];
+        return List<Record>.empty();
       }
     } catch (e) {
+      print("catch!");
       developer.log(e.toString());
       return null;
     }

@@ -10,7 +10,9 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import 'dart:developer' as developer;
 
-class SocialLogin {
+import 'firebase_database_service.dart';
+
+class SocialLoginService {
   // kakao
   Future<User?> signInWithKakao() async {
     kakao_flutter.KakaoSdk.init(
@@ -138,5 +140,33 @@ class SocialLogin {
     prefs.setString('email', user.email.toString());
     prefs.setString('token', user.getIdToken().toString());
     prefs.setString("uId", user.uid);
+  }
+
+  final FirebaseAuth fAuth = FirebaseAuth.instance;
+  final FirebaseDatabaseService _databaseService = FirebaseDatabaseService();
+
+  Future<bool> withdrawal() async {
+    while (true) {
+      _databaseService.delRecord();
+      try {
+        await fAuth.currentUser?.delete();
+        fAuth.signOut();
+        break;
+      } catch (e) {
+        print('계정탈퇴에 실패했습니다.');
+      }
+      Future.delayed(Duration(seconds: 3));
+    }
+    return true;
+  }
+
+  Future<bool> signOut() async {
+    try {
+      await fAuth.signOut();
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
   }
 }

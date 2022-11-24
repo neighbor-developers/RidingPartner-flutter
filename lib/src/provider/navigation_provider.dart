@@ -156,8 +156,6 @@ class NavigationProvider with ChangeNotifier {
       _position = pos;
     });
 
-    // Screen.keepOn(true);
-
     _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
       _calToPoint();
       getRouteTimer++;

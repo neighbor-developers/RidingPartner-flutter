@@ -9,11 +9,15 @@ class NetworkHelper {
   NetworkHelper._internal();
 
   Future<Result> getData(String url) async {
-    http.Response response = await http.get(Uri.parse(url));
+    try {
+      http.Response response = await http.get(Uri.parse(url));
 
-    if (response.statusCode == 200) {
-      return Result(isSuccess: true, response: jsonDecode(response.body));
-    } else {
+      if (response.statusCode == 200) {
+        return Result(isSuccess: true, response: jsonDecode(response.body));
+      } else {
+        return Result(isSuccess: false, response: null);
+      }
+    } catch (e) {
       return Result(isSuccess: false, response: null);
     }
   }

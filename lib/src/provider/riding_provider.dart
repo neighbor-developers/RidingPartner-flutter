@@ -58,7 +58,7 @@ class RidingProvider with ChangeNotifier {
   RidingState get state => _ridingState;
   Position? get position => _position;
 
-  late Uint8List customIcon;
+  Uint8List? customIcon;
   google_map.BitmapDescriptor pictureIcon =
       google_map.BitmapDescriptor.defaultMarker;
 
@@ -103,7 +103,9 @@ class RidingProvider with ChangeNotifier {
 
     _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
       if (_position != null) {
-        _calRecord(_position!);
+        if (_time.inSeconds / 3 == 0) {
+          _calRecord(_position!);
+        }
       }
       if (isDisposed) return;
       notifyListeners();

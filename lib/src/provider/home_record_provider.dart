@@ -24,25 +24,23 @@ class HomeRecordProvider extends ChangeNotifier {
     _ridingRecord = await _firebaseDatabaseService.getAllRecords();
     _prefRecord = PreferenceUtils.getRecordFromPref();
 
-    switch (_ridingRecord) {
-      case null:
-        _recordState = RecordState.fail;
-        if (_prefRecord != null) {
-          _lastRecord = _prefRecord;
-        }
-        break;
-      case <Record>[]:
-        _recordState = RecordState.empty;
-        if (_prefRecord != null) {
-          _lastRecord = _prefRecord;
-        }
-        break;
-      default:
-        _recordState = RecordState.success;
-        if (_prefRecord != _ridingRecord?.last && _prefRecord != null) {
-          saveRecord(_prefRecord!);
-        }
+    if (_ridingRecord == null) {
+      _recordState = RecordState.fail;
+      if (_prefRecord != null) {
+        _lastRecord = _prefRecord;
+      }
+    } else if (_ridingRecord!.isEmpty) {
+      _recordState = RecordState.empty;
+      if (_prefRecord != null) {
+        _lastRecord = _prefRecord;
+      }
+    } else {
+      _recordState = RecordState.success;
+      if (_prefRecord != _ridingRecord!.last && _prefRecord != null) {
+        saveRecord(_prefRecord!);
+      }
     }
+    notifyListeners();
   }
 
   void saveRecord(Record record) {
