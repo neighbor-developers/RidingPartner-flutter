@@ -1,19 +1,20 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
+import 'package:ridingpartner_flutter/src/models/result.dart';
 
 class NetworkHelper {
   static final NetworkHelper _instance = NetworkHelper._internal();
   factory NetworkHelper() => _instance;
   NetworkHelper._internal();
 
-  Future getData(String url) async {
+  Future<Result> getData(String url) async {
     http.Response response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return Result(isSuccess: true, response: jsonDecode(response.body));
     } else {
-      print(response.statusCode);
+      return Result(isSuccess: false, response: null);
     }
   }
 

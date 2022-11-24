@@ -21,17 +21,27 @@ class WeatherProvider with ChangeNotifier {
   Future<void> getWeather() async {
     _loadingStatus = LoadingStatus.searching;
 
-    final weatherData = await _openWeatherService.getWeather();
-    if (weatherData == null) {
+    try {
+      final result = await _openWeatherService.getWeather();
+
+      if (result.isSuccess) {
+        final weatherData = result.response;
+
+        if (weatherData == null) {
+          _loadingStatus = LoadingStatus.empty;
+          _message = 'Could not find weather. Please try again.';
+        } else {
+          _loadingStatus = LoadingStatus.completed;
+          weather.condition = weatherData['weather'][0]['main'];
+          weather.conditionId = weatherData['weather'][0]['id'];
+          weather.humidity = weatherData['main']['humidity'];
+          weather.temp = weatherData['main']['temp'];
+          weather.temp = (weather.temp! * 10).roundToDouble() / 10;
+        }
+      }
+    } catch (e) {
       _loadingStatus = LoadingStatus.empty;
       _message = 'Could not find weather. Please try again.';
-    } else {
-      _loadingStatus = LoadingStatus.completed;
-      weather.condition = weatherData['weather'][0]['main'];
-      weather.conditionId = weatherData['weather'][0]['id'];
-      weather.humidity = weatherData['main']['humidity'];
-      weather.temp = weatherData['main']['temp'];
-      weather.temp = (weather.temp! * 10).roundToDouble() / 10;
     }
 
     notifyListeners();

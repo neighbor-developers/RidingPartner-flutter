@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:ridingpartner_flutter/src/models/result.dart';
 import 'package:ridingpartner_flutter/src/models/weather.dart';
 import 'package:ridingpartner_flutter/src/network/network_helper.dart';
 import 'dart:convert';
@@ -13,7 +14,7 @@ class OpenWeatherService {
   final String _apiKey = dotenv.env['openWeatherApiKey']!;
   final String _baseUrl = dotenv.env['openWeatherApiBaseUrl']!;
 
-  Future getWeather() async {
+  Future<Result> getWeather() async {
     MyLocation myLocation = MyLocation();
     developer.log("myLocation called in network");
     try {
@@ -22,9 +23,9 @@ class OpenWeatherService {
       developer.log("error : getLocation ${e.toString()}");
     }
 
-    final weatherData = NetworkHelper().getData(
+    final result = await NetworkHelper().getData(
         '$_baseUrl?lat=${myLocation.latitude}&lon=${myLocation.longitude}&appid=$_apiKey&units=metric');
-    return weatherData;
+    return result;
   }
 }
 
