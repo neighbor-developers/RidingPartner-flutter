@@ -40,6 +40,7 @@ class HomeRecordProvider extends ChangeNotifier {
         saveRecord(_prefRecord!);
       }
     }
+    notifyListeners();
   }
 
   void saveRecord(Record record) {
