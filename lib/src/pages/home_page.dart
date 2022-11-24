@@ -9,8 +9,10 @@ import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/models/weather.dart';
 import 'package:ridingpartner_flutter/src/pages/loding_page.dart';
+import 'package:ridingpartner_flutter/src/pages/setting_page.dart';
 import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/setting_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 import 'dart:developer' as developer;
 
@@ -22,6 +24,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State<HomePage> {
+  late WeatherProvider _weatherProvider;
+  late HomeRecordProvider _homeRecordProvider;
+  late List<Record>? records;
   @override
   void initState() {
     super.initState();
@@ -29,53 +34,83 @@ class _HomePage extends State<HomePage> {
     Provider.of<HomeRecordProvider>(context, listen: false).getRecord();
   }
 
-  List<Record>? records;
-
   @override
   Widget build(BuildContext context) {
-    final weather = Provider.of<WeatherProvider>(context).weather;
-    records = Provider.of<HomeRecordProvider>(context).ridingRecord;
+    _weatherProvider = Provider.of<WeatherProvider>(context);
+    _homeRecordProvider = Provider.of<HomeRecordProvider>(context);
+    records = _homeRecordProvider.ridingRecord;
     developer.log('weather build');
 
     return Scaffold(
       floatingActionButton: floatingButtons(),
       body: Column(
         children: [
-          weatherWidget(weather),
+          weatherWidget(),
           Container(
             height: 70,
           ),
-          lastRecord(),
-          lastRidingProgress(),
-          recordChart(),
+          recordWidget(_homeRecordProvider.recordState),
           recommendWidget()
         ],
       ),
     );
   }
 
-  Widget weatherWidget(Weather weather) {
-    return Row(
-      children: [
-        Text(
-            '${weather.condition} ${getWeatherIcon(weather.conditionId ?? 800)}'),
-        Text('현재 온도 : ${weather.temp}° '),
-        Text('습도 : ${weather.humidity}%'),
-      ],
-    );
+  Widget weatherWidget() {
+    switch (_weatherProvider.loadingStatus) {
+      case WeatherState.searching:
+        return Text('날씨를 검색중입니다');
+      case WeatherState.empty:
+        return Text('날씨를 불러올 수 없습니다.');
+      case WeatherState.completed:
+        Weather weather = _weatherProvider.weather;
+        return Text(
+            '${weather.condition} ${getWeatherIcon(weather.conditionId ?? 800)} 현재 온도 : ${weather.temp}° 습도 : ${weather.humidity}%');
+      default:
+        return Text('날씨를 검색중입니다');
+    }
+  }
+
+  Widget recordWidget(RecordState state) {
+    switch (state) {
+      case RecordState.empty:
+        return Container(
+          child: Text('데이터가 없습니다.'),
+        );
+      case RecordState.fail:
+        return Container(
+          child: Text('데이터 로드에 실패했습니다. 네트워크를 확인해주세요'),
+        );
+      case RecordState.loading:
+        return Container(
+          child: Text('데이터 로드중'),
+        );
+      case RecordState.success:
+        return Column(
+          children: [
+            lastRecord(),
+            lastRidingProgress(),
+            recordChart(),
+          ],
+        );
+      default:
+        return Container(
+          child: Text('데이터 로드중'),
+        );
+    }
   }
 
   Widget lastRecord() {
     return Column(
       children: [
-        Text(records?.last.distance.toString() ?? ""),
-        Text(records?.last.timestamp.toString() ?? "")
+        Text(records!.last.distance.toString()),
+        Text(records!.last.timestamp.toString())
       ],
     );
   }
 
   Widget lastRidingProgress() {
-    double percent = records?.last.distance ?? 3 / 10;
+    double percent = records!.last.distance ?? 3 / 10;
     return Column(
       children: [
         Container(
@@ -101,7 +136,7 @@ class _HomePage extends State<HomePage> {
         aspectRatio: 2,
         child: LineChart(LineChartData(lineBarsData: [
           LineChartBarData(
-              spots: records?.map((data) => FlSpot(1, data.distance!)).toList())
+              spots: records!.map((data) => FlSpot(1, data.distance!)).toList())
         ])));
   }
 
@@ -121,7 +156,13 @@ class _HomePage extends State<HomePage> {
                 fontSize: 13.0),
             backgroundColor: Colors.indigo.shade900,
             labelBackgroundColor: Colors.indigo.shade900,
-            onTap: () {}),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ChangeNotifierProvider(
+                        create: (context) => SettingProvider(),
+                        child: SettingPage(),
+                      )));
+            }),
         SpeedDialChild(
           child: const Icon(
             Icons.add_chart_rounded,
