@@ -6,7 +6,7 @@ import '../service/social_login_service.dart';
 import 'dart:developer' as developer;
 
 class AuthProvider with ChangeNotifier {
-  final socialLogin = SocialLogin();
+  final socialLogin = SocialLoginService();
 
   final FirebaseAuth fAuth = FirebaseAuth.instance;
   User? _user;
@@ -41,10 +41,5 @@ class AuthProvider with ChangeNotifier {
     User? user = await socialLogin.siginInwithApple();
     developer.log(user.toString());
     _setUser(user);
-  }
-
-  signOut() async {
-    await fAuth.signOut();
-    _setUser(null);
   }
 }
