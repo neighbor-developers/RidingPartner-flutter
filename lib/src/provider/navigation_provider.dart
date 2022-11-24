@@ -57,12 +57,22 @@ class NavigationProvider with ChangeNotifier {
   int get remainedDistance => _remainedDistance;
   int get totalDistance => _totalDistance;
 
+  bool _disposed = false;
+
   void setState(RidingState state) {
     _ridingState = state;
     if (state == RidingState.pause) {
       _timer?.cancel();
     }
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _timer?.cancel();
+    _positionStream.dispose();
+    super.dispose();
   }
 
   Future<void> getRoute() async {
@@ -263,6 +273,7 @@ class NavigationProvider with ChangeNotifier {
     });
 
     _polylinePoints = pointLatLngs;
+    if (_disposed) return;
     notifyListeners();
   }
 

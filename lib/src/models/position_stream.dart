@@ -19,6 +19,11 @@ class PositionStream {
     return _instance;
   }
 
+  //dispose
+  void dispose() {
+    _controller.close();
+  }
+
   PositionStream._internal() {
     if (defaultTargetPlatform == TargetPlatform.android) {
       locationSettings = AndroidSettings(
