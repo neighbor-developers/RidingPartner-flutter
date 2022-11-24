@@ -25,16 +25,14 @@ class _HomePage extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    Provider.of<WeatherProvider>(context, listen: false).getWeather();
-    Provider.of<HomeRecordProvider>(context, listen: false).getRecord();
   }
 
   List<Record>? records;
 
   @override
   Widget build(BuildContext context) {
-    final weather = Provider.of<WeatherProvider>(context).weather;
-    records = Provider.of<HomeRecordProvider>(context).ridingRecord;
+    final weather = WeatherProvider().weather;
+    records = HomeRecordProvider().ridingRecord;
     developer.log('weather build');
 
     return Scaffold(
