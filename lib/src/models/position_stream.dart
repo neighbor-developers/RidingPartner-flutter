@@ -8,7 +8,7 @@ import 'package:geolocator_android/geolocator_android.dart';
 class PositionStream {
   late LocationSettings locationSettings;
   static final PositionStream _instance = PositionStream._internal();
-  static final StreamController<Position> _controller =
+  static StreamController<Position> _controller =
       StreamController<Position>.broadcast();
   static final int DISTANCE = 30;
   static final int DURATION_SECNOD = 2;
@@ -16,6 +16,7 @@ class PositionStream {
   StreamController<Position> get controller => _controller;
 
   factory PositionStream() {
+    _controller = StreamController<Position>.broadcast();
     return _instance;
   }
 
