@@ -147,8 +147,8 @@ class MapSampleState extends State<MapSearchPage> {
           focusNode: focusNode,
           onChanged: (value) => mapSearchProvider.searchPlace(value, type),
           controller: textController,
-          decoration: InputDecoration(
-            hintText: type,
+          decoration: const InputDecoration(
+            hintText: "목적지",
             border: OutlineInputBorder(),
           ),
         ),
