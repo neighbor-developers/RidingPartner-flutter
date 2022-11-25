@@ -88,7 +88,7 @@ class MapSampleState extends State<MapSearchPage> {
           Container(
               alignment: Alignment.topLeft,
               width: MediaQuery.of(context).size.width - 80,
-              margin: const EdgeInsets.only(top: 190, left: 50),
+              margin: const EdgeInsets.only(top: 120, left: 50),
               child: Visibility(
                 visible: mapSearchProvider.isEndSearching,
                 child: Column(children: [
