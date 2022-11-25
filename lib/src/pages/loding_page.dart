@@ -62,8 +62,6 @@ class _LodingPageState extends State<LodingPage> {
                       ChangeNotifierProvider(
                           create: (context) => MapSearchProvider()),
                       ChangeNotifierProvider(
-                          create: (context) => RidingProvider()),
-                      ChangeNotifierProvider(
                           create: (context) => PlaceListProvider()),
                       ChangeNotifierProvider(
                           create: (context) => HomeRecordProvider())

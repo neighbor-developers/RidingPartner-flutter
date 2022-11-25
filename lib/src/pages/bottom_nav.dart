@@ -7,6 +7,7 @@ import 'package:ridingpartner_flutter/src/pages/sights_page.dart';
 import 'package:ridingpartner_flutter/src/pages/riding_page.dart';
 import 'package:ridingpartner_flutter/src/pages/home_page.dart';
 import 'package:ridingpartner_flutter/src/provider/bottom_navigation_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 
 import '../models/place.dart';
 
@@ -48,14 +49,22 @@ class BottomNavigation extends StatelessWidget {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.pedal_bike),
-              label: '설정',
+              label: '라이딩',
             ),
           ],
           currentIndex: _bottomNavigationProvider.currentPage,
           selectedItemColor: Colors.indigo.shade900,
           unselectedItemColor: Colors.grey,
           onTap: (index) {
-            _bottomNavigationProvider.setCurrentPage(index);
+            if (index == 4) {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ChangeNotifierProvider(
+                        create: (context) => RidingProvider(),
+                        child: RidingPage(),
+                      )));
+            } else {
+              _bottomNavigationProvider.setCurrentPage(index);
+            }
           }),
     );
   }
