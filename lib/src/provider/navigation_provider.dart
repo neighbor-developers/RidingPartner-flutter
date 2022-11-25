@@ -45,6 +45,7 @@ class NavigationProvider with ChangeNotifier {
   int getRouteTimer = 0;
   int _remainedDistance = 0;
   int _totalDistance = 0;
+  bool isFirst = true;
 
   LatLng? _nextLatLng;
 
@@ -80,6 +81,7 @@ class NavigationProvider with ChangeNotifier {
     _goalDestination = _ridingCourse.first;
     _finalDestination = _ridingCourse.last;
     _nextDestination = _ridingCourse.elementAt(1);
+    isFirst = true;
 
     try {
       _position ??= await Geolocator.getCurrentPosition(
@@ -193,14 +195,20 @@ class NavigationProvider with ChangeNotifier {
             _route!.removeAt(0);
             _goalPoint = _route![0]; //
             _nextPoint = null;
-            _polylinePoints.removeAt(0);
+            if (isFirst) {
+              _polylinePoints.removeAt(0);
+              isFirst = false;
+            }
             _remainedDistance -= _distances.last;
             _distances.removeLast();
           } else {
             _route!.removeAt(0);
             _goalPoint = _route![0]; //
             _nextPoint = _route![1];
-            _polylinePoints.removeAt(0);
+            if (isFirst) {
+              _polylinePoints.removeAt(0);
+              isFirst = false;
+            }
             _remainedDistance -= _distances.last;
             _distances.removeLast();
           }

@@ -118,13 +118,13 @@ class RidingProvider with ChangeNotifier {
 
   void _calRecord(Position position) {
     num distance = _calDistance.as(
-        LengthUnit.Kilometer,
+        LengthUnit.Meter,
         LatLng(_befLatLng.latitude, _befLatLng.longitude),
         LatLng(position.latitude, position.longitude));
     _befLatLng = LatLng(position.latitude, position.longitude); // 거리 계산
 
-    _sumDistance += distance; // km
-    _speed = distance / 3 * 3600; // k/h
+    _sumDistance += distance; // m
+    _speed = distance / 3; // m/s
     if (_topSpeed < _speed) {
       _topSpeed = _speed;
     }
