@@ -24,7 +24,8 @@ class MapSampleState extends State<MapSearchPage> {
   var _startPointTextController;
   var _endPointTextController;
   var _initLocation = CameraPosition(
-    target: LatLng(MyLocation().latitude!, MyLocation().longitude!),
+    target: LatLng(
+        MyLocation().position!.latitude, MyLocation().position!.longitude),
     zoom: 14.4746,
   );
   final List<Marker> _markers = [];
@@ -275,13 +276,15 @@ class MapSampleState extends State<MapSearchPage> {
     final myLocation = MyLocation();
     await myLocation.getMyCurrentLocation();
     _initLocation = CameraPosition(
-      target: LatLng(myLocation.latitude!, myLocation.longitude!),
+      target:
+          LatLng(myLocation.position!.latitude, myLocation.position!.longitude),
       zoom: 14.4746,
     );
     _markers.add(Marker(
         markerId: const MarkerId("1"),
         draggable: true,
         onTap: () => {},
-        position: LatLng(myLocation.latitude!, myLocation.longitude!)));
+        position: LatLng(
+            myLocation.position!.latitude, myLocation.position!.longitude)));
   }
 }

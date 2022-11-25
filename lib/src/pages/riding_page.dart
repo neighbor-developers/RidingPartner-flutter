@@ -23,14 +23,10 @@ class RidingPage extends StatelessWidget {
     primary: Colors.red,
     onPrimary: Colors.white,
   );
+  final myLocation = MyLocation();
 
   @override
   Widget build(BuildContext context) {
-    var initLocation = CameraPosition(
-      target: LatLng(MyLocation().latitude!!, MyLocation().longitude!!),
-      zoom: 12.6,
-    );
-
     _ridingProvider = Provider.of<RidingProvider>(context);
     Position? position = _ridingProvider.position;
 
@@ -39,6 +35,7 @@ class RidingPage extends StatelessWidget {
       if (position != null) {
         googleMapController.animateCamera(CameraUpdate.newCameraPosition(
             CameraPosition(
+                zoom: 19,
                 target: LatLng(position.latitude, position.longitude))));
       }
     }
@@ -53,8 +50,8 @@ class RidingPage extends StatelessWidget {
         GoogleMap(
           mapType: MapType.normal,
           initialCameraPosition: CameraPosition(
-            target: LatLng(position?.latitude ?? 37.343991285297,
-                position?.longitude ?? 126.74729588817),
+            target: LatLng(myLocation.position?.latitude ?? 37.0,
+                myLocation.position?.longitude ?? 126.0),
             zoom: 12.6,
           ),
           onMapCreated: (GoogleMapController controller) {
@@ -69,12 +66,12 @@ class RidingPage extends StatelessWidget {
                 points: _ridingProvider.polylineCoordinates),
           },
           markers: {
-            Marker(
-                markerId: const MarkerId("currentLocation"),
-                icon: BitmapDescriptor.fromBytes(RidingProvider().customIcon),
-                position: LatLng(
-                    _ridingProvider.position?.latitude ?? 37.343991285297,
-                    _ridingProvider.position?.longitude ?? 126.74729588817))
+            // Marker(
+            //     markerId: const MarkerId("currentLocation"),
+            //     icon: BitmapDescriptor.fromBytes(),
+            //     position: LatLng(
+            //         _ridingProvider.position?.latitude ?? 37.343991285297,
+            //         _ridingProvider.position?.longitude ?? 126.74729588817))
           },
         ),
         Positioned(

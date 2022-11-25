@@ -2,8 +2,6 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:developer' as developer;
 
 class MyLocation {
-  late double? latitude;
-  late double? longitude;
   late Position? position;
 
   static final MyLocation _instance = MyLocation._internal();
@@ -47,13 +45,22 @@ class MyLocation {
     try {
       position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
-      latitude = position!.latitude;
-      longitude = position!.longitude;
-      developer.log("latitude : $latitude , longitude : $longitude");
+      developer.log(
+          "latitude : ${position?.latitude} , longitude : ${position?.longitude}");
     } catch (e) {
       developer.log("error : getMyCurrentLocation ${e.toString()}");
-      latitude = 37.579871128849334;
-      longitude = 126.98935225645432;
+      position = await Geolocator.getLastKnownPosition();
+    }
+    if (position == null) {
+      position = Position(
+          longitude: 126.98935225645432,
+          latitude: 37.579871128849334,
+          timestamp: null,
+          accuracy: 0.0,
+          altitude: 0.0,
+          heading: 0.0,
+          speed: 0.0,
+          speedAccuracy: 0.0);
     }
   }
 

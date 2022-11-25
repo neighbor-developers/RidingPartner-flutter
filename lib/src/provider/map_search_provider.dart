@@ -52,8 +52,8 @@ class MapSearchProvider extends ChangeNotifier {
     final myLocation = MyLocation();
     myLocation.getMyCurrentLocation();
     _myPosition = myLocation.position;
-    final lat = myLocation.latitude;
-    final lon = myLocation.longitude;
+    final lat = myLocation.position!.latitude;
+    final lon = myLocation.position!.longitude;
     final url =
         "https://dapi.kakao.com/v2/local/geo/coord2address.json?x=$lon&y=$lat&input_coord=WGS84";
     Map<String, String> requestHeaders = {'Authorization': 'KakaoAK $kakaoKey'};
