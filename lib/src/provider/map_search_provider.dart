@@ -14,38 +14,23 @@ class MapSearchProvider extends ChangeNotifier {
   final NaverMapService _naverMapService = NaverMapService();
   final kakaoKey = dotenv.env['KAKAO_REST_API_KEY'];
 
-  List<Place> _startPointSearchResult = [];
-  List<Place> get startPointSearchResult => _startPointSearchResult;
+  List<Place> _destinationSearchResult = [];
+  List<Place> get destinationSearchResult => _destinationSearchResult;
 
-  List<Place> _endPointSearchResult = [];
-  List<Place> get endPointSearchResult => _endPointSearchResult;
-
-  Place? _startPoint;
-  Place? get startPoint => _startPoint;
-
-  Place? _endPoint;
-  Place? get endPoint => _endPoint;
+  Place? _destination;
+  Place? get destination => _destination;
 
   Place? _myLocation;
   Position? _myPosition;
   Position? get myPosition => _myPosition;
 
-  setStartPoint(Place place) {
-    _startPoint = place;
-    notifyListeners();
-  }
-
   setEndPoint(Place place) {
-    _endPoint = place;
+    _destination = place;
     notifyListeners();
   }
 
   searchPlace(value, type) async {
-    if (type == '출발지') {
-      setStartPointSearchResult(value);
-    } else {
-      setEndPointSearchResult(value);
-    }
+    setEndPointSearchResult(value);
   }
 
   Future<String> getMyLocationAddress() async {
@@ -65,60 +50,18 @@ class MapSearchProvider extends ChangeNotifier {
     return address;
   }
 
-  setStartPointSearchResult(String title) async {
-    _startPointSearchResult = (await _naverMapService.getPlaces(title)) ?? [];
-    if (_startPointSearchResult.isNotEmpty) {
-      isStartSearching = true;
-      if (_myLocation != null) {
-        _startPointSearchResult.insert(0, _myLocation!);
-      }
-    } else {
-      isStartSearching = false;
-    }
-    notifyListeners();
-  }
-
   setEndPointSearchResult(String title) async {
-    _endPointSearchResult = (await _naverMapService.getPlaces(title)) ?? [];
-    if (_endPointSearchResult.isNotEmpty) {
+    _destinationSearchResult = (await _naverMapService.getPlaces(title)) ?? [];
+    if (_destinationSearchResult.isNotEmpty) {
       isEndSearching = true;
-      if (_myLocation != null) {
-        _endPointSearchResult.insert(0, _myLocation!);
-      }
     } else {
       isEndSearching = false;
     }
     notifyListeners();
   }
 
-  setMyLocationOnly(type) {
-    if (type == '출발지') {
-      _startPointSearchResult = [];
-      _startPointSearchResult.add(_myLocation!);
-      isStartSearching = true;
-    } else {
-      _endPointSearchResult = [];
-      _endPointSearchResult.add(_myLocation!);
-      isEndSearching = true;
-    }
-    notifyListeners();
-  }
-
-  setMyLocation(address) async {
-    List<Place> tmpResult = (await _naverMapService.getPlaces(address)) ?? [];
-    _myLocation = tmpResult[0];
-    _myLocation!.title = "내 위치";
-    notifyListeners();
-  }
-
-  clearStartPointSearchResult() {
-    _startPointSearchResult = [];
-    isStartSearching = false;
-    notifyListeners();
-  }
-
   clearEndPointSearchResult() {
-    _endPointSearchResult = [];
+    _destinationSearchResult = [];
     isEndSearching = false;
     notifyListeners();
   }

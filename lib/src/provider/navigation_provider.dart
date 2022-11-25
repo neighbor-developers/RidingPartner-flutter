@@ -2,12 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as google_map;
 import 'package:latlong2/latlong.dart';
-import 'package:ridingpartner_flutter/main.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
@@ -19,7 +17,6 @@ import '../models/position_stream.dart';
 class NavigationProvider with ChangeNotifier {
   final NaverMapService _naverMapService = NaverMapService();
   //make constructer with one Place type parameter
-  NavigationProvider.p(this._ridingCourse, this._position);
   NavigationProvider(this._ridingCourse);
   //make constructer without parameter
   NavigationProvider.empty();
@@ -80,7 +77,9 @@ class NavigationProvider with ChangeNotifier {
     getRouteTimer = 0;
     _goalDestination = _ridingCourse.first;
     _finalDestination = _ridingCourse.last;
-    _nextDestination = _ridingCourse.elementAt(1);
+    if (_ridingCourse.length > 1) {
+      _nextDestination = _ridingCourse.elementAt(1);
+    }
     isFirst = true;
 
     try {
@@ -90,8 +89,10 @@ class NavigationProvider with ChangeNotifier {
     } catch (e) {
       print(e.toString());
       MyLocation().cheakPermission();
-      _position = await Geolocator.getLastKnownPosition();
+      _position = MyLocation().position;
     }
+
+    // getMyLocationAddress(_position);
 
     Place startPlace = Place(
         id: null,
@@ -152,6 +153,19 @@ class NavigationProvider with ChangeNotifier {
     _polyline();
   }
 
+  // Future<String> getMyLocationAddress(Position position) async {
+  //   final url =
+  //       "https://dapi.kakao.com/v2/local/geo/coord2address.json?x=$lon&y=$lat&input_coord=WGS84";
+  //   Map<String, String> requestHeaders = {'Authorization': 'KakaoAK $kakaoKey'};
+  //   final response = await http.get(Uri.parse(url), headers: requestHeaders);
+  //   final address = json.decode(response.body)['documents'][0]['address']
+  //           ['address_name'] ??
+  //       '';
+  //   developer.log(address);
+
+  //   return address;
+  // }
+
   Future<void> startNavigation() async {
     setState(RidingState.riding);
     _positionStream.controller.stream.listen((pos) {
@@ -182,7 +196,9 @@ class NavigationProvider with ChangeNotifier {
       if (distanceToPoint > distancePointToPoint + 10) {
         // 2의 경우
         // c + am
-        _calToDestination(); // 다음 경유지 계산해서 만약 다음 경유지가 더 가까우면 사용자 입력 받아서 다음경유지로 안내
+        if (_nextDestination != null) {
+          _calToDestination(); // 다음 경유지 계산해서 만약 다음 경유지가 더 가까우면 사용자 입력 받아서 다음경유지로 안내
+        }
         if (getRouteTimer > 10) {
           getRoute();
         }
@@ -206,8 +222,9 @@ class NavigationProvider with ChangeNotifier {
             _goalPoint = _route![0]; //
             _nextPoint = _route![1];
             if (isFirst) {
-              _polylinePoints.removeAt(0);
               isFirst = false;
+            } else {
+              _polylinePoints.removeAt(0);
             }
             _remainedDistance -= _distances.last;
             _distances.removeLast();

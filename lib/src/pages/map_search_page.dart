@@ -19,10 +19,8 @@ class MapSearchPage extends StatefulWidget {
 
 class MapSampleState extends State<MapSearchPage> {
   final Completer<GoogleMapController> _controller = Completer();
-  late FocusNode _startPointFocusNode;
-  late FocusNode _endPointFocusNode;
-  var _startPointTextController;
-  var _endPointTextController;
+  FocusNode _destinationFocusNode = FocusNode();
+  final _destinationTextController = TextEditingController();
   var _initLocation = CameraPosition(
     target: LatLng(
         MyLocation().position!.latitude, MyLocation().position!.longitude),
@@ -33,18 +31,8 @@ class MapSampleState extends State<MapSearchPage> {
   @override
   void initState() {
     super.initState();
-    _endPointTextController = TextEditingController();
-    _startPointTextController = TextEditingController();
-    _endPointFocusNode = FocusNode();
-    _startPointFocusNode = FocusNode();
-    _startPointFocusNode.addListener(() {
-      if (!_startPointFocusNode.hasFocus) {
-        Provider.of<MapSearchProvider>(context, listen: false)
-            .clearStartPointSearchResult();
-      }
-    });
-    _endPointFocusNode.addListener(() {
-      if (!_endPointFocusNode.hasFocus) {
+    _destinationFocusNode.addListener(() {
+      if (!_destinationFocusNode.hasFocus) {
         Provider.of<MapSearchProvider>(context, listen: false)
             .clearEndPointSearchResult();
       }
@@ -54,15 +42,13 @@ class MapSampleState extends State<MapSearchPage> {
 
   @override
   void dispose() {
-    _startPointTextController.dispose();
-    _endPointTextController.dispose();
+    _destinationTextController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final mapSearchProvider = Provider.of<MapSearchProvider>(context);
-    var myLocation = '내 위치';
 
     return Scaffold(
       body: Stack(
@@ -70,18 +56,12 @@ class MapSampleState extends State<MapSearchPage> {
           GoogleMap(
             mapType: MapType.normal,
             onTap: (latlng) {
-              _startPointFocusNode.unfocus();
-              _endPointFocusNode.unfocus();
+              _destinationFocusNode.unfocus();
             },
             markers: Set.from(_markers),
             initialCameraPosition: _initLocation,
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
-              mapSearchProvider
-                  .getMyLocationAddress()
-                  .then((value) => {mapSearchProvider.setMyLocation(value)})
-                  .catchError((error) => '내 위치를 불러오지 못했어요' + error.toString());
-              ;
             },
             myLocationButtonEnabled: true,
             myLocationEnabled: true,
@@ -91,14 +71,11 @@ class MapSampleState extends State<MapSearchPage> {
             alignment: Alignment.topLeft,
             child: Column(
               children: <Widget>[
-                searchBox(mapSearchProvider, "출발지", _startPointTextController,
-                    _startPointFocusNode),
-                searchBox(mapSearchProvider, "도착지", _endPointTextController,
-                    _endPointFocusNode),
+                searchBox(mapSearchProvider, "도착지", _destinationTextController,
+                    _destinationFocusNode),
                 GestureDetector(
                   onTap: () {
-                    _startPointFocusNode.unfocus();
-                    _endPointFocusNode.unfocus();
+                    _destinationFocusNode.unfocus();
                   },
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height * 0.5,
@@ -111,19 +88,6 @@ class MapSampleState extends State<MapSearchPage> {
           Container(
               alignment: Alignment.topLeft,
               width: MediaQuery.of(context).size.width - 80,
-              margin: const EdgeInsets.only(top: 120, left: 50),
-              child: Visibility(
-                  visible: mapSearchProvider.isStartSearching,
-                  child: Column(children: [
-                    placeList(
-                        mapSearchProvider,
-                        "출발지",
-                        mapSearchProvider.startPointSearchResult,
-                        _startPointTextController)
-                  ]))),
-          Container(
-              alignment: Alignment.topLeft,
-              width: MediaQuery.of(context).size.width - 80,
               margin: const EdgeInsets.only(top: 190, left: 50),
               child: Visibility(
                 visible: mapSearchProvider.isEndSearching,
@@ -131,8 +95,8 @@ class MapSampleState extends State<MapSearchPage> {
                   placeList(
                       mapSearchProvider,
                       "도착지",
-                      mapSearchProvider.endPointSearchResult,
-                      _endPointTextController)
+                      mapSearchProvider.destinationSearchResult,
+                      _destinationTextController)
                 ]),
               )),
         ],
@@ -151,21 +115,12 @@ class MapSampleState extends State<MapSearchPage> {
               child: ListTile(
                   title: Text(list[index].title!),
                   subtitle: Text(list[index].jibunAddress ?? ''),
-                  textColor: setTextColor(index),
+                  textColor: Colors.black,
                   onTap: () async {
                     final GoogleMapController controller =
                         await _controller.future;
-                    if (index == 0) {
-                      textController.text =
-                          '${list[index].title!}: ${list[index].jibunAddress!}';
-                    } else {
-                      textController.text = list[index].title!;
-                    }
-                    if (type == "출발지") {
-                      FocusScope.of(context).requestFocus(_endPointFocusNode);
-                    } else {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                    }
+                    textController.text = list[index].title!;
+                    FocusManager.instance.primaryFocus?.unfocus();
                     controller.animateCamera(CameraUpdate.newCameraPosition(
                       CameraPosition(
                         target: LatLng(double.parse(list[index].latitude!),
@@ -174,13 +129,8 @@ class MapSampleState extends State<MapSearchPage> {
                       ),
                     ));
                     _updatePosition(list[index]);
-                    if (type == "출발지") {
-                      mapSearchProvider.setStartPoint(list[index]);
-                      mapSearchProvider.clearStartPointSearchResult();
-                    } else {
-                      mapSearchProvider.setEndPoint(list[index]);
-                      mapSearchProvider.clearEndPointSearchResult();
-                    }
+                    mapSearchProvider.setEndPoint(list[index]);
+                    mapSearchProvider.clearEndPointSearchResult();
                   }));
         },
       ),
@@ -195,7 +145,6 @@ class MapSampleState extends State<MapSearchPage> {
         width: MediaQuery.of(context).size.width - 100,
         child: TextField(
           focusNode: focusNode,
-          onTap: () => {mapSearchProvider.setMyLocationOnly(type)},
           onChanged: (value) => mapSearchProvider.searchPlace(value, type),
           controller: textController,
           decoration: InputDecoration(
@@ -207,31 +156,15 @@ class MapSampleState extends State<MapSearchPage> {
     ]);
   }
 
-  Color setTextColor(index) {
-    if (index == 0) {
-      return Colors.lightBlue;
-    }
-    return Colors.black;
-  }
-
-  Widget testButton(MapSearchProvider mapSearchProvider) {
-    return FloatingActionButton.extended(
-        onPressed: () {
-          mapSearchProvider.getMyLocationAddress();
-        },
-        label: Text("test"));
-  }
-
   Widget startNav(MapSearchProvider mapSearchProvider) {
     return FloatingActionButton.extended(
         label: const Text('안내시작'),
         heroTag: 'navigateStartBtn',
         onPressed: () {
-          if (mapSearchProvider.startPoint == null ||
-              mapSearchProvider.endPoint == null) {
+          if (mapSearchProvider.destination == null) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('출발지와 도착지를 입력해주세요.'),
+                content: Text('목적지를 입력해주세요.'),
               ),
             );
             return;
@@ -243,10 +176,8 @@ class MapSampleState extends State<MapSearchPage> {
                     builder: (context) => MultiProvider(
                           providers: [
                             ChangeNotifierProvider(
-                                create: (context) => NavigationProvider.p([
-                                      mapSearchProvider.startPoint!,
-                                      mapSearchProvider.endPoint!
-                                    ], mapSearchProvider.myPosition)),
+                                create: (context) => NavigationProvider(
+                                    [mapSearchProvider.destination!])),
                             ChangeNotifierProvider(
                                 create: (context) => RidingProvider())
                           ],

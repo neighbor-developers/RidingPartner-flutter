@@ -51,17 +51,15 @@ class MyLocation {
       developer.log("error : getMyCurrentLocation ${e.toString()}");
       position = await Geolocator.getLastKnownPosition();
     }
-    if (position == null) {
-      position = Position(
-          longitude: 126.98935225645432,
-          latitude: 37.579871128849334,
-          timestamp: null,
-          accuracy: 0.0,
-          altitude: 0.0,
-          heading: 0.0,
-          speed: 0.0,
-          speedAccuracy: 0.0);
-    }
+    position ??= Position(
+        longitude: 126.98935225645432,
+        latitude: 37.579871128849334,
+        timestamp: null,
+        accuracy: 0.0,
+        altitude: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0);
   }
 
   // Future<dynamic> _cheakPermission() async {

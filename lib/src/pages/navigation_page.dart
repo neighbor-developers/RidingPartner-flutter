@@ -125,7 +125,11 @@ class _NavigationPageState extends State<NavigationPage> {
               elevation: 0,
               leading: IconButton(
                 onPressed: () {
-                  backDialog(context, "안내를 중단하시겠습니까?");
+                  if (_navigationProvider.ridingState == RidingState.before) {
+                    Navigator.pop(context);
+                  } else {
+                    backDialog(context, "안내를 중단하시겠습니까?");
+                  }
                 },
                 icon: Icon(Icons.arrow_back),
                 color: Colors.indigo.shade900,
