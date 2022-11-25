@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk_share.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/pages/record_page.dart';
@@ -14,8 +12,7 @@ import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_result_provider.dart';
 import 'package:ridingpartner_flutter/src/widgets/dialog.dart';
-import 'package:screen/screen.dart';
-// import 'package:screen/screen.dart';
+import 'package:wakelock/wakelock.dart';
 
 class NavigationPage extends StatefulWidget {
   const NavigationPage({super.key});
@@ -271,14 +268,14 @@ class _NavigationPageState extends State<NavigationPage> {
   }
 
   void screenKeepOn() async {
-    if (!(await Screen.isKeptOn)) {
-      Screen.keepOn(true);
+    if (!(await Wakelock.enabled)) {
+      Wakelock.enable();
     }
   }
 
   void screenKeepOff() async {
-    if (await Screen.isKeptOn) {
-      Screen.keepOn(false);
+    if (await Wakelock.enabled) {
+      Wakelock.disable();
     }
   }
 

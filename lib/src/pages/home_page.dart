@@ -27,6 +27,9 @@ class _HomePage extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
+    Provider.of<WeatherProvider>(context, listen: false).getWeather();
+    Provider.of<HomeRecordProvider>(context, listen: false).getRecord();
   }
 
   @override
