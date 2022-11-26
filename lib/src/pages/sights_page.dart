@@ -6,6 +6,12 @@ import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/provider/sights_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/custom_marker.dart';
 
+import '../provider/navigation_provider.dart';
+import '../provider/riding_provider.dart';
+import 'navigation_page.dart';
+import '../models/place.dart';
+import 'flutter/src/widgets/framework.dart';
+
 class SightsPage extends StatelessWidget {
   final Completer<GoogleMapController> _controller = Completer();
   late Set<Marker> markers;
@@ -15,6 +21,55 @@ class SightsPage extends StatelessWidget {
     final sightsProvider = Provider.of<SightsProvider>(context);
 
     final state = sightsProvider.state;
+
+    void routeDialog(Place place) => showDialog(
+        context: context,
+        //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)),
+            //Dialog Main Title
+            title: Text(place.title!),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Image.asset(place.image!),
+                const Text("여기로 떠나볼까요?"),
+              ],
+            ),
+            actions: <Widget>[
+              ElevatedButton(
+                child: const Text("안내 시작"),
+                onPressed: () async {
+                  final placeList = <Place>[place];
+
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MultiProvider(
+                            providers: [
+                              ChangeNotifierProvider(
+                                  create: (context) =>
+                                      NavigationProvider(placeList)),
+                              ChangeNotifierProvider(
+                                  create: (context) => RidingProvider())
+                            ],
+                            child: NavigationPage(),
+                          )));
+                },
+              ),
+              ElevatedButton(
+                child: const Text("뒤로"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
 
     if (state == MarkerListState.searching) {
       sightsProvider.getPlaceList();
@@ -29,7 +84,9 @@ class SightsPage extends StatelessWidget {
           markers.add(Marker(
               markerId: MarkerId(place.title ?? "marker"),
               icon: customIcon,
-              onTap: () => {},
+              onTap: () => {
+                routeDialog(place)
+              },
               position: LatLng(double.parse(place.latitude ?? ""),
                   double.parse(place.longitude ?? "")) //예외처리해주기
               ));
@@ -43,6 +100,8 @@ class SightsPage extends StatelessWidget {
     if (state == MarkerListState.placeCompleted) {
       setCustomMarker();
     }
+
+
 
     return Scaffold(
         body: GoogleMap(
