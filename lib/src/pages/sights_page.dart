@@ -10,7 +10,6 @@ import '../provider/navigation_provider.dart';
 import '../provider/riding_provider.dart';
 import 'navigation_page.dart';
 import '../models/place.dart';
-import 'flutter/src/widgets/framework.dart';
 
 class SightsPage extends StatelessWidget {
   final Completer<GoogleMapController> _controller = Completer();
@@ -50,15 +49,15 @@ class SightsPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => MultiProvider(
-                            providers: [
-                              ChangeNotifierProvider(
-                                  create: (context) =>
-                                      NavigationProvider(placeList)),
-                              ChangeNotifierProvider(
-                                  create: (context) => RidingProvider())
-                            ],
-                            child: NavigationPage(),
-                          )));
+                                providers: [
+                                  ChangeNotifierProvider(
+                                      create: (context) =>
+                                          NavigationProvider(placeList)),
+                                  ChangeNotifierProvider(
+                                      create: (context) => RidingProvider())
+                                ],
+                                child: NavigationPage(),
+                              )));
                 },
               ),
               ElevatedButton(
@@ -84,9 +83,7 @@ class SightsPage extends StatelessWidget {
           markers.add(Marker(
               markerId: MarkerId(place.title ?? "marker"),
               icon: customIcon,
-              onTap: () => {
-                routeDialog(place)
-              },
+              onTap: () => {routeDialog(place)},
               position: LatLng(double.parse(place.latitude ?? ""),
                   double.parse(place.longitude ?? "")) //예외처리해주기
               ));
@@ -100,8 +97,6 @@ class SightsPage extends StatelessWidget {
     if (state == MarkerListState.placeCompleted) {
       setCustomMarker();
     }
-
-
 
     return Scaffold(
         body: GoogleMap(
