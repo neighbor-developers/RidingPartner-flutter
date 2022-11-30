@@ -24,6 +24,8 @@ class SightsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+
+
   List<Place> _sightList = <Place>[];
   List<Place> get sightList => _sightList;
 

@@ -15,58 +15,90 @@ class SightsPage extends StatelessWidget {
   final Completer<GoogleMapController> _controller = Completer();
   late Set<Marker> markers;
 
+
   @override
   Widget build(BuildContext context) {
     final sightsProvider = Provider.of<SightsProvider>(context);
 
     final state = sightsProvider.state;
 
+
+
     void routeDialog(Place place) => showDialog(
         context: context,
         //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
-            //Dialog Main Title
-            title: Text(place.title!),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Image.asset(place.image!),
-                const Text("여기로 떠나볼까요?"),
-              ],
-            ),
-            actions: <Widget>[
-              ElevatedButton(
-                child: const Text("안내 시작"),
-                onPressed: () async {
-                  final placeList = <Place>[place];
+          double height = MediaQuery.of(context).size.height;
+          double width = MediaQuery.of(context).size.width;
 
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => MultiProvider(
-                                providers: [
-                                  ChangeNotifierProvider(
-                                      create: (context) =>
-                                          NavigationProvider(placeList)),
-                                  ChangeNotifierProvider(
-                                      create: (context) => RidingProvider())
-                                ],
-                                child: NavigationPage(),
-                              )));
-                },
+          return Container(
+            height: height*0.5,
+            width: width*0.9,
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              //Dialog Main Title
+              title: Text(
+                  style: TextStyle(),
+                  place.title!),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    //mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                            place.roadAddress??"위치 로드에 실패하였습니다. 재접속해주세요",
+                            style: const TextStyle(
+                              color: Color(0xFFE9E9E9),
+                            )
+                        ),
+                        //Text(sightsProvider.distance+"km")
+                      ]
+                  ),
+                  Image.asset(place.image!),
+
+                ],
               ),
-              ElevatedButton(
-                child: const Text("뒤로"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
+              actions: <Widget>[
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFE9E9E9)),
+                    //maximumSize: Size(),
+                  ),
+                  child: const Text(
+                      style: TextStyle(color: Color(0xFF666666)),"취소"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.orange[600]!)
+                  ),
+                  child: const Text("안내 시작", style: TextStyle(color: Colors.white)),
+                  onPressed: () async {
+                    final placeList = <Place>[place];
+
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MultiProvider(
+                              providers: [
+                                ChangeNotifierProvider(
+                                    create: (context) =>
+                                        NavigationProvider(placeList)),
+                                ChangeNotifierProvider(
+                                    create: (context) => RidingProvider())
+                              ],
+                              child: NavigationPage(),
+                            )));
+                  },
+                ),
+              ],
+            )
           );
         });
 
