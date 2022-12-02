@@ -126,7 +126,9 @@ class NavigationProvider with ChangeNotifier {
     if (response != null) {
       _route = response['guides'];
       _remainedDistance = response['sumdistance'];
-      _totalDistance = response['sumdistance'];
+      if (_totalDistance < response['sumdistance']) {
+        _totalDistance = response['sumdistance'];
+      }
       _distances = response['distances'];
     } else {
       _route = null;
