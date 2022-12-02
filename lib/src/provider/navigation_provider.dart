@@ -39,19 +39,18 @@ class NavigationProvider with ChangeNotifier {
   Place? _nextDestination;
   late Place _finalDestination;
   Timer? _timer;
-  int getRouteTimer = 0;
   int _remainedDistance = 0;
   int _totalDistance = 0;
   bool isFirst = true;
 
-  LatLng? _nextLatLng;
+  LatLng? _bearingPoint;
 
   Guide get goalPoint => _goalPoint;
   Position? get position => _position;
   List<Guide>? get route => _route;
   RidingState get ridingState => _ridingState;
   List<Place> get course => _ridingCourse;
-  LatLng? get nextLatLng => _nextLatLng;
+  LatLng? get bearingPoint => _bearingPoint;
   int get remainedDistance => _remainedDistance;
   int get totalDistance => _totalDistance;
 
@@ -74,7 +73,6 @@ class NavigationProvider with ChangeNotifier {
   }
 
   Future<void> getRoute() async {
-    getRouteTimer = 0;
     _goalDestination = _ridingCourse.first;
     _finalDestination = _ridingCourse.last;
     if (_ridingCourse.length > 1) {
@@ -145,7 +143,7 @@ class NavigationProvider with ChangeNotifier {
         _goalPoint = _route![0];
         _nextPoint = _route![1];
       }
-      _nextLatLng = latLngFromGuide(_nextPoint);
+      _bearingPoint = latLngFromGuide(_goalPoint);
       // _route.forEach((element) {
       //   _remainedDistance += element.
       // })
@@ -176,24 +174,24 @@ class NavigationProvider with ChangeNotifier {
 
     _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
       _calToPoint();
-      getRouteTimer++;
     }));
   }
 
   void _calToPoint() {
     LatLng? point = latLngFromGuide(_goalPoint);
-    _nextLatLng = latLngFromGuide(_nextPoint);
+    LatLng? nextLatLng = latLngFromGuide(_nextPoint);
+    _bearingPoint = point;
 
-    if (_nextLatLng != null) {
+    if (nextLatLng != null) {
       num distanceToPoint = _calDistance.as(LengthUnit.Meter,
           LatLng(_position!.latitude, _position!.longitude), point!);
 
       // 마지막 지점이 아닐때
       num distanceToNextPoint = _calDistance.as(LengthUnit.Meter,
-          LatLng(_position!.latitude, _position!.longitude), _nextLatLng!);
+          LatLng(_position!.latitude, _position!.longitude), nextLatLng);
 
       num distancePointToPoint =
-          _calDistance.as(LengthUnit.Meter, point, _nextLatLng!);
+          _calDistance.as(LengthUnit.Meter, point, nextLatLng);
 
       if (distanceToPoint > distancePointToPoint + 10) {
         // 2의 경우
@@ -201,12 +199,10 @@ class NavigationProvider with ChangeNotifier {
         if (_nextDestination != null) {
           _calToDestination(); // 다음 경유지 계산해서 만약 다음 경유지가 더 가까우면 사용자 입력 받아서 다음경유지로 안내
         }
-        if (getRouteTimer > 10) {
-          getRoute();
-        }
+        getRoute();
       } else {
         if (distanceToPoint <= 10 ||
-            distanceToPoint > distanceToNextPoint + 10) {
+            distanceToPoint > distanceToNextPoint + 50) {
           // 턴 포인트 도착이거나 a > b일때
           _isDestination(); // 경유지인지 확인
           if (_route!.length == 2) {

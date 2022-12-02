@@ -81,6 +81,7 @@ class _NavigationPageState extends State<NavigationPage> {
 
   String floatBtnLabel = "일시중지";
   IconData floatBtnIcon = Icons.pause;
+  int polylineWidth = 5;
 
   @override
   Widget build(BuildContext context) {
@@ -92,12 +93,12 @@ class _NavigationPageState extends State<NavigationPage> {
     void _setController() async {
       GoogleMapController _googleMapController = await _controller.future;
       if (position != null) {
-        if (_navigationProvider.nextLatLng != null) {
+        if (_navigationProvider.bearingPoint != null) {
           bearing = Geolocator.bearingBetween(
               position.latitude,
               position.longitude,
-              _navigationProvider.nextLatLng!.latitude,
-              _navigationProvider.nextLatLng!.longitude);
+              _navigationProvider.bearingPoint!.latitude,
+              _navigationProvider.bearingPoint!.longitude);
         }
         _googleMapController.animateCamera(CameraUpdate.newCameraPosition(
             CameraPosition(
@@ -152,7 +153,10 @@ class _NavigationPageState extends State<NavigationPage> {
                         polylines: {
                           Polyline(
                               polylineId: PolylineId("route"),
-                              width: 5,
+                              color: Colors.orange[600] ?? Colors.blue,
+                              width: polylineWidth,
+                              startCap: Cap.roundCap,
+                              endCap: Cap.roundCap,
                               points: _navigationProvider.polylinePoints)
                         },
                         onMapCreated: (GoogleMapController controller) {
@@ -292,6 +296,7 @@ class _NavigationPageState extends State<NavigationPage> {
             _ridingProvider.startRiding();
             _navigationProvider.startNavigation();
             screenKeepOn();
+            polylineWidth = 8;
           },
           child: Text('시작'),
         ),
