@@ -20,49 +20,52 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePage();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePage extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   late WeatherProvider _weatherProvider;
   late HomeRecordProvider _homeRecordProvider;
-  late List<Record>? records;
+  late List<Record> records;
+  late TabController _tabController;
   @override
   void initState() {
     super.initState();
-
     Provider.of<WeatherProvider>(context, listen: false).getWeather();
     Provider.of<HomeRecordProvider>(context, listen: false).getRecord();
+    _tabController = TabController(length: 14, vsync: this, initialIndex: 13);
   }
 
   @override
   Widget build(BuildContext context) {
     _weatherProvider = Provider.of<WeatherProvider>(context);
     _homeRecordProvider = Provider.of<HomeRecordProvider>(context);
-    records = _homeRecordProvider.ridingRecord;
+    _tabController.addListener(() {
+      _homeRecordProvider.setIndex(_tabController.index);
+    });
+    records = _homeRecordProvider.recordFor14Days;
 
     return Scaffold(
         appBar: AppBar(
-          excludeHeaderSemantics: false,
+          backgroundColor: Colors.white,
           title: Text(
-            'RidingPartner',
+            'Riding Partner',
             style: TextStyle(color: Colors.orange[600]),
           ),
-          elevation: 10,
-          backgroundColor: Colors.white,
+          excludeHeaderSemantics: true,
         ),
         floatingActionButton: floatingButtons(),
-        extendBodyBehindAppBar: false,
-        body: Container(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            children: [
-              weatherWidget(),
-              recommendWidget(Place(title: '갯골 생태 공원')),
-              lastRecordGridView(
-                  Record(distance: 7500, timestamp: 13400, topSpeed: 30)),
-            ],
-          ),
+        body: Column(
+          children: [
+            weatherWidget(),
+            recommendPlaceText(),
+            Row(children: [
+              recommendPlace(Place(title: '갯골 생태 공원')),
+              recommendPlace(Place(title: '갯골 생태 공원'))
+            ]),
+            weekWidget()
+          ],
         ));
   }
 
@@ -81,30 +84,24 @@ class _HomePage extends State<HomePage> {
     }
   }
 
-  Widget recommendWidget(Place place) {
-    return Container(
-        padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text.rich(
+  Widget recommendPlaceText() {
+    return Text.rich(
+      TextSpan(
+          text: '혜진님, 오늘같은 날에는\n',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          children: <TextSpan>[
             TextSpan(
-                text: '혜진님, 오늘같은 날에는\n',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                children: <TextSpan>[
-                  TextSpan(
-                      text: '\'${place.title}\'',
-                      style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.orange[600])),
-                  TextSpan(
-                      text: ' 어떠세요?',
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold))
-                ]),
-            textAlign: TextAlign.start,
-          ),
-          Row(children: [recommendPlace(place), recommendPlace(place)])
-        ]));
+                text: '\'갯골 생태 공원\'',
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange[600])),
+            TextSpan(
+                text: ' 어떠세요?',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))
+          ]),
+      textAlign: TextAlign.start,
+    );
   }
 
   Widget recommendPlace(Place place) => Flexible(
@@ -140,51 +137,61 @@ class _HomePage extends State<HomePage> {
         flex: 1,
       );
 
-  Widget recordWidget(RecordState state) {
-    // switch (state) {
-    //   case RecordState.empty:
-    //     return Container(
-    //       child: Text('최근 일주일 간 라이딩한 기록이 없습니다.'),
-    //     );
-    //   case RecordState.fail:
-    //     return Container(
-    //       child: Text('데이터 로드에 실패했습니다. 네트워크를 확인해주세요'),
-    //     );
-    //   case RecordState.loading:
-    //     return Container(
-    //       child: Text('데이터 로드중'),
-    //     );
-    // case RecordState.success:
+  Widget weekWidget() {
     return Column(children: [
-      lastRecordGridView(
-          Record(distance: 7500, timestamp: 13400, topSpeed: 30)),
-      // recordChart(),
+      TabBar(
+          onTap: (value) => _homeRecordProvider.setIndex(value),
+          controller: _tabController,
+          isScrollable: true,
+          tabs: _homeRecordProvider.daysFor14.map((e) {
+            if (_tabController.index ==
+                _homeRecordProvider.daysFor14.indexOf(e)) {
+              return Tab(text: e);
+            } else {
+              return Tab(text: e.substring(0, 2));
+            }
+          }).toList(),
+          unselectedLabelColor: Colors.black54,
+          labelColor: Colors.white,
+          indicator: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: Offset(0, 3), // changes position of shadow
+              )
+            ],
+            borderRadius: BorderRadius.circular(65.0),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.orange[900]!,
+                Colors.orange[600]!,
+              ],
+            ),
+          )),
+      // TabBarView(
+      //     controller: _tabController,
+      //     children: records.map((e) => recordDetailView(e)).toList())
     ]);
-    //     );
-    //   default:
-    //     return Container(
-    //       child: Text('데이터 로드중'),
-    //     );
-    // }
   }
 
-  Widget lastRecordGridView(Record record) {
-    return Column(
-      children: [
-        Expanded(
-            child: GridView.builder(
-                scrollDirection: Axis.vertical,
-                padding: const EdgeInsets.all(10),
-                itemCount: 4,
-                itemBuilder: (BuildContext context, index) =>
-                    lastRecordCard(index, record),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 1 / 1,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10))),
-        recordRateProgress(7500)
-      ],
+  Widget recordDetailView(Record record) {
+    return Container(
+      child: GridView.builder(
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          padding: const EdgeInsets.all(10),
+          itemCount: 4,
+          itemBuilder: (BuildContext context, index) =>
+              lastRecordCard(index, record),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1 / 1,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10)),
     );
   }
 
