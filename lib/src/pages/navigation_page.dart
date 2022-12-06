@@ -120,9 +120,9 @@ class _NavigationPageState extends State<NavigationPage> {
 
     return WillPopScope(
         child: Scaffold(
-            extendBodyBehindAppBar: true,
             appBar: AppBar(
-              backgroundColor: Colors.transparent,
+              title: Text(_navigationProvider.nextDestination?.title ?? ""),
+              backgroundColor: Colors.white,
               elevation: 0,
               leading: IconButton(
                 onPressed: () {

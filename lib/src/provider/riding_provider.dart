@@ -124,7 +124,7 @@ class RidingProvider with ChangeNotifier {
     _befLatLng = LatLng(position.latitude, position.longitude); // 거리 계산
 
     _sumDistance += distance; // m
-    _speed = distance / 3; // m/s
+    _speed = distance / 3 * 3.6; // k/h
     if (_topSpeed < _speed) {
       _topSpeed = _speed;
     }

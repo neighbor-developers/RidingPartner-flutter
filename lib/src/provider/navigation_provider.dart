@@ -53,6 +53,7 @@ class NavigationProvider with ChangeNotifier {
   LatLng? get bearingPoint => _bearingPoint;
   int get remainedDistance => _remainedDistance;
   int get totalDistance => _totalDistance;
+  Place? get nextDestination => _nextDestination;
 
   bool _disposed = false;
 
