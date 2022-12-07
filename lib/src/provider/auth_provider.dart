@@ -1,9 +1,9 @@
+import 'dart:developer' as developer;
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 import '../service/social_login_service.dart';
-import 'dart:developer' as developer;
 
 class AuthProvider with ChangeNotifier {
   final socialLogin = SocialLoginService();

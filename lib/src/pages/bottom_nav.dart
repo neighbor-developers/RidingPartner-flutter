@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ridingpartner_flutter/src/pages/map_search_page.dart';
-import 'package:ridingpartner_flutter/src/pages/navigation_page.dart';
-import 'package:ridingpartner_flutter/src/pages/recommended_route_page.dart';
-import 'package:ridingpartner_flutter/src/pages/sights_page.dart';
-import 'package:ridingpartner_flutter/src/pages/riding_page.dart';
 import 'package:ridingpartner_flutter/src/pages/home_page.dart';
+import 'package:ridingpartner_flutter/src/pages/map_search_page.dart';
+import 'package:ridingpartner_flutter/src/pages/recommended_route_page.dart';
+import 'package:ridingpartner_flutter/src/pages/riding_page.dart';
+import 'package:ridingpartner_flutter/src/pages/sights_page.dart';
 import 'package:ridingpartner_flutter/src/provider/bottom_navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
-
-import '../models/place.dart';
 
 class BottomNavigation extends StatelessWidget {
   BottomNavigation({Key? key}) : super(key: key);

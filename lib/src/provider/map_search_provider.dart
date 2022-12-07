@@ -1,12 +1,14 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
+
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
 import 'package:ridingpartner_flutter/src/models/place.dart';
 import 'package:ridingpartner_flutter/src/utils/user_location.dart';
+
 import '../service/naver_map_service.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'dart:developer' as developer;
 
 class MapSearchProvider extends ChangeNotifier {
   var isStartSearching = false;

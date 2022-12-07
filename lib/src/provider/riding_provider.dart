@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer' as developer;
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
@@ -11,10 +12,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
 import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
-import '../utils/custom_marker.dart';
 
 import '../models/position_stream.dart';
-import 'dart:developer' as developer;
 
 enum RidingState { before, riding, pause, stop }
 

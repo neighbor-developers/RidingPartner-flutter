@@ -1,7 +1,9 @@
 import 'dart:convert';
-import 'package:ridingpartner_flutter/src/utils/user_location.dart';
-import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
+
+import 'package:http/http.dart' as http;
+import 'package:ridingpartner_flutter/src/utils/user_location.dart';
+
 import '../models/place.dart';
 import '../models/route.dart';
 

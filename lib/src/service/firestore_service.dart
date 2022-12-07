@@ -1,6 +1,7 @@
+import 'dart:developer' as developer;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
-import 'dart:developer' as developer;
 
 import '../models/place.dart';
 

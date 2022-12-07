@@ -1,14 +1,9 @@
-import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
-import 'package:ridingpartner_flutter/src/models/result.dart';
-import 'package:ridingpartner_flutter/src/models/weather.dart';
-import 'package:ridingpartner_flutter/src/network/network_helper.dart';
-import 'dart:convert';
-import 'package:ridingpartner_flutter/src/utils/user_location.dart';
-import 'package:ridingpartner_flutter/src/utils/conv_grid_gps.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../utils/conv_weather_data.dart';
 import 'dart:developer' as developer;
+
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:ridingpartner_flutter/src/models/result.dart';
+import 'package:ridingpartner_flutter/src/network/network_helper.dart';
+import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 
 class OpenWeatherService {
   final String _apiKey = dotenv.env['openWeatherApiKey']!;

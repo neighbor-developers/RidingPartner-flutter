@@ -1,18 +1,13 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/models/weather.dart';
-import 'package:ridingpartner_flutter/src/pages/loding_page.dart';
 import 'package:ridingpartner_flutter/src/pages/setting_page.dart';
-import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/setting_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
-import 'dart:developer' as developer;
 
 import '../models/place.dart';
 

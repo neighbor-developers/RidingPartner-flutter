@@ -1,9 +1,9 @@
+import 'dart:developer' as developer;
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:developer' as developer;
 
 class FirebaseDatabaseService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;

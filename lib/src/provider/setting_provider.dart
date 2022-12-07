@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-
 import 'package:ridingpartner_flutter/src/service/social_login_service.dart';
 
 class SettingProvider with ChangeNotifier {

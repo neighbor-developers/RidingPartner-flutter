@@ -6,23 +6,20 @@ import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/provider/sights_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/custom_marker.dart';
 
+import '../models/place.dart';
 import '../provider/navigation_provider.dart';
 import '../provider/riding_provider.dart';
 import 'navigation_page.dart';
-import '../models/place.dart';
 
 class SightsPage extends StatelessWidget {
   final Completer<GoogleMapController> _controller = Completer();
   late Set<Marker> markers;
-
 
   @override
   Widget build(BuildContext context) {
     final sightsProvider = Provider.of<SightsProvider>(context);
 
     final state = sightsProvider.state;
-
-
 
     void routeDialog(Place place) => showDialog(
         context: context,
@@ -33,73 +30,68 @@ class SightsPage extends StatelessWidget {
           double width = MediaQuery.of(context).size.width;
 
           return Container(
-            height: height*0.5,
-            width: width*0.9,
-            child: AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
-              //Dialog Main Title
-              title: Text(
-                  style: TextStyle(),
-                  place.title!),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    //mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                            place.roadAddress??"위치 로드에 실패하였습니다. 재접속해주세요",
-                            style: const TextStyle(
-                              color: Color(0xFFE9E9E9),
-                            )
-                        ),
-                        //Text(sightsProvider.distance+"km")
-                      ]
+              height: height * 0.5,
+              width: width * 0.9,
+              child: AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                //Dialog Main Title
+                title: Text(style: TextStyle(), place.title!),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                        //mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Text(place.roadAddress ?? "위치 로드에 실패하였습니다. 재접속해주세요",
+                              style: const TextStyle(
+                                color: Color(0xFFE9E9E9),
+                              )),
+                          //Text(sightsProvider.distance+"km")
+                        ]),
+                    Image.asset(place.image!),
+                  ],
+                ),
+                actions: <Widget>[
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color(0xFFE9E9E9)),
+                      //maximumSize: Size(),
+                    ),
+                    child: const Text(
+                        style: TextStyle(color: Color(0xFF666666)), "취소"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                   ),
-                  Image.asset(place.image!),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.orange[600]!)),
+                    child: const Text("안내 시작",
+                        style: TextStyle(color: Colors.white)),
+                    onPressed: () async {
+                      final placeList = <Place>[place];
 
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MultiProvider(
+                                    providers: [
+                                      ChangeNotifierProvider(
+                                          create: (context) =>
+                                              NavigationProvider(placeList)),
+                                      ChangeNotifierProvider(
+                                          create: (context) => RidingProvider())
+                                    ],
+                                    child: NavigationPage(),
+                                  )));
+                    },
+                  ),
                 ],
-              ),
-              actions: <Widget>[
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFE9E9E9)),
-                    //maximumSize: Size(),
-                  ),
-                  child: const Text(
-                      style: TextStyle(color: Color(0xFF666666)),"취소"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(Colors.orange[600]!)
-                  ),
-                  child: const Text("안내 시작", style: TextStyle(color: Colors.white)),
-                  onPressed: () async {
-                    final placeList = <Place>[place];
-
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MultiProvider(
-                              providers: [
-                                ChangeNotifierProvider(
-                                    create: (context) =>
-                                        NavigationProvider(placeList)),
-                                ChangeNotifierProvider(
-                                    create: (context) => RidingProvider())
-                              ],
-                              child: NavigationPage(),
-                            )));
-                  },
-                ),
-              ],
-            )
-          );
+              ));
         });
 
     if (state == MarkerListState.searching) {

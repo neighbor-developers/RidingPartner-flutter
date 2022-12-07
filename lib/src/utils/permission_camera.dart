@@ -1,8 +1,7 @@
-import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter/material.dart';
-import 'package:ridingpartner_flutter/src/utils/get_camera.dart';
 import 'package:app_settings/app_settings.dart';
-
+import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:ridingpartner_flutter/src/utils/get_camera.dart';
 
 void startCamera(BuildContext context) async {
   if (await confirmPermissionGranted(context)) {

@@ -1,5 +1,6 @@
-import 'package:geolocator/geolocator.dart';
 import 'dart:developer' as developer;
+
+import 'package:geolocator/geolocator.dart';
 
 class MyLocation {
   late Position? position;

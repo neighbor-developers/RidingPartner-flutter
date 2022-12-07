@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ridingpartner_flutter/src/pages/home_page.dart';
 
 import '../pages/bottom_nav.dart';
 import '../provider/bottom_navigation_provider.dart';

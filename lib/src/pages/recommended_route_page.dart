@@ -1,8 +1,4 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'dart:developer' as developer;
-
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
 import 'package:ridingpartner_flutter/src/pages/navigation_page.dart';

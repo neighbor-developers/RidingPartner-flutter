@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -116,7 +115,8 @@ class _LodingPageState extends State<LodingPage> {
                   onPressed: () {
                     _authProvider.signInWithNaver();
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(62, 200, 76, 1)),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromRGBO(62, 200, 76, 1)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: const [
@@ -128,10 +128,9 @@ class _LodingPageState extends State<LodingPage> {
                       Text('네이버 로그인',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.white,
-                              fontWeight: FontWeight.bold
-                          )),
+                              fontSize: 15,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
                       Icon(
                         Icons.arrow_forward_ios_outlined,
                         color: Colors.brown,
@@ -154,7 +153,8 @@ class _LodingPageState extends State<LodingPage> {
                     onPressed: () {
                       _authProvider.signInWithKakao();
                     },
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.yellow),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: const [
@@ -166,10 +166,9 @@ class _LodingPageState extends State<LodingPage> {
                         // ignore: prefer_const_constructors
                         Text('카카오 로그인',
                             style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.black87,
-                                fontWeight: FontWeight.bold
-                            )),
+                                fontSize: 15,
+                                color: Colors.black87,
+                                fontWeight: FontWeight.bold)),
                         Icon(
                           Icons.arrow_forward_ios_outlined,
                           color: Colors.brown,
@@ -191,7 +190,8 @@ class _LodingPageState extends State<LodingPage> {
                     onPressed: () {
                       _authProvider.signInWithGoogle();
                     },
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.white),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: const [
@@ -202,10 +202,9 @@ class _LodingPageState extends State<LodingPage> {
                         ),
                         Text('구글 로그인',
                             style: TextStyle(
-                              fontSize: 15,
-                              color: Color.fromARGB(150, 40, 40, 40),
-                              fontWeight: FontWeight.bold
-                            )),
+                                fontSize: 15,
+                                color: Color.fromARGB(150, 40, 40, 40),
+                                fontWeight: FontWeight.bold)),
                         Icon(
                           Icons.arrow_forward_ios_outlined,
                           color: Colors.brown,
@@ -228,7 +227,8 @@ class _LodingPageState extends State<LodingPage> {
                       onPressed: () {
                         _authProvider.signInWithApple();
                       },
-                      style: ElevatedButton.styleFrom(backgroundColor: const Color.fromARGB(255, 2, 2, 2)),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 2, 2, 2)),
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: const [
@@ -239,17 +239,15 @@ class _LodingPageState extends State<LodingPage> {
                             ),
                             Text('애플 로그인',
                                 style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.white,
-                                    fontWeight: FontWeight.bold
-                                )),
+                                    fontSize: 15,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
                             Icon(
                               Icons.arrow_forward_ios_outlined,
                               color: Colors.brown,
                               size: 14.0,
                             )
-                          ]
-                      )))));
+                          ])))));
     } else {
       return Column();
     }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/pages/home_page.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';

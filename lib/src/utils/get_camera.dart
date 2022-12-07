@@ -1,11 +1,12 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ridingpartner_flutter/src/utils/permission_camera.dart';
 
 class CameraExample extends StatefulWidget {
-  static const routeName='/getimage';
+  static const routeName = '/getimage';
 
   @override
   _CameraExampleState createState() => _CameraExampleState();
