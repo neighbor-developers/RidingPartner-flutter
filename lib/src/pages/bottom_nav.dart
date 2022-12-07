@@ -53,7 +53,7 @@ class BottomNavigation extends StatelessWidget {
             ),
           ],
           currentIndex: _bottomNavigationProvider.currentPage,
-          selectedItemColor: Colors.indigo.shade900,
+          selectedItemColor: Colors.orange[600],
           unselectedItemColor: Colors.grey,
           onTap: (index) {
             if (index == 4) {

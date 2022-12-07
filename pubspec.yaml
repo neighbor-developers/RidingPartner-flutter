@@ -63,7 +63,6 @@ dependencies:
   flutter_speed_dial: ^6.2.0
   fl_chart: ^0.55.2
   wakelock: ^0.6.2
-
   shared_preferences: ^2.0.15
   firebase_database: ^9.1.7
   latlong2: ^0.8.1

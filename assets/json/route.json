@@ -21,7 +21,14 @@
         "image": "assets/images/places/okgu_park.jpeg",
         "routeImage": "assets/images/places/okgu_park.jpeg",
         "description": "오이도 해안도로",
-        "route": ["오이도역", "배곧생명공원", "옥구공원", "오이도빨간등대", "거북섬", "반달섬"]
+        "route": [
+            "오이도역",
+            "배곧생명공원",
+            "옥구공원",
+            "오이도빨간등대",
+            "거북섬",
+            "반달섬"
+        ]
     },
     {
         "id": "4",
@@ -29,22 +36,43 @@
         "image": "assets/images/places/sihwa_seawall.jpeg",
         "routeImage": "assets/images/places/sihwa_seawall.jpeg",
         "description": "시화 방조제",
-        "route": ["오이도역", "배곧생명공원", "옥구공원", "오이도빨간등대", "시화방조제", "대부도공원"]
+        "route": [
+            "오이도역",
+            "배곧생명공원",
+            "옥구공원",
+            "오이도빨간등대",
+            "시화방조제",
+            "대부도공원"
+        ]
     },
     {
         "id": "5",
-        "title": "시흥 순환 코스",
-        "image": "assets/images/places/red_lighthouse.jpeg",
-        "routeImage": "assets/images/places/red_lighthouse.jpeg",
-        "description": "시흥 순환 코스",
-        "route": ["고잔역 4호선", "반달섬", "거북섬", "오이도빨간등대", "물왕호수", "고잔역 4호선"]
+        "title": "테스트용1",
+        "image": "assets/images/places/wolgot_port.jpeg",
+        "routeImage": "assets/images/places/wolgot_port.jpeg",
+        "description": "테스트용1",
+        "route": [
+            "정왕동체육공원",
+            "물왕호수",
+            "연꽃테마파크",
+            "갯골생태공원",
+            "월곶포구",
+            "배곧생명공원",
+            "옥구공원"
+        ]
     },
     {
         "id": "6",
-        "title": "테스트용",
-        "image": "assets/images/places/wolgot_port.jpeg",
-        "routeImage": "assets/images/places/wolgot_port.jpeg",
-        "description": "테스트용",
-        "route": ["고잔역 4호선", "반달섬", "거북섬", "오이도빨간등대", "물왕호수", "고잔역 4호선"]
+        "title": "테스트용2",
+        "image": "assets/images/places/red_lighthouse.jpeg",
+        "routeImage": "assets/images/places/red_lighthouse.jpeg",
+        "description": "테스트용2",
+        "route": [
+            "옥구공원",
+            "오이도빨간등대",
+            "거북섬",
+            "반달섬",
+            "정왕동체육공원"
+        ]
     }
 ]
