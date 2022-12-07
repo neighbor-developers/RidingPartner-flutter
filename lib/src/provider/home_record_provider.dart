@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
+import 'package:ridingpartner_flutter/src/pages/home_page.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
 
 import '../service/shared_preference.dart';
@@ -12,7 +13,7 @@ class HomeRecordProvider extends ChangeNotifier {
       FirebaseDatabaseService();
   List<String> _daysFor14 = [];
   List<Record> _recordFor14Days = [];
-  int _selectedIndex = 13;
+  int _selectedIndex = numberOfRecentRecords - 1;
   Record? _prefRecord;
 
   List<Record> get recordFor14Days => _recordFor14Days;
@@ -56,14 +57,14 @@ class HomeRecordProvider extends ChangeNotifier {
   }
 
   void setList() {
-    for (int i = 0; i < 14; i++) {
+    for (int i = 0; i < numberOfRecentRecords; i++) {
       recordFor14Days.add(Record());
     }
   }
 
   void setDate() {
     DateTime today = DateTime.now();
-    for (int i = 0; i < 14; i++) {
+    for (int i = 0; i < numberOfRecentRecords; i++) {
       DateTime currentDay = today.subtract(Duration(days: i));
       String day = dayToDayString(currentDay.day);
       String weekday = weekdayIntToString(currentDay.weekday);
@@ -82,7 +83,7 @@ class HomeRecordProvider extends ChangeNotifier {
     for (var element in records) {
       int days = int.parse(
           today.difference(DateTime.parse(element.date!)).inDays.toString());
-      if (days < 14) {
+      if (days < numberOfRecentRecords) {
         // 14일 이내이면 그 자리에 넣기
         _recordFor14Days[days] = element;
         // 30, 31, 1, 2, 3 ~ 으로 흐를 경우 날짜 순서를 구분하기 위해 map과 리스트 동시 사용

@@ -16,6 +16,10 @@ import 'dart:developer' as developer;
 
 import '../models/place.dart';
 
+const mainFontSize = 22.0;
+const recordFontSize = 10.0;
+const numberOfRecentRecords = 14;
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -34,7 +38,10 @@ class _HomePageState extends State<HomePage>
     super.initState();
     Provider.of<WeatherProvider>(context, listen: false).getWeather();
     Provider.of<HomeRecordProvider>(context, listen: false).getRecord();
-    _tabController = TabController(length: 14, vsync: this, initialIndex: 13);
+    _tabController = TabController(
+        length: numberOfRecentRecords,
+        vsync: this,
+        initialIndex: numberOfRecentRecords - 1);
   }
 
   @override
@@ -88,17 +95,18 @@ class _HomePageState extends State<HomePage>
     return Text.rich(
       TextSpan(
           text: '혜진님, 오늘같은 날에는\n',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: mainFontSize, fontWeight: FontWeight.bold),
           children: <TextSpan>[
             TextSpan(
                 text: '\'갯골 생태 공원\'',
                 style: TextStyle(
-                    fontSize: 22,
+                    fontSize: mainFontSize,
                     fontWeight: FontWeight.bold,
                     color: Colors.orange[600])),
             TextSpan(
                 text: ' 어떠세요?',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))
+                style: TextStyle(
+                    fontSize: mainFontSize, fontWeight: FontWeight.bold))
           ]),
       textAlign: TextAlign.start,
     );
@@ -239,7 +247,8 @@ class _HomePageState extends State<HomePage>
                     width: 30, height: 30, fit: BoxFit.cover),
                 Text(
                   title,
-                  style: TextStyle(fontSize: 10, color: Colors.black87),
+                  style: TextStyle(
+                      fontSize: recordFontSize, color: Colors.black87),
                 )
               ],
             ),
@@ -267,11 +276,13 @@ class _HomePageState extends State<HomePage>
                   children: [
                     Text(
                       '오늘의 목표거리 달성률',
-                      style: TextStyle(fontSize: 10, color: Colors.black54),
+                      style: TextStyle(
+                          fontSize: recordFontSize, color: Colors.black54),
                     ),
                     Text(
                       '${distance / 1000}km / 10km',
-                      style: TextStyle(fontSize: 10, color: Colors.black54),
+                      style: TextStyle(
+                          fontSize: recordFontSize, color: Colors.black54),
                     )
                   ],
                 )),
