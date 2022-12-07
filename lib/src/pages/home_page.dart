@@ -55,20 +55,22 @@ class _HomePageState extends State<HomePage>
             'Riding Partner',
             style: TextStyle(color: Colors.orange[600]),
           ),
-          excludeHeaderSemantics: true,
         ),
         floatingActionButton: floatingButtons(),
-        body: Column(
-          children: [
-            weatherWidget(),
-            recommendPlaceText(),
-            Row(children: [
-              recommendPlace(Place(title: '갯골 생태 공원')),
-              recommendPlace(Place(title: '갯골 생태 공원'))
-            ]),
-            weekWidget()
-          ],
-        ));
+        body: Container(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                weatherWidget(),
+                recommendPlaceText(),
+                Row(children: [
+                  recommendPlace(Place(title: '갯골 생태 공원')),
+                  recommendPlace(Place(title: '갯골 생태 공원'))
+                ]),
+                weekWidget()
+              ],
+            )));
   }
 
   Widget weatherWidget() {
@@ -87,62 +89,80 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget recommendPlaceText() {
-    return Text.rich(
-      TextSpan(
-          text: '혜진님, 오늘같은 날에는\n',
-          style: TextStyle(fontSize: mainFontSize, fontWeight: FontWeight.bold),
-          children: <TextSpan>[
-            TextSpan(
-                text: '\'갯골 생태 공원\'',
-                style: TextStyle(
-                    fontSize: mainFontSize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange[600])),
-            TextSpan(
-                text: ' 어떠세요?',
-                style: TextStyle(
-                    fontSize: mainFontSize, fontWeight: FontWeight.bold))
-          ]),
-      textAlign: TextAlign.start,
-    );
+    return Container(
+        padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
+        child: Text.rich(
+          TextSpan(
+              text: '혜진님, 오늘같은 날에는\n',
+              style: TextStyle(
+                  fontSize: mainFontSize, fontWeight: FontWeight.bold),
+              children: <TextSpan>[
+                TextSpan(
+                    text: '\'갯골 생태 공원\'',
+                    style: TextStyle(
+                        fontSize: mainFontSize,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange[600])),
+                TextSpan(
+                    text: ' 어떠세요?',
+                    style: TextStyle(
+                        fontSize: mainFontSize, fontWeight: FontWeight.bold))
+              ]),
+          textAlign: TextAlign.start,
+        ));
   }
 
   Widget recommendPlace(Place place) => Flexible(
-        child: Card(
-            semanticContainer: true,
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            elevation: 5,
-            margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-            child: InkWell(
-                onTap: () {},
+        child: Stack(
+          children: [
+            Card(
+                semanticContainer: true,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                elevation: 5,
+                margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                child: InkWell(
+                    onTap: () {},
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 100,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage(
+                                'assets/images/places/lotus_flower_theme_park.jpeg',
+                              ),
+                              fit: BoxFit.cover)),
+                    ))),
+            Card(
+                semanticContainer: true,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                 child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 100,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                    image: AssetImage(
-                      'assets/images/places/lotus_flower_theme_park.jpeg',
-                    ),
-                    fit: BoxFit.cover,
-                    colorFilter: ColorFilter.mode(
-                        Colors.black.withOpacity(0.2), BlendMode.dstATop),
-                  )),
-                  child: Text(
-                    place.title!,
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ))),
+                    width: MediaQuery.of(context).size.width,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                    height: 100,
+                    child: Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: Text(place.title!,
+                          style: TextStyle(
+                            color: Colors.white,
+                          )),
+                    )))
+          ],
+        ),
         flex: 1,
       );
 
   Widget weekWidget() {
     return Column(children: [
       TabBar(
+          padding: EdgeInsets.fromLTRB(0, 20, 0, 15),
           onTap: (value) => _homeRecordProvider.setIndex(value),
           controller: _tabController,
           isScrollable: true,
@@ -156,13 +176,14 @@ class _HomePageState extends State<HomePage>
           }).toList(),
           unselectedLabelColor: Colors.black54,
           labelColor: Colors.white,
+          labelStyle: TextStyle(fontWeight: FontWeight.bold),
           indicator: BoxDecoration(
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
+                color: Color.fromARGB(255, 183, 183, 183).withOpacity(0.5),
                 spreadRadius: 5,
                 blurRadius: 7,
-                offset: Offset(0, 3), // changes position of shadow
+                offset: Offset(0, 1), // changes position of shadow
               )
             ],
             borderRadius: BorderRadius.circular(65.0),
@@ -183,6 +204,7 @@ class _HomePageState extends State<HomePage>
 
   Widget recordDetailView(Record record) {
     return Container(
+      height: 300,
       child: GridView.builder(
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
