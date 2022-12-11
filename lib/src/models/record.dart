@@ -7,9 +7,9 @@ class Record {
   Record({this.distance, this.date, this.timestamp, this.topSpeed});
 
   factory Record.fromDB(db) => Record(
-        distance: db["distance"],
+        distance: db["distance"].toDouble(),
         timestamp: db["timestamp"],
         date: db["date"],
-        topSpeed: db["topSpeed"],
+        topSpeed: db["topSpeed"].toDouble(),
       );
 }
