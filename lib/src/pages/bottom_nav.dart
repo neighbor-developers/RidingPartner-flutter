@@ -27,30 +27,75 @@ class BottomNavigation extends StatelessWidget {
         ].elementAt(_bottomNavigationProvider.currentPage),
       ),
       bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
+          items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.add_location_sharp),
+              icon: Image.asset(
+                'assets/icons/bottom_nav_place.png',
+                height: 15,
+                color: Colors.grey[600],
+              ),
+              activeIcon: Image.asset(
+                'assets/icons/bottom_nav_place.png',
+                height: 18,
+                color: Colors.black,
+              ),
               label: '명소',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.flag),
+              icon: Image.asset(
+                'assets/icons/bottom_nav_route.png',
+                height: 15,
+                color: Colors.grey[600],
+              ),
+              activeIcon: Image.asset(
+                'assets/icons/bottom_nav_route.png',
+                height: 18,
+                color: Colors.black,
+              ),
               label: '추천경로',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
+              icon: Image.asset(
+                'assets/icons/bottom_nav_home.png',
+                height: 15,
+                color: Colors.grey[600],
+              ),
+              activeIcon: Image.asset(
+                'assets/icons/bottom_nav_home.png',
+                color: Colors.black,
+                height: 18,
+              ),
               label: '홈',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.map),
-              label: '지도',
+              icon: Image.asset(
+                'assets/icons/bottom_nav_search.png',
+                height: 15,
+                color: Colors.grey[600],
+              ),
+              activeIcon: Image.asset(
+                'assets/icons/bottom_nav_search.png',
+                color: Colors.black,
+                height: 18,
+              ),
+              label: '경로검색',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.pedal_bike),
+              icon: Image.asset(
+                'assets/icons/bottom_nav_riding.png',
+                height: 15,
+                color: Colors.grey[600],
+              ),
+              activeIcon: Image.asset(
+                'assets/icons/bottom_nav_riding.png',
+                color: Colors.black,
+                height: 18,
+              ),
               label: '라이딩',
             ),
           ],
           currentIndex: _bottomNavigationProvider.currentPage,
-          selectedItemColor: Colors.orange[600],
+          selectedItemColor: Colors.black,
           unselectedItemColor: Colors.grey,
           onTap: (index) {
             if (index == 4) {

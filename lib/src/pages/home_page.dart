@@ -50,19 +50,17 @@ class _HomePageState extends State<HomePage>
 
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: Text(
-            'Riding Partner',
-            style: TextStyle(color: Colors.orange[600]),
-          ),
-        ),
+            backgroundColor: Colors.white,
+            title: Image.asset(
+              "assets/icons/logo.png",
+              height: 25,
+            )),
         floatingActionButton: floatingButtons(),
         body: Container(
             padding: EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                weatherWidget(),
                 recommendPlaceText(),
                 Row(children: [
                   recommendPlace(Place(title: '갯골 생태 공원')),
@@ -102,7 +100,8 @@ class _HomePageState extends State<HomePage>
                     style: TextStyle(
                         fontSize: mainFontSize,
                         fontWeight: FontWeight.bold,
-                        color: Colors.orange[600])),
+                        fontFamily: "assets/font/pretendard_medium",
+                        color: Color.fromARGB(0xFF, 0xFF, 0xA0, 0x44))),
                 TextSpan(
                     text: ' 어떠세요?',
                     style: TextStyle(
@@ -163,7 +162,10 @@ class _HomePageState extends State<HomePage>
     return Column(children: [
       TabBar(
           padding: EdgeInsets.fromLTRB(0, 20, 0, 15),
-          onTap: (value) => _homeRecordProvider.setIndex(value),
+          onTap: (value) => {
+                _homeRecordProvider.setIndex(value),
+                if (value == 2) {_tabController.animateTo(28)}
+              },
           controller: _tabController,
           isScrollable: true,
           tabs: _homeRecordProvider.daysFor14.map((e) {
@@ -191,8 +193,8 @@ class _HomePageState extends State<HomePage>
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.orange[900]!,
-                Colors.orange[600]!,
+                Color.fromARGB(0xFF, 0xEE, 0x75, 0x00)!,
+                Color.fromARGB(0xFF, 0xFF, 0xA0, 0x44),
               ],
             ),
           )),
@@ -309,7 +311,7 @@ class _HomePageState extends State<HomePage>
                     percent: percent,
                     radius: 100,
                     backgroundColor: Colors.black12,
-                    progressColor: Colors.orange[600]))
+                    progressColor: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32)))
           ],
         )));
   }
@@ -328,7 +330,7 @@ class _HomePageState extends State<HomePage>
       animatedIcon: AnimatedIcons.menu_close,
       visible: true,
       curve: Curves.bounceIn,
-      backgroundColor: Colors.orange[600],
+      backgroundColor: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
       children: [
         SpeedDialChild(
             child: const Icon(Icons.settings_sharp, color: Colors.white),
@@ -337,8 +339,8 @@ class _HomePageState extends State<HomePage>
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
                 fontSize: 13.0),
-            backgroundColor: Colors.orange[600],
-            labelBackgroundColor: Colors.orange[600],
+            backgroundColor: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+            labelBackgroundColor: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => ChangeNotifierProvider(
@@ -352,8 +354,8 @@ class _HomePageState extends State<HomePage>
             color: Colors.white,
           ),
           label: "내 기록",
-          backgroundColor: Colors.orange[600],
-          labelBackgroundColor: Colors.indigo.shade900,
+          backgroundColor: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+          labelBackgroundColor: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
           labelStyle: const TextStyle(
               fontWeight: FontWeight.w500, color: Colors.white, fontSize: 13.0),
           onTap: () {},
