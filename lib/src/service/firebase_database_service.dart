@@ -55,8 +55,7 @@ class FirebaseDatabaseService {
 
       if (snapshot.exists) {
         print("데이터 있음");
-        Map<dynamic, dynamic> map = snapshot.value as Map<String, dynamic>;
-        final a = map;
+        Map<dynamic, dynamic> map = snapshot.value as Map<dynamic, dynamic>;
         return map.values.map(Record.fromDB).toList();
       } else {
         print("데이터 없음");
