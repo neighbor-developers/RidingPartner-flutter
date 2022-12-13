@@ -1,7 +1,7 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -34,6 +34,7 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   void initState() {
+    super.initState();
     FirebaseAuth auth = FirebaseAuth.instance;
     userProfile = auth.currentUser?.photoURL;
 
@@ -41,7 +42,6 @@ class _NavigationPageState extends State<NavigationPage> {
         Provider.of<NavigationProvider>(context, listen: false);
 
     setMapComponent();
-    super.initState();
   }
 
   setMapComponent() async {
@@ -62,18 +62,16 @@ class _NavigationPageState extends State<NavigationPage> {
           ((_navigationProvider.position!.longitude) +
                   double.parse(_navigationProvider.course.last.longitude!)) /
               2);
-      myPositionIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(),
-        'assets/icons/cycling_person.png',
-      ).catchError((e) {
-        print(e.toString());
-      });
+      final Uint8List markerIcon = await _navigationProvider.getBytesFromAsset(
+          'assets/icons/my_location.png', 200);
+      myPositionIcon = BitmapDescriptor.fromBytes(markerIcon);
 
       markers.add(Marker(
-          icon: myPositionIcon,
-          markerId: MarkerId("currentPosition"),
-          position: LatLng(_navigationProvider.position!.latitude,
-              _navigationProvider.position!.longitude)));
+        icon: myPositionIcon,
+        markerId: MarkerId("currentPosition"),
+        position: LatLng(_navigationProvider.position!.latitude,
+            _navigationProvider.position!.longitude),
+      ));
     } else {
       initCameraPosition = LatLng(37.339985, 126.733378);
     }
@@ -191,8 +189,8 @@ class _NavigationPageState extends State<NavigationPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/icons/icon_right.png',
-                width: 30, height: 30, fit: BoxFit.cover),
+            // Image.asset('assets/icons/icon_right.png',
+            //     width: 30, height: 30, fit: BoxFit.cover),
             Text(
               _navigationProvider.route?.first.content ?? "",
               style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
@@ -298,7 +296,10 @@ class _NavigationPageState extends State<NavigationPage> {
             screenKeepOn();
             polylineWidth = 8;
           },
-          child: Text('시작'),
+          child: Text(
+            '안내 시작',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ]));
     } else {
@@ -336,7 +337,7 @@ class _NavigationPageState extends State<NavigationPage> {
         Container(
           alignment: FractionalOffset(percent, 1 - percent),
           child: FractionallySizedBox(
-              child: Image.asset('assets/icons/cycling_person.png',
+              child: Image.asset('assets/icons/riding_character.png',
                   width: 30, height: 30, fit: BoxFit.cover)),
         ),
         LinearPercentIndicator(
