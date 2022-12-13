@@ -43,7 +43,7 @@ class _LodingPageState extends State<LodingPage> {
   Widget build(BuildContext context) {
     _authProvider = Provider.of<AuthProvider>(context);
 
-    Future.delayed(const Duration(milliseconds: 1500), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       if (_authProvider.user != null) {
         Navigator.pushAndRemoveUntil(
             context,
@@ -79,7 +79,7 @@ class _LodingPageState extends State<LodingPage> {
         alignment: Alignment.center,
         decoration: const BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/images/loading_background.png'),
+              image: AssetImage('assets/images/img_loading.png'),
               fit: BoxFit.cover),
         ),
         child: Container(

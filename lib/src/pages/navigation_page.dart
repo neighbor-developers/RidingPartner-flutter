@@ -131,7 +131,7 @@ class _NavigationPageState extends State<NavigationPage> {
                   }
                 },
                 icon: Icon(Icons.arrow_back),
-                color: Colors.indigo.shade900,
+                color: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
               ),
             ),
             floatingActionButton: floatingButtons(_ridingProvider.state),
@@ -139,7 +139,8 @@ class _NavigationPageState extends State<NavigationPage> {
                 FloatingActionButtonLocation.miniEndFloat,
             body: _navigationProvider.route == null
                 ? const Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                        color: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32)),
                   )
                 : Stack(
                     alignment: Alignment.bottomCenter,
@@ -151,7 +152,7 @@ class _NavigationPageState extends State<NavigationPage> {
                         polylines: {
                           Polyline(
                               polylineId: PolylineId("route"),
-                              color: Colors.orange[600] ?? Colors.blue,
+                              color: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
                               width: polylineWidth,
                               startCap: Cap.roundCap,
                               endCap: Cap.roundCap,
@@ -220,7 +221,7 @@ class _NavigationPageState extends State<NavigationPage> {
         animatedIcon: AnimatedIcons.menu_close,
         visible: true,
         curve: Curves.bounceIn,
-        backgroundColor: Colors.indigo.shade900,
+        backgroundColor: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
         children: [
           SpeedDialChild(
               child: Icon(floatBtnIcon, color: Colors.white),
@@ -229,8 +230,8 @@ class _NavigationPageState extends State<NavigationPage> {
                   fontWeight: FontWeight.w500,
                   color: Colors.white,
                   fontSize: 13.0),
-              backgroundColor: Colors.indigo.shade900,
-              labelBackgroundColor: Colors.indigo.shade900,
+              backgroundColor: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+              labelBackgroundColor: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
               onTap: () {
                 if (state == RidingState.riding) {
                   _ridingProvider.pauseRiding();
@@ -246,8 +247,8 @@ class _NavigationPageState extends State<NavigationPage> {
               color: Colors.white,
             ),
             label: "종료",
-            backgroundColor: Colors.indigo.shade900,
-            labelBackgroundColor: Colors.indigo.shade900,
+            backgroundColor: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+            labelBackgroundColor: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
             labelStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
@@ -319,7 +320,10 @@ class _NavigationPageState extends State<NavigationPage> {
             children: [
               Text(
                 "남은거리 : ${((((_navigationProvider.remainedDistance) / 100).roundToDouble()) / 10).toString()}, 속도 : ${_ridingProvider.speed.toString()}",
-                style: TextStyle(fontSize: 20, color: Colors.indigo.shade900),
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+                ),
               )
             ],
           ),
@@ -338,14 +342,14 @@ class _NavigationPageState extends State<NavigationPage> {
           alignment: FractionalOffset(percent, 1 - percent),
           child: FractionallySizedBox(
               child: Image.asset('assets/icons/riding_character.png',
-                  width: 30, height: 30, fit: BoxFit.cover)),
+                  width: 40, height: 30, fit: BoxFit.fitHeight)),
         ),
         LinearPercentIndicator(
           padding: EdgeInsets.zero,
           percent: percent,
           lineHeight: 10,
           backgroundColor: Colors.black38,
-          progressColor: Colors.indigo.shade900,
+          progressColor: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
           width: MediaQuery.of(context).size.width,
         )
       ],
