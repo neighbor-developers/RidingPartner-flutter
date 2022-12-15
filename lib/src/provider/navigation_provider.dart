@@ -16,6 +16,8 @@ import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 import '../models/place.dart';
 import '../models/position_stream.dart';
 
+enum SearchRouteState { loading, fail, empty, success }
+
 class NavigationProvider with ChangeNotifier {
   final NaverMapService _naverMapService = NaverMapService();
   //make constructer with one Place type parameter
@@ -26,11 +28,12 @@ class NavigationProvider with ChangeNotifier {
   Position? _position;
   final Distance _calDistance = const Distance();
   RidingState _ridingState = RidingState.before;
+  SearchRouteState _searchRouteState = SearchRouteState.loading;
 
   final PositionStream _positionStream = PositionStream();
 
   late List<Place> _ridingCourse;
-  List<Guide>? _route;
+  List<Guide> _route = [];
   List<int> _distances = [];
   List<google_map.LatLng> _polylinePoints = [];
   List<google_map.LatLng> get polylinePoints => _polylinePoints;
@@ -51,6 +54,7 @@ class NavigationProvider with ChangeNotifier {
   Position? get position => _position;
   List<Guide>? get route => _route;
   RidingState get ridingState => _ridingState;
+  SearchRouteState get searchRouteState => _searchRouteState;
   List<Place> get course => _ridingCourse;
   LatLng? get bearingPoint => _bearingPoint;
   int get remainedDistance => _remainedDistance;
@@ -119,41 +123,40 @@ class NavigationProvider with ChangeNotifier {
       _ridingCourse = List.from(_ridingCourse.reversed);
     }
 
-    Map<String, dynamic>? response = await _naverMapService
+    Map<String, dynamic> response = await _naverMapService
         .getRoute(startPlace, _finalDestination, _ridingCourse)
         .catchError((onError) {
-      return null;
+      return {'result': SearchRouteState.fail};
     });
-    if (response != null) {
+
+    _searchRouteState = response['result'];
+
+    if (_searchRouteState == SearchRouteState.success) {
+      response = response['data'];
+
       _route = response['guides'];
       _remainedDistance = response['sumdistance'];
       if (_totalDistance < response['sumdistance']) {
         _totalDistance = response['sumdistance'];
       }
       _distances = response['distances'];
-    } else {
-      _route = null;
-      _distances = [];
-      return;
-    }
 
-    if (_route != null) {
-      print("루트 사이즈 : ${_route!.length.toString()}");
-      if (_route!.length == 1) {
-        _goalPoint = _route![0];
+      if (_route.length == 1) {
+        _goalPoint = _route[0];
         _nextPoint = null;
       } else {
-        _goalPoint = _route![0];
-        _nextPoint = _route![1];
+        _goalPoint = _route[0];
+        _nextPoint = _route[1];
       }
       _bearingPoint = latLngFromGuide(_goalPoint);
       // _route.forEach((element) {
       //   _remainedDistance += element.
       // })
+      _polyline();
     } else {
-      print("루트 : null");
+      _route = [];
     }
-    _polyline();
+    notifyListeners();
   }
 
   // Future<String> getMyLocationAddress(Position position) async {

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:http/http.dart' as http;
+import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 
 import '../models/place.dart';
@@ -73,7 +74,7 @@ class NaverMapService {
     }
   }
 
-  Future<Map<String, dynamic>?> getRoute(
+  Future<Map<String, dynamic>> getRoute(
       Place start, Place destination, List<Place>? waypoints) async {
     try {
       List<Guide> guides = [];
@@ -101,7 +102,7 @@ class NaverMapService {
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
         var routeData = NaverRouteData.fromJson(jsonResponse);
-        if (routeData.routes != null) {
+        if (routeData.routes != null && routeData.routes != []) {
           guides = routeData.routes!
               .expand<Legs>((rou) => rou.legs!)
               .expand((leg) => leg.steps!)
@@ -114,19 +115,18 @@ class NaverMapService {
               .toList();
 
           sumDistance = routeData.routes![0].summary!.distance!;
-        } else {
-          print("routeData.routes = null");
-        }
-        Map<String, dynamic> routes = {
-          'sumdistance': sumDistance,
-          'guides': guides,
-          'distances': distances
-        };
 
-        return routes;
+          Map<String, dynamic> routes = {
+            'sumdistance': sumDistance,
+            'guides': guides,
+            'distances': distances
+          };
+          return {'result': SearchRouteState.success, 'data': routes};
+        } else {
+          return {'result': SearchRouteState.empty};
+        }
       } else {
-        print("가이드 잘 안왔음");
-        return null;
+        return {'result': SearchRouteState.fail};
       }
     } catch (e) {
       developer.log(e.toString());
