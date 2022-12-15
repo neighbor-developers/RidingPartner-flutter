@@ -12,20 +12,14 @@ class HomeRecordProvider extends ChangeNotifier {
       FirebaseDatabaseService();
   List<String> _daysFor14 = [];
   List<Record> _recordFor14Days = [];
-  int _selectedIndex = numberOfRecentRecords - 1;
+  final int _recordLength = 14;
   Record? _prefRecord;
 
   List<Record> get recordFor14Days => _recordFor14Days;
   List<String> get daysFor14 => _daysFor14;
-  int get selectedIndex => _selectedIndex;
 
   RecordState _recordState = RecordState.loading;
   RecordState get recordState => _recordState;
-
-  void setIndex(int index) {
-    _selectedIndex = index;
-    notifyListeners();
-  }
 
   Future getRecord() async {
     setList();
@@ -56,14 +50,14 @@ class HomeRecordProvider extends ChangeNotifier {
   }
 
   void setList() {
-    for (int i = 0; i < numberOfRecentRecords; i++) {
-      recordFor14Days.add(Record());
+    for (int i = 0; i < 14; i++) {
+      _recordFor14Days.add(Record());
     }
   }
 
   void setDate() {
     DateTime today = DateTime.now();
-    for (int i = 0; i < numberOfRecentRecords; i++) {
+    for (int i = 0; i < _recordLength; i++) {
       DateTime currentDay = today.subtract(Duration(days: i));
       String day = dayToDayString(currentDay.day);
       String weekday = weekdayIntToString(currentDay.weekday);
@@ -82,7 +76,7 @@ class HomeRecordProvider extends ChangeNotifier {
     for (var element in records) {
       int days = int.parse(
           today.difference(DateTime.parse(element.date!)).inDays.toString());
-      if (days < numberOfRecentRecords) {
+      if (days < _recordLength) {
         // 14일 이내이면 그 자리에 넣기
         _recordFor14Days[days] = element;
         // 30, 31, 1, 2, 3 ~ 으로 흐를 경우 날짜 순서를 구분하기 위해 map과 리스트 동시 사용

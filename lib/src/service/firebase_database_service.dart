@@ -59,7 +59,7 @@ class FirebaseDatabaseService {
         return map.values.map(Record.fromDB).toList();
       } else {
         print("데이터 없음");
-        return List<Record>.empty();
+        return <Record>[];
       }
     } catch (e) {
       print("catch!");
