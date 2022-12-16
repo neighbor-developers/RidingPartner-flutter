@@ -166,8 +166,10 @@ class _HomePageState extends State<HomePage>
         return const SizedBox(
             height: 100,
             child: Center(
-              child: CircularProgressIndicator(
-                  color: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32)),
+              child: Text(
+                "라이더님의 주행 기록을 불러오는 중입니다",
+                textAlign: TextAlign.center,
+              ),
             ));
       case RecordState.empty:
         return const SizedBox(
@@ -239,8 +241,8 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget recordDetailView(Record record) {
-    if (record == Record()) {
-      return Container();
+    if (record == Record() || record.date == null) {
+      return const SizedBox(height: 0, width: 0);
     } else {
       List<Data> data = [
         Data('거리', '${record.distance! / 1000}km',
@@ -259,21 +261,19 @@ class _HomePageState extends State<HomePage>
       List<String> values = data.map((e) => e.data).toList();
       List<String> icons = data.map((e) => e.icon).toList();
 
-      return SizedBox(
-        height: 100,
-        child: GridView.builder(
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            padding: const EdgeInsets.all(10),
-            itemCount: 4,
-            itemBuilder: (BuildContext context, index) =>
-                recordCard(keys[index], values[index], icons[index]),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1 / 1,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10)),
-      );
+      return Expanded(
+          child: GridView.builder(
+              shrinkWrap: true,
+              padding: const EdgeInsets.all(10),
+              itemCount: 4,
+              scrollDirection: Axis.vertical,
+              itemBuilder: (BuildContext context, index) =>
+                  recordCard(keys[index], values[index], icons[index]),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 1 / 1,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10)));
     }
   }
 

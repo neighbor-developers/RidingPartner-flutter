@@ -84,7 +84,7 @@ class RidingProvider with ChangeNotifier {
     } else {
       _startTime = _befTime;
       _ridingDate =
-          DateFormat('yy:MM:dd HH:mm').format(DateTime.now()); //format변경
+          DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()); //format변경
     }
 
     // setCustomMarker();

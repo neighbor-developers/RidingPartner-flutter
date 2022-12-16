@@ -12,6 +12,8 @@ class WeatherProvider with ChangeNotifier {
   WeatherState _loadingStatus = WeatherState.searching;
   WeatherState get loadingStatus => _loadingStatus;
 
+  bool _disposed = false;
+
   final OpenWeatherService _openWeatherService = OpenWeatherService();
 
   Future<void> getWeather() async {
@@ -37,6 +39,20 @@ class WeatherProvider with ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  // _disposed == false 일 때만, super.notifyListeners() 호출!
+  @override
+  notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
   }
 
   // WeatherService weatherServie = WeatherService();

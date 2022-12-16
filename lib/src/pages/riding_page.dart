@@ -296,7 +296,7 @@ class _RidingPageState extends State<RidingPage> {
         Container(
           alignment: FractionalOffset(percent, 1 - percent),
           child: FractionallySizedBox(
-              child: Image.asset('assets/icons/cycling_person.png',
+              child: Image.asset('assets/icons/riding_character.png',
                   width: 30, height: 30, fit: BoxFit.cover)),
         ),
         LinearPercentIndicator(
