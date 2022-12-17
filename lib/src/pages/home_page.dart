@@ -55,14 +55,6 @@ class _HomePageState extends State<HomePage>
     records = _homeRecordProvider.recordFor14Days;
 
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          title: Image.asset(
-            'assets/icons/logo.png',
-            height: 25,
-          ),
-          elevation: 0,
-        ),
         floatingActionButton: floatingButtons(),
         body: Container(
             padding: const EdgeInsets.all(20),
@@ -231,7 +223,7 @@ class _HomePageState extends State<HomePage>
       case WeatherState.completed:
         Weather weather = _weatherProvider.weather;
         return Text(
-            '${weather.condition} ${getWeatherIcon(weather.conditionId ?? 800)} 현재 온도 : ${weather.temp}° 습도 : ${weather.humidity}%');
+            '${weather.condition} ${getWeatherIcon(800)} 현재 온도 : ${weather.temp}° 습도 : ${weather.humidity}%');
       default:
         return const Text('날씨를 검색중입니다');
     }

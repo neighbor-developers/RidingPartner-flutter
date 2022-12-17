@@ -125,14 +125,6 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
     return Scaffold(
         body: Column(
       children: <Widget>[
-        Container(
-          height: 100,
-          alignment: Alignment.center,
-          child: const Text(
-            '# 추천 경로',
-            style: TextStyle(fontSize: 30),
-          ),
-        ),
         routeListWidget(),
       ],
     ));
