@@ -49,16 +49,20 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     _weatherProvider = Provider.of<WeatherProvider>(context);
     _homeRecordProvider = Provider.of<HomeRecordProvider>(context);
-
+    _tabController.addListener(() {
+      _homeRecordProvider.setIndex(_tabController.index);
+    });
     records = _homeRecordProvider.recordFor14Days;
 
     return Scaffold(
         appBar: AppBar(
-            backgroundColor: Colors.white,
-            title: Image.asset(
-              'assets/icons/logo.png',
-              height: 25,
-            )),
+          backgroundColor: Colors.transparent,
+          title: Image.asset(
+            'assets/icons/logo.png',
+            height: 25,
+          ),
+          elevation: 0,
+        ),
         floatingActionButton: floatingButtons(),
         body: Container(
             padding: const EdgeInsets.all(20),
@@ -70,7 +74,150 @@ class _HomePageState extends State<HomePage>
                   recommendPlace(Place(title: '갯골 생태 공원')),
                   recommendPlace(Place(title: '갯골 생태 공원'))
                 ]),
-                weekWidget()
+                Expanded(child: weekWidget())
+              ],
+            )));
+  }
+
+  Widget weekWidget() {
+    switch (_homeRecordProvider.recordState) {
+      case RecordState.loading:
+        return const SizedBox(
+            height: 100,
+            child: Center(
+              child: Text(
+                "라이더님의 주행 기록을 불러오는 중입니다",
+                textAlign: TextAlign.center,
+              ),
+            ));
+      case RecordState.empty:
+        return const SizedBox(
+            height: 100,
+            child: Center(
+              child: Text(
+                "아직 주행한 기록이 없습니다\n라이딩 파트너와 함께 달려보세요!",
+                textAlign: TextAlign.center,
+              ),
+            ));
+      case RecordState.fail:
+        return const SizedBox(
+            height: 100,
+            child: Center(
+              child: Text("기록 조회에 실패했습니다\n네트워크 상태를 체크해주세요!",
+                  textAlign: TextAlign.center),
+            ));
+      case RecordState.success:
+        return Column(children: [
+          TabBar(
+              padding: const EdgeInsets.fromLTRB(0, 20, 0, 15),
+              onTap: (value) => {_tabController.animateTo(value)},
+              controller: _tabController,
+              isScrollable: true,
+              tabs: _homeRecordProvider.daysFor14.map((e) {
+                if (_tabController.index ==
+                    _homeRecordProvider.daysFor14.indexOf(e)) {
+                  return Tab(text: e);
+                } else {
+                  return Tab(text: e.substring(0, 2));
+                }
+              }).toList(),
+              unselectedLabelColor: Colors.black54,
+              labelColor: Colors.white,
+              labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+              indicator: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color.fromARGB(255, 183, 183, 183)
+                        .withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(0, 1), // changes position of shadow
+                  )
+                ],
+                borderRadius: BorderRadius.circular(65.0),
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
+                    Color.fromARGB(0xFF, 0xFF, 0xA0, 0x44),
+                  ],
+                ),
+              )),
+          Expanded(
+              child: TabBarView(
+                  controller: _tabController,
+                  children: records.map((e) => recordDetailView(e)).toList()))
+        ]);
+
+      default:
+        return const SizedBox(
+            height: 100,
+            child: Center(
+              child: CircularProgressIndicator(
+                  color: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32)),
+            ));
+    }
+  }
+
+  Widget recordDetailView(Record record) {
+    if (record == Record() || record.date == null) {
+      return const SizedBox(height: 0, width: 0);
+    } else {
+      List<Data> data = [
+        Data('거리', '${record.distance! / 1000}km',
+            'assets/icons/home_distance.png'),
+        Data(
+            '시간',
+            '${record.timestamp! / 3600} : ${record.timestamp! / 60} : ${record.timestamp! % 60}',
+            'assets/icons/home_time.png'),
+        Data('평균 속도', '${record.distance! / record.timestamp!}m/s',
+            'assets/icons/home_speed.png'),
+        Data('순간 최고 속도', '${record.topSpeed}m/s',
+            'assets/icons/home_max_speed.png')
+      ];
+
+      List<String> keys = data.map((e) => e.key).toList();
+      List<String> values = data.map((e) => e.data).toList();
+      List<String> icons = data.map((e) => e.icon).toList();
+
+      return Expanded(
+          child: GridView.builder(
+              shrinkWrap: true,
+              padding: const EdgeInsets.all(10),
+              itemCount: 4,
+              scrollDirection: Axis.vertical,
+              itemBuilder: (BuildContext context, index) =>
+                  recordCard(keys[index], values[index], icons[index]),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 1 / 1,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10)));
+    }
+  }
+
+  Widget recordCard(String key, String data, String icon) {
+    return SizedBox(
+        height: 50,
+        child: Container(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Image.asset(icon, width: 30, height: 30, fit: BoxFit.cover),
+                    Text(
+                      key,
+                      style: const TextStyle(
+                          fontSize: recordFontSize, color: Colors.black87),
+                    )
+                  ],
+                ),
+                Text(
+                  data,
+                  style: const TextStyle(fontSize: 15, color: Colors.black87),
+                )
               ],
             )));
   }
@@ -159,151 +306,6 @@ class _HomePageState extends State<HomePage>
           ],
         ),
       );
-
-  Widget weekWidget() {
-    switch (_homeRecordProvider.recordState) {
-      case RecordState.loading:
-        return const SizedBox(
-            height: 100,
-            child: Center(
-              child: Text(
-                "라이더님의 주행 기록을 불러오는 중입니다",
-                textAlign: TextAlign.center,
-              ),
-            ));
-      case RecordState.empty:
-        return const SizedBox(
-            height: 100,
-            child: Center(
-              child: Text(
-                "아직 주행한 기록이 없습니다\n라이딩 파트너와 함께 달려보세요!",
-                textAlign: TextAlign.center,
-              ),
-            ));
-      case RecordState.fail:
-        return const SizedBox(
-            height: 100,
-            child: Center(
-              child: Text("기록 조회에 실패했습니다\n네트워크 상태를 체크해주세요!",
-                  textAlign: TextAlign.center),
-            ));
-      case RecordState.success:
-        return Column(children: [
-          TabBar(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 15),
-              onTap: (value) => {_tabController.animateTo(value)},
-              controller: _tabController,
-              isScrollable: true,
-              tabs: _homeRecordProvider.daysFor14.map((e) {
-                if (_tabController.index ==
-                    _homeRecordProvider.daysFor14.indexOf(e)) {
-                  return Tab(text: e);
-                } else {
-                  return Tab(text: e.substring(0, 2));
-                }
-              }).toList(),
-              unselectedLabelColor: Colors.black54,
-              labelColor: Colors.white,
-              labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-              indicator: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(255, 183, 183, 183)
-                        .withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: const Offset(0, 1), // changes position of shadow
-                  )
-                ],
-                borderRadius: BorderRadius.circular(65.0),
-                gradient: const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
-                    Color.fromARGB(0xFF, 0xFF, 0xA0, 0x44),
-                  ],
-                ),
-              )),
-          TabBarView(
-              controller: _tabController,
-              children: records.map((e) => recordDetailView(e)).toList())
-        ]);
-
-      default:
-        return const SizedBox(
-            height: 100,
-            child: Center(
-              child: CircularProgressIndicator(
-                  color: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32)),
-            ));
-    }
-  }
-
-  Widget recordDetailView(Record record) {
-    if (record == Record() || record.date == null) {
-      return const SizedBox(height: 0, width: 0);
-    } else {
-      List<Data> data = [
-        Data('거리', '${record.distance! / 1000}km',
-            'assets/icons/home_distance.png'),
-        Data(
-            '시간',
-            '${record.timestamp! / 3600} : ${record.timestamp! / 60} : ${record.timestamp! % 60}',
-            'assets/icons/home_time.png'),
-        Data('평균 속도', '${record.distance! / record.timestamp!}m/s',
-            'assets/icons/home_speed.png'),
-        Data('순간 최고 속도', '${record.topSpeed}m/s',
-            'assets/icons/home_max_speed.png')
-      ];
-
-      List<String> keys = data.map((e) => e.key).toList();
-      List<String> values = data.map((e) => e.data).toList();
-      List<String> icons = data.map((e) => e.icon).toList();
-
-      return Expanded(
-          child: GridView.builder(
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(10),
-              itemCount: 4,
-              scrollDirection: Axis.vertical,
-              itemBuilder: (BuildContext context, index) =>
-                  recordCard(keys[index], values[index], icons[index]),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 1 / 1,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10)));
-    }
-  }
-
-  Widget recordCard(String key, String data, String icon) {
-    return Card(
-        semanticContainer: true,
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        elevation: 5,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Image.asset(icon, width: 30, height: 30, fit: BoxFit.cover),
-                Text(
-                  key,
-                  style: const TextStyle(
-                      fontSize: recordFontSize, color: Colors.black87),
-                )
-              ],
-            ),
-            Text(
-              data,
-              style: const TextStyle(fontSize: 15, color: Colors.black87),
-            )
-          ],
-        ));
-  }
 
   Widget recordRateProgress(double distance) {
     double percent = distance / 1000;
