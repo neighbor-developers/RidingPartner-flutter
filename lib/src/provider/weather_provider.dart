@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ridingpartner_flutter/src/service/wether_service.dart';
+import 'package:ridingpartner_flutter/src/utils/weather_icon.dart';
 
 import '../models/weather.dart';
 
@@ -28,10 +29,12 @@ class WeatherProvider with ChangeNotifier {
         } else {
           _loadingStatus = WeatherState.completed;
           weather.condition = weatherData['weather'][0]['main'];
-          weather.conditionId = weatherData['weather'][0]['id'];
           weather.humidity = weatherData['main']['humidity'];
           weather.temp = weatherData['main']['temp'];
           weather.temp = (weather.temp! * 10).roundToDouble() / 10;
+          if (weather.condition != null) {
+            weather.icon = weatherIcon(weather.condition!);
+          }
         }
       }
     } catch (e) {

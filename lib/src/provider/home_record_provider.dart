@@ -10,6 +10,7 @@ enum RecordState { loading, fail, empty, success }
 class HomeRecordProvider extends ChangeNotifier {
   final FirebaseDatabaseService _firebaseDatabaseService =
       FirebaseDatabaseService();
+  int _selectedIndex = 13;
   List<String> _daysFor14 = [];
   List<Record> _recordFor14Days = [];
   final int _recordLength = 14;
@@ -17,9 +18,15 @@ class HomeRecordProvider extends ChangeNotifier {
 
   List<Record> get recordFor14Days => _recordFor14Days;
   List<String> get daysFor14 => _daysFor14;
+  int get selectedIndex => _selectedIndex;
 
   RecordState _recordState = RecordState.loading;
   RecordState get recordState => _recordState;
+
+  void setIndex(int index) {
+    _selectedIndex = index;
+    notifyListeners();
+  }
 
   Future getRecord() async {
     setList();
