@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -75,15 +74,6 @@ class MapSampleState extends State<MapSearchPage> {
               children: <Widget>[
                 searchBox(mapSearchProvider, "도착지", _destinationTextController,
                     _destinationFocusNode),
-                GestureDetector(
-                  onTap: () {
-                    _destinationFocusNode.unfocus();
-                  },
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.5,
-                  ),
-                ),
-                startNav(mapSearchProvider),
               ],
             ),
           ),
@@ -101,6 +91,7 @@ class MapSampleState extends State<MapSearchPage> {
                       _destinationTextController)
                 ]),
               )),
+          Positioned(bottom: 0, child: startNav(mapSearchProvider))
         ],
       ),
     );
@@ -159,37 +150,45 @@ class MapSampleState extends State<MapSearchPage> {
   }
 
   Widget startNav(MapSearchProvider mapSearchProvider) {
-    return FloatingActionButton.extended(
-        label: const Text('안내시작'),
-        heroTag: 'navigateStartBtn',
-        onPressed: () {
-          if (mapSearchProvider.destination == null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('목적지를 입력해주세요.'),
-              ),
-            );
-            return;
-          } else {
-            developer.log("안내시작");
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => MultiProvider(
-                          providers: [
-                            ChangeNotifierProvider(
-                                create: (context) => NavigationProvider(
-                                    [mapSearchProvider.destination!])),
-                            ChangeNotifierProvider(
-                                create: (context) => RidingProvider())
-                          ],
-                          child: NavigationPage(),
-                        )),
-                (route) => false);
-          }
-        },
-        materialTapTargetSize: MaterialTapTargetSize.padded,
-        backgroundColor: Colors.green);
+    return SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: 60,
+        child: FloatingActionButton.extended(
+            label: Text('안내 시작',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold)),
+            shape: BeveledRectangleBorder(borderRadius: BorderRadius.zero),
+            elevation: 10,
+            heroTag: 'navigateStartBtn',
+            onPressed: () {
+              if (mapSearchProvider.destination == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('목적지를 입력해주세요.'),
+                  ),
+                );
+                return;
+              } else {
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MultiProvider(
+                              providers: [
+                                ChangeNotifierProvider(
+                                    create: (context) => NavigationProvider(
+                                        [mapSearchProvider.destination!])),
+                                ChangeNotifierProvider(
+                                    create: (context) => RidingProvider())
+                              ],
+                              child: NavigationPage(),
+                            )),
+                    (route) => false);
+              }
+            },
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            backgroundColor: Color(0xffF07805)));
   }
 
   void _updatePosition(Place position) {
