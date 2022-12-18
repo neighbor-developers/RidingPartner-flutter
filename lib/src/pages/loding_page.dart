@@ -43,7 +43,7 @@ class _LodingPageState extends State<LodingPage> {
   Widget build(BuildContext context) {
     _authProvider = Provider.of<AuthProvider>(context);
 
-    Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 1500), () {
       if (_authProvider.user != null) {
         Navigator.pushAndRemoveUntil(
             context,

@@ -112,6 +112,20 @@ class MapSampleState extends State<MapSearchPage> {
               width: MediaQuery.of(context).size.width - 40,
               margin: const EdgeInsets.only(top: 190, left: 25),
               child: Visibility(
+                visible: mapSearchProvider.isStartSearching,
+                child: Column(children: [
+                  placeList(
+                      mapSearchProvider,
+                      "출발지",
+                      mapSearchProvider.startPointSearchResult,
+                      _startTextController)
+                ]),
+              )),
+          Container(
+              alignment: Alignment.topLeft,
+              width: MediaQuery.of(context).size.width - 80,
+              margin: const EdgeInsets.only(top: 190, left: 50),
+              child: Visibility(
                 visible: mapSearchProvider.isEndSearching,
                 child: Column(children: [
                   placeList(
