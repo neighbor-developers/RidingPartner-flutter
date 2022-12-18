@@ -19,7 +19,7 @@ class Data {
   Data(this.key, this.data, this.icon);
 }
 
-const mainFontSize = 22.0;
+const mainFontSize = 24.0;
 const recordFontSize = 12.0;
 const numberOfRecentRecords = 14;
 
@@ -36,11 +36,12 @@ class _HomePageState extends State<HomePage>
   late HomeRecordProvider _homeRecordProvider;
   late List<Record> records;
   late TabController _tabController;
+  int state = 0;
   @override
   void initState() {
     super.initState();
     Provider.of<WeatherProvider>(context, listen: false).getWeather();
-    Provider.of<HomeRecordProvider>(context, listen: false).getRecord();
+    Provider.of<HomeRecordProvider>(context, listen: false).getData();
     _tabController = TabController(
         length: numberOfRecentRecords, vsync: this, initialIndex: 13);
   }
@@ -49,21 +50,11 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     _weatherProvider = Provider.of<WeatherProvider>(context);
     _homeRecordProvider = Provider.of<HomeRecordProvider>(context);
-    _tabController.addListener(() {
-      _homeRecordProvider.setIndex(_tabController.index);
-    });
     records = _homeRecordProvider.recordFor14Days;
 
+    _weatherProvider.getWeather();
     return Scaffold(
         backgroundColor: const Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: Image.asset(
-            'assets/icons/logo.png',
-            height: 25,
-          ),
-          elevation: 0,
-        ),
         floatingActionButton: floatingButtons(),
         body: Stack(
           children: [
@@ -74,8 +65,8 @@ class _HomePageState extends State<HomePage>
                 children: [
                   recommendPlaceText(),
                   Row(children: [
-                    recommendPlace(Place(title: '갯골 생태 공원')),
-                    recommendPlace(Place(title: '갯골 생태 공원'))
+                    recommendPlace(_homeRecordProvider.recommendPlace),
+                    recommendPlace(_homeRecordProvider.recommendRoute)
                   ]),
                   Expanded(child: weekWidget()),
                 ],
@@ -129,7 +120,11 @@ class _HomePageState extends State<HomePage>
         return Column(children: [
           TabBar(
               padding: const EdgeInsets.fromLTRB(0, 20, 0, 15),
-              onTap: (value) => {_tabController.animateTo(value)},
+              onTap: (value) {
+                state = 1;
+                _homeRecordProvider.setIndex(_tabController.index);
+                _tabController.animateTo(value);
+              },
               controller: _tabController,
               isScrollable: true,
               tabs: _homeRecordProvider.daysFor14.map((e) {
@@ -142,15 +137,17 @@ class _HomePageState extends State<HomePage>
               }).toList(),
               unselectedLabelColor: Colors.black54,
               labelColor: Colors.white,
-              labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+              labelStyle: const TextStyle(
+                  fontSize: 14,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w700),
               indicator: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
-                    color: const Color.fromARGB(255, 183, 183, 183)
-                        .withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: const Offset(0, 1), // changes position of shadow
+                    color: const Color.fromRGBO(0, 0, 0, 0.1),
+                    spreadRadius: 2,
+                    blurRadius: 3,
+                    offset: const Offset(1, 1), // changes position of shadow
                   )
                 ],
                 borderRadius: BorderRadius.circular(65.0),
@@ -221,6 +218,7 @@ class _HomePageState extends State<HomePage>
     return SizedBox(
         height: 50,
         child: Container(
+            height: 50,
             padding: const EdgeInsets.all(20),
             decoration: const BoxDecoration(
                 color: Colors.white,
@@ -239,14 +237,21 @@ class _HomePageState extends State<HomePage>
                       Text(
                         "  $key",
                         style: const TextStyle(
-                            fontSize: recordFontSize, color: Colors.black),
+                            fontSize: 12,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w500,
+                            color: Color.fromRGBO(17, 17, 17, 1)),
                       )
                     ],
                   ),
                 ),
                 Text(
                   data,
-                  style: const TextStyle(fontSize: 25, color: Colors.black),
+                  style: const TextStyle(
+                      fontSize: 24,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w300,
+                      color: Colors.black),
                 )
               ],
             )));
@@ -263,6 +268,12 @@ class _HomePageState extends State<HomePage>
                 child: const Text('날씨를 검색중입니다')));
       case WeatherState.empty:
         return Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 1,
+                color: Colors.orange,
+              ),
+            ),
             width: MediaQuery.of(context).size.width,
             color: Colors.white,
             child: Container(
@@ -274,22 +285,30 @@ class _HomePageState extends State<HomePage>
             width: MediaQuery.of(context).size.width,
             color: Colors.white,
             child: Container(
-                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    width: 0.1,
+                    color: Color.fromARGB(255, 92, 92, 92),
+                  ),
+                ),
+                padding: const EdgeInsets.all(14),
                 child: Row(
                   children: [
                     Image.asset(
                       weather.icon ?? 'assets/icons/weather_cloud.png',
-                      width: 15,
-                      height: 15,
+                      width: 17,
+                      height: 17,
                     ),
                     const SizedBox(
-                      width: 5,
+                      width: 8,
                     ),
                     Text(
-                      '오늘의 온도 : ${weather.temp}°C  습도 : ${weather.humidity}%',
-                      style: const TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.w500),
-                    )
+                        '오늘의 온도 : ${weather.temp}°C  습도 : ${weather.humidity}%',
+                        style: const TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            color: Color.fromRGBO(51, 51, 51, 1)))
                   ],
                 )));
 
@@ -301,72 +320,97 @@ class _HomePageState extends State<HomePage>
   Widget recommendPlaceText() {
     return Container(
         padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
-        child: const Text.rich(
+        child: Text.rich(
           TextSpan(
-              text: '혜진님, 오늘같은 날에는\n',
-              style: TextStyle(
-                  fontSize: mainFontSize, fontWeight: FontWeight.bold),
-              children: <TextSpan>[
+              text: '${_homeRecordProvider.name}님, 오늘같은 날에는\n',
+              style: const TextStyle(
+                  fontSize: mainFontSize,
+                  fontFamily: "Pretendard",
+                  fontWeight: FontWeight.w800),
+              children: const <TextSpan>[
                 TextSpan(
                     text: '\'갯골 생태 공원\'',
                     style: TextStyle(
                         fontSize: mainFontSize,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: "assets/font/pretendard_medium",
-                        color: Color.fromARGB(0xFF, 0xFF, 0xA0, 0x44))),
+                        fontWeight: FontWeight.w800,
+                        fontFamily: "Pretendard",
+                        color: Color.fromARGB(255, 253, 154, 55))),
                 TextSpan(
                     text: ' 어떠세요?',
                     style: TextStyle(
-                        fontSize: mainFontSize, fontWeight: FontWeight.bold))
+                        fontSize: mainFontSize,
+                        fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w800))
               ]),
           textAlign: TextAlign.start,
         ));
   }
 
-  Widget recommendPlace(Place place) => Flexible(
-        flex: 1,
-        child: Stack(
-          children: [
-            Container(
-                height: 130,
-                margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                child: InkWell(
-                    onTap: () {},
-                    child: Stack(children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                            image: DecorationImage(
-                                image: AssetImage(
-                                  'assets/images/places/lotus_flower_theme_park.jpeg',
-                                ),
-                                fit: BoxFit.cover)),
-                      ),
-                      Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height,
-                          decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                              color: Color.fromARGB(90, 0, 0, 0)))
-                    ]))),
-            Container(
+  Widget recommendPlace(dynamic data) {
+    return Flexible(
+      flex: 1,
+      child: _homeRecordProvider.recommendPlace == null
+          ? Container(
+              alignment: Alignment.center,
               height: 130,
-              padding: const EdgeInsets.all(15),
-              alignment: Alignment.bottomLeft,
+              margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
               child: Text(
-                place.title!,
+                "추천 명소를\n불러오고 있습니다",
                 style: const TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w600,
                     color: Colors.white),
               ),
             )
-          ],
-        ),
-      );
+          : Stack(
+              children: [
+                Container(
+                    height: 130,
+                    margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                    child: InkWell(
+                        onTap: () {},
+                        child: Stack(children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height,
+                            decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                                image: DecorationImage(
+                                    image: AssetImage(
+                                      'assets/images/places/lotus_flower_theme_park.jpeg',
+                                    ),
+                                    fit: BoxFit.cover)),
+                          ),
+                          Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                              decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20)),
+                                  color: Color.fromARGB(90, 0, 0, 0)))
+                        ]))),
+                Container(
+                  height: 130,
+                  padding: const EdgeInsets.all(15),
+                  alignment: Alignment.bottomLeft,
+                  child: Text(
+                    "${data.title}",
+                    style: const TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white),
+                  ),
+                )
+              ],
+            ),
+    );
+  }
 
   Widget recordRateProgress(double distance) {
     double percent = distance / 1000;

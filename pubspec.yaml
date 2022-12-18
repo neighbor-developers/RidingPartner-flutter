@@ -101,7 +101,28 @@ flutter:
     - assets/images/places/
     - assets/icons/
     - assets/json/
-    - assets/font/
+    
+  fonts:
+    - family: Pretendard
+      fonts:
+        - asset: assets/font/Pretendard-Thin.otf
+          weight: 100
+        - asset: assets/font/Pretendard-ExtraLight.otf
+          weight: 200
+        - asset: assets/font/Pretendard-Light.otf
+          weight: 300
+        - asset: assets/font/Pretendard-SemiBold.otf
+          weight: 400
+        - asset: assets/font/Pretendard-Medium.otf
+          weight: 500
+        - asset: assets/font/Pretendard-Regular.otf
+          weight: 600
+        - asset: assets/font/Pretendard-Bold.otf
+          weight: 700
+        - asset: assets/font/Pretendard-ExtraBold.otf
+          weight: 900
+        - asset: assets/font/Pretendard-Black.otf
+          weight: 900
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
