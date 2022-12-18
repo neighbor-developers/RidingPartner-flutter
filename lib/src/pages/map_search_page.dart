@@ -10,6 +10,7 @@ import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 
 import '../provider/map_search_provider.dart';
 import '../provider/riding_provider.dart';
+import '../utils/custom_marker.dart';
 
 class MapSearchPage extends StatefulWidget {
   const MapSearchPage({super.key});
@@ -28,9 +29,9 @@ class MapSampleState extends State<MapSearchPage> {
   final Color _orangeColor = const Color(0xffF07805);
   final TextStyle _searchBoxTextStyle = const TextStyle(
       fontFamily: 'Pretended',
-      color: Color(0xff666666),
+      color: Colors.black,
       fontSize: 16,
-      fontWeight: FontWeight.normal);
+      fontWeight: FontWeight.bold);
   final TextStyle _hintTextStyle = const TextStyle(
       fontFamily: 'Pretended',
       color: Color(0xff666666),
@@ -297,10 +298,13 @@ class MapSampleState extends State<MapSearchPage> {
             backgroundColor: _orangeColor));
   }
 
-  void _updatePosition(Place position) {
+  Future<void> _updatePosition(Place position) async {
     _markers.clear();
+    final customIcon = await CustomMarker()
+        .getPictuerMarker('assets/icons/search_riding_marker.png');
     _markers.add(
       Marker(
+        icon: customIcon,
         markerId: const MarkerId('1'),
         position: LatLng(double.parse(position.latitude!),
             double.parse(position.longitude!)),
