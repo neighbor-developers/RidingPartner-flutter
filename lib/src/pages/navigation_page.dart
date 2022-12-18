@@ -209,9 +209,9 @@ class _NavigationPageState extends State<NavigationPage> {
         'assets/icons/navigation_straight.png';
     return Container(
         alignment: Alignment.center,
-        color: Colors.white,
         padding: const EdgeInsets.all(20),
         decoration: const BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(8)),
         ),
         child: Row(
