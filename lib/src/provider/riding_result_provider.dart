@@ -32,7 +32,7 @@ class RidingResultProvider with ChangeNotifier {
   Future<void> getRidingData() async {
     _record = await _firebaseDb.getRecord(_ridingDate);
 
-    if (_record == Record()) {
+    if (_record != Record() && _record.date != null) {
       _recordState = RecordState.success;
     } else {
       _recordState = RecordState.fail;
