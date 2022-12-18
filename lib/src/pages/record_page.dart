@@ -97,9 +97,8 @@ class RecordPage extends StatelessWidget {
                     style: TextStyle(
                         color: Color.fromARGB(255, 0, 0, 0), fontSize: 16.0),
                   ),
-                  /*Text("${_record.timestamp! / 3600} : ${_record.timestamp! /
-                      60} : ${_record.timestamp! % 60}\n",
-                    style: const TextStyle(fontSize: 16),)*/
+                  // Text("${_record.timestamp! / 3600} : ${_record.timestamp! / 60} : ${_record.timestamp! % 60}\n",
+                  //  style: const TextStyle(fontSize: 16),)
                 ]),
                 Row(children: [
                   const Text(
@@ -107,8 +106,8 @@ class RecordPage extends StatelessWidget {
                     style: TextStyle(
                         color: Color.fromARGB(255, 0, 0, 0), fontSize: 16.0),
                   ),
-                  /*Text("${_record.distance! / _record.timestamp!}km/h\n",
-                    style: const TextStyle(fontSize: 16),)*/
+                  // Text("${_record.distance! / _record.timestamp!}km/h\n",
+                    //style: const TextStyle(fontSize: 16),)
                 ]),
                 Row(children: [
                   const Text(
