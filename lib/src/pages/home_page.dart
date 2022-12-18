@@ -20,7 +20,7 @@ class Data {
 }
 
 const mainFontSize = 22.0;
-const recordFontSize = 10.0;
+const recordFontSize = 12.0;
 const numberOfRecentRecords = 14;
 
 class HomePage extends StatefulWidget {
@@ -55,8 +55,9 @@ class _HomePageState extends State<HomePage>
     records = _homeRecordProvider.recordFor14Days;
 
     return Scaffold(
+        backgroundColor: const Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white,
           title: Image.asset(
             'assets/icons/logo.png',
             height: 25,
@@ -64,19 +65,28 @@ class _HomePageState extends State<HomePage>
           elevation: 0,
         ),
         floatingActionButton: floatingButtons(),
-        body: Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                recommendPlaceText(),
-                Row(children: [
-                  recommendPlace(Place(title: '갯골 생태 공원')),
-                  recommendPlace(Place(title: '갯골 생태 공원'))
-                ]),
-                Expanded(child: weekWidget())
-              ],
-            )));
+        body: Stack(
+          children: [
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  recommendPlaceText(),
+                  Row(children: [
+                    recommendPlace(Place(title: '갯골 생태 공원')),
+                    recommendPlace(Place(title: '갯골 생태 공원'))
+                  ]),
+                  Expanded(child: weekWidget()),
+                ],
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              child: weatherWidget(),
+            )
+          ],
+        ));
   }
 
   Widget weekWidget() {
@@ -90,12 +100,21 @@ class _HomePageState extends State<HomePage>
                 textAlign: TextAlign.center,
               ),
             ));
-      case RecordState.empty:
+      case RecordState.none:
         return const SizedBox(
             height: 100,
             child: Center(
               child: Text(
                 "아직 주행한 기록이 없습니다\n라이딩 파트너와 함께 달려보세요!",
+                textAlign: TextAlign.center,
+              ),
+            ));
+      case RecordState.empty:
+        return const SizedBox(
+            height: 100,
+            child: Center(
+              child: Text(
+                "최근 2주간 라이딩한 기록이 없습니다\n라이딩 파트너와 함께 달려보세요!",
                 textAlign: TextAlign.center,
               ),
             ));
@@ -162,14 +181,15 @@ class _HomePageState extends State<HomePage>
 
   Widget recordDetailView(Record record) {
     if (record == Record() || record.date == null) {
-      return const SizedBox(height: 0, width: 0);
+      return Container(
+        alignment: Alignment.center,
+        child: Text('라이딩한 기록이 없습니다'),
+      );
     } else {
       List<Data> data = [
         Data('거리', '${record.distance! / 1000}km',
             'assets/icons/home_distance.png'),
-        Data(
-            '시간',
-            '${record.timestamp! / 3600} : ${record.timestamp! / 60} : ${record.timestamp! % 60}',
+        Data('시간', timestampToText(record.timestamp!),
             'assets/icons/home_time.png'),
         Data('평균 속도', '${record.distance! / record.timestamp!}m/s',
             'assets/icons/home_speed.png'),
@@ -201,22 +221,32 @@ class _HomePageState extends State<HomePage>
     return SizedBox(
         height: 50,
         child: Container(
-            padding: EdgeInsets.all(20),
-            child: Column(
+            padding: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(12))),
+            child: Stack(
+              alignment: Alignment.center,
               children: [
-                Row(
-                  children: [
-                    Image.asset(icon, width: 30, height: 30, fit: BoxFit.cover),
-                    Text(
-                      key,
-                      style: const TextStyle(
-                          fontSize: recordFontSize, color: Colors.black87),
-                    )
-                  ],
+                Container(
+                  alignment: Alignment.topLeft,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: Row(
+                    children: [
+                      Image.asset(icon,
+                          width: 15, height: 15, fit: BoxFit.cover),
+                      Text(
+                        "  $key",
+                        style: const TextStyle(
+                            fontSize: recordFontSize, color: Colors.black),
+                      )
+                    ],
+                  ),
                 ),
                 Text(
                   data,
-                  style: const TextStyle(fontSize: 15, color: Colors.black87),
+                  style: const TextStyle(fontSize: 25, color: Colors.black),
                 )
               ],
             )));
@@ -225,13 +255,44 @@ class _HomePageState extends State<HomePage>
   Widget weatherWidget() {
     switch (_weatherProvider.loadingStatus) {
       case WeatherState.searching:
-        return const Text('날씨를 검색중입니다');
+        return Container(
+            width: MediaQuery.of(context).size.width,
+            color: Colors.white,
+            child: Container(
+                padding: const EdgeInsets.all(12),
+                child: const Text('날씨를 검색중입니다')));
       case WeatherState.empty:
-        return const Text('날씨를 불러올 수 없습니다.');
+        return Container(
+            width: MediaQuery.of(context).size.width,
+            color: Colors.white,
+            child: Container(
+                padding: const EdgeInsets.all(12),
+                child: const Text('날씨를 불러오지 못했습니다,')));
       case WeatherState.completed:
         Weather weather = _weatherProvider.weather;
-        return Text(
-            '${weather.condition} ${getWeatherIcon(weather.conditionId ?? 800)} 현재 온도 : ${weather.temp}° 습도 : ${weather.humidity}%');
+        return Container(
+            width: MediaQuery.of(context).size.width,
+            color: Colors.white,
+            child: Container(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      weather.icon ?? 'assets/icons/weather_cloud.png',
+                      width: 15,
+                      height: 15,
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      '오늘의 온도 : ${weather.temp}°C  습도 : ${weather.humidity}%',
+                      style: const TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.w500),
+                    )
+                  ],
+                )));
+
       default:
         return const Text('날씨를 검색중입니다');
     }
@@ -266,43 +327,43 @@ class _HomePageState extends State<HomePage>
         flex: 1,
         child: Stack(
           children: [
-            Card(
-                semanticContainer: true,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                elevation: 5,
+            Container(
+                height: 130,
                 margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                 child: InkWell(
                     onTap: () {},
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 100,
-                      decoration: const BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage(
-                                'assets/images/places/lotus_flower_theme_park.jpeg',
-                              ),
-                              fit: BoxFit.cover)),
-                    ))),
-            Card(
-                semanticContainer: true,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                child: Container(
-                  alignment: Alignment.bottomRight,
-                  width: MediaQuery.of(context).size.width,
-                  color: const Color.fromARGB(255, 0, 0, 0),
-                  height: 100,
-                  child: Text(place.title!,
-                      style: const TextStyle(
-                        color: Colors.white,
-                      )),
-                ))
+                    child: Stack(children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            image: DecorationImage(
+                                image: AssetImage(
+                                  'assets/images/places/lotus_flower_theme_park.jpeg',
+                                ),
+                                fit: BoxFit.cover)),
+                      ),
+                      Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                          decoration: const BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
+                              color: Color.fromARGB(90, 0, 0, 0)))
+                    ]))),
+            Container(
+              height: 130,
+              padding: const EdgeInsets.all(15),
+              alignment: Alignment.bottomLeft,
+              child: Text(
+                place.title!,
+                style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+            )
           ],
         ),
       );
@@ -393,23 +454,28 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  String getWeatherIcon(int condition) {
-    if (condition < 300) {
-      return '🌩';
-    } else if (condition < 400) {
-      return '🌧';
-    } else if (condition < 600) {
-      return '☔️';
-    } else if (condition < 700) {
-      return '☃️';
-    } else if (condition < 800) {
-      return '🌫';
-    } else if (condition == 800) {
-      return '☀️';
-    } else if (condition <= 804) {
-      return '☁️';
+  String timestampToText(int timestamp) {
+    String hour = "00";
+    String minute = "00";
+    String second = "00";
+
+    if (timestamp ~/ 3600 < 10) {
+      hour = "0${timestamp ~/ 3600}";
     } else {
-      return '🤷‍';
+      hour = "${timestamp ~/ 3600}";
     }
+
+    if (timestamp ~/ 60 < 10) {
+      minute = "0${timestamp ~/ 60}";
+    } else {
+      minute = "${timestamp ~/ 60}";
+    }
+    if (timestamp % 60 < 10) {
+      second = "0${timestamp % 60}";
+    } else {
+      second = "${timestamp % 60}";
+    }
+
+    return '$hour:$minute:$second';
   }
 }

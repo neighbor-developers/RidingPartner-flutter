@@ -112,7 +112,7 @@ class _NavigationPageState extends State<NavigationPage> {
       }
     }
 
-    if (_navigationProvider.ridingState != RidingState.before) {
+    if (_navigationProvider.searchRouteState == SearchRouteState.success) {
       setController();
     }
 
