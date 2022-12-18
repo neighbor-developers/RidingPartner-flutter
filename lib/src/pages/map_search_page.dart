@@ -176,15 +176,29 @@ class MapSampleState extends State<MapSearchPage> {
       Material(
         elevation: 5,
         borderRadius: BorderRadius.circular(10),
-        child: SizedBox(
+        child: Container(
           height: 70,
           width: MediaQuery.of(context).size.width - 100,
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
           child: TextField(
             focusNode: focusNode,
             onChanged: (value) => mapSearchProvider.searchPlace(value, type),
             controller: textController,
             decoration: InputDecoration(
               hintText: type,
+              labelStyle: TextStyle(
+                  color: Colors.black,
+                  fontFamily: 'Pretended',
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+              prefixIcon: Icon(Icons.search),
+              suffixIcon: IconButton(
+                  icon: Image.asset(
+                    'assets/icons/xmark.png',
+                    scale: 3,
+                  ),
+                  onPressed: () =>
+                      _clearText(textController, type, mapSearchProvider)),
               filled: true,
               fillColor: Color(0xffF5F6F9),
               border: OutlineInputBorder(
@@ -251,6 +265,16 @@ class MapSampleState extends State<MapSearchPage> {
       ),
     );
     setState(() {});
+  }
+
+  void _clearText(TextEditingController textController, String type,
+      MapSearchProvider mapSearchProvider) {
+    if (type == "출발지") {
+      mapSearchProvider.clearStartPointSearchResult();
+    } else {
+      mapSearchProvider.clearEndPointSearchResult();
+    }
+    textController.clear();
   }
 
   void _initLoaction() async {
