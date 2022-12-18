@@ -25,6 +25,18 @@ class MapSampleState extends State<MapSearchPage> {
   final _destinationTextController = TextEditingController();
   final _startTextController = TextEditingController();
   final Color _searchBoxColor = const Color(0xffF5F6F9);
+  final Color _orangeColor = const Color(0xffF07805);
+  final TextStyle _searchBoxTextStyle = const TextStyle(
+      fontFamily: 'Pretended',
+      color: Color(0xff666666),
+      fontSize: 16,
+      fontWeight: FontWeight.normal);
+  final TextStyle _hintTextStyle = const TextStyle(
+      fontFamily: 'Pretended',
+      color: Color(0xff666666),
+      fontSize: 16,
+      fontWeight: FontWeight.w200);
+
   var _initLocation = CameraPosition(
     target: LatLng(
         MyLocation().position!.latitude, MyLocation().position!.longitude),
@@ -66,6 +78,7 @@ class MapSampleState extends State<MapSearchPage> {
           GoogleMap(
             mapType: MapType.normal,
             onTap: (latlng) {
+              _startFocusNode.unfocus();
               _destinationFocusNode.unfocus();
             },
             markers: Set.from(_markers),
@@ -77,7 +90,7 @@ class MapSampleState extends State<MapSearchPage> {
             myLocationEnabled: true,
           ),
           Container(
-            margin: const EdgeInsets.only(top: 60, left: 35),
+            margin: const EdgeInsets.only(top: 40, left: 35),
             alignment: Alignment.topLeft,
             padding:
                 const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
@@ -86,7 +99,7 @@ class MapSampleState extends State<MapSearchPage> {
                 searchBox(mapSearchProvider, "출발지", _startTextController,
                     _startFocusNode),
                 SizedBox(
-                  height: 10,
+                  height: 15,
                 ),
                 searchBox(mapSearchProvider, "도착지", _destinationTextController,
                     _destinationFocusNode),
@@ -96,7 +109,7 @@ class MapSampleState extends State<MapSearchPage> {
           Container(
               alignment: Alignment.topLeft,
               width: MediaQuery.of(context).size.width - 40,
-              margin: const EdgeInsets.only(top: 120, left: 25),
+              margin: const EdgeInsets.only(top: 100, left: 25),
               child: Visibility(
                 visible: mapSearchProvider.isStartSearching,
                 child: Column(children: [
@@ -110,21 +123,7 @@ class MapSampleState extends State<MapSearchPage> {
           Container(
               alignment: Alignment.topLeft,
               width: MediaQuery.of(context).size.width - 40,
-              margin: const EdgeInsets.only(top: 190, left: 25),
-              child: Visibility(
-                visible: mapSearchProvider.isStartSearching,
-                child: Column(children: [
-                  placeList(
-                      mapSearchProvider,
-                      "출발지",
-                      mapSearchProvider.startPointSearchResult,
-                      _startTextController)
-                ]),
-              )),
-          Container(
-              alignment: Alignment.topLeft,
-              width: MediaQuery.of(context).size.width - 80,
-              margin: const EdgeInsets.only(top: 190, left: 50),
+              margin: const EdgeInsets.only(top: 175, left: 25),
               child: Visibility(
                 visible: mapSearchProvider.isEndSearching,
                 child: Column(children: [
@@ -135,6 +134,19 @@ class MapSampleState extends State<MapSearchPage> {
                       _destinationTextController)
                 ]),
               )),
+          Positioned(
+            bottom: 100,
+            left: 20,
+            child: FloatingActionButton(
+              backgroundColor: Colors.white,
+              child: const ImageIcon(
+                  AssetImage('assets/icons/search_myLocation_button.png'),
+                  color: Colors.orange),
+              onPressed: () {
+                _initLoaction();
+              },
+            ),
+          ),
           Positioned(bottom: 0, child: startNav(mapSearchProvider))
         ],
       ),
@@ -148,10 +160,19 @@ class MapSampleState extends State<MapSearchPage> {
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index) {
           return Card(
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+              borderOnForeground: true,
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 0.3),
               child: ListTile(
-                  title: Text(list[index].title!),
-                  subtitle: Text(list[index].jibunAddress ?? ''),
+                  title: Row(
+                    children: [
+                      const ImageIcon(
+                          AssetImage('assets/icons/search_marker.png'),
+                          size: 18),
+                      Text("  ${list[index].title!}",
+                          style: _searchBoxTextStyle),
+                    ],
+                  ),
+                  // subtitle: Text(list[index].jibunAddress ?? ''),
                   textColor: Colors.black,
                   tileColor: _searchBoxColor,
                   onTap: () async {
@@ -201,11 +222,13 @@ class MapSampleState extends State<MapSearchPage> {
           width: MediaQuery.of(context).size.width - 60,
           height: 60,
           child: TextField(
+            style: _searchBoxTextStyle,
             focusNode: focusNode,
             onChanged: (value) => mapSearchProvider.searchPlace(value, type),
             controller: textController,
             decoration: InputDecoration(
-              hintText: type,
+              hintStyle: _hintTextStyle,
+              hintText: type + "를 입력해주세요",
               prefixIcon: Icon(Icons.search),
               suffixIcon: _xMarkBtn(mapSearchProvider, type, textController),
               filled: true,
@@ -271,7 +294,7 @@ class MapSampleState extends State<MapSearchPage> {
               }
             },
             materialTapTargetSize: MaterialTapTargetSize.padded,
-            backgroundColor: const Color(0xffF07805)));
+            backgroundColor: _orangeColor));
   }
 
   void _updatePosition(Place position) {
@@ -298,6 +321,7 @@ class MapSampleState extends State<MapSearchPage> {
   }
 
   void _initLoaction() async {
+    final GoogleMapController controller = await _controller.future;
     final myLocation = MyLocation();
     await myLocation.getMyCurrentLocation();
     _initLocation = CameraPosition(
@@ -305,11 +329,6 @@ class MapSampleState extends State<MapSearchPage> {
           LatLng(myLocation.position!.latitude, myLocation.position!.longitude),
       zoom: 14.4746,
     );
-    _markers.add(Marker(
-        markerId: const MarkerId("1"),
-        draggable: true,
-        onTap: () => {},
-        position: LatLng(
-            myLocation.position!.latitude, myLocation.position!.longitude)));
+    controller.animateCamera(CameraUpdate.newCameraPosition(_initLocation));
   }
 }
