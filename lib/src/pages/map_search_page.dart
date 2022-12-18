@@ -20,8 +20,10 @@ class MapSearchPage extends StatefulWidget {
 
 class MapSampleState extends State<MapSearchPage> {
   final Completer<GoogleMapController> _controller = Completer();
-  FocusNode _destinationFocusNode = FocusNode();
+  final FocusNode _destinationFocusNode = FocusNode();
+  final FocusNode _startFocusNode = FocusNode();
   final _destinationTextController = TextEditingController();
+  final _startTextController = TextEditingController();
   var _initLocation = CameraPosition(
     target: LatLng(
         MyLocation().position!.latitude, MyLocation().position!.longitude),
@@ -36,6 +38,12 @@ class MapSampleState extends State<MapSearchPage> {
       if (!_destinationFocusNode.hasFocus) {
         Provider.of<MapSearchProvider>(context, listen: false)
             .clearEndPointSearchResult();
+      }
+    });
+    _startFocusNode.addListener(() {
+      if (!_startFocusNode.hasFocus) {
+        Provider.of<MapSearchProvider>(context, listen: false)
+            .clearStartPointSearchResult();
       }
     });
     _initLoaction();
@@ -72,6 +80,8 @@ class MapSampleState extends State<MapSearchPage> {
             alignment: Alignment.topLeft,
             child: Column(
               children: <Widget>[
+                searchBox(mapSearchProvider, "출발지", _startTextController,
+                    _startFocusNode),
                 searchBox(mapSearchProvider, "도착지", _destinationTextController,
                     _destinationFocusNode),
               ],
@@ -81,6 +91,20 @@ class MapSampleState extends State<MapSearchPage> {
               alignment: Alignment.topLeft,
               width: MediaQuery.of(context).size.width - 80,
               margin: const EdgeInsets.only(top: 120, left: 50),
+              child: Visibility(
+                visible: mapSearchProvider.isStartSearching,
+                child: Column(children: [
+                  placeList(
+                      mapSearchProvider,
+                      "출발지",
+                      mapSearchProvider.startPointSearchResult,
+                      _startTextController)
+                ]),
+              )),
+          Container(
+              alignment: Alignment.topLeft,
+              width: MediaQuery.of(context).size.width - 80,
+              margin: const EdgeInsets.only(top: 190, left: 50),
               child: Visibility(
                 visible: mapSearchProvider.isEndSearching,
                 child: Column(children: [
@@ -112,8 +136,19 @@ class MapSampleState extends State<MapSearchPage> {
                   onTap: () async {
                     final GoogleMapController controller =
                         await _controller.future;
-                    textController.text = list[index].title!;
-                    FocusManager.instance.primaryFocus?.unfocus();
+
+                    if (index == 0) {
+                      textController.text =
+                          '${list[index].title!}: ${list[index].jibunAddress!}';
+                    } else {
+                      textController.text = list[index].title!;
+                    }
+                    if (type == "출발지") {
+                      FocusScope.of(context)
+                          .requestFocus(_destinationFocusNode);
+                    } else {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    }
                     controller.animateCamera(CameraUpdate.newCameraPosition(
                       CameraPosition(
                         target: LatLng(double.parse(list[index].latitude!),
@@ -122,8 +157,13 @@ class MapSampleState extends State<MapSearchPage> {
                       ),
                     ));
                     _updatePosition(list[index]);
-                    mapSearchProvider.setEndPoint(list[index]);
-                    mapSearchProvider.clearEndPointSearchResult();
+                    if (type == "출발지") {
+                      mapSearchProvider.setStartPoint(list[index]);
+                      mapSearchProvider.clearStartPointSearchResult();
+                    } else {
+                      mapSearchProvider.setEndPoint(list[index]);
+                      mapSearchProvider.clearEndPointSearchResult();
+                    }
                   }));
         },
       ),
@@ -133,16 +173,25 @@ class MapSampleState extends State<MapSearchPage> {
   Widget searchBox(MapSearchProvider mapSearchProvider, String type,
       TextEditingController textController, FocusNode focusNode) {
     return Column(children: [
-      SizedBox(
-        height: 70,
-        width: MediaQuery.of(context).size.width - 100,
-        child: TextField(
-          focusNode: focusNode,
-          onChanged: (value) => mapSearchProvider.searchPlace(value, type),
-          controller: textController,
-          decoration: const InputDecoration(
-            hintText: "목적지",
-            border: OutlineInputBorder(),
+      Material(
+        elevation: 5,
+        borderRadius: BorderRadius.circular(10),
+        child: SizedBox(
+          height: 70,
+          width: MediaQuery.of(context).size.width - 100,
+          child: TextField(
+            focusNode: focusNode,
+            onChanged: (value) => mapSearchProvider.searchPlace(value, type),
+            controller: textController,
+            decoration: InputDecoration(
+              hintText: type,
+              filled: true,
+              fillColor: Color(0xffF5F6F9),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide.none,
+              ),
+            ),
           ),
         ),
       ),
@@ -188,7 +237,7 @@ class MapSampleState extends State<MapSearchPage> {
               }
             },
             materialTapTargetSize: MaterialTapTargetSize.padded,
-            backgroundColor: Color(0xffF07805)));
+            backgroundColor: const Color(0xffF07805)));
   }
 
   void _updatePosition(Place position) {

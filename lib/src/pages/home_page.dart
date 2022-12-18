@@ -9,8 +9,6 @@ import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/setting_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 
-import '../models/place.dart';
-
 class Data {
   String key;
   String data;

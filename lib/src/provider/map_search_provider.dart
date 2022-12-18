@@ -17,14 +17,21 @@ class MapSearchProvider extends ChangeNotifier {
   final NaverMapService _naverMapService = NaverMapService();
   final kakaoKey = dotenv.env['KAKAO_REST_API_KEY'];
 
+  List<Place> _startPointSearchResult = [];
+  List<Place> get startPointSearchResult => _startPointSearchResult;
   List<Place> _destinationSearchResult = [];
   List<Place> get destinationSearchResult => _destinationSearchResult;
-
+  Place? _startPoint;
+  Place? get startPoint => _startPoint;
   Place? _destination;
   Place? get destination => _destination;
 
   Position? _myPosition;
   Position? get myPosition => _myPosition;
+  setStartPoint(Place place) {
+    _startPoint = place;
+    notifyListeners();
+  }
 
   setEndPoint(Place place) {
     _destination = place;
@@ -32,7 +39,11 @@ class MapSearchProvider extends ChangeNotifier {
   }
 
   searchPlace(value, type) async {
-    setEndPointSearchResult(value);
+    if (type == '출발지') {
+      setStartPointSearchResult(value);
+    } else {
+      setEndPointSearchResult(value);
+    }
   }
 
   Future<String> getMyLocationAddress() async {
@@ -52,6 +63,16 @@ class MapSearchProvider extends ChangeNotifier {
     return address;
   }
 
+  setStartPointSearchResult(String title) async {
+    _startPointSearchResult = (await _naverMapService.getPlaces(title)) ?? [];
+    if (_startPointSearchResult.isNotEmpty) {
+      isStartSearching = true;
+    } else {
+      isStartSearching = false;
+    }
+    notifyListeners();
+  }
+
   setEndPointSearchResult(String title) async {
     _destinationSearchResult = (await _naverMapService.getPlaces(title)) ?? [];
     if (_destinationSearchResult.isNotEmpty) {
@@ -59,6 +80,12 @@ class MapSearchProvider extends ChangeNotifier {
     } else {
       isEndSearching = false;
     }
+    notifyListeners();
+  }
+
+  clearStartPointSearchResult() {
+    _startPointSearchResult = [];
+    isStartSearching = false;
     notifyListeners();
   }
 
