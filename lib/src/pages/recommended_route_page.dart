@@ -16,7 +16,6 @@ class RecommendedRoutePage extends StatefulWidget {
 class RecommendedRoutePageState extends State<StatefulWidget> {
   @override
   Widget build(BuildContext context) {
-    const NUMBER_OF_COLUMNS = 2;
     final routeListProvider = Provider.of<RouteListProvider>(context);
     final state = routeListProvider.state;
 
@@ -88,17 +87,24 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
             semanticContainer: true,
             clipBehavior: Clip.antiAliasWithSaveLayer,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5.0),
+              borderRadius: BorderRadius.circular(10.0),
             ),
             child: InkWell(
-              onTap: () {
-                routeDialog(route);
-              },
-              child: Image.asset(
-                route.image!,
-                fit: BoxFit.fill,
-              ),
-            )));
+                onTap: () {
+                  routeDialog(route);
+                },
+                child: Stack(fit: StackFit.expand, children: <Widget>[
+                  Image.asset(
+                    route.image!,
+                    fit: BoxFit.fill,
+                  ),
+                  Align(
+                      alignment: Alignment.bottomRight,
+                      child: Text(
+                        route.title! + "  ",
+                        style: TextStyle(color: Colors.white),
+                      )),
+                ]))));
 
     Widget routeListWidget() {
       if (state == RouteListState.searching) {
@@ -116,7 +122,7 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
                     listCard(routeList[index]),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 1 / 1,
+                    childAspectRatio: 4 / 3,
                     mainAxisSpacing: 10,
                     crossAxisSpacing: 10)));
       }
@@ -125,14 +131,6 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
     return Scaffold(
         body: Column(
       children: <Widget>[
-        Container(
-          height: 100,
-          alignment: Alignment.center,
-          child: const Text(
-            '# 추천 경로',
-            style: TextStyle(fontSize: 30),
-          ),
-        ),
         routeListWidget(),
       ],
     ));

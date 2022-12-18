@@ -12,7 +12,7 @@ class RidingResultProvider with ChangeNotifier {
   final FirebaseDatabaseService _firebaseDb = FirebaseDatabaseService();
 
   RidingResultProvider(this._ridingDate);
-  late String _ridingDate;
+  final String _ridingDate;
 
   final picker = ImagePicker();
 
@@ -28,10 +28,11 @@ class RidingResultProvider with ChangeNotifier {
   late final File _image;
   File get image => _image;
 
+
   Future<void> getRidingData() async {
     _record = await _firebaseDb.getRecord(_ridingDate);
 
-    if (_record != Record()) {
+    if (_record == Record()) {
       _recordState = RecordState.success;
     } else {
       _recordState = RecordState.fail;

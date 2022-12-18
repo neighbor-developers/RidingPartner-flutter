@@ -17,6 +17,14 @@ class BottomNavigation extends StatelessWidget {
     _bottomNavigationProvider = Provider.of<BottomNavigationProvider>(context);
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: Image.asset(
+          'assets/icons/logo.png',
+          height: 25,
+        ),
+        elevation: 0,
+      ),
       body: SafeArea(
         child: [
           SightsPage(),
