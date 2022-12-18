@@ -85,12 +85,14 @@ class MapSearchProvider extends ChangeNotifier {
 
   clearStartPointSearchResult() {
     _startPointSearchResult = [];
+    _startPoint = null;
     isStartSearching = false;
     notifyListeners();
   }
 
   clearEndPointSearchResult() {
     _destinationSearchResult = [];
+    _destination = null;
     isEndSearching = false;
     notifyListeners();
   }
