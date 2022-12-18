@@ -11,6 +11,7 @@ import 'package:ridingpartner_flutter/src/pages/record_page.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_result_provider.dart';
+import 'package:ridingpartner_flutter/src/utils/navigation_icon.dart';
 import 'package:ridingpartner_flutter/src/widgets/dialog.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -80,6 +81,11 @@ class _NavigationPageState extends State<NavigationPage> {
   String floatBtnLabel = "일시중지";
   IconData floatBtnIcon = Icons.pause;
   int polylineWidth = 5;
+  TextStyle plainStyle = const TextStyle(
+      fontSize: 12,
+      fontFamily: 'Pretendard',
+      fontWeight: FontWeight.w500,
+      color: Color.fromRGBO(17, 17, 17, 1));
 
   @override
   Widget build(BuildContext context) {
@@ -119,9 +125,13 @@ class _NavigationPageState extends State<NavigationPage> {
     return WillPopScope(
         child: Scaffold(
             appBar: AppBar(
-              title: Text(_navigationProvider.nextDestination?.title ?? ""),
+              shadowColor: const Color.fromRGBO(255, 255, 255, 0.5),
               backgroundColor: Colors.white,
-              elevation: 0,
+              title: Image.asset(
+                'assets/icons/logo.png',
+                width: 100,
+              ),
+              elevation: 10,
               leading: IconButton(
                 onPressed: () {
                   if (_navigationProvider.ridingState == RidingState.before) {
@@ -131,7 +141,7 @@ class _NavigationPageState extends State<NavigationPage> {
                   }
                 },
                 icon: const Icon(Icons.arrow_back),
-                color: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+                color: const Color.fromRGBO(240, 120, 5, 1),
               ),
             ),
             floatingActionButton: floatingButtons(_ridingProvider.state),
@@ -144,14 +154,14 @@ class _NavigationPageState extends State<NavigationPage> {
                         color: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32)),
                   )
                 : _navigationProvider.searchRouteState == SearchRouteState.empty
-                    ? const Center(
+                    ? Center(
                         child: Text("원하는 경로가 없어요!\n다시 검색해주세요",
-                            textAlign: TextAlign.center))
+                            style: plainStyle, textAlign: TextAlign.center))
                     : _navigationProvider.searchRouteState ==
                             SearchRouteState.fail
-                        ? const Center(
+                        ? Center(
                             child: Text("경로를 불러오는데에 실패했습니다\n네트워크 상태를 체크해주세요",
-                                textAlign: TextAlign.center))
+                                style: plainStyle, textAlign: TextAlign.center))
                         : Stack(
                             alignment: Alignment.bottomCenter,
                             children: <Widget>[
@@ -183,8 +193,7 @@ class _NavigationPageState extends State<NavigationPage> {
                                   left: 0,
                                   right: 0,
                                   child: Column(children: [
-                                    startButton(_ridingProvider.state),
-                                    record(),
+                                    record(_ridingProvider.state),
                                     // changeButton(_navigationProvider.ridingState)
                                   ])),
                               Positioned(top: 0, child: guideWidget())
@@ -196,20 +205,107 @@ class _NavigationPageState extends State<NavigationPage> {
   }
 
   Widget guideWidget() {
+    String iconRoute = turnIcon[_navigationProvider.goalPoint.turn] ??
+        'assets/icons/navigation_straight.png';
     return Container(
-        color: const Color.fromARGB(178, 194, 194, 194),
+        alignment: Alignment.center,
+        color: Colors.white,
         padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Image.asset('assets/icons/icon_right.png',
-            //     width: 30, height: 30, fit: BoxFit.cover),
+            Image.asset(iconRoute, width: 55, height: 55, fit: BoxFit.cover),
             Text(
-              _navigationProvider.route?.first.content ?? "",
-              style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+              _navigationProvider.goalPoint.content ?? "-",
+              style: const TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 32,
+                  fontWeight: FontWeight.w600),
             )
           ],
         ));
+  }
+
+  Widget record(RidingState state) {
+    if (state == RidingState.before) {
+      return InkWell(
+        child: Container(
+          color: Color.fromRGBO(240, 120, 5, 1),
+          alignment: Alignment.center,
+          width: MediaQuery.of(context).size.width,
+          height: 61,
+          child: const Text(
+            '안내 시작',
+            style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w700,
+                fontSize: 18),
+          ),
+        ),
+        onTap: () {
+          _ridingProvider.startRiding();
+          _navigationProvider.startNavigation();
+          screenKeepOn();
+          polylineWidth = 8;
+        },
+      );
+    } else {
+      return Container(
+          alignment: Alignment.center,
+          height: 140,
+          padding: const EdgeInsets.all(11),
+          color: Colors.white,
+          child: Column(
+            children: [
+              ridingProgress(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "남은거리 : ${((((_navigationProvider.remainedDistance) / 100).roundToDouble()) / 10).toString()}, 속도 : ${_ridingProvider.speed.toString()}",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ));
+    }
+  }
+
+  Widget ridingProgress() {
+    double distance = (_ridingProvider.distance ~/ 100) / 10;
+    double percent = (_navigationProvider.totalDistance -
+            _navigationProvider.remainedDistance) /
+        _navigationProvider.totalDistance;
+    return Column(
+      children: [
+        Container(
+            alignment: FractionalOffset(percent, 1 - percent),
+            child: Column(
+              children: [
+                FractionallySizedBox(
+                    child: Image.asset('assets/icons/riding_character.png',
+                        width: 17, height: 17, fit: BoxFit.fitHeight)),
+                Text('${distance}km'),
+              ],
+            )),
+        LinearPercentIndicator(
+          padding: EdgeInsets.zero,
+          percent: percent,
+          lineHeight: 10,
+          backgroundColor: Colors.black38,
+          progressColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+          width: MediaQuery.of(context).size.width,
+        )
+      ],
+    );
   }
 
   Widget? floatingButtons(RidingState state) {
@@ -297,75 +393,5 @@ class _NavigationPageState extends State<NavigationPage> {
     if (await Wakelock.enabled) {
       Wakelock.disable();
     }
-  }
-
-  Widget startButton(RidingState state) {
-    if (state == RidingState.before) {
-      return Container(
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        ElevatedButton(
-          onPressed: () {
-            _ridingProvider.startRiding();
-            _navigationProvider.startNavigation();
-            screenKeepOn();
-            polylineWidth = 8;
-          },
-          child: const Text(
-            '안내 시작',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ]));
-    } else {
-      return Container();
-    }
-  }
-
-  Widget record() {
-    return Column(
-      children: [
-        ridingProgress(),
-        Container(
-          height: 100,
-          color: Colors.white,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "남은거리 : ${((((_navigationProvider.remainedDistance) / 100).roundToDouble()) / 10).toString()}, 속도 : ${_ridingProvider.speed.toString()}",
-                style: const TextStyle(
-                  fontSize: 20,
-                  color: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-                ),
-              )
-            ],
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget ridingProgress() {
-    double percent = (_navigationProvider.totalDistance -
-            _navigationProvider.remainedDistance) /
-        _navigationProvider.totalDistance;
-    return Column(
-      children: [
-        Container(
-          alignment: FractionalOffset(percent, 1 - percent),
-          child: FractionallySizedBox(
-              child: Image.asset('assets/icons/riding_character.png',
-                  width: 40, height: 30, fit: BoxFit.fitHeight)),
-        ),
-        LinearPercentIndicator(
-          padding: EdgeInsets.zero,
-          percent: percent,
-          lineHeight: 10,
-          backgroundColor: Colors.black38,
-          progressColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-          width: MediaQuery.of(context).size.width,
-        )
-      ],
-    );
   }
 }
