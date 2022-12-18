@@ -24,6 +24,7 @@ class MapSampleState extends State<MapSearchPage> {
   final FocusNode _startFocusNode = FocusNode();
   final _destinationTextController = TextEditingController();
   final _startTextController = TextEditingController();
+  final Color _searchBoxColor = const Color(0xffF5F6F9);
   var _initLocation = CameraPosition(
     target: LatLng(
         MyLocation().position!.latitude, MyLocation().position!.longitude),
@@ -76,12 +77,17 @@ class MapSampleState extends State<MapSearchPage> {
             myLocationEnabled: true,
           ),
           Container(
-            margin: const EdgeInsets.only(top: 60, left: 60),
+            margin: const EdgeInsets.only(top: 60, left: 35),
             alignment: Alignment.topLeft,
+            padding:
+                const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
             child: Column(
               children: <Widget>[
                 searchBox(mapSearchProvider, "출발지", _startTextController,
                     _startFocusNode),
+                SizedBox(
+                  height: 10,
+                ),
                 searchBox(mapSearchProvider, "도착지", _destinationTextController,
                     _destinationFocusNode),
               ],
@@ -89,8 +95,8 @@ class MapSampleState extends State<MapSearchPage> {
           ),
           Container(
               alignment: Alignment.topLeft,
-              width: MediaQuery.of(context).size.width - 80,
-              margin: const EdgeInsets.only(top: 120, left: 50),
+              width: MediaQuery.of(context).size.width - 40,
+              margin: const EdgeInsets.only(top: 120, left: 25),
               child: Visibility(
                 visible: mapSearchProvider.isStartSearching,
                 child: Column(children: [
@@ -103,8 +109,8 @@ class MapSampleState extends State<MapSearchPage> {
               )),
           Container(
               alignment: Alignment.topLeft,
-              width: MediaQuery.of(context).size.width - 80,
-              margin: const EdgeInsets.only(top: 190, left: 50),
+              width: MediaQuery.of(context).size.width - 40,
+              margin: const EdgeInsets.only(top: 190, left: 25),
               child: Visibility(
                 visible: mapSearchProvider.isEndSearching,
                 child: Column(children: [
@@ -133,6 +139,7 @@ class MapSampleState extends State<MapSearchPage> {
                   title: Text(list[index].title!),
                   subtitle: Text(list[index].jibunAddress ?? ''),
                   textColor: Colors.black,
+                  tileColor: _searchBoxColor,
                   onTap: () async {
                     final GoogleMapController controller =
                         await _controller.future;
@@ -177,30 +184,18 @@ class MapSampleState extends State<MapSearchPage> {
         elevation: 5,
         borderRadius: BorderRadius.circular(10),
         child: Container(
-          height: 70,
-          width: MediaQuery.of(context).size.width - 100,
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+          width: MediaQuery.of(context).size.width - 60,
+          height: 60,
           child: TextField(
             focusNode: focusNode,
             onChanged: (value) => mapSearchProvider.searchPlace(value, type),
             controller: textController,
             decoration: InputDecoration(
               hintText: type,
-              labelStyle: TextStyle(
-                  color: Colors.black,
-                  fontFamily: 'Pretended',
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
               prefixIcon: Icon(Icons.search),
-              suffixIcon: IconButton(
-                  icon: Image.asset(
-                    'assets/icons/xmark.png',
-                    scale: 3,
-                  ),
-                  onPressed: () =>
-                      _clearText(textController, type, mapSearchProvider)),
+              suffixIcon: _xMarkBtn(mapSearchProvider, type, textController),
               filled: true,
-              fillColor: Color(0xffF5F6F9),
+              fillColor: _searchBoxColor,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide.none,
@@ -212,6 +207,16 @@ class MapSampleState extends State<MapSearchPage> {
     ]);
   }
 
+  Widget _xMarkBtn(MapSearchProvider mapSearchProvider, String type,
+      TextEditingController textController) {
+    return IconButton(
+        icon: Image.asset(
+          'assets/icons/xmark.png',
+          scale: 3.5,
+        ),
+        onPressed: () => _clearText(textController, type, mapSearchProvider));
+  }
+
   Widget startNav(MapSearchProvider mapSearchProvider) {
     return SizedBox(
         width: MediaQuery.of(context).size.width,
@@ -219,6 +224,7 @@ class MapSampleState extends State<MapSearchPage> {
         child: FloatingActionButton.extended(
             label: Text('안내 시작',
                 style: TextStyle(
+                    fontFamily: 'Pretended',
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold)),
