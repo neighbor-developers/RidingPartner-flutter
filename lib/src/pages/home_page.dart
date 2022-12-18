@@ -326,12 +326,15 @@ class _HomePageState extends State<HomePage>
               style: const TextStyle(
                   fontSize: mainFontSize,
                   fontFamily: "Pretendard",
+                  height: 1.4,
+                  letterSpacing: 0.02,
                   fontWeight: FontWeight.w800),
               children: const <TextSpan>[
                 TextSpan(
                     text: '\'갯골 생태 공원\'',
                     style: TextStyle(
                         fontSize: mainFontSize,
+                        letterSpacing: 0.02,
                         fontWeight: FontWeight.w800,
                         fontFamily: "Pretendard",
                         color: Color.fromARGB(255, 253, 154, 55))),
@@ -339,6 +342,7 @@ class _HomePageState extends State<HomePage>
                     text: ' 어떠세요?',
                     style: TextStyle(
                         fontSize: mainFontSize,
+                        letterSpacing: 0.02,
                         fontFamily: "Pretendard",
                         fontWeight: FontWeight.w800))
               ]),

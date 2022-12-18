@@ -1,8 +1,14 @@
+import 'dart:math';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
+import 'package:ridingpartner_flutter/src/models/route.dart';
 import 'package:ridingpartner_flutter/src/pages/home_page.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
+import 'package:ridingpartner_flutter/src/service/firestore_service.dart';
 
+import '../models/place.dart';
 import '../service/shared_preference.dart';
 
 enum RecordState { loading, fail, none, success, empty }
@@ -10,16 +16,25 @@ enum RecordState { loading, fail, none, success, empty }
 class HomeRecordProvider extends ChangeNotifier {
   final FirebaseDatabaseService _firebaseDatabaseService =
       FirebaseDatabaseService();
+  final FireStoreService _fireStoreService = FireStoreService();
+  final _random = Random();
+
+  final String _auth = FirebaseAuth.instance.currentUser!.displayName!;
   int _selectedIndex = 13;
   List<String> _daysFor14 = [];
   List<Record> _recordFor14Days = [];
   final int _recordLength = 14;
   Record? _prefRecord;
   int _count = 0;
+  Place? _recommendPlace;
+  RidingRoute? _recommendRoute;
 
   List<Record> get recordFor14Days => _recordFor14Days;
   List<String> get daysFor14 => _daysFor14;
   int get selectedIndex => _selectedIndex;
+  String get name => _auth;
+  Place? get recommendPlace => _recommendPlace;
+  RidingRoute? get recommendRoute => _recommendRoute;
 
   RecordState _recordState = RecordState.loading;
   RecordState get recordState => _recordState;
@@ -27,6 +42,22 @@ class HomeRecordProvider extends ChangeNotifier {
   void setIndex(int index) {
     _selectedIndex = index;
     notifyListeners();
+  }
+
+  getData() {
+    getRecomendPlace();
+    getRecomendRoute();
+    getRecord();
+  }
+
+  getRecomendPlace() async {
+    List<Place> places = await _fireStoreService.getPlaces();
+    _recommendPlace = places[_random.nextInt(places.length)];
+  }
+
+  getRecomendRoute() async {
+    List<RidingRoute> routes = await _fireStoreService.getRoutes();
+    _recommendRoute = routes[_random.nextInt(routes.length)];
   }
 
   Future getRecord() async {
@@ -58,12 +89,14 @@ class HomeRecordProvider extends ChangeNotifier {
   }
 
   void setList() {
+    _recordFor14Days = [];
     for (int i = 0; i < 14; i++) {
       _recordFor14Days.add(Record());
     }
   }
 
   void setDate() {
+    _daysFor14 = [];
     DateTime today = DateTime.now();
     for (int i = 0; i < _recordLength; i++) {
       DateTime currentDay = today.subtract(Duration(days: i));
