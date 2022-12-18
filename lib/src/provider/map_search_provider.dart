@@ -3,11 +3,14 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart' as google_map;
 import 'package:http/http.dart' as http;
 import 'package:ridingpartner_flutter/src/models/place.dart';
 import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 
+import '../models/route.dart';
 import '../service/naver_map_service.dart';
 
 class MapSearchProvider extends ChangeNotifier {
@@ -19,22 +22,39 @@ class MapSearchProvider extends ChangeNotifier {
 
   List<Place> _startPointSearchResult = [];
   List<Place> get startPointSearchResult => _startPointSearchResult;
+
   List<Place> _destinationSearchResult = [];
   List<Place> get destinationSearchResult => _destinationSearchResult;
+
   Place? _startPoint;
   Place? get startPoint => _startPoint;
+
   Place? _destination;
   Place? get destination => _destination;
 
   Position? _myPosition;
   Position? get myPosition => _myPosition;
+
+  List<Guide> route = [];
+
+  List<google_map.LatLng> _polylinePoints = [];
+  List<google_map.LatLng> get polylinePoints => _polylinePoints;
   setStartPoint(Place place) {
+    developer.log('setStartPoint');
     _startPoint = place;
+    developer.log(_startPoint!.title.toString());
     notifyListeners();
   }
 
   setEndPoint(Place place) {
+    // developer.log('setEndPoint');
     _destination = place;
+    // developer.log(_startPoint!.title.toString());
+    // developer.log(_destination!.jibunAddress.toString());
+    // if (_startPoint != null && _destination != null) {
+    //   developer.log('draw polyline');
+    //   polyline(_startPoint!, _destination!);
+    // }
     notifyListeners();
   }
 
@@ -80,20 +100,64 @@ class MapSearchProvider extends ChangeNotifier {
     } else {
       isEndSearching = false;
     }
+
+    notifyListeners();
+  }
+
+  removeStartPoint() {
+    _startPoint = null;
+    notifyListeners();
+  }
+
+  removeDestination() {
+    _destination = null;
     notifyListeners();
   }
 
   clearStartPointSearchResult() {
     _startPointSearchResult = [];
-    _startPoint = null;
     isStartSearching = false;
     notifyListeners();
   }
 
   clearEndPointSearchResult() {
     _destinationSearchResult = [];
-    _destination = null;
     isEndSearching = false;
     notifyListeners();
+  }
+
+  clearPolyLine() {
+    _polylinePoints = [];
+    notifyListeners();
+  }
+
+  void polyline(Place startPlace, Place finalDestination) async {
+    List<Place> ridingCourse = [finalDestination];
+    Map<String, dynamic> response = await _naverMapService
+        .getRoute(startPlace, finalDestination, ridingCourse)
+        .catchError((onError) {
+      return {'result': 'fail'};
+    });
+
+    final result = response['result'];
+
+    if (result != 'fail') {
+      response = response['data'];
+
+      route = response['guides'];
+      List<PolylineWayPoint>? turnPoints = route
+          ?.map((route) => PolylineWayPoint(location: route.turnPoint ?? ""))
+          .toList();
+      List<google_map.LatLng> pointLatLngs = [];
+
+      turnPoints?.forEach((element) {
+        List<String> a = element.location.split(',');
+        pointLatLngs
+            .add(google_map.LatLng(double.parse(a[1]), double.parse(a[0])));
+      });
+
+      _polylinePoints = pointLatLngs;
+      notifyListeners();
+    }
   }
 }

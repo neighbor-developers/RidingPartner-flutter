@@ -25,6 +25,9 @@ class MapSampleState extends State<MapSearchPage> {
   final FocusNode _startFocusNode = FocusNode();
   final _destinationTextController = TextEditingController();
   final _startTextController = TextEditingController();
+  final int polylineWidth = 5;
+  int startMarkerId = 0;
+  int endMarkerId = 0;
   final Color _searchBoxColor = const Color(0xffF5F6F9);
   final Color _orangeColor = const Color(0xffF07805);
   final TextStyle _searchBoxTextStyle = const TextStyle(
@@ -60,11 +63,15 @@ class MapSampleState extends State<MapSearchPage> {
             .clearStartPointSearchResult();
       }
     });
+    _markers.clear();
     _initLoaction();
   }
 
   @override
   void dispose() {
+    _startFocusNode.dispose();
+    _destinationFocusNode.dispose();
+    _startTextController.dispose();
     _destinationTextController.dispose();
     super.dispose();
   }
@@ -81,6 +88,15 @@ class MapSampleState extends State<MapSearchPage> {
             onTap: (latlng) {
               _startFocusNode.unfocus();
               _destinationFocusNode.unfocus();
+            },
+            polylines: {
+              Polyline(
+                  polylineId: const PolylineId("route"),
+                  color: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+                  width: polylineWidth,
+                  startCap: Cap.roundCap,
+                  endCap: Cap.roundCap,
+                  points: mapSearchProvider.polylinePoints)
             },
             markers: Set.from(_markers),
             initialCameraPosition: _initLocation,
@@ -199,13 +215,21 @@ class MapSampleState extends State<MapSearchPage> {
                         zoom: 20,
                       ),
                     ));
-                    _updatePosition(list[index]);
+                    _updatePosition(list[index], type);
                     if (type == "출발지") {
                       mapSearchProvider.setStartPoint(list[index]);
                       mapSearchProvider.clearStartPointSearchResult();
                     } else {
                       mapSearchProvider.setEndPoint(list[index]);
                       mapSearchProvider.clearEndPointSearchResult();
+                    }
+
+                    if (mapSearchProvider.startPoint != null &&
+                        mapSearchProvider.destination != null) {
+                      _drawPolyline(
+                          mapSearchProvider,
+                          mapSearchProvider.startPoint!,
+                          mapSearchProvider.destination!);
                     }
                   }));
         },
@@ -298,14 +322,24 @@ class MapSampleState extends State<MapSearchPage> {
             backgroundColor: _orangeColor));
   }
 
-  Future<void> _updatePosition(Place position) async {
-    _markers.clear();
+  Future<void> _updatePosition(Place position, String type) async {
     final customIcon = await CustomMarker()
         .getPictuerMarker('assets/icons/search_riding_marker.png');
-    _markers.add(
+    int index;
+    if (type == "출발지") {
+      index = 0;
+    } else {
+      index = 1;
+    }
+    if (index < _markers.length) {
+      _markers.removeAt(index);
+    }
+    _markers.insert(
+      // 출발지와 도착지 마커를 구분하기 위해 index를 사용
+      index,
       Marker(
         icon: customIcon,
-        markerId: const MarkerId('1'),
+        markerId: MarkerId('' + position.latitude! + position.longitude!),
         position: LatLng(double.parse(position.latitude!),
             double.parse(position.longitude!)),
         draggable: true,
@@ -322,6 +356,48 @@ class MapSampleState extends State<MapSearchPage> {
       mapSearchProvider.clearEndPointSearchResult();
     }
     textController.clear();
+  }
+
+  void _drawPolyline(MapSearchProvider mapSearchProvider, Place startPlace,
+      Place finalDestination) async {
+    final GoogleMapController controller = await _controller.future;
+    final List<LatLng> polylineCoordinates = [];
+    mapSearchProvider.polyline(startPlace, finalDestination);
+    LatLng start = LatLng(double.parse(startPlace.latitude!),
+        double.parse(startPlace.longitude!));
+    LatLng end = LatLng(double.parse(finalDestination.latitude!),
+        double.parse(finalDestination.longitude!));
+
+    if (start.latitude <= end.latitude) {
+      LatLng temp = start;
+      start = end;
+      end = temp;
+    }
+    LatLng northEast = start;
+    LatLng southWest = end;
+
+    var nLat, nLon, sLat, sLon;
+
+    if (southWest!.latitude <= northEast!.latitude) {
+      sLat = southWest.latitude;
+      nLat = northEast.latitude;
+    } else {
+      sLat = northEast.latitude;
+      nLat = southWest.latitude;
+    }
+    if (southWest.longitude <= northEast.longitude) {
+      sLon = southWest.longitude;
+      nLon = northEast.longitude;
+    } else {
+      sLon = northEast.longitude;
+      nLon = southWest.longitude;
+    }
+    controller.animateCamera(CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+          northeast: LatLng(nLat, nLon),
+          southwest: LatLng(sLat, sLon),
+        ),
+        100));
   }
 
   void _initLoaction() async {
