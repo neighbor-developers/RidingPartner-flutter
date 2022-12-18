@@ -9,8 +9,6 @@ import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/setting_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 
-import '../models/place.dart';
-
 class Data {
   String key;
   String data;
@@ -59,11 +57,12 @@ class _HomePageState extends State<HomePage>
         body: Stack(
           children: [
             Container(
-              padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  recommendPlaceText(),
+                  recommendPlaceText(
+                      _homeRecordProvider.recommendPlace?.title ?? '-'),
                   Row(children: [
                     recommendPlace(_homeRecordProvider.recommendPlace),
                     recommendPlace(_homeRecordProvider.recommendRoute)
@@ -287,8 +286,8 @@ class _HomePageState extends State<HomePage>
             child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    width: 0.1,
-                    color: Color.fromARGB(255, 92, 92, 92),
+                    width: 0.7,
+                    color: Color.fromRGBO(234, 234, 234, 1),
                   ),
                 ),
                 padding: const EdgeInsets.all(14),
@@ -300,10 +299,10 @@ class _HomePageState extends State<HomePage>
                       height: 17,
                     ),
                     const SizedBox(
-                      width: 8,
+                      width: 10,
                     ),
                     Text(
-                        '오늘의 온도 : ${weather.temp}°C  습도 : ${weather.humidity}%',
+                        '오늘의 온도 : ${weather.temp}°C   습도 : ${weather.humidity}%',
                         style: const TextStyle(
                             fontSize: 14,
                             fontFamily: 'Pretendard',
@@ -317,7 +316,7 @@ class _HomePageState extends State<HomePage>
     }
   }
 
-  Widget recommendPlaceText() {
+  Widget recommendPlaceText(String title) {
     return Container(
         padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
         child: Text.rich(
@@ -325,24 +324,26 @@ class _HomePageState extends State<HomePage>
               text: '${_homeRecordProvider.name}님, 오늘같은 날에는\n',
               style: const TextStyle(
                   fontSize: mainFontSize,
+                  color: Color.fromRGBO(51, 51, 51, 1),
                   fontFamily: "Pretendard",
                   height: 1.4,
                   letterSpacing: 0.02,
                   fontWeight: FontWeight.w800),
-              children: const <TextSpan>[
+              children: <TextSpan>[
                 TextSpan(
-                    text: '\'갯골 생태 공원\'',
-                    style: TextStyle(
+                    text: '\'$title',
+                    style: const TextStyle(
                         fontSize: mainFontSize,
                         letterSpacing: 0.02,
                         fontWeight: FontWeight.w800,
                         fontFamily: "Pretendard",
                         color: Color.fromARGB(255, 253, 154, 55))),
-                TextSpan(
+                const TextSpan(
                     text: ' 어떠세요?',
                     style: TextStyle(
                         fontSize: mainFontSize,
                         letterSpacing: 0.02,
+                        color: Color.fromRGBO(51, 51, 51, 1),
                         fontFamily: "Pretendard",
                         fontWeight: FontWeight.w800))
               ]),
@@ -359,15 +360,17 @@ class _HomePageState extends State<HomePage>
               height: 130,
               margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
               decoration: const BoxDecoration(
+                color: Colors.white,
                 borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
-              child: Text(
+              child: const Text(
                 "추천 명소를\n불러오고 있습니다",
-                style: const TextStyle(
-                    fontSize: 18,
-                    fontFamily: 'Pretendard',
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w600,
+                  color: Color.fromRGBO(51, 51, 51, 1),
+                ),
               ),
             )
           : Stack(
