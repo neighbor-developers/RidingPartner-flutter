@@ -350,20 +350,20 @@ class MapSampleState extends State<MapSearchPage> {
                 );
                 return;
               } else {
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => MultiProvider(
-                              providers: [
-                                ChangeNotifierProvider(
-                                    create: (context) => NavigationProvider(
-                                        [mapSearchProvider.destination!])),
-                                ChangeNotifierProvider(
-                                    create: (context) => RidingProvider())
-                              ],
-                              child: NavigationPage(),
-                            )),
-                    (route) => false);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MultiProvider(
+                            providers: [
+                              ChangeNotifierProvider(
+                                  create: (context) => NavigationProvider(
+                                      [mapSearchProvider.destination!])),
+                              ChangeNotifierProvider(
+                                  create: (context) => RidingProvider())
+                            ],
+                            child: NavigationPage(),
+                          )),
+                );
               }
             },
             materialTapTargetSize: MaterialTapTargetSize.padded,
