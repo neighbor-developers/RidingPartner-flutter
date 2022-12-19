@@ -35,10 +35,26 @@ class MapSampleState extends State<MapSearchPage> {
       color: Colors.black,
       fontSize: 16,
       fontWeight: FontWeight.bold);
+  final TextStyle _searchBoxHighlightStyle = const TextStyle(
+      fontFamily: 'Pretended',
+      color: Color(0xffF07805),
+      fontSize: 16,
+      fontWeight: FontWeight.w900);
   final TextStyle _hintTextStyle = const TextStyle(
       fontFamily: 'Pretended',
       color: Color(0xff666666),
       fontSize: 16,
+      fontWeight: FontWeight.w200);
+  final TextStyle _subTextStyle = const TextStyle(
+      fontFamily: 'Pretended',
+      color: Color(0xff666666),
+      fontSize: 12,
+      fontWeight: FontWeight.w200);
+
+  final TextStyle _subHighlightStyle = const TextStyle(
+      fontFamily: 'Pretended',
+      color: Color(0xffF07805),
+      fontSize: 12,
       fontWeight: FontWeight.w200);
 
   var _initLocation = CameraPosition(
@@ -185,23 +201,25 @@ class MapSampleState extends State<MapSearchPage> {
                       const ImageIcon(
                           AssetImage('assets/icons/search_marker.png'),
                           size: 18),
-                      Text("  ${list[index].title!}",
-                          style: _searchBoxTextStyle),
+                      highlightedText("  ${list[index].title!}",
+                          textController.text, "title"),
                     ],
                   ),
                   // subtitle: Text(list[index].jibunAddress ?? ''),
+                  subtitle: highlightedText(list[index].jibunAddress ?? '',
+                      textController.text, "subtitle"),
                   textColor: Colors.black,
                   tileColor: _searchBoxColor,
                   onTap: () async {
                     final GoogleMapController controller =
                         await _controller.future;
 
-                    if (index == 0) {
-                      textController.text =
-                          '${list[index].title!}: ${list[index].jibunAddress!}';
-                    } else {
-                      textController.text = list[index].title!;
-                    }
+                    // if (index == 0) {
+                    //   textController.text =
+                    //       '${list[index].title!}: ${list[index].jibunAddress!}';
+                    // } else {
+                    textController.text = list[index].title!;
+                    // }
                     if (type == "출발지") {
                       FocusScope.of(context)
                           .requestFocus(_destinationFocusNode);
@@ -235,6 +253,35 @@ class MapSampleState extends State<MapSearchPage> {
         },
       ),
     );
+  }
+
+  Widget highlightedText(String text, String highlight, String type) {
+    final List<String> splitText = text.split(highlight);
+    final List<TextSpan> children = [];
+
+    if (type == "title") {
+      for (int i = 0; i < splitText.length; i++) {
+        children.add(TextSpan(text: splitText[i], style: _searchBoxTextStyle));
+        if (i != splitText.length - 1) {
+          children.add(TextSpan(
+            text: highlight,
+            style: _searchBoxHighlightStyle,
+          ));
+        }
+      }
+    }
+    if (type == "subtitle") {
+      for (int i = 0; i < splitText.length; i++) {
+        children.add(TextSpan(text: splitText[i], style: _subTextStyle));
+        if (i != splitText.length - 1) {
+          children.add(TextSpan(
+            text: highlight,
+            style: _subHighlightStyle,
+          ));
+        }
+      }
+    }
+    return Text.rich(TextSpan(children: children), textAlign: TextAlign.start);
   }
 
   Widget searchBox(MapSearchProvider mapSearchProvider, String type,
