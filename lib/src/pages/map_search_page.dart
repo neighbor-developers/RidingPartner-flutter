@@ -28,6 +28,7 @@ class MapSampleState extends State<MapSearchPage> {
   final int polylineWidth = 5;
   int startMarkerId = 0;
   int endMarkerId = 0;
+
   final Color _searchBoxColor = const Color(0xffF5F6F9);
   final Color _orangeColor = const Color(0xffF07805);
   final TextStyle _searchBoxTextStyle = const TextStyle(
@@ -62,11 +63,12 @@ class MapSampleState extends State<MapSearchPage> {
         MyLocation().position!.latitude, MyLocation().position!.longitude),
     zoom: 14.4746,
   );
-  final List<Marker> _markers = [];
+  final _markers = <Marker>[];
 
   @override
   void initState() {
     super.initState();
+    Provider.of<MapSearchProvider>(context, listen: false).newPage();
     _destinationFocusNode.addListener(() {
       if (!_destinationFocusNode.hasFocus) {
         Provider.of<MapSearchProvider>(context, listen: false)
@@ -79,23 +81,23 @@ class MapSampleState extends State<MapSearchPage> {
             .clearStartPointSearchResult();
       }
     });
+
     _markers.clear();
     _initLoaction();
   }
 
   @override
   void dispose() {
+    super.dispose();
     _startFocusNode.dispose();
     _destinationFocusNode.dispose();
     _startTextController.dispose();
     _destinationTextController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final mapSearchProvider = Provider.of<MapSearchProvider>(context);
-
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -205,7 +207,6 @@ class MapSampleState extends State<MapSearchPage> {
                           textController.text, "title"),
                     ],
                   ),
-                  // subtitle: Text(list[index].jibunAddress ?? ''),
                   subtitle: highlightedText(list[index].jibunAddress ?? '',
                       textController.text, "subtitle"),
                   textColor: Colors.black,
@@ -233,7 +234,7 @@ class MapSampleState extends State<MapSearchPage> {
                         zoom: 20,
                       ),
                     ));
-                    _updatePosition(list[index], type);
+                    _updatePosition(list[index], type, mapSearchProvider);
                     if (type == "출발지") {
                       mapSearchProvider.setStartPoint(list[index]);
                       mapSearchProvider.clearStartPointSearchResult();
@@ -369,7 +370,8 @@ class MapSampleState extends State<MapSearchPage> {
             backgroundColor: _orangeColor));
   }
 
-  Future<void> _updatePosition(Place position, String type) async {
+  Future<void> _updatePosition(
+      Place position, String type, MapSearchProvider mapSearchProvider) async {
     final customIcon = await CustomMarker()
         .getPictuerMarker('assets/icons/search_riding_marker.png');
     int index;
@@ -378,12 +380,30 @@ class MapSampleState extends State<MapSearchPage> {
     } else {
       index = 1;
     }
-    if (index < _markers.length) {
-      _markers.removeAt(index);
+
+    if (index == 0) {
+      _markers.insert(
+          index,
+          Marker(
+            icon: customIcon,
+            markerId: MarkerId('' + position.latitude! + position.longitude!),
+            position: LatLng(double.parse(position.latitude!),
+                double.parse(position.longitude!)),
+            draggable: true,
+          ));
+      if (_markers.length > 2) {
+        _markers.removeAt(1);
+      }
+      setState(() {});
+      return;
     }
-    _markers.insert(
+    if (_markers.length == 2) {
+      _markers.removeAt(index);
+    } else if (mapSearchProvider.startPoint == null) {
+      _markers.clear();
+    }
+    _markers.add(
       // 출발지와 도착지 마커를 구분하기 위해 index를 사용
-      index,
       Marker(
         icon: customIcon,
         markerId: MarkerId('' + position.latitude! + position.longitude!),

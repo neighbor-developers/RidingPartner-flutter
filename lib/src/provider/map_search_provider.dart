@@ -39,11 +39,21 @@ class MapSearchProvider extends ChangeNotifier {
 
   List<google_map.LatLng> _polylinePoints = [];
   List<google_map.LatLng> get polylinePoints => _polylinePoints;
+
   setStartPoint(Place place) {
     developer.log('setStartPoint');
     _startPoint = place;
     developer.log(_startPoint!.title.toString());
     notifyListeners();
+  }
+
+  newPage() {
+    _startPoint = null;
+    _destination = null;
+    _startPointSearchResult = [];
+    _destinationSearchResult = [];
+    _polylinePoints = [];
+    route = [];
   }
 
   setEndPoint(Place place) {
