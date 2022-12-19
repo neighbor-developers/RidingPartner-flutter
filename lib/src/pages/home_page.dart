@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -8,6 +9,7 @@ import 'package:ridingpartner_flutter/src/pages/setting_page.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/setting_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
+import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
 
 class Data {
   String key;
@@ -57,20 +59,29 @@ class _HomePageState extends State<HomePage>
         body: Stack(
           children: [
             Container(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  recommendPlaceText(
-                      _homeRecordProvider.recommendPlace?.title ?? '-'),
-                  Row(children: [
-                    recommendPlace(_homeRecordProvider.recommendPlace),
-                    recommendPlace(_homeRecordProvider.recommendRoute)
-                  ]),
-                  Expanded(child: weekWidget()),
-                ],
-              ),
-            ),
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: SingleChildScrollView(
+                    child: SizedBox(
+                  width: MediaQuery.of(context).size.height,
+                  child: Column(
+                    children: [
+                      recommendPlaceText(
+                          _homeRecordProvider.recommendPlace?.title ?? '-'),
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        child: Row(children: [
+                          recommendPlace(_homeRecordProvider.recommendPlace),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          recommendPlace(_homeRecordProvider.recommendRoute)
+                        ]),
+                      ),
+                      weekWidget()
+                    ],
+                  ),
+                ))),
             Positioned(
               bottom: 0,
               child: weatherWidget(),
@@ -83,7 +94,7 @@ class _HomePageState extends State<HomePage>
     switch (_homeRecordProvider.recordState) {
       case RecordState.loading:
         return const SizedBox(
-            height: 100,
+            height: 50,
             child: Center(
               child: Text(
                 "라이더님의 주행 기록을 불러오는 중입니다",
@@ -92,7 +103,7 @@ class _HomePageState extends State<HomePage>
             ));
       case RecordState.none:
         return const SizedBox(
-            height: 100,
+            height: 50,
             child: Center(
               child: Text(
                 "아직 주행한 기록이 없습니다\n라이딩 파트너와 함께 달려보세요!",
@@ -101,7 +112,7 @@ class _HomePageState extends State<HomePage>
             ));
       case RecordState.empty:
         return const SizedBox(
-            height: 100,
+            height: 50,
             child: Center(
               child: Text(
                 "최근 2주간 라이딩한 기록이 없습니다\n라이딩 파트너와 함께 달려보세요!",
@@ -141,12 +152,12 @@ class _HomePageState extends State<HomePage>
                   fontFamily: 'Pretendard',
                   fontWeight: FontWeight.w700),
               indicator: BoxDecoration(
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
-                    color: const Color.fromRGBO(0, 0, 0, 0.1),
+                    color: Color.fromRGBO(0, 0, 0, 0.1),
                     spreadRadius: 2,
                     blurRadius: 3,
-                    offset: const Offset(1, 1), // changes position of shadow
+                    offset: Offset(1, 1), // changes position of shadow
                   )
                 ],
                 borderRadius: BorderRadius.circular(65.0),
@@ -159,10 +170,16 @@ class _HomePageState extends State<HomePage>
                   ],
                 ),
               )),
-          Expanded(
+          SizedBox(
+              height: 220,
+              width: MediaQuery.of(context).size.width,
               child: TabBarView(
                   controller: _tabController,
-                  children: records.map((e) => recordDetailView(e)).toList()))
+                  children: records.map((e) => recordDetailView(e)).toList())),
+          SizedBox(
+              height: 330,
+              width: MediaQuery.of(context).size.width,
+              child: recordChart()),
         ]);
 
       default:
@@ -178,85 +195,162 @@ class _HomePageState extends State<HomePage>
   Widget recordDetailView(Record record) {
     if (record == Record() || record.date == null) {
       return Container(
+        padding: const EdgeInsets.all(20),
+        height: 50,
         alignment: Alignment.center,
-        child: Text('라이딩한 기록이 없습니다'),
+        child: const Text('라이딩한 기록이 없습니다'),
       );
     } else {
-      List<Data> data = [
-        Data('거리', '${record.distance! / 1000}km',
-            'assets/icons/home_distance.png'),
-        Data('시간', timestampToText(record.timestamp!),
-            'assets/icons/home_time.png'),
-        Data('평균 속도', '${record.distance! / record.timestamp!}m/s',
-            'assets/icons/home_speed.png'),
-        Data('순간 최고 속도', '${record.topSpeed}m/s',
-            'assets/icons/home_max_speed.png')
-      ];
+      Data distance = Data('거리', '${record.distance! / 1000}km',
+          'assets/icons/home_distance.png');
+      Data time = Data('시간', timestampToText(record.timestamp!),
+          'assets/icons/home_time.png');
+      Data speed = Data('평균 속도', '${record.distance! / record.timestamp!}m/s',
+          'assets/icons/home_speed.png');
+      Data speedMax = Data('순간 최고 속도', '${record.topSpeed}m/s',
+          'assets/icons/home_max_speed.png');
 
-      List<String> keys = data.map((e) => e.key).toList();
-      List<String> values = data.map((e) => e.data).toList();
-      List<String> icons = data.map((e) => e.icon).toList();
-
-      return Expanded(
-          child: GridView.builder(
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(10),
-              itemCount: 4,
-              scrollDirection: Axis.vertical,
-              itemBuilder: (BuildContext context, index) =>
-                  recordCard(keys[index], values[index], icons[index]),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 1 / 1,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10)));
+      return Container(
+          height: 200,
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+          width: MediaQuery.of(context).size.width,
+          child: Row(
+            children: [
+              Flexible(
+                  flex: 1,
+                  child: Column(
+                    children: [
+                      recordCard(distance),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      recordCard(speed)
+                    ],
+                  )),
+              const SizedBox(
+                width: 8,
+              ),
+              Flexible(
+                  flex: 1,
+                  child: Column(
+                    children: [
+                      recordCard(time),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      recordCard(speedMax)
+                    ],
+                  ))
+            ],
+          ));
     }
   }
 
-  Widget recordCard(String key, String data, String icon) {
-    return SizedBox(
-        height: 50,
+  Widget recordCard(Data data) {
+    return Flexible(
+        flex: 1,
         child: Container(
-            height: 50,
             padding: const EdgeInsets.all(20),
             decoration: const BoxDecoration(
                 color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Color.fromRGBO(0, 41, 135, 0.047),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: Offset(1, 1), // changes position of shadow
+                  )
+                ],
                 borderRadius: BorderRadius.all(Radius.circular(12))),
             child: Stack(
-              alignment: Alignment.center,
               children: [
-                Container(
-                  alignment: Alignment.topLeft,
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  child: Row(
-                    children: [
-                      Image.asset(icon,
-                          width: 15, height: 15, fit: BoxFit.cover),
-                      Text(
-                        "  $key",
-                        style: const TextStyle(
-                            fontSize: 12,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w500,
-                            color: Color.fromRGBO(17, 17, 17, 1)),
-                      )
-                    ],
-                  ),
-                ),
-                Text(
-                  data,
-                  style: const TextStyle(
-                      fontSize: 24,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w300,
-                      color: Colors.black),
-                )
+                Positioned(
+                    left: 0,
+                    top: 0,
+                    child: Row(
+                      children: [
+                        Image.asset(data.icon,
+                            width: 15, height: 15, fit: BoxFit.cover),
+                        Text(
+                          "  ${data.key}",
+                          style: const TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w500,
+                              color: Color.fromRGBO(17, 17, 17, 1)),
+                        )
+                      ],
+                    )),
+                Positioned(
+                    bottom: 0,
+                    left: 0,
+                    child: Text(
+                      data.data,
+                      style: const TextStyle(
+                          fontSize: 24,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w300,
+                          color: Colors.black),
+                      textAlign: TextAlign.start,
+                    ))
               ],
             )));
   }
 
+  Widget recordChart() {
+    return Container(
+        decoration: const BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Color.fromRGBO(0, 41, 135, 0.047),
+                spreadRadius: 2,
+                blurRadius: 10,
+                offset: Offset(1, 1), // changes position of shadow
+              )
+            ],
+            borderRadius: BorderRadius.all(Radius.circular(12))),
+        padding: const EdgeInsets.all(25),
+        margin: const EdgeInsets.fromLTRB(20, 15, 20, 40),
+        alignment: Alignment.topLeft,
+        width: MediaQuery.of(context).size.width,
+        child: Stack(children: [
+          const Positioned(
+            top: 0,
+            left: 0,
+            child: Text('주행기록',
+                style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w700,
+                    color: Color.fromRGBO(51, 51, 51, 1))),
+          ),
+          const Positioned(
+              top: 0,
+              right: 0,
+              child: Text('km',
+                  style: TextStyle(
+                      fontSize: 12,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w300,
+                      color: Color.fromRGBO(51, 51, 51, 1)))),
+          Container(
+              margin: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: Row(children: [
+                const VerticalDivider(
+                    color: Color.fromRGBO(234, 234, 234, 1), thickness: 1.0),
+              ]))
+        ]));
+  }
+
   Widget weatherWidget() {
+    const TextStyle weatherTextStyle = TextStyle(
+        fontSize: 14,
+        fontFamily: 'Pretendard',
+        fontWeight: FontWeight.w600,
+        color: Color.fromRGBO(51, 51, 51, 1));
     switch (_weatherProvider.loadingStatus) {
       case WeatherState.searching:
         return Container(
@@ -264,7 +358,10 @@ class _HomePageState extends State<HomePage>
             color: Colors.white,
             child: Container(
                 padding: const EdgeInsets.all(12),
-                child: const Text('날씨를 검색중입니다')));
+                child: const Text(
+                  '날씨를 검색중입니다',
+                  style: weatherTextStyle,
+                )));
       case WeatherState.empty:
         return Container(
             decoration: BoxDecoration(
@@ -277,7 +374,10 @@ class _HomePageState extends State<HomePage>
             color: Colors.white,
             child: Container(
                 padding: const EdgeInsets.all(12),
-                child: const Text('날씨를 불러오지 못했습니다,')));
+                child: const Text(
+                  '날씨를 불러오지 못했습니다,',
+                  style: weatherTextStyle,
+                )));
       case WeatherState.completed:
         Weather weather = _weatherProvider.weather;
         return Container(
@@ -287,7 +387,7 @@ class _HomePageState extends State<HomePage>
                 decoration: BoxDecoration(
                   border: Border.all(
                     width: 0.7,
-                    color: Color.fromRGBO(234, 234, 234, 1),
+                    color: const Color.fromRGBO(234, 234, 234, 1),
                   ),
                 ),
                 padding: const EdgeInsets.all(14),
@@ -303,11 +403,7 @@ class _HomePageState extends State<HomePage>
                     ),
                     Text(
                         '오늘의 온도 : ${weather.temp}°C   습도 : ${weather.humidity}%',
-                        style: const TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            color: Color.fromRGBO(51, 51, 51, 1)))
+                        style: weatherTextStyle)
                   ],
                 )));
 
@@ -318,7 +414,8 @@ class _HomePageState extends State<HomePage>
 
   Widget recommendPlaceText(String title) {
     return Container(
-        padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.fromLTRB(20, 25, 20, 25),
         child: Text.rich(
           TextSpan(
               text: '${_homeRecordProvider.name}님, 오늘같은 날에는\n',
@@ -358,7 +455,7 @@ class _HomePageState extends State<HomePage>
           ? Container(
               alignment: Alignment.center,
               height: 130,
-              margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+              margin: const EdgeInsets.all(4),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -375,9 +472,8 @@ class _HomePageState extends State<HomePage>
             )
           : Stack(
               children: [
-                Container(
+                SizedBox(
                     height: 130,
-                    margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                     child: InkWell(
                         onTap: () {},
                         child: Stack(children: [
@@ -457,15 +553,6 @@ class _HomePageState extends State<HomePage>
         )));
   }
 
-  // Widget recordChart() {
-  //   return AspectRatio(
-  //       aspectRatio: 2,
-  //       child: LineChart(LineChartData(lineBarsData: [
-  //         LineChartBarData(
-  //             spots: records!.map((data) => FlSpot(1, data.distance!)).toList())
-  //       ])));
-  // }
-
   Widget? floatingButtons() {
     return SpeedDial(
       animatedIcon: AnimatedIcons.menu_close,
@@ -504,29 +591,21 @@ class _HomePageState extends State<HomePage>
       ],
     );
   }
-
-  String timestampToText(int timestamp) {
-    String hour = "00";
-    String minute = "00";
-    String second = "00";
-
-    if (timestamp ~/ 3600 < 10) {
-      hour = "0${timestamp ~/ 3600}";
-    } else {
-      hour = "${timestamp ~/ 3600}";
-    }
-
-    if (timestamp ~/ 60 < 10) {
-      minute = "0${timestamp ~/ 60}";
-    } else {
-      minute = "${timestamp ~/ 60}";
-    }
-    if (timestamp % 60 < 10) {
-      second = "0${timestamp % 60}";
-    } else {
-      second = "${timestamp % 60}";
-    }
-
-    return '$hour:$minute:$second';
-  }
 }
+// class Chart extends CustomPainter {
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     var myPaint = Paint();
+//     myPaint.color = Color.fromRGBO(234, 234, 234, 1);
+//     myPaint.strokeWidth = 1.0;
+//     canvas.drawLine(Offset(0.0, 0.0), Offset(0.0, 10.0), myPaint);
+//     canvas.drawOval(Rect.fromCenter(center: center, width: width, height: height), paint)
+//   }
+
+//   @override
+//   bool shouldRepaint(covariant CustomPainter oldDelegate) {
+//     // TODO: implement shouldRepaint
+//     throw UnimplementedError();
+//   }
+// }
+
