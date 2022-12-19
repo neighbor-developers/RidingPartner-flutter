@@ -256,9 +256,9 @@ class MapSampleState extends State<MapSearchPage> {
   }
 
   Widget highlightedText(String text, String highlight, String type) {
+    highlight = highlight.replaceAll(" ", "");
     final List<String> splitText = text.split(highlight);
     final List<TextSpan> children = [];
-
     if (type == "title") {
       for (int i = 0; i < splitText.length; i++) {
         children.add(TextSpan(text: splitText[i], style: _searchBoxTextStyle));
