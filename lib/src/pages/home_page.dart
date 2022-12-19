@@ -463,9 +463,9 @@ class _HomePageState extends State<HomePage>
               child: const Text(
                 "추천 명소를\n불러오고 있습니다",
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                   color: Color.fromRGBO(51, 51, 51, 1),
                 ),
               ),

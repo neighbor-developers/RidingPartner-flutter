@@ -16,7 +16,7 @@ import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 import '../models/place.dart';
 import '../models/position_stream.dart';
 
-enum SearchRouteState { loading, fail, empty, success }
+enum SearchRouteState { loading, fail, empty, success, locationFail }
 
 class NavigationProvider with ChangeNotifier {
   final NaverMapService _naverMapService = NaverMapService();
@@ -94,7 +94,10 @@ class NavigationProvider with ChangeNotifier {
     } catch (e) {
       print(e.toString());
       MyLocation().cheakPermission();
-      _position = MyLocation().position;
+      _position = null;
+      _searchRouteState = SearchRouteState.locationFail;
+      notifyListeners();
+      return;
     }
 
     // getMyLocationAddress(_position);

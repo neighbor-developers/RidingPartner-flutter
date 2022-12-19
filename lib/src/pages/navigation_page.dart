@@ -12,6 +12,7 @@ import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_result_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/navigation_icon.dart';
+import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
 import 'package:ridingpartner_flutter/src/widgets/dialog.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -27,8 +28,8 @@ class _NavigationPageState extends State<NavigationPage> {
   late RidingProvider _ridingProvider;
 
   Completer<GoogleMapController> _controller = Completer();
-  late LatLng initCameraPosition;
-  late Set<Marker> markers;
+  LatLng initCameraPosition = const LatLng(37.37731944, 126.8050778);
+  Set<Marker> markers = {};
   late String? userProfile;
   double bearing = 180;
   late BitmapDescriptor myPositionIcon;
@@ -47,13 +48,7 @@ class _NavigationPageState extends State<NavigationPage> {
 
   setMapComponent() async {
     await _navigationProvider.getRoute();
-
-    markers = _navigationProvider.course
-        .map((course) => Marker(
-            markerId: MarkerId(course.title ?? ""),
-            position: LatLng(double.parse(course.latitude!),
-                double.parse(course.longitude!))))
-        .toSet();
+    setRouteMarkers();
 
     if (_navigationProvider.position != null) {
       initCameraPosition = LatLng(
@@ -65,17 +60,51 @@ class _NavigationPageState extends State<NavigationPage> {
               2);
       final Uint8List markerIcon = await _navigationProvider.getBytesFromAsset(
           'assets/icons/my_location.png', 200);
+
       myPositionIcon = BitmapDescriptor.fromBytes(markerIcon);
 
       markers.add(Marker(
-        icon: myPositionIcon,
+        anchor: const Offset(0, 0),
+        icon: BitmapDescriptor.fromBytes(markerIcon),
         markerId: const MarkerId("currentPosition"),
         position: LatLng(_navigationProvider.position!.latitude,
             _navigationProvider.position!.longitude),
       ));
     } else {
-      initCameraPosition = const LatLng(37.339985, 126.733378);
+      initCameraPosition = const LatLng(37.37731944, 126.8050778);
     }
+  }
+
+  Future setRouteMarkers() async {
+    final Uint8List turnMarkerIcon = await _navigationProvider
+        .getBytesFromAsset('assets/icons/marker_orange.png', 80);
+    final Uint8List startMarkerIcon = await _navigationProvider
+        .getBytesFromAsset('assets/icons/marker_start.png', 80);
+    final Uint8List destinationMarkerIcon = await _navigationProvider
+        .getBytesFromAsset('assets/icons/marker_destination.png', 80);
+
+    List<Marker> markerList = _navigationProvider.course
+        .map((course) => Marker(
+            icon: BitmapDescriptor.fromBytes(turnMarkerIcon),
+            markerId: MarkerId(course.title ?? ""),
+            position: LatLng(double.parse(course.latitude!),
+                double.parse(course.longitude!))))
+        .toList();
+
+    markerList[0] = Marker(
+        icon: BitmapDescriptor.fromBytes(startMarkerIcon),
+        markerId: MarkerId(_navigationProvider.course[0].title ?? ""),
+        position: LatLng(double.parse(_navigationProvider.course[0].latitude!),
+            double.parse(_navigationProvider.course[0].longitude!)));
+
+    markerList.last = Marker(
+        icon: BitmapDescriptor.fromBytes(destinationMarkerIcon),
+        markerId: MarkerId(_navigationProvider.course.last.title ?? ""),
+        position: LatLng(
+            double.parse(_navigationProvider.course.last.latitude!),
+            double.parse(_navigationProvider.course[0].longitude!)));
+
+    markers = markerList.toSet();
   }
 
   String floatBtnLabel = "일시중지";
@@ -118,7 +147,7 @@ class _NavigationPageState extends State<NavigationPage> {
       }
     }
 
-    if (_navigationProvider.searchRouteState == SearchRouteState.success) {
+    if (_ridingProvider.state == RidingState.riding) {
       setController();
     }
 
@@ -162,43 +191,46 @@ class _NavigationPageState extends State<NavigationPage> {
                         ? Center(
                             child: Text("경로를 불러오는데에 실패했습니다\n네트워크 상태를 체크해주세요",
                                 style: plainStyle, textAlign: TextAlign.center))
-                        : Stack(
-                            alignment: Alignment.bottomCenter,
-                            children: <Widget>[
-                              GoogleMap(
-                                mapType: MapType.normal,
-                                initialCameraPosition: CameraPosition(
-                                    target: initCameraPosition, zoom: 13),
-                                polylines: {
-                                  Polyline(
-                                      polylineId: const PolylineId("route"),
-                                      color: const Color.fromARGB(
-                                          0xFF, 0xFB, 0x95, 0x32),
-                                      width: polylineWidth,
-                                      startCap: Cap.roundCap,
-                                      endCap: Cap.roundCap,
-                                      points:
-                                          _navigationProvider.polylinePoints)
-                                },
-                                onMapCreated: (GoogleMapController controller) {
-                                  _controller.complete(controller);
-                                },
-                                myLocationButtonEnabled: false,
-                                myLocationEnabled: false,
-                                markers: markers,
-                                compassEnabled: false,
-                              ),
-                              Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: Column(children: [
-                                    record(_ridingProvider.state),
-                                    // changeButton(_navigationProvider.ridingState)
-                                  ])),
-                              Positioned(top: 0, child: guideWidget())
-                            ],
-                          )),
+                        : _navigationProvider.searchRouteState ==
+                                SearchRouteState.locationFail
+                            ? Center(
+                                child: Text("GPS 상태가 원활하지 않습니다.",
+                                    style: plainStyle,
+                                    textAlign: TextAlign.center))
+                            : Stack(
+                                alignment: Alignment.bottomCenter,
+                                children: <Widget>[
+                                  GoogleMap(
+                                    mapType: MapType.normal,
+                                    initialCameraPosition: CameraPosition(
+                                        target: initCameraPosition, zoom: 13),
+                                    polylines: {
+                                      Polyline(
+                                          polylineId: const PolylineId("route"),
+                                          color: const Color.fromARGB(
+                                              0xFF, 0xFB, 0x95, 0x32),
+                                          width: polylineWidth,
+                                          startCap: Cap.roundCap,
+                                          endCap: Cap.roundCap,
+                                          points: _navigationProvider
+                                              .polylinePoints)
+                                    },
+                                    onMapCreated:
+                                        (GoogleMapController controller) {
+                                      _controller.complete(controller);
+                                    },
+                                    myLocationButtonEnabled: false,
+                                    myLocationEnabled: false,
+                                    markers: markers,
+                                    compassEnabled: false,
+                                  ),
+                                  Positioned(top: 0, child: guideWidget()),
+                                  Positioned(
+                                      bottom: 0,
+                                      child: record(_ridingProvider.state))
+                                  // changeButton(_navigationProvider.ridingState)
+                                ],
+                              )),
         onWillPop: () {
           return backDialog(context, "안내를 중단하시겠습니까?");
         });
@@ -207,26 +239,46 @@ class _NavigationPageState extends State<NavigationPage> {
   Widget guideWidget() {
     String iconRoute = turnIcon[_navigationProvider.goalPoint.turn] ??
         'assets/icons/navigation_straight.png';
-    return Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.all(20),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(iconRoute, width: 55, height: 55, fit: BoxFit.cover),
-            Text(
-              _navigationProvider.goalPoint.content ?? "-",
-              style: const TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 32,
-                  fontWeight: FontWeight.w600),
-            )
-          ],
-        ));
+
+    return _navigationProvider.goalPoint.turn != 41 &&
+            _navigationProvider.goalPoint.turn != 48 &&
+            _ridingProvider.state == RidingState.riding
+        ? Container(
+            margin: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                    spreadRadius: 3,
+                    blurRadius: 3,
+                    offset: Offset(1, 1),
+                    color: Color.fromRGBO(0, 41, 135, 0.047))
+              ],
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(iconRoute,
+                    width: 55, height: 55, fit: BoxFit.cover),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  _navigationProvider.goalPoint.content ?? "-",
+                  style: const TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 32,
+                      fontWeight: FontWeight.w600),
+                )
+              ],
+            ))
+        : SizedBox(
+            width: 0,
+            height: 0,
+          );
   }
 
   Widget record(RidingState state) {
@@ -244,6 +296,7 @@ class _NavigationPageState extends State<NavigationPage> {
                 fontFamily: 'Pretendard',
                 fontWeight: FontWeight.w700,
                 fontSize: 18),
+            textAlign: TextAlign.center,
           ),
         ),
         onTap: () {
@@ -257,26 +310,57 @@ class _NavigationPageState extends State<NavigationPage> {
       return Container(
           alignment: Alignment.center,
           height: 140,
-          padding: const EdgeInsets.all(11),
-          color: Colors.white,
-          child: Column(
-            children: [
-              ridingProgress(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "남은거리 : ${((((_navigationProvider.remainedDistance) / 100).roundToDouble()) / 10).toString()}, 속도 : ${_ridingProvider.speed.toString()}",
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-                    ),
-                  )
-                ],
-              ),
+          padding: const EdgeInsets.all(12),
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+          decoration: const BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                  spreadRadius: 1,
+                  blurRadius: 3,
+                  offset: Offset(1, 1),
+                  color: Color.fromRGBO(0, 41, 135, 0.047))
             ],
-          ));
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+          child: ridingRecord());
     }
+  }
+
+  Widget ridingRecord() {
+    return Column(
+      children: [
+        ridingProgress(),
+        Row(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('남은거리'),
+                Text(((((_navigationProvider.remainedDistance) / 100)
+                            .roundToDouble()) /
+                        10)
+                    .toString())
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('주행 속도'),
+                Text(_ridingProvider.speed.roundToDouble().toString())
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('주행 시간'),
+                Text(timestampToText(_ridingProvider.time.inSeconds))
+              ],
+            )
+          ],
+        )
+      ],
+    );
   }
 
   Widget ridingProgress() {
@@ -287,6 +371,7 @@ class _NavigationPageState extends State<NavigationPage> {
     return Column(
       children: [
         Container(
+            width: MediaQuery.of(context).size.width,
             alignment: FractionalOffset(percent, 1 - percent),
             child: Column(
               children: [
@@ -300,8 +385,9 @@ class _NavigationPageState extends State<NavigationPage> {
           padding: EdgeInsets.zero,
           percent: percent,
           lineHeight: 10,
-          backgroundColor: Colors.black38,
-          progressColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+          linearStrokeCap: LinearStrokeCap.round,
+          backgroundColor: const Color.fromRGBO(241, 243, 245, 1),
+          progressColor: const Color.fromRGBO(240, 120, 5, 1),
           width: MediaQuery.of(context).size.width,
         )
       ],
