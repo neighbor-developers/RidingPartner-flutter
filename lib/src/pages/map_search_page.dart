@@ -370,6 +370,14 @@ class MapSampleState extends State<MapSearchPage> {
             backgroundColor: _orangeColor));
   }
 
+  void clearMarker(String type, MapSearchProvider mapSearchProvider) {
+    if (type == "출발지" && mapSearchProvider.startPoint != null) {
+      _markers.removeAt(0);
+    } else if (type == "도착지" && mapSearchProvider.destination != null) {
+      _markers.removeAt(_markers.length - 1);
+    }
+  }
+
   Future<void> _updatePosition(
       Place position, String type, MapSearchProvider mapSearchProvider) async {
     final customIcon = await CustomMarker()
@@ -417,10 +425,14 @@ class MapSampleState extends State<MapSearchPage> {
 
   void _clearText(TextEditingController textController, String type,
       MapSearchProvider mapSearchProvider) {
+    clearMarker(type, mapSearchProvider);
+    mapSearchProvider.clearPolyLine();
     if (type == "출발지") {
       mapSearchProvider.clearStartPointSearchResult();
+      mapSearchProvider.removeStartPoint();
     } else {
       mapSearchProvider.clearEndPointSearchResult();
+      mapSearchProvider.removeDestination();
     }
     textController.clear();
   }
