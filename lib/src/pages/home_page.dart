@@ -52,7 +52,6 @@ class _HomePageState extends State<HomePage>
     _homeRecordProvider = Provider.of<HomeRecordProvider>(context);
     records = _homeRecordProvider.recordFor14Days;
 
-    _weatherProvider.getWeather();
     return Scaffold(
         backgroundColor: const Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
         floatingActionButton: floatingButtons(),
@@ -75,7 +74,7 @@ class _HomePageState extends State<HomePage>
                           const SizedBox(
                             width: 15,
                           ),
-                          recommendPlace(_homeRecordProvider.recommendRoute)
+                          recommendPlace(_homeRecordProvider.recommendPlace2)
                         ]),
                       ),
                       weekWidget()
