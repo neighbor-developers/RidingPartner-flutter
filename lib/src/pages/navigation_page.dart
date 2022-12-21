@@ -107,8 +107,6 @@ class _NavigationPageState extends State<NavigationPage> {
     markers = markerList.toSet();
   }
 
-  String floatBtnLabel = "일시중지";
-  IconData floatBtnIcon = Icons.pause;
   int polylineWidth = 5;
   TextStyle plainStyle = const TextStyle(
       fontSize: 12,
@@ -173,9 +171,6 @@ class _NavigationPageState extends State<NavigationPage> {
                 color: const Color.fromRGBO(240, 120, 5, 1),
               ),
             ),
-            floatingActionButton: floatingButtons(_ridingProvider.state),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.miniEndFloat,
             body: _navigationProvider.searchRouteState ==
                     SearchRouteState.loading
                 ? const Center(
@@ -280,17 +275,28 @@ class _NavigationPageState extends State<NavigationPage> {
                 )
               ],
             ))
-        : SizedBox(
+        : const SizedBox(
             width: 0,
             height: 0,
           );
   }
 
   Widget record(RidingState state) {
+    const TextStyle titleStyle = TextStyle(
+        fontFamily: 'Pretendard',
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        color: Color.fromRGBO(134, 142, 150, 1));
+    const TextStyle dataStyle = TextStyle(
+        fontFamily: 'Pretendard',
+        fontSize: 18,
+        fontWeight: FontWeight.w400,
+        color: Color.fromRGBO(52, 58, 64, 1));
+
     if (state == RidingState.before) {
       return InkWell(
         child: Container(
-          color: Color.fromRGBO(240, 120, 5, 1),
+          color: const Color.fromRGBO(240, 120, 5, 1),
           alignment: Alignment.center,
           width: MediaQuery.of(context).size.width,
           height: 61,
@@ -312,60 +318,104 @@ class _NavigationPageState extends State<NavigationPage> {
         },
       );
     } else {
+      double width = MediaQuery.of(context).size.width;
       return Container(
-          alignment: Alignment.center,
-          height: 140,
-          padding: const EdgeInsets.all(12),
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-          decoration: const BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                  spreadRadius: 1,
-                  blurRadius: 3,
-                  offset: Offset(1, 1),
-                  color: Color.fromRGBO(0, 41, 135, 0.047))
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              AnimatedContainer(
+                curve: Curves.fastOutSlowIn,
+                duration: const Duration(milliseconds: 300),
+                transform: Matrix4.translationValues(
+                    0, _navigationProvider.visivility ? 0 : 140, 0),
+                child: buttons(state),
+              ),
+              Container(
+                height: 140,
+                padding: const EdgeInsets.all(20),
+                decoration: const BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                        spreadRadius: 1,
+                        blurRadius: 3,
+                        offset: Offset(1, 1),
+                        color: Color.fromRGBO(0, 41, 135, 0.047))
+                  ],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ridingProgress(),
+                    Container(
+                        width: MediaQuery.of(context).size.width - 80,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text('남은거리', style: titleStyle),
+                                Text(
+                                  ((((_navigationProvider.remainedDistance) /
+                                                  100)
+                                              .roundToDouble()) /
+                                          10)
+                                      .toString(),
+                                  style: dataStyle,
+                                )
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  '주행 속도',
+                                  style: titleStyle,
+                                ),
+                                Text(
+                                  _ridingProvider.speed
+                                      .roundToDouble()
+                                      .toString(),
+                                  style: dataStyle,
+                                )
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  '주행 시간',
+                                  style: titleStyle,
+                                ),
+                                Text(
+                                  timestampToText(
+                                      _ridingProvider.time.inSeconds),
+                                  style: dataStyle,
+                                )
+                              ],
+                            ),
+                            InkWell(
+                              onTap: () {
+                                _navigationProvider.setVisivility();
+                              },
+                              child: Container(
+                                width: 18,
+                                child: Image.asset('assets/icons/menu_bar.png',
+                                    fit: BoxFit.fitWidth),
+                              ),
+                            )
+                          ],
+                        ))
+                  ],
+                ),
+              )
             ],
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-          child: ridingRecord());
+          ));
     }
-  }
-
-  Widget ridingRecord() {
-    return Column(
-      children: [
-        ridingProgress(),
-        Row(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text('남은거리'),
-                Text(((((_navigationProvider.remainedDistance) / 100)
-                            .roundToDouble()) /
-                        10)
-                    .toString())
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text('주행 속도'),
-                Text(_ridingProvider.speed.roundToDouble().toString())
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text('주행 시간'),
-                Text(timestampToText(_ridingProvider.time.inSeconds))
-              ],
-            )
-          ],
-        )
-      ],
-    );
   }
 
   Widget ridingProgress() {
@@ -373,66 +423,70 @@ class _NavigationPageState extends State<NavigationPage> {
     double percent = (_navigationProvider.totalDistance -
             _navigationProvider.remainedDistance) /
         _navigationProvider.totalDistance;
-    return Column(
-      children: [
-        Container(
-            width: MediaQuery.of(context).size.width,
-            alignment: FractionalOffset(percent, 1 - percent),
-            child: Column(
-              children: [
-                FractionallySizedBox(
-                    child: Image.asset('assets/icons/riding_character.png',
-                        width: 17, height: 17, fit: BoxFit.fitHeight)),
-                Text('${distance}km'),
-              ],
-            )),
-        LinearPercentIndicator(
-          padding: EdgeInsets.zero,
-          percent: percent,
-          lineHeight: 10,
-          linearStrokeCap: LinearStrokeCap.round,
-          backgroundColor: const Color.fromRGBO(241, 243, 245, 1),
-          progressColor: const Color.fromRGBO(240, 120, 5, 1),
-          width: MediaQuery.of(context).size.width,
-        )
-      ],
-    );
+    return SizedBox(
+        width: MediaQuery.of(context).size.width - 80,
+        height: 40,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+                width: MediaQuery.of(context).size.width - 80,
+                alignment: FractionalOffset(percent, 1 - percent),
+                child: Column(
+                  children: [
+                    FractionallySizedBox(
+                        child: Image.asset('assets/icons/riding_character.png',
+                            width: 17, height: 17, fit: BoxFit.contain)),
+                    Text(
+                      '${distance}km',
+                      style: const TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w400),
+                    ),
+                  ],
+                )),
+            LinearPercentIndicator(
+              padding: EdgeInsets.zero,
+              percent: percent,
+              lineHeight: 5,
+              barRadius: const Radius.circular(15.0),
+              backgroundColor: const Color.fromRGBO(241, 243, 245, 1),
+              progressColor: const Color.fromRGBO(240, 120, 5, 1),
+              width: MediaQuery.of(context).size.width - 80,
+            )
+          ],
+        ));
   }
 
-  Widget? floatingButtons(RidingState state) {
+  Widget buttons(RidingState state) {
+    String text = "일시정지";
+    const TextStyle testStyle = TextStyle(
+        color: Color.fromRGBO(52, 58, 64, 1),
+        fontFamily: 'Pretended',
+        fontWeight: FontWeight.w600,
+        fontSize: 16);
+
     switch (state) {
       case RidingState.riding:
         {
-          floatBtnLabel = "일시중지";
-          floatBtnIcon = Icons.pause;
+          text = "일시중지";
           break;
         }
       case RidingState.pause:
         {
-          floatBtnLabel = "재시작";
-          floatBtnIcon = Icons.restart_alt;
+          text = "이어서 시작";
           break;
         }
       default:
     }
     if (state != RidingState.before) {
-      return SpeedDial(
-        animatedIcon: AnimatedIcons.menu_close,
-        visible: true,
-        curve: Curves.bounceIn,
-        backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          SpeedDialChild(
-              child: Icon(floatBtnIcon, color: Colors.white),
-              label: floatBtnLabel,
-              labelStyle: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                  fontSize: 13.0),
-              backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-              labelBackgroundColor:
-                  const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+          InkWell(
               onTap: () {
+                _navigationProvider.setVisivility();
                 if (state == RidingState.riding) {
                   _ridingProvider.pauseRiding();
                   _navigationProvider.setState(RidingState.pause);
@@ -440,19 +494,23 @@ class _NavigationPageState extends State<NavigationPage> {
                   _ridingProvider.startRiding();
                   _navigationProvider.setState(RidingState.riding);
                 }
-              }),
-          SpeedDialChild(
-            child: const Icon(
-              Icons.stop,
-              color: Colors.white,
-            ),
-            label: "종료",
-            backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-            labelBackgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 13.0),
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                decoration: const BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                        spreadRadius: 1,
+                        blurRadius: 3,
+                        offset: Offset(1, 1),
+                        color: Color.fromRGBO(0, 41, 135, 0.047))
+                  ],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(7)),
+                ),
+                child: Text(text, style: testStyle),
+              )),
+          InkWell(
             onTap: () {
               screenKeepOff();
               _ridingProvider.stopAndSaveRiding();
@@ -466,11 +524,30 @@ class _NavigationPageState extends State<NavigationPage> {
                             child: RecordPage(),
                           )));
             },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              margin: EdgeInsets.symmetric(vertical: 15),
+              decoration: const BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                      spreadRadius: 1,
+                      blurRadius: 3,
+                      offset: Offset(1, 1),
+                      color: Color.fromRGBO(0, 41, 135, 0.047))
+                ],
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(7)),
+              ),
+              child: Text('종료', style: testStyle),
+            ),
           )
         ],
       );
     } else {
-      return null;
+      return SizedBox(
+        height: 0,
+        width: 0,
+      );
     }
   }
 

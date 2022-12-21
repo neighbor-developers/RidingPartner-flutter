@@ -47,6 +47,7 @@ class NavigationProvider with ChangeNotifier {
   int _remainedDistance = 0;
   int _totalDistance = 0;
   bool isFirst = true;
+  bool visivility = false;
 
   LatLng? _bearingPoint;
 
@@ -68,6 +69,11 @@ class NavigationProvider with ChangeNotifier {
     if (state == RidingState.pause) {
       _timer?.cancel();
     }
+    notifyListeners();
+  }
+
+  void setVisivility() {
+    visivility = !visivility;
     notifyListeners();
   }
 

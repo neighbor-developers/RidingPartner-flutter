@@ -27,14 +27,14 @@ class HomeRecordProvider extends ChangeNotifier {
   Record? _prefRecord;
   int _count = 0;
   Place? _recommendPlace;
-  RidingRoute? _recommendRoute;
+  Place? _recommendPlace2;
 
   List<Record> get recordFor14Days => _recordFor14Days;
   List<String> get daysFor14 => _daysFor14;
   int get selectedIndex => _selectedIndex;
   String get name => _auth;
   Place? get recommendPlace => _recommendPlace;
-  RidingRoute? get recommendRoute => _recommendRoute;
+  Place? get recommendPlace2 => _recommendPlace2;
 
   RecordState _recordState = RecordState.loading;
   RecordState get recordState => _recordState;
@@ -46,18 +46,17 @@ class HomeRecordProvider extends ChangeNotifier {
 
   getData() {
     getRecomendPlace();
-    getRecomendRoute();
     getRecord();
   }
 
   getRecomendPlace() async {
     List<Place> places = await _fireStoreService.getPlaces();
     _recommendPlace = places[_random.nextInt(places.length)];
-  }
+    _recommendPlace2 = places[_random.nextInt(places.length)];
 
-  getRecomendRoute() async {
-    List<RidingRoute> routes = await _fireStoreService.getRoutes();
-    _recommendRoute = routes[_random.nextInt(routes.length)];
+    while (_recommendPlace == _recommendPlace2) {
+      _recommendPlace2 = places[_random.nextInt(places.length)];
+    }
   }
 
   Future getRecord() async {
