@@ -12,8 +12,9 @@ class OpenWeatherService {
   Future<Result> getWeather() async {
     MyLocation myLocation = MyLocation();
     developer.log("myLocation called in network");
+
     try {
-      await myLocation.getMyCurrentLocation();
+      await myLocation.getMyCurrentLocation().timeout(Duration(seconds: 3));
     } catch (e) {
       developer.log("error : getLocation ${e.toString()}");
     }

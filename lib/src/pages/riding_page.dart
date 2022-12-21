@@ -59,7 +59,11 @@ class _RidingPageState extends State<RidingPage> {
               elevation: 0,
               leading: IconButton(
                 onPressed: () {
-                  backDialog(context, "안내를 중단하시겠습니까?");
+                  if (_ridingProvider.state == RidingState.before) {
+                    Navigator.pop(context);
+                  } else {
+                    backDialog(context, "라이딩을 중단하시겠습니까?\n기록은 삭제됩니다");
+                  }
                 },
                 icon: Icon(Icons.arrow_back),
                 color: Colors.indigo.shade900,
@@ -163,8 +167,13 @@ class _RidingPageState extends State<RidingPage> {
                 ),
               ],
             )),
-        onWillPop: () {
-          return backDialog(context, "라이딩를 중단하시겠습니까?");
+        onWillPop: () async {
+          if (_ridingProvider.state == RidingState.before) {
+            Navigator.pop(context);
+            return true;
+          } else {
+            return backDialog(context, "라이딩을 중단하시겠습니까?\n기록은 삭제됩니다");
+          }
         });
   }
 

@@ -15,6 +15,7 @@ Future<bool> backDialog(BuildContext context, String text) async {
   return await showDialog(
       context: context,
       barrierDismissible: false,
+      useRootNavigator: false,
       builder: (BuildContext context) => AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0)),
@@ -28,29 +29,8 @@ Future<bool> backDialog(BuildContext context, String text) async {
                   child: Text("취소")),
               TextButton(
                   onPressed: () {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MultiProvider(providers: [
-                                  ChangeNotifierProvider(
-                                      create: (context) => SightsProvider()),
-                                  ChangeNotifierProvider(
-                                      create: (context) => WeatherProvider()),
-                                  ChangeNotifierProvider(
-                                      create: (context) => RouteListProvider()),
-                                  ChangeNotifierProvider(
-                                      create: (context) =>
-                                          BottomNavigationProvider()),
-                                  ChangeNotifierProvider(
-                                      create: (context) => MapSearchProvider()),
-                                  ChangeNotifierProvider(
-                                      create: (context) => RidingProvider()),
-                                  ChangeNotifierProvider(
-                                      create: (context) => PlaceListProvider()),
-                                  ChangeNotifierProvider(
-                                      create: (context) => HomeRecordProvider())
-                                ], child: BottomNavigation())),
-                        (route) => false);
+                    Navigator.pop(context, true);
+                    Navigator.pop(context, true);
                   },
                   child: Text("확인")),
             ],

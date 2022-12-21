@@ -166,7 +166,7 @@ class _NavigationPageState extends State<NavigationPage> {
                   if (_navigationProvider.ridingState == RidingState.before) {
                     Navigator.pop(context);
                   } else {
-                    backDialog(context, "안내를 중단하시겠습니까?");
+                    backDialog(context, "안내를 중단하시겠습니까?\n기록은 삭제됩니다");
                   }
                 },
                 icon: const Icon(Icons.arrow_back),
@@ -231,8 +231,13 @@ class _NavigationPageState extends State<NavigationPage> {
                                   // changeButton(_navigationProvider.ridingState)
                                 ],
                               )),
-        onWillPop: () {
-          return backDialog(context, "안내를 중단하시겠습니까?");
+        onWillPop: () async {
+          if (_navigationProvider.ridingState == RidingState.before) {
+            Navigator.pop(context);
+            return true;
+          } else {
+            return backDialog(context, "안내를 중단하시겠습니까?\n기록은 삭제됩니다");
+          }
         });
   }
 
