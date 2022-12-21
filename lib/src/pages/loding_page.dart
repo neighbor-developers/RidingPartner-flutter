@@ -83,134 +83,120 @@ class _LodingPageState extends State<LodingPage> {
               fit: BoxFit.cover),
         ),
         child: Container(
-            margin: const EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 0.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "RIDING PARTNER\nIN SIHEUNG",
-                  style: TextStyle(
-                      backgroundColor: null,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                      fontSize: 30),
-                  textAlign: TextAlign.center,
-                ),
-                _kakaoLoginButton(),
-                _naverLoginButton(),
-                _googleLoginButton(),
-                _appleLoginButton()
-              ],
-            )));
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: FractionalOffset.topCenter,
+                    end: FractionalOffset.bottomCenter,
+                    colors: [
+                  Colors.black.withOpacity(0.0),
+                  Colors.white.withOpacity(1.0),
+                ])),
+            child: Container(
+                margin: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                        width: 140.0,
+                        height: 100.0,
+                        decoration: const BoxDecoration(
+                            image: DecorationImage(
+                                image:
+                                    AssetImage('assets/icons/logo_white.png')),
+                            color: Colors.transparent)),
+                    _kakaoLoginButton(),
+                    _naverLoginButton(),
+                    _googleLoginButton(),
+                    _appleLoginButton(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                            width: 70.0,
+                            height: 70.0,
+                            margin:
+                                const EdgeInsets.fromLTRB(0.0, 40.0, 30.0, 0.0),
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage(
+                                      'assets/icons/logo_siheung.png')),
+                            ),
+                            child: const Scaffold(
+                              backgroundColor: Colors.transparent,
+                            )),
+                        Container(
+                            width: 125.0,
+                            height: 100.0,
+                            margin:
+                                const EdgeInsets.fromLTRB(10.0, 40.0, 0.0, 0.0),
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                  image:
+                                      AssetImage('assets/icons/logo_tuk.png')),
+                            ),
+                            child: const Scaffold(
+                              backgroundColor: Colors.transparent,
+                            )),
+                      ],
+                    )
+                  ],
+                ))));
   }
 
   Widget _naverLoginButton() {
     return SizedBox(
         width: MediaQuery.of(context).size.width,
-        height: 55.0,
-        child: Container(
-            margin: const EdgeInsets.only(top: 10.0),
-            child: Visibility(
-                visible: _authProvider.user == null,
-                child: ElevatedButton(
-                  onPressed: () {
-                    _authProvider.signInWithNaver();
-                  },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromRGBO(62, 200, 76, 1)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Icon(
-                        Icons.messenger,
-                        color: Colors.white,
-                        size: 22.0,
-                      ),
-                      Text('네이버 로그인',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                      Icon(
-                        Icons.arrow_forward_ios_outlined,
-                        color: Colors.brown,
-                        size: 14.0,
-                      )
-                    ],
-                  ),
-                ))));
+        height: 65.0,
+        child: Visibility(
+            visible: _authProvider.user == null,
+            child: Card(
+                margin: const EdgeInsets.only(top: 20),
+                child: InkWell(
+                    onTap: () {
+                      _authProvider.signInWithNaver();
+                    },
+                    child: Ink.image(
+                      fit: BoxFit.cover,
+                      image:
+                          const AssetImage("assets/icons/btn_naver_login.png"),
+                    )))));
   }
 
   Widget _kakaoLoginButton() {
     return SizedBox(
         width: MediaQuery.of(context).size.width,
         height: 65.0,
-        child: Container(
-            margin: const EdgeInsets.only(top: 20),
-            child: Visibility(
-                visible: _authProvider.user == null,
-                child: ElevatedButton(
-                    onPressed: () {
+        child: Visibility(
+            visible: _authProvider.user == null,
+            child: Card(
+                margin: const EdgeInsets.only(top: 20),
+                child: InkWell(
+                    onTap: () {
                       _authProvider.signInWithKakao();
                     },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.yellow),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Icon(
-                          Icons.messenger,
-                          color: Colors.brown,
-                          size: 22.0,
-                        ),
-                        // ignore: prefer_const_constructors
-                        Text('카카오 로그인',
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.black87,
-                                fontWeight: FontWeight.bold)),
-                        Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          color: Colors.brown,
-                          size: 14.0,
-                        )
-                      ],
+                    child: Ink.image(
+                      fit: BoxFit.cover,
+                      image:
+                          const AssetImage("assets/icons/btn_kakao_login.png"),
                     )))));
   }
 
   Widget _googleLoginButton() {
     return SizedBox(
         width: MediaQuery.of(context).size.width,
-        height: 55.0,
-        child: Container(
-            margin: const EdgeInsets.only(top: 10.0),
-            child: Visibility(
-                visible: _authProvider.user == null,
-                child: ElevatedButton(
-                    onPressed: () {
+        height: 65.0,
+        child: Visibility(
+            visible: _authProvider.user == null,
+            child: Card(
+                margin: const EdgeInsets.only(top: 20),
+                child: InkWell(
+                    onTap: () {
                       _authProvider.signInWithGoogle();
                     },
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Icon(
-                          Icons.messenger,
-                          color: Colors.brown,
-                          size: 22.0,
-                        ),
-                        Text('구글 로그인',
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: Color.fromARGB(150, 40, 40, 40),
-                                fontWeight: FontWeight.bold)),
-                        Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          color: Colors.brown,
-                          size: 14.0,
-                        )
-                      ],
+                    child: Ink.image(
+                      fit: BoxFit.cover,
+                      image:
+                          const AssetImage("assets/icons/btn_google_login.png"),
                     )))));
   }
 
@@ -218,36 +204,20 @@ class _LodingPageState extends State<LodingPage> {
     if (Platform.isIOS) {
       return SizedBox(
           width: MediaQuery.of(context).size.width,
-          height: 55.0,
-          child: Container(
-              margin: const EdgeInsets.only(top: 10.0),
-              child: Visibility(
-                  visible: _authProvider.user == null,
-                  child: ElevatedButton(
-                      onPressed: () {
+          height: 65.0,
+          child: Visibility(
+              visible: _authProvider.user == null,
+              child: Card(
+                  margin: const EdgeInsets.only(top: 20),
+                  child: InkWell(
+                      onTap: () {
                         _authProvider.signInWithApple();
                       },
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 2, 2, 2)),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            Icon(
-                              Icons.messenger,
-                              color: Colors.brown,
-                              size: 22.0,
-                            ),
-                            Text('애플 로그인',
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold)),
-                            Icon(
-                              Icons.arrow_forward_ios_outlined,
-                              color: Colors.brown,
-                              size: 14.0,
-                            )
-                          ])))));
+                      child: Ink.image(
+                        fit: BoxFit.cover,
+                        image: const AssetImage(
+                            "assets/icons/btn_apple_login.png"),
+                      )))));
     } else {
       return Column();
     }
