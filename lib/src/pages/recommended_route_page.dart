@@ -152,9 +152,27 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
       }
     }
 
+    Widget recommendTitleWidget() => Container(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+          child: Column(children: [
+            Text("라이딩파트너와 함께",
+                style: TextStyle(
+                    fontFamily: 'Pretended',
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold)),
+            Text("오늘도 달려볼까요?",
+                style: TextStyle(
+                    fontFamily: 'Pretended',
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold)),
+          ]),
+        );
+
     return Scaffold(
         body: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        recommendTitleWidget(),
         routeListWidget(),
       ],
     ));
