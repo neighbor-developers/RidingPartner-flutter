@@ -30,99 +30,72 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
                 topLeft: Radius.circular(15.0),
                 topRight: Radius.circular(15.0))),
         builder: (BuildContext context) => Container(
-              padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
-              height: 500,
+              height: 550,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
-                    route.title!,
-                    style:
-                        TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    route.description!,
-                  ),
-                  Text(
-                    route.route!.join(' > '),
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  Divider(color: Colors.grey, thickness: 1.0),
-                  Image.asset(route.image!),
-                  Text(route.description!),
+                  Container(
+                      padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            route.title!,
+                            style: TextStyle(
+                                fontSize: 22.0, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 5.0),
+                          Text(
+                            route.description!,
+                          ),
+                          const SizedBox(height: 5.0),
+                          Text(
+                            route.route!.join(' > '),
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          const SizedBox(height: 5.0),
+                          Divider(color: Colors.grey, thickness: 1.0),
+                          const SizedBox(height: 5.0),
+                          Image.asset(route.image!),
+                          const SizedBox(height: 5.0),
+                          Text(route.description!),
+                        ],
+                      )),
                   InkWell(
-                    onTap: () async {
-                      final placeList =
-                          await routeListProvider.getPlaceList(route.route!);
-                      if (!mounted) return;
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MultiProvider(
-                                    providers: [
-                                      ChangeNotifierProvider(
-                                          create: (context) =>
-                                              NavigationProvider(placeList)),
-                                      ChangeNotifierProvider(
-                                          create: (context) => RidingProvider())
-                                    ],
-                                    child: NavigationPage(),
-                                  )));
-                    },
-                    child: Container(
-                        width: double.infinity,
-                        height: 60,
-                        color: Colors.cyan,
-                        child: const Text("안내 시작")),
-                  )
+                      onTap: () async {
+                        final placeList =
+                            await routeListProvider.getPlaceList(route.route!);
+                        if (!mounted) return;
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MultiProvider(
+                                      providers: [
+                                        ChangeNotifierProvider(
+                                            create: (context) =>
+                                                NavigationProvider(placeList)),
+                                        ChangeNotifierProvider(
+                                            create: (context) =>
+                                                RidingProvider())
+                                      ],
+                                      child: NavigationPage(),
+                                    )));
+                      },
+                      child: Container(
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width,
+                          height: 60,
+                          color: Colors.orange,
+                          child: Text('안내 시작',
+                              style: TextStyle(
+                                  fontFamily: 'Pretended',
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold))))
                 ],
               ),
-            )
-        // return AlertDialog(
-        //   shape: RoundedRectangleBorder(
-        //       borderRadius: BorderRadius.circular(10.0)),
-        //   //Dialog Main Title
-        //   title: Text(route.title!),
-        //   content: Column(
-        //     mainAxisSize: MainAxisSize.min,
-        //     crossAxisAlignment: CrossAxisAlignment.start,
-        //     children: <Widget>[
-        //       Image.asset(route.image!),
-        //       Text(route.description!),
-        //     ],
-        //   ),
-        //   actions: <Widget>[
-        //     ElevatedButton(
-        //       child: const Text("안내 시작"),
-        //       onPressed: () async {
-        //         final placeList =
-        //             await routeListProvider.getPlaceList(route.route!);
-        //         if (!mounted) return;
-        //         Navigator.push(
-        //             context,
-        //             MaterialPageRoute(
-        //                 builder: (context) => MultiProvider(
-        //                       providers: [
-        //                         ChangeNotifierProvider(
-        //                             create: (context) =>
-        //                                 NavigationProvider(placeList)),
-        //                         ChangeNotifierProvider(
-        //                             create: (context) => RidingProvider())
-        //                       ],
-        //                       child: NavigationPage(),
-        //                     )));
-        //       },
-        //     ),
-        //     ElevatedButton(
-        //       child: const Text("뒤로"),
-        //       onPressed: () {
-        //         Navigator.pop(context);
-        //       },
-        //     ),
-        //   ],
-        // );
-        );
+            ));
 
     Widget messageWidget(String message) => Container(
           height: 100,
