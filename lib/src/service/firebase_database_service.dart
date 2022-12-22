@@ -30,7 +30,7 @@ class FirebaseDatabaseService {
       DatabaseReference ref = _database.ref("$_uId/$ridingDate");
       final DataSnapshot snapshot = await ref.get();
       if (snapshot.exists) {
-        return Record.fromDB(snapshot);
+        return Record.fromDB(snapshot.value);
       }
       throw Exception("getRecord: snapshot not exist");
     } catch (e) {
