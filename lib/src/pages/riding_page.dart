@@ -118,7 +118,7 @@ class _RidingPageState extends State<RidingPage> {
                   if (_ridingProvider.state == RidingState.before) {
                     Navigator.pop(context);
                   } else {
-                    backDialog(context, "라이딩을 중단하시겠습니까?\n기록은 삭제됩니다");
+                    backDialog(context, 1);
                   }
                 },
                 icon: const Icon(Icons.arrow_back),
@@ -154,7 +154,7 @@ class _RidingPageState extends State<RidingPage> {
             Navigator.pop(context);
             return true;
           } else {
-            return backDialog(context, "라이딩을 중단하시겠습니까?\n기록은 삭제됩니다");
+            return backDialog(context, 1);
           }
         });
   }
