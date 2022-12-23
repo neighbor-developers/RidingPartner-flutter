@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -15,6 +14,8 @@ import 'package:ridingpartner_flutter/src/utils/navigation_icon.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
 import 'package:ridingpartner_flutter/src/widgets/dialog.dart';
 import 'package:wakelock/wakelock.dart';
+
+import '../utils/bytesFromAsset.dart';
 
 class NavigationPage extends StatefulWidget {
   const NavigationPage({super.key});
@@ -58,8 +59,8 @@ class _NavigationPageState extends State<NavigationPage> {
           ((_navigationProvider.position!.longitude) +
                   double.parse(_navigationProvider.course.last.longitude!)) /
               2);
-      final Uint8List markerIcon = await _navigationProvider.getBytesFromAsset(
-          'assets/icons/my_location.png', 200);
+      final Uint8List markerIcon =
+          await getBytesFromAsset('assets/icons/my_location.png', 200);
 
       myPositionIcon = BitmapDescriptor.fromBytes(markerIcon);
 
@@ -76,12 +77,12 @@ class _NavigationPageState extends State<NavigationPage> {
   }
 
   Future setRouteMarkers() async {
-    final Uint8List turnMarkerIcon = await _navigationProvider
-        .getBytesFromAsset('assets/icons/marker_orange.png', 80);
-    final Uint8List startMarkerIcon = await _navigationProvider
-        .getBytesFromAsset('assets/icons/marker_start.png', 80);
-    final Uint8List destinationMarkerIcon = await _navigationProvider
-        .getBytesFromAsset('assets/icons/marker_destination.png', 80);
+    final Uint8List turnMarkerIcon =
+        await getBytesFromAsset('assets/icons/marker_orange.png', 80);
+    final Uint8List startMarkerIcon =
+        await getBytesFromAsset('assets/icons/marker_start.png', 80);
+    final Uint8List destinationMarkerIcon =
+        await getBytesFromAsset('assets/icons/marker_destination.png', 80);
 
     List<Marker> markerList = _navigationProvider.course
         .map((course) => Marker(
@@ -154,11 +155,15 @@ class _NavigationPageState extends State<NavigationPage> {
             appBar: AppBar(
               shadowColor: const Color.fromRGBO(255, 255, 255, 0.5),
               backgroundColor: Colors.white,
-              title: Image.asset(
-                'assets/icons/logo.png',
-                width: 100,
-              ),
-              elevation: 10,
+              title: Container(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 50, 0),
+                  width: MediaQuery.of(context).size.width,
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    'assets/icons/logo.png',
+                    height: 25,
+                  )),
+              leadingWidth: 50,
               leading: IconButton(
                 onPressed: () {
                   if (_navigationProvider.ridingState == RidingState.before) {
@@ -170,6 +175,7 @@ class _NavigationPageState extends State<NavigationPage> {
                 icon: const Icon(Icons.arrow_back),
                 color: const Color.fromRGBO(240, 120, 5, 1),
               ),
+              elevation: 10,
             ),
             body: _navigationProvider.searchRouteState ==
                     SearchRouteState.loading
@@ -318,7 +324,6 @@ class _NavigationPageState extends State<NavigationPage> {
         },
       );
     } else {
-      double width = MediaQuery.of(context).size.width;
       return Container(
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
           child: Column(
@@ -360,10 +365,7 @@ class _NavigationPageState extends State<NavigationPage> {
                               children: [
                                 const Text('남은거리', style: titleStyle),
                                 Text(
-                                  ((((_navigationProvider.remainedDistance) /
-                                                  100)
-                                              .roundToDouble()) /
-                                          10)
+                                  ("${(((_navigationProvider.remainedDistance) / 100).roundToDouble()) / 10}km")
                                       .toString(),
                                   style: dataStyle,
                                 )
@@ -377,9 +379,7 @@ class _NavigationPageState extends State<NavigationPage> {
                                   style: titleStyle,
                                 ),
                                 Text(
-                                  _ridingProvider.speed
-                                      .roundToDouble()
-                                      .toString(),
+                                  "${_ridingProvider.speed.roundToDouble()}km/h",
                                   style: dataStyle,
                                 )
                               ],

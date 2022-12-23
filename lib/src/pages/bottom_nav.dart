@@ -24,10 +24,12 @@ class BottomNavigation extends StatelessWidget {
       appBar: AppBar(
         shadowColor: const Color.fromRGBO(255, 255, 255, 0.5),
         backgroundColor: Colors.white,
-        title: Image.asset(
-          'assets/icons/logo.png',
-          width: 100,
-        ),
+        title: Container(
+            width: MediaQuery.of(context).size.width,
+            child: Image.asset(
+              'assets/icons/logo.png',
+              height: 25,
+            )),
         elevation: 10,
       ),
       body: SafeArea(
