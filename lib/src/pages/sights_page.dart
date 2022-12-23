@@ -141,7 +141,7 @@ class SightsPage extends StatelessWidget {
       try {
         await Future.forEach(sightsProvider.sightList, (place) async {
           final customIcon =
-              await CustomMarker().getPictuerMarker(place.image!);
+              await CustomMarker().getPictuerMarker(place.marker!);
           markers.add(Marker(
               markerId: MarkerId(place.title ?? "marker"),
               icon: customIcon,
