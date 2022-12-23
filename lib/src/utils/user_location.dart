@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 import 'package:geolocator/geolocator.dart';
 
 class MyLocation {
-  late Position? position;
+  Position? position;
 
   static final MyLocation _instance = MyLocation._internal();
   factory MyLocation() {

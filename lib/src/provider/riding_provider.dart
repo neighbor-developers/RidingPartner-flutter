@@ -31,11 +31,6 @@ class RidingProvider with ChangeNotifier {
 
   bool isDisposed = false;
 
-  late int _startTime; // 라이딩 시작 타임스탬프
-  late int _endTime; // 라이딩 중단 타임스탬프
-  late int _restartTime = 0; // 라이딩 시작 타임스탬프
-  late int _pauseTime = 0; // 라이딩 시작 타임스탬프
-
   late LatLng _befLatLng;
 
   late Timer _timer;
@@ -89,27 +84,22 @@ class RidingProvider with ChangeNotifier {
 
   Future<void> getLocation() async {
     _position = MyLocation().position;
+    if (_position != null) {
+      _befLatLng = LatLng(_position!.latitude, position!.longitude);
+    }
   }
 
   Future<void> startRiding() async {
     _befTime = DateTime.now().millisecondsSinceEpoch; // 이전 시간 저장용
     setRidingState(RidingState.riding);
 
-    if (_ridingState == RidingState.pause) {
-      // 재시작일때
-      _restartTime = _befTime;
-    } else {
-      _startTime = _befTime;
+    if (_ridingState == RidingState.before) {
       _ridingDate =
           DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()); //format변경
     }
-
     // setCustomMarker();
 
     _positionStream.controller.stream.listen((pos) {
-      if (_position == null) {
-        _befLatLng = LatLng(pos.latitude, pos.longitude);
-      }
       _position = pos;
       _polylineCoordinates
           .add(google_map.LatLng(_position!.latitude, _position!.longitude));
@@ -125,6 +115,7 @@ class RidingProvider with ChangeNotifier {
       }
       if (isDisposed) return;
       notifyListeners();
+      print('noti');
       _time = _stopwatch.elapsed;
       if (_time.inSeconds / 60 == 0) {
         _saveRecord();
@@ -175,7 +166,6 @@ class RidingProvider with ChangeNotifier {
     setRidingState(RidingState.pause);
     _stopwatch.stop();
     _timer.cancel();
-    _pauseTime = DateTime.now().millisecondsSinceEpoch;
   }
 
 /*  void addPolyline(){

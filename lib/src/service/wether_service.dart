@@ -20,7 +20,7 @@ class OpenWeatherService {
     }
 
     final result = await NetworkHelper().getData(
-        '$_baseUrl?lat=${myLocation.position!.latitude}&lon=${myLocation.position!.longitude}&appid=$_apiKey&units=metric');
+        '$_baseUrl?lat=${myLocation.position?.latitude}&lon=${myLocation.position?.longitude}&appid=$_apiKey&units=metric');
     return result;
   }
 }
