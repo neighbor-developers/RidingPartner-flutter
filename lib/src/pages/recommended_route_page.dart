@@ -30,12 +30,11 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
                 topLeft: Radius.circular(15.0),
                 topRight: Radius.circular(15.0))),
         builder: (BuildContext context) => Container(
-              height: 550,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Container(
-                      padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                      padding: const EdgeInsets.fromLTRB(30, 30, 30, 0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
