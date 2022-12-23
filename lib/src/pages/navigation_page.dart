@@ -150,6 +150,32 @@ class _NavigationPageState extends State<NavigationPage> {
       setController();
     }
 
+    Widget failMessageWidget() {
+      switch (_navigationProvider.searchRouteState) {
+        case SearchRouteState.loading:
+          return const Center(
+            child: CircularProgressIndicator(
+                color: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32)),
+          );
+        case SearchRouteState.empty:
+          return Center(
+              child: Text("원하는 경로가 없어요!\n다시 검색해주세요",
+                  style: plainStyle, textAlign: TextAlign.center));
+        case SearchRouteState.fail:
+          return Center(
+              child: Text("경로를 불러오는데에 실패했습니다\n네트워크 상태를 체크해주세요",
+                  style: plainStyle, textAlign: TextAlign.center));
+        case SearchRouteState.locationFail:
+          return Center(
+              child: Text("GPS 상태가 원활하지 않습니다.",
+                  style: plainStyle, textAlign: TextAlign.center));
+        default:
+          return Center(
+              child: Text("같은 에러가 반복되면문의해주세요",
+                  style: plainStyle, textAlign: TextAlign.center));
+      }
+    }
+
     return WillPopScope(
         child: Scaffold(
             appBar: AppBar(
@@ -178,60 +204,39 @@ class _NavigationPageState extends State<NavigationPage> {
               elevation: 10,
             ),
             body: _navigationProvider.searchRouteState ==
-                    SearchRouteState.loading
-                ? const Center(
-                    child: CircularProgressIndicator(
-                        color: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32)),
+                    SearchRouteState.success
+                ? Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: <Widget>[
+                      GoogleMap(
+                        mapType: MapType.normal,
+                        initialCameraPosition: CameraPosition(
+                            target: initCameraPosition, zoom: 13),
+                        polylines: {
+                          Polyline(
+                              polylineId: const PolylineId("route"),
+                              color:
+                                  const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+                              width: polylineWidth,
+                              startCap: Cap.roundCap,
+                              endCap: Cap.roundCap,
+                              points: _navigationProvider.polylinePoints)
+                        },
+                        onMapCreated: (GoogleMapController controller) {
+                          _controller.complete(controller);
+                        },
+                        myLocationButtonEnabled: false,
+                        myLocationEnabled: false,
+                        markers: markers,
+                        compassEnabled: false,
+                      ),
+                      Positioned(top: 0, child: guideWidget()),
+                      Positioned(
+                          bottom: 0, child: record(_ridingProvider.state))
+                      // changeButton(_navigationProvider.ridingState)
+                    ],
                   )
-                : _navigationProvider.searchRouteState == SearchRouteState.empty
-                    ? Center(
-                        child: Text("원하는 경로가 없어요!\n다시 검색해주세요",
-                            style: plainStyle, textAlign: TextAlign.center))
-                    : _navigationProvider.searchRouteState ==
-                            SearchRouteState.fail
-                        ? Center(
-                            child: Text("경로를 불러오는데에 실패했습니다\n네트워크 상태를 체크해주세요",
-                                style: plainStyle, textAlign: TextAlign.center))
-                        : _navigationProvider.searchRouteState ==
-                                SearchRouteState.locationFail
-                            ? Center(
-                                child: Text("GPS 상태가 원활하지 않습니다.",
-                                    style: plainStyle,
-                                    textAlign: TextAlign.center))
-                            : Stack(
-                                alignment: Alignment.bottomCenter,
-                                children: <Widget>[
-                                  GoogleMap(
-                                    mapType: MapType.normal,
-                                    initialCameraPosition: CameraPosition(
-                                        target: initCameraPosition, zoom: 13),
-                                    polylines: {
-                                      Polyline(
-                                          polylineId: const PolylineId("route"),
-                                          color: const Color.fromARGB(
-                                              0xFF, 0xFB, 0x95, 0x32),
-                                          width: polylineWidth,
-                                          startCap: Cap.roundCap,
-                                          endCap: Cap.roundCap,
-                                          points: _navigationProvider
-                                              .polylinePoints)
-                                    },
-                                    onMapCreated:
-                                        (GoogleMapController controller) {
-                                      _controller.complete(controller);
-                                    },
-                                    myLocationButtonEnabled: false,
-                                    myLocationEnabled: false,
-                                    markers: markers,
-                                    compassEnabled: false,
-                                  ),
-                                  Positioned(top: 0, child: guideWidget()),
-                                  Positioned(
-                                      bottom: 0,
-                                      child: record(_ridingProvider.state))
-                                  // changeButton(_navigationProvider.ridingState)
-                                ],
-                              )),
+                : failMessageWidget()),
         onWillPop: () async {
           if (_navigationProvider.ridingState == RidingState.before) {
             Navigator.pop(context);

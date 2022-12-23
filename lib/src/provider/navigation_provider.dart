@@ -86,6 +86,7 @@ class NavigationProvider with ChangeNotifier {
   }
 
   Future<void> getRoute() async {
+    final myLocation = MyLocation();
     _goalDestination = _ridingCourse.first;
     _finalDestination = _ridingCourse.last;
     if (_ridingCourse.length > 1) {
@@ -94,19 +95,16 @@ class NavigationProvider with ChangeNotifier {
     isFirst = true;
 
     try {
-      _position ??= await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.best,
-          timeLimit: Duration(seconds: 5));
+      myLocation.getMyCurrentLocation();
+      _position = myLocation.position;
     } catch (e) {
       print(e.toString());
-      MyLocation().cheakPermission();
+      myLocation.checkPermission();
       _position = null;
       _searchRouteState = SearchRouteState.locationFail;
       notifyListeners();
       return;
     }
-
-    // getMyLocationAddress(_position);
 
     Place startPlace = Place(
         id: null,
@@ -115,21 +113,23 @@ class NavigationProvider with ChangeNotifier {
         longitude: _position!.longitude.toString(),
         jibunAddress: null);
 
-    num distanceToCourseStart = _calDistance.as(
-        LengthUnit.Meter,
-        LatLng(_position!.latitude, _position!.longitude),
-        LatLng(double.parse(_ridingCourse.first.latitude!),
-            double.parse(_ridingCourse.first.longitude!)));
+    if (_ridingCourse.length > 1) {
+      num distanceToCourseStart = _calDistance.as(
+          LengthUnit.Meter,
+          LatLng(_position!.latitude, _position!.longitude),
+          LatLng(double.parse(_ridingCourse.first.latitude!),
+              double.parse(_ridingCourse.first.longitude!)));
 
-    num distanceToCourseLast = _calDistance.as(
-        LengthUnit.Meter,
-        LatLng(_position!.latitude, _position!.longitude),
-        LatLng(double.parse(_ridingCourse.last.latitude!),
-            double.parse(_ridingCourse.last.longitude!)));
+      num distanceToCourseLast = _calDistance.as(
+          LengthUnit.Meter,
+          LatLng(_position!.latitude, _position!.longitude),
+          LatLng(double.parse(_ridingCourse.last.latitude!),
+              double.parse(_ridingCourse.last.longitude!)));
 
-    // 출발지보다 도착지가 더 가까울때 반대로 안내
-    if (distanceToCourseLast < distanceToCourseStart) {
-      _ridingCourse = List.from(_ridingCourse.reversed);
+      // 출발지보다 도착지가 더 가까울때 반대로 안내
+      if (distanceToCourseLast < distanceToCourseStart) {
+        _ridingCourse = List.from(_ridingCourse.reversed);
+      }
     }
 
     Map<String, dynamic> response = await _naverMapService
