@@ -2,10 +2,8 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/pages/record_page.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
@@ -27,7 +25,7 @@ class RidingPage extends StatefulWidget {
 }
 
 class _RidingPageState extends State<RidingPage> {
-  late Completer<GoogleMapController> _controller;
+  Completer<GoogleMapController> _controller = Completer();
   late RidingProvider _ridingProvider;
   LatLng initCameraPosition = const LatLng(37.37731944, 126.8050778);
   Set<Marker> myPositionMarker = {};
@@ -201,13 +199,7 @@ class _RidingPageState extends State<RidingPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            AnimatedContainer(
-              curve: Curves.fastOutSlowIn,
-              duration: const Duration(milliseconds: 300),
-              transform: Matrix4.translationValues(
-                  0, _ridingProvider.visivility ? 0 : 140, 0),
-              child: buttons(state),
-            ),
+            buttons(state),
             Container(
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(20),
@@ -305,60 +297,67 @@ class _RidingPageState extends State<RidingPage> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          InkWell(
-              onTap: () {
-                _ridingProvider.setVisivility();
-                if (state == RidingState.riding) {
-                  _ridingProvider.pauseRiding();
-                } else {
-                  _ridingProvider.startRiding();
-                }
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                decoration: const BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                        spreadRadius: 1,
-                        blurRadius: 3,
-                        offset: Offset(1, 1),
-                        color: Color.fromRGBO(0, 41, 135, 0.047))
-                  ],
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(7)),
+          Visibility(
+            visible: _ridingProvider.visivility,
+            child: InkWell(
+                onTap: () {
+                  _ridingProvider.setVisivility();
+                  if (state == RidingState.riding) {
+                    _ridingProvider.pauseRiding();
+                  } else {
+                    _ridingProvider.startRiding();
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  decoration: const BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                          spreadRadius: 1,
+                          blurRadius: 3,
+                          offset: Offset(1, 1),
+                          color: Color.fromRGBO(0, 41, 135, 0.047))
+                    ],
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(7)),
+                  ),
+                  child: Text(text, style: testStyle),
+                )),
+          ),
+          Visibility(
+              maintainState: true,
+              maintainAnimation: true,
+              visible: _ridingProvider.visivility,
+              child: InkWell(
+                onTap: () {
+                  screenKeepOff();
+                  _ridingProvider.stopAndSaveRiding();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ChangeNotifierProvider(
+                                create: (context) => RidingResultProvider(
+                                    _ridingProvider.ridingDate),
+                                child: RecordPage(),
+                              )));
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  margin: EdgeInsets.symmetric(vertical: 15),
+                  decoration: const BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                          spreadRadius: 1,
+                          blurRadius: 3,
+                          offset: Offset(1, 1),
+                          color: Color.fromRGBO(0, 41, 135, 0.047))
+                    ],
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(7)),
+                  ),
+                  child: Text('종료', style: testStyle),
                 ),
-                child: Text(text, style: testStyle),
-              )),
-          InkWell(
-            onTap: () {
-              screenKeepOff();
-              _ridingProvider.stopAndSaveRiding();
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ChangeNotifierProvider(
-                            create: (context) => RidingResultProvider(
-                                _ridingProvider.ridingDate),
-                            child: RecordPage(),
-                          )));
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              margin: EdgeInsets.symmetric(vertical: 15),
-              decoration: const BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                      spreadRadius: 1,
-                      blurRadius: 3,
-                      offset: Offset(1, 1),
-                      color: Color.fromRGBO(0, 41, 135, 0.047))
-                ],
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(7)),
-              ),
-              child: Text('종료', style: testStyle),
-            ),
-          )
+              ))
         ],
       );
     } else {
