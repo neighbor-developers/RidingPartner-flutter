@@ -11,6 +11,7 @@ class Place {
   String? description;
   String? image;
   String? marker;
+  String? type;
 
   Place({
     this.id,
@@ -21,7 +22,8 @@ class Place {
     this.roadAddress,
     this.description,
     this.image,
-    this.marker
+    this.marker,
+    this.type
   });
 
   factory Place.fromJson(Map<String, dynamic> json) => Place(
@@ -34,6 +36,7 @@ class Place {
         description: json["description"],
         image: json["image"],
         marker: json["marker"],
+        type: json["type"]
       );
 
   factory Place.fromDB(db) => Place(
@@ -45,7 +48,8 @@ class Place {
         roadAddress: db?["roadAddress"],
         description: db?["description"],
         image: db?["image"],
-        marker: db?["marker"]
+        marker: db?["marker"],
+        type: db?["type"]
       );
 }
 
