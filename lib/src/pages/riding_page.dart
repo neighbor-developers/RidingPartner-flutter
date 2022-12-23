@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -11,6 +12,8 @@ import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../provider/riding_result_provider.dart';
+import '../utils/bytesFromAsset.dart';
+import '../utils/timestampToText.dart';
 import '../utils/user_location.dart';
 import '../widgets/dialog.dart';
 
@@ -24,39 +27,94 @@ class RidingPage extends StatefulWidget {
 }
 
 class _RidingPageState extends State<RidingPage> {
-  late Completer<GoogleMapController> _controller = Completer();
+  late Completer<GoogleMapController> _controller;
   late RidingProvider _ridingProvider;
+  LatLng initCameraPosition = const LatLng(37.37731944, 126.8050778);
+  Set<Marker> myPositionMarker = {};
+  late BitmapDescriptor myPositionIcon;
+
+  @override
+  void initState() {
+    super.initState();
+    setMapComponent();
+  }
+
+  setMapComponent() async {
+    await Provider.of<RidingProvider>(context, listen: false).getLocation();
+
+    if (_ridingProvider.position != null) {
+      initCameraPosition = LatLng(_ridingProvider.position!.latitude,
+          _ridingProvider.position!.longitude);
+      final Uint8List markerIcon =
+          await getBytesFromAsset('assets/icons/my_location.png', 200);
+      myPositionIcon = BitmapDescriptor.fromBytes(markerIcon);
+
+      myPositionMarker.add(Marker(
+          markerId: const MarkerId("currentLocation"),
+          icon: BitmapDescriptor.fromBytes(markerIcon),
+          position: LatLng(_ridingProvider.position!.latitude,
+              _ridingProvider.position!.longitude)));
+      _ridingProvider.setMapComponent();
+    } else {
+      initCameraPosition = const LatLng(37.37731944, 126.8050778);
+    }
+  }
 
   final myLocation = MyLocation();
 
   String floatBtnLabel = "일시중지";
   IconData floatBtnIcon = Icons.pause;
+  double bearing = 180;
 
   @override
   Widget build(BuildContext context) {
     _ridingProvider = Provider.of<RidingProvider>(context);
     Position? position = _ridingProvider.position;
 
-    void _setController() async {
+    void setController() async {
       GoogleMapController googleMapController = await _controller.future;
       if (position != null) {
+        if (_ridingProvider.bearingPoint != null) {
+          bearing = Geolocator.bearingBetween(
+              position.latitude,
+              position.longitude,
+              _ridingProvider.bearingPoint!.latitude,
+              _ridingProvider.bearingPoint!.longitude);
+        }
         googleMapController.animateCamera(CameraUpdate.newCameraPosition(
             CameraPosition(
+                target: LatLng(position.latitude, position.longitude),
                 zoom: 19,
-                target: LatLng(position.latitude, position.longitude))));
+                bearing: bearing)));
+
+        myPositionMarker = {
+          Marker(
+              markerId: const MarkerId("currentLocation"),
+              icon: myPositionIcon,
+              position: LatLng(_ridingProvider.position!.latitude,
+                  _ridingProvider.position!.longitude))
+        };
       }
     }
 
     if (_ridingProvider.state != RidingState.before) {
-      _setController();
+      setController();
     }
 
     return WillPopScope(
         child: Scaffold(
-            extendBodyBehindAppBar: true,
             appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
+              shadowColor: const Color.fromRGBO(255, 255, 255, 0.5),
+              backgroundColor: Colors.white,
+              title: Container(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 50, 0),
+                  width: MediaQuery.of(context).size.width,
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    'assets/icons/logo.png',
+                    height: 25,
+                  )),
+              leadingWidth: 50,
               leading: IconButton(
                 onPressed: () {
                   if (_ridingProvider.state == RidingState.before) {
@@ -65,13 +123,11 @@ class _RidingPageState extends State<RidingPage> {
                     backDialog(context, "라이딩을 중단하시겠습니까?\n기록은 삭제됩니다");
                   }
                 },
-                icon: Icon(Icons.arrow_back),
-                color: Colors.indigo.shade900,
+                icon: const Icon(Icons.arrow_back),
+                color: const Color.fromRGBO(240, 120, 5, 1),
               ),
+              elevation: 10,
             ),
-            floatingActionButton: floatingButtons(_ridingProvider.state),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.miniEndFloat,
             body: Stack(
               children: <Widget>[
                 GoogleMap(
@@ -84,87 +140,15 @@ class _RidingPageState extends State<RidingPage> {
                   onMapCreated: (GoogleMapController controller) {
                     _controller.complete(controller);
                   },
-                  myLocationButtonEnabled: true,
-                  myLocationEnabled: true,
                   polylines: {
                     Polyline(
                         polylineId: PolylineId("poly"),
                         width: 5,
                         points: _ridingProvider.polylineCoordinates),
                   },
-                  markers: {
-                    // Marker(
-                    //     markerId: const MarkerId("currentLocation"),
-                    //     icon: BitmapDescriptor.fromBytes(),
-                    //     position: LatLng(
-                    //         _ridingProvider.position?.latitude ?? 37.343991285297,
-                    //         _ridingProvider.position?.longitude ?? 126.74729588817))
-                  },
+                  markers: myPositionMarker,
                 ),
-                Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Column(children: [
-                      startButton(_ridingProvider.state),
-                      record(),
-                      // changeButton(_navigationProvider.ridingState)
-                    ])),
-                Positioned(
-                  // 위치 지정하기
-                  child: FractionallySizedBox(
-                      alignment: Alignment.bottomLeft,
-                      widthFactor: 0.5,
-                      heightFactor: 0.23,
-                      child: Container(
-                        color: Colors.white,
-                        child: Column(
-                          children: <Widget>[
-                            Row(children: <Widget>[
-                              Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: SizedBox(
-                                      child: Text("${_ridingProvider.speed}",
-                                          style:
-                                              const TextStyle(fontSize: 23)))),
-                              //Spacer(flex: ),
-                              const Text("속도")
-                            ]),
-                            Row(children: <Widget>[
-                              Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: SizedBox(
-                                      child: Text(
-                                          "${_ridingProvider.distance}km",
-                                          style:
-                                              const TextStyle(fontSize: 23)))),
-                              const Text("거리")
-                            ]),
-                            Row(children: <Widget>[
-                              Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: SizedBox(
-                                      child: Text(
-                                          "${_ridingProvider.speed}km/h",
-                                          style:
-                                              const TextStyle(fontSize: 23)))),
-                              const Text("평균속도")
-                            ]),
-                            Row(children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(5),
-                                child: SizedBox(
-                                    child: Text(
-                                        "${_ridingProvider.time}"
-                                            .substring(0, 7),
-                                        style: const TextStyle(fontSize: 23))),
-                              ),
-                              const Text("시간")
-                            ])
-                          ],
-                        ),
-                      )),
-                ),
+                Positioned(bottom: 0, child: record(_ridingProvider.state))
               ],
             )),
         onWillPop: () async {
@@ -177,57 +161,175 @@ class _RidingPageState extends State<RidingPage> {
         });
   }
 
-  Widget? floatingButtons(RidingState state) {
+  Widget record(RidingState state) {
+    const TextStyle titleStyle = TextStyle(
+        fontFamily: 'Pretendard',
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        color: Color.fromRGBO(134, 142, 150, 1));
+    const TextStyle dataStyle = TextStyle(
+        fontFamily: 'Pretendard',
+        fontSize: 18,
+        fontWeight: FontWeight.w400,
+        color: Color.fromRGBO(52, 58, 64, 1));
+
+    if (state == RidingState.before) {
+      return InkWell(
+        child: Container(
+          color: const Color.fromRGBO(240, 120, 5, 1),
+          alignment: Alignment.center,
+          width: MediaQuery.of(context).size.width,
+          height: 61,
+          child: const Text(
+            '안내 시작',
+            style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w700,
+                fontSize: 18),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        onTap: () {
+          _ridingProvider.startRiding();
+          screenKeepOn();
+        },
+      );
+    } else {
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            AnimatedContainer(
+              curve: Curves.fastOutSlowIn,
+              duration: const Duration(milliseconds: 300),
+              transform: Matrix4.translationValues(
+                  0, _ridingProvider.visivility ? 0 : 140, 0),
+              child: buttons(state),
+            ),
+            Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(20),
+                decoration: const BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                        spreadRadius: 1,
+                        blurRadius: 3,
+                        offset: Offset(1, 1),
+                        color: Color.fromRGBO(0, 41, 135, 0.047))
+                  ],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                child: Container(
+                    width: MediaQuery.of(context).size.width - 80,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text('거리', style: titleStyle),
+                            Text("${_ridingProvider.distance}km",
+                                style: dataStyle)
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text(
+                              '주행 속도',
+                              style: titleStyle,
+                            ),
+                            Text(
+                              "${_ridingProvider.speed.roundToDouble()}km/h",
+                              style: dataStyle,
+                            )
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text(
+                              '주행 시간',
+                              style: titleStyle,
+                            ),
+                            Text(
+                              timestampToText(_ridingProvider.time.inSeconds),
+                              style: dataStyle,
+                            )
+                          ],
+                        ),
+                        InkWell(
+                          onTap: () {
+                            _ridingProvider.setVisivility();
+                          },
+                          child: Container(
+                            width: 18,
+                            child: Image.asset('assets/icons/menu_bar.png',
+                                fit: BoxFit.fitWidth),
+                          ),
+                        )
+                      ],
+                    )))
+          ],
+        ),
+      );
+    }
+  }
+
+  Widget buttons(RidingState state) {
+    String text = "일시정지";
+    const TextStyle testStyle = TextStyle(
+        color: Color.fromRGBO(52, 58, 64, 1),
+        fontFamily: 'Pretended',
+        fontWeight: FontWeight.w600,
+        fontSize: 16);
+
     switch (state) {
       case RidingState.riding:
         {
-          floatBtnLabel = "일시중지";
-          floatBtnIcon = Icons.pause;
+          text = "일시중지";
           break;
         }
       case RidingState.pause:
         {
-          floatBtnLabel = "재시작";
-          floatBtnIcon = Icons.restart_alt;
+          text = "이어서 시작";
           break;
         }
       default:
     }
     if (state != RidingState.before) {
-      return SpeedDial(
-        animatedIcon: AnimatedIcons.menu_close,
-        visible: true,
-        curve: Curves.bounceIn,
-        backgroundColor: Colors.indigo.shade900,
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          SpeedDialChild(
-              child: Icon(floatBtnIcon, color: Colors.white),
-              label: floatBtnLabel,
-              labelStyle: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                  fontSize: 13.0),
-              backgroundColor: Colors.indigo.shade900,
-              labelBackgroundColor: Colors.indigo.shade900,
+          InkWell(
               onTap: () {
+                _ridingProvider.setVisivility();
                 if (state == RidingState.riding) {
                   _ridingProvider.pauseRiding();
                 } else {
                   _ridingProvider.startRiding();
                 }
-              }),
-          SpeedDialChild(
-            child: Icon(
-              Icons.stop,
-              color: Colors.white,
-            ),
-            label: "종료",
-            backgroundColor: Colors.indigo.shade900,
-            labelBackgroundColor: Colors.indigo.shade900,
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 13.0),
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                decoration: const BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                        spreadRadius: 1,
+                        blurRadius: 3,
+                        offset: Offset(1, 1),
+                        color: Color.fromRGBO(0, 41, 135, 0.047))
+                  ],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(7)),
+                ),
+                child: Text(text, style: testStyle),
+              )),
+          InkWell(
             onTap: () {
               screenKeepOff();
               _ridingProvider.stopAndSaveRiding();
@@ -240,11 +342,30 @@ class _RidingPageState extends State<RidingPage> {
                             child: RecordPage(),
                           )));
             },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              margin: EdgeInsets.symmetric(vertical: 15),
+              decoration: const BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                      spreadRadius: 1,
+                      blurRadius: 3,
+                      offset: Offset(1, 1),
+                      color: Color.fromRGBO(0, 41, 135, 0.047))
+                ],
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(7)),
+              ),
+              child: Text('종료', style: testStyle),
+            ),
           )
         ],
       );
     } else {
-      return null;
+      return SizedBox(
+        height: 0,
+        width: 0,
+      );
     }
   }
 
@@ -258,65 +379,5 @@ class _RidingPageState extends State<RidingPage> {
     if (await Wakelock.enabled) {
       Wakelock.disable();
     }
-  }
-
-  Widget startButton(RidingState state) {
-    if (state == RidingState.before) {
-      return Container(
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        ElevatedButton(
-          onPressed: () {
-            _ridingProvider.startRiding();
-            screenKeepOn();
-          },
-          child: Text('시작'),
-        ),
-      ]));
-    } else {
-      return Container();
-    }
-  }
-
-  Widget record() {
-    return Column(
-      children: [
-        ridingProgress(),
-        Container(
-          height: 100,
-          color: Colors.white,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "남은거리 : , 속도 : ${_ridingProvider.speed.toString()}",
-                style: TextStyle(fontSize: 20, color: Colors.indigo.shade900),
-              )
-            ],
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget ridingProgress() {
-    double percent = _ridingProvider.distance / 10000;
-    return Column(
-      children: [
-        Container(
-          alignment: FractionalOffset(percent, 1 - percent),
-          child: FractionallySizedBox(
-              child: Image.asset('assets/icons/riding_character.png',
-                  width: 30, height: 30, fit: BoxFit.cover)),
-        ),
-        LinearPercentIndicator(
-          padding: EdgeInsets.zero,
-          percent: percent,
-          lineHeight: 10,
-          backgroundColor: Colors.black38,
-          progressColor: Colors.indigo.shade900,
-          width: MediaQuery.of(context).size.width,
-        )
-      ],
-    );
   }
 }

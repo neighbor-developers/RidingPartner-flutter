@@ -12,6 +12,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
 import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
+import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 
 import '../models/position_stream.dart';
 
@@ -40,8 +41,10 @@ class RidingProvider with ChangeNotifier {
   late Timer _timer;
   final Stopwatch _stopwatch = Stopwatch();
   late int _befTime;
+  bool visivility = false;
+  LatLng? _bearingPoint;
 
-  //final 붙여도 되나?
+  //final 붙여도 되나? -> 안돼요
   List<google_map.LatLng> _polylineCoordinates = [];
   List<google_map.LatLng> get polylineCoordinates => _polylineCoordinates;
   PolylinePoints polylinePoints = PolylinePoints();
@@ -56,6 +59,7 @@ class RidingProvider with ChangeNotifier {
   Duration get time => _time;
   RidingState get state => _ridingState;
   Position? get position => _position;
+  LatLng? get bearingPoint => _bearingPoint;
 
   Uint8List? customIcon;
   google_map.BitmapDescriptor pictureIcon =
@@ -66,12 +70,25 @@ class RidingProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  setMapComponent() {
+    notifyListeners();
+  }
+
+  void setVisivility() {
+    visivility = !visivility;
+    notifyListeners();
+  }
+
   @override
   void dispose() {
     isDisposed = true;
     _positionStream.dispose();
     _stopwatch.stop();
     super.dispose();
+  }
+
+  Future<void> getLocation() async {
+    _position = MyLocation().position;
   }
 
   Future<void> startRiding() async {
