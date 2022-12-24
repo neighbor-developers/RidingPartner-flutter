@@ -138,6 +138,7 @@ class _RidingPageState extends State<RidingPage> {
                   onMapCreated: (GoogleMapController controller) {
                     _controller.complete(controller);
                   },
+                  myLocationButtonEnabled: false,
                   polylines: {
                     Polyline(
                         polylineId: PolylineId("poly"),
