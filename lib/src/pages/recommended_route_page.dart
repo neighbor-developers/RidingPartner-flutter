@@ -14,166 +14,186 @@ class RecommendedRoutePage extends StatefulWidget {
 }
 
 class RecommendedRoutePageState extends State<StatefulWidget> {
+  late RouteListState state;
+  late RouteListProvider routeListProvider;
   @override
   Widget build(BuildContext context) {
-    final routeListProvider = Provider.of<RouteListProvider>(context);
-    final state = routeListProvider.state;
+    routeListProvider = Provider.of<RouteListProvider>(context);
+    state = routeListProvider.state;
 
     if (state == RouteListState.searching) {
       routeListProvider.getRouteList();
     }
 
-    void routeDialog(RidingRoute route) => showModalBottomSheet<void>(
-        context: context,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15.0),
-                topRight: Radius.circular(15.0))),
-        builder: (BuildContext context) => Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(
-                      padding: const EdgeInsets.fromLTRB(30, 30, 30, 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            route.title!,
-                            style: TextStyle(
-                                fontSize: 22.0, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 5.0),
-                          Text(
-                            route.description!,
-                          ),
-                          const SizedBox(height: 5.0),
-                          Text(
-                            route.route!.join(' > '),
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                          const SizedBox(height: 5.0),
-                          Divider(color: Colors.grey, thickness: 1.0),
-                          const SizedBox(height: 5.0),
-                          Image.asset(route.image!),
-                          const SizedBox(height: 5.0),
-                          Text(route.description!),
-                        ],
-                      )),
-                  InkWell(
-                      onTap: () async {
-                        final placeList =
-                            await routeListProvider.getPlaceList(route.route!);
-                        if (!mounted) return;
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MultiProvider(
-                                      providers: [
-                                        ChangeNotifierProvider(
-                                            create: (context) =>
-                                                NavigationProvider(placeList)),
-                                        ChangeNotifierProvider(
-                                            create: (context) =>
-                                                RidingProvider())
-                                      ],
-                                      child: NavigationPage(),
-                                    )));
-                      },
-                      child: Container(
-                          alignment: Alignment.center,
-                          width: MediaQuery.of(context).size.width,
-                          height: 60,
-                          color: Colors.orange,
-                          child: Text('안내 시작',
-                              style: TextStyle(
-                                  fontFamily: 'Pretended',
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold))))
-                ],
-              ),
-            ));
-
-    Widget messageWidget(String message) => Container(
-          height: 100,
-          alignment: Alignment.center,
-          child: Text(
-            message,
-            style: TextStyle(fontSize: 30),
-          ),
-        );
-
-    Widget listCard(RidingRoute route) => Container(
-        child: Card(
-            semanticContainer: true,
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: InkWell(
-                onTap: () {
-                  routeDialog(route);
-                },
-                child: Stack(fit: StackFit.expand, children: <Widget>[
-                  Image.asset(
-                    route.image!,
-                    fit: BoxFit.fill,
-                  ),
-                  Align(
-                      alignment: Alignment.bottomRight,
-                      child: Text(
-                        route.title! + "  ",
-                        style: TextStyle(color: Colors.white),
-                      )),
-                ]))));
-
-    Widget routeListWidget() {
-      if (state == RouteListState.searching) {
-        return messageWidget("Loading");
-      } else if (state == RouteListState.empty) {
-        return messageWidget("Loading");
-      } else {
-        final routeList = routeListProvider.routeList;
-        return Expanded(
-            child: GridView.builder(
-                scrollDirection: Axis.vertical,
-                padding: const EdgeInsets.all(10),
-                itemCount: routeList.length,
-                itemBuilder: (BuildContext context, index) =>
-                    listCard(routeList[index]),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 4 / 3,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10)));
-      }
-    }
-
-    Widget recommendTitleWidget() => Container(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-          child: Column(children: [
-            Text("라이딩파트너와 함께",
-                style: TextStyle(
-                    fontFamily: 'Pretended',
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold)),
-            Text("오늘도 달려볼까요?",
-                style: TextStyle(
-                    fontFamily: 'Pretended',
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold)),
-          ]),
-        );
-
     return Scaffold(
-        body: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        recommendTitleWidget(),
-        routeListWidget(),
-      ],
-    ));
+        body: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                recommendTitleWidget(),
+                routeListWidget(),
+              ],
+            )));
   }
+
+  Widget messageWidget(String message) => Container(
+        height: 100,
+        alignment: Alignment.center,
+        child: Text(
+          message,
+          style: const TextStyle(fontSize: 30),
+        ),
+      );
+
+  void routeDialog(RidingRoute route) => showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0))),
+      builder: (BuildContext context) => Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                  padding: const EdgeInsets.fromLTRB(24, 38, 24, 30),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        route.title!,
+                        style: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        route.description!,
+                        style: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        route.route!.join(' > '),
+                        style: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Color.fromRGBO(51, 51, 51, 0.5)),
+                      ),
+                      const SizedBox(height: 16.0),
+                      const Divider(
+                        color: Color.fromRGBO(233, 236, 239, 1),
+                        thickness: 1.0,
+                      ),
+                      const SizedBox(height: 16.0),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.asset(
+                          route.image!,
+                          height: 160.0,
+                          width: MediaQuery.of(context).size.width,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ],
+                  )),
+              InkWell(
+                  onTap: () async {
+                    final placeList =
+                        await routeListProvider.getPlaceList(route.route!);
+                    if (!mounted) return;
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MultiProvider(
+                                  providers: [
+                                    ChangeNotifierProvider(
+                                        create: (context) =>
+                                            NavigationProvider(placeList)),
+                                    ChangeNotifierProvider(
+                                        create: (context) => RidingProvider())
+                                  ],
+                                  child: const NavigationPage(),
+                                )));
+                  },
+                  child: Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width,
+                      height: 60,
+                      color: const Color.fromRGBO(240, 120, 5, 1),
+                      child: const Text('안내 시작',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700))))
+            ],
+          ));
+
+  Widget routeListWidget() {
+    if (state == RouteListState.searching) {
+      return messageWidget("Loading");
+    } else if (state == RouteListState.empty) {
+      return messageWidget("Loading");
+    } else {
+      final routeList = routeListProvider.routeList;
+      return Expanded(
+          child: GridView.builder(
+              scrollDirection: Axis.vertical,
+              itemCount: routeList.length,
+              itemBuilder: (BuildContext context, index) =>
+                  listCard(routeList[index]),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 4 / 3,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10)));
+    }
+  }
+
+  Widget listCard(RidingRoute route) => Container(
+      child: Card(
+          semanticContainer: true,
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: InkWell(
+              onTap: () {
+                routeDialog(route);
+              },
+              child: Stack(fit: StackFit.expand, children: <Widget>[
+                Image.asset(
+                  route.image!,
+                  fit: BoxFit.fill,
+                ),
+                Container(
+                    alignment: Alignment.bottomRight,
+                    padding: EdgeInsets.all(7),
+                    child: Text(route.title! + "  ",
+                        style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600))),
+              ]))));
+
+  Widget recommendTitleWidget() => Container(
+        margin: const EdgeInsets.fromLTRB(0, 32, 0, 24),
+        child: const Text("라이딩파트너와 함께\n오늘도 달려볼까요?",
+            style: TextStyle(
+                height: 1.4,
+                fontFamily: 'Pretendard',
+                fontSize: 24,
+                fontWeight: FontWeight.w800)),
+      );
 }
