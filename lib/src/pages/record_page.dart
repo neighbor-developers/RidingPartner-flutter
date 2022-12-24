@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -5,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/provider/bottom_navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
+import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
 
 import '../models/record.dart';
 import '../provider/riding_result_provider.dart';
@@ -38,12 +40,12 @@ class RecordPage extends StatelessWidget {
     DateTime today = DateTime.now();
     DateFormat format = DateFormat('yyyy년 MM월 dd일');
     String formattedDate = format.format(today);
-
+    int hKcal = 401;
 
     // File _image = _recordProvider.image;
 
     // 이미지를 보여주는 위젯
-    /* Widget showImage() {
+    /*Widget showImage() {
       if (_recordProvider.imageStatus == ImageStatus.init) {
         return const Text("init");
       } else if (_recordProvider.imageStatus == ImageStatus.success) {
@@ -68,117 +70,149 @@ class RecordPage extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-            centerTitle: true,
-            backgroundColor: Colors.white,
-            title: Image.asset(
-              'assets/icons/logo.png',
-              height: 25,
-            )),
+          backgroundColor: const Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
+          elevation: 0.0,
+        ),
         body: Container(
-            margin: const EdgeInsets.only(bottom: 10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text("주행기록",
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 0, 0, 0), fontSize: 30.0)),
-                Row(children: [
-                  const Text(
-                    "날짜\t",
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 0, 0, 0), fontSize: 16.0),
-                  ),
-                  Text("$formattedDate\n",
-                    style: const TextStyle(fontSize: 16),)
-                ]),
-                Row(children: [
-                  const Text(
-                    "주행 시간\t",
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 0, 0, 0), fontSize: 16.0),
-                  ),
-                  // Text("${_record.timestamp! / 3600} : ${_record.timestamp! / 60} : ${_record.timestamp! % 60}\n",
-                  //  style: const TextStyle(fontSize: 16),)
-                ]),
-                Row(children: [
-                  const Text(
-                    "평균 속도\t",
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 0, 0, 0), fontSize: 16.0),
-                  ),
-                  // Text("${_record.distance! / _record.timestamp!}km/h\n",
-                    //style: const TextStyle(fontSize: 16),)
-                ]),
-                Row(children: [
-                  const Text(
-                    "주행 총 거리\t",
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 0, 0, 0), fontSize: 16.0),
-                  ),
-                  Text("${_record.distance! / 1000}km\n",
-                    style: const TextStyle(fontSize: 16),)
-                ]),
-                Row(children: const [
-                  Text(
-                    "소모 칼로리\t",
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 0, 0, 0), fontSize: 16.0),
-                  ),
-                  Text("36.9kcal\n",
-                    style: TextStyle(fontSize: 16),)
-                ]),
-                InkWell(
-                    child: Container(
-                        width: 60.0,
-                        height: 60.0,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.rectangle,
-                        ),
-                        child: Image.asset(
-                          'assets/icons/add_image.png',
-                          color: Colors.black26,
-                        ))),
-                const TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: "오늘의 라이딩은 어땠나요?",
-                    )),
-                Container(
-                  alignment: Alignment.bottomCenter,
-                  child: ElevatedButton(onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) =>
-                            MultiProvider(providers: [
-                                ChangeNotifierProvider(
-                                create: (context) => WeatherProvider()),
-                                ChangeNotifierProvider(
-                                create: (context) => HomeRecordProvider()),
-                                ChangeNotifierProvider(
-                                    create: (context) => BottomNavigationProvider())
-                    ],
-                    child: const HomePage())));
-                  },
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.all<EdgeInsets>(
-                          const EdgeInsets.all(13.0)),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18.0),
-                          )
-                      ),
-                    ),
-                    child:
-                    const Text(
-                        "기록 저장하기",
+            decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
+                      Color.fromARGB(0xFF, 0xFF, 0xA0, 0x44)
+                    ])),
+            child: Container(
+                margin: const EdgeInsets.only(left: 20.0, right: 20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("즐거운 라이딩\n되셨나요?",
                         style: TextStyle(
-                            fontSize: 17.0
-                        )
+                            color: Color.fromARGB(255, 255, 255, 255),
+                            fontSize: 31.0)),
+                    Container(
+                      margin: const EdgeInsets.only(top: 15.0),
+                      child: Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text(
+                                "날짜",
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Color.fromARGB(255, 255, 255, 255)),
+                              ),
+                              Text(
+                                "주행 시간",
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Color.fromARGB(255, 255, 255, 255)),
+                              ),
+                              Text(
+                                "평균 속도",
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Color.fromARGB(255, 255, 255, 255)),
+                              ),
+                              Text(
+                                "주행 총 거리",
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Color.fromARGB(255, 255, 255, 255)),
+                              ),
+                              Text(
+                                "소모 칼로리",
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Color.fromARGB(255, 255, 255, 255)),
+                              )
+                            ],
+                          ),
+                          const SizedBox(width:20.0),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                formattedDate,
+                                style: const TextStyle(fontSize: 16.0,
+                                    color: Color.fromARGB(255, 255, 255, 255)),
+                              ),
+                              Text(
+                                timestampToText(_record.timestamp!),
+                                style: const TextStyle(fontSize: 16.0,
+                                    color: Color.fromARGB(255, 255, 255, 255)),
+                              ),
+                              Text(
+                                "${_record.distance! /
+                                    _record.timestamp!} km/h",
+                                style: const TextStyle(fontSize: 16.0,
+                                    color: Color.fromARGB(255, 255, 255, 255)),
+                              ),
+                              Text(
+                                "${_record.distance! / 1000} km",
+                                style: const TextStyle(fontSize: 16.0,
+                                    color: Color.fromARGB(255, 255, 255, 255)),
+                              ),
+                              Text(
+                                "${(hKcal * (_record.timestamp!) / 4000)
+                                    .toStringAsFixed(1)} kcal",
+                                style: const TextStyle(fontSize: 16.0,
+                                    color: Color.fromARGB(255, 255, 255, 255)),
+                              )
+                            ],
+                          ),
+                        ],),
                     ),
-                  ),
-                )
-              ],
-            )));
+                    InkWell(
+                      onTap: (){/*showImage();*/},
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
+                            width: 60.0,
+                            height: 60.0,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.rectangle,
+                            ),
+                            child: Image.asset(
+                              'assets/icons/add_image.png',
+                              color: Colors.white,
+                            ))),
+                    const TextField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(width: 3,
+                                color: Colors.white),
+                          ),
+                          hintText: "오늘의 라이딩은 어땠나요?",
+                          hintStyle: TextStyle(color: Colors.white,
+                          ),
+                        )),
+                    Container(
+                      margin: const EdgeInsets.only(top: 20.0),
+                      alignment: Alignment.bottomCenter,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                        style: ButtonStyle(
+                          shadowColor: MaterialStateProperty.all<Color>(Color.fromARGB(0xFF, 0xFB, 0x95, 0x32)),
+                          padding: MaterialStateProperty.all<EdgeInsets>(
+                              const EdgeInsets.all(13.0)),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32)),
+                          shape: MaterialStateProperty.all<
+                              RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                              )),
+                        ),
+                        child:
+                        const Text("기록 저장하기", style: TextStyle(fontSize: 17.0)),
+                      ),
+                    )
+                  ],
+                ))));
   }
 }
