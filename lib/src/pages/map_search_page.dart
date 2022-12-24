@@ -131,7 +131,7 @@ class MapSampleState extends State<MapSearchPage> {
           Visibility(
             visible: searchboxVisible,
             child: Container(
-              margin: const EdgeInsets.only(top: 40, left: 35),
+              margin: const EdgeInsets.symmetric(vertical: 40, horizontal: 35),
               alignment: Alignment.topLeft,
               padding:
                   const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
@@ -139,9 +139,6 @@ class MapSampleState extends State<MapSearchPage> {
                 children: <Widget>[
                   searchBox(mapSearchProvider, "출발지", _startTextController,
                       _startFocusNode),
-                  const SizedBox(
-                    height: 15,
-                  ),
                   searchBox(mapSearchProvider, "도착지",
                       _destinationTextController, _destinationFocusNode),
                 ],
@@ -151,7 +148,7 @@ class MapSampleState extends State<MapSearchPage> {
           Container(
               alignment: Alignment.topLeft,
               width: MediaQuery.of(context).size.width - 40,
-              margin: const EdgeInsets.only(top: 100, left: 25),
+              margin: const EdgeInsets.only(top: 109.3, left: 35, right: 35),
               child: Visibility(
                 visible: mapSearchProvider.isStartSearching,
                 child: Column(children: [
@@ -165,7 +162,7 @@ class MapSampleState extends State<MapSearchPage> {
           Container(
               alignment: Alignment.topLeft,
               width: MediaQuery.of(context).size.width - 40,
-              margin: const EdgeInsets.only(top: 175, left: 25),
+              margin: const EdgeInsets.only(top: 189.5, left: 35, right: 35),
               child: Visibility(
                 visible: mapSearchProvider.isEndSearching,
                 child: Column(children: [
@@ -217,7 +214,7 @@ class MapSampleState extends State<MapSearchPage> {
         itemBuilder: (BuildContext context, int index) {
           return Card(
               borderOnForeground: true,
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 0.3),
+              margin: const EdgeInsets.symmetric(vertical: 0.3),
               child: ListTile(
                   title: Row(
                     children: [
@@ -309,34 +306,35 @@ class MapSampleState extends State<MapSearchPage> {
 
   Widget searchBox(MapSearchProvider mapSearchProvider, String type,
       TextEditingController textController, FocusNode focusNode) {
-    return Column(children: [
-      Material(
-        elevation: 5,
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          width: MediaQuery.of(context).size.width - 60,
-          height: 60,
-          child: TextField(
-            style: _searchBoxTextStyle,
-            focusNode: focusNode,
-            onChanged: (value) => mapSearchProvider.searchPlace(value, type),
-            controller: textController,
-            decoration: InputDecoration(
-              hintStyle: _hintTextStyle,
-              hintText: type + "를 입력해주세요",
-              prefixIcon: const Icon(Icons.search),
-              suffixIcon: _xMarkBtn(mapSearchProvider, type, textController),
-              filled: true,
-              fillColor: _searchBoxColor,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-            ),
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(boxShadow: [
+        BoxShadow(
+            spreadRadius: 5,
+            blurRadius: 10,
+            color: Color.fromRGBO(0, 0, 0, 0.07))
+      ]),
+      width: MediaQuery.of(context).size.width - 60,
+      height: 60,
+      child: TextField(
+        style: _searchBoxTextStyle,
+        focusNode: focusNode,
+        onChanged: (value) => mapSearchProvider.searchPlace(value, type),
+        controller: textController,
+        decoration: InputDecoration(
+          hintStyle: _hintTextStyle,
+          hintText: type + "를 입력해주세요",
+          prefixIcon: const Icon(Icons.search),
+          suffixIcon: _xMarkBtn(mapSearchProvider, type, textController),
+          filled: true,
+          fillColor: _searchBoxColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide.none,
           ),
         ),
       ),
-    ]);
+    );
   }
 
   Widget _xMarkBtn(MapSearchProvider mapSearchProvider, String type,
