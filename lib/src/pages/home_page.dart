@@ -3,13 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:ridingpartner_flutter/src/models/place.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/models/weather.dart';
+import 'package:ridingpartner_flutter/src/pages/navigation_page.dart';
 import 'package:ridingpartner_flutter/src/pages/setting_page.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/setting_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
+import 'package:ridingpartner_flutter/src/widgets/chartPainter.dart';
 
 class Data {
   String key;
@@ -89,11 +94,91 @@ class _HomePageState extends State<HomePage>
         ));
   }
 
+  void routeDialog(Place place) => showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0))),
+      builder: (BuildContext context) => Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                  padding: const EdgeInsets.fromLTRB(24, 38, 24, 30),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        place.title!,
+                        style: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        place.roadAddress!,
+                        style: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Color.fromRGBO(51, 51, 51, 0.5)),
+                      ),
+                      const SizedBox(height: 16.0),
+                      const Divider(
+                        color: Color.fromRGBO(233, 236, 239, 1),
+                        thickness: 1.0,
+                      ),
+                      const SizedBox(height: 16.0),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.network(
+                          place.image!,
+                          height: 180.0,
+                          width: MediaQuery.of(context).size.width,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ],
+                  )),
+              InkWell(
+                  onTap: () async {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MultiProvider(
+                                  providers: [
+                                    ChangeNotifierProvider(
+                                        create: (context) =>
+                                            NavigationProvider([place])),
+                                    ChangeNotifierProvider(
+                                        create: (context) => RidingProvider())
+                                  ],
+                                  child: const NavigationPage(),
+                                )));
+                  },
+                  child: Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width,
+                      height: 60,
+                      color: const Color.fromRGBO(240, 120, 5, 1),
+                      child: const Text('안내 시작',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700))))
+            ],
+          ));
+
   Widget weekWidget() {
     switch (_homeRecordProvider.recordState) {
       case RecordState.loading:
         return const SizedBox(
-            height: 50,
+            height: 100,
             child: Center(
               child: Text(
                 "라이더님의 주행 기록을 불러오는 중입니다",
@@ -102,7 +187,7 @@ class _HomePageState extends State<HomePage>
             ));
       case RecordState.none:
         return const SizedBox(
-            height: 50,
+            height: 100,
             child: Center(
               child: Text(
                 "아직 주행한 기록이 없습니다\n라이딩 파트너와 함께 달려보세요!",
@@ -111,7 +196,7 @@ class _HomePageState extends State<HomePage>
             ));
       case RecordState.empty:
         return const SizedBox(
-            height: 50,
+            height: 100,
             child: Center(
               child: Text(
                 "최근 2주간 라이딩한 기록이 없습니다\n라이딩 파트너와 함께 달려보세요!",
@@ -335,12 +420,23 @@ class _HomePageState extends State<HomePage>
                       color: Color.fromRGBO(51, 51, 51, 1)))),
           Container(
               margin: const EdgeInsets.fromLTRB(20, 40, 20, 20),
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: Row(children: [
-                const VerticalDivider(
-                    color: Color.fromRGBO(234, 234, 234, 1), thickness: 1.0),
-              ]))
+              height: 164,
+              width: 300,
+              child: CustomPaint(
+                size: Size(MediaQuery.of(context).size.width,
+                    MediaQuery.of(context).size.height),
+                foregroundPainter: ChartPainter(
+                    records: _homeRecordProvider.allRecords,
+                    pointSize: 1,
+                    lineWidth: 1.0,
+                    lineColor: Color.fromRGBO(234, 234, 234, 1),
+                    pointColor: Color.fromRGBO(234, 234, 234, 1)),
+              )
+              // Row(children: [
+              //   const VerticalDivider(
+              //       color: Color.fromRGBO(234, 234, 234, 1), thickness: 1.0),
+              // ])
+              )
         ]));
   }
 
@@ -447,10 +543,10 @@ class _HomePageState extends State<HomePage>
         ));
   }
 
-  Widget recommendPlace(dynamic data) {
+  Widget recommendPlace(Place? place) {
     return Flexible(
       flex: 1,
-      child: _homeRecordProvider.recommendPlace == null
+      child: place == null
           ? Container(
               alignment: Alignment.center,
               height: 130,
@@ -474,19 +570,26 @@ class _HomePageState extends State<HomePage>
                 SizedBox(
                     height: 130,
                     child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          routeDialog(place);
+                        },
                         child: Stack(children: [
                           Container(
                             width: MediaQuery.of(context).size.width,
                             height: MediaQuery.of(context).size.height,
                             decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                                image: DecorationImage(
-                                    image: AssetImage(
-                                      'assets/images/places/lotus_flower_theme_park.jpeg',
-                                    ),
-                                    fit: BoxFit.cover)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20.0),
+                              child: Image.network(
+                                place.image!,
+                                height: 130.0,
+                                width: MediaQuery.of(context).size.width,
+                                fit: BoxFit.fill,
+                              ),
+                            ),
                           ),
                           Container(
                               width: MediaQuery.of(context).size.width,
@@ -501,7 +604,7 @@ class _HomePageState extends State<HomePage>
                   padding: const EdgeInsets.all(15),
                   alignment: Alignment.bottomLeft,
                   child: Text(
-                    "${data.title}",
+                    "${place.title}",
                     style: const TextStyle(
                         fontSize: 16,
                         fontFamily: 'Pretendard',
@@ -591,20 +694,3 @@ class _HomePageState extends State<HomePage>
     );
   }
 }
-// class Chart extends CustomPainter {
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     var myPaint = Paint();
-//     myPaint.color = Color.fromRGBO(234, 234, 234, 1);
-//     myPaint.strokeWidth = 1.0;
-//     canvas.drawLine(Offset(0.0, 0.0), Offset(0.0, 10.0), myPaint);
-//     canvas.drawOval(Rect.fromCenter(center: center, width: width, height: height), paint)
-//   }
-
-//   @override
-//   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-//     // TODO: implement shouldRepaint
-//     throw UnimplementedError();
-//   }
-// }
-
