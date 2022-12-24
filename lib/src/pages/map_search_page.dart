@@ -83,7 +83,9 @@ class MapSampleState extends State<MapSearchPage> {
             .clearStartPointSearchResult();
       }
     });
-
+    Provider.of<MapSearchProvider>(context, listen: false).setInitalLocation();
+    _startTextController.text =
+        "현재 위치: ${Provider.of<MapSearchProvider>(context, listen: false).myLocationAddress}";
     _markers.clear();
     _initLoaction();
   }
@@ -519,6 +521,7 @@ class MapSampleState extends State<MapSearchPage> {
           LatLng(myLocation.position!.latitude, myLocation.position!.longitude),
       zoom: 14.4746,
     );
+
     controller.animateCamera(CameraUpdate.newCameraPosition(_initLocation));
   }
 }

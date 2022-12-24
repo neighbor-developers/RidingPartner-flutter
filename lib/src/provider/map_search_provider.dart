@@ -41,6 +41,10 @@ class MapSearchProvider extends ChangeNotifier {
   List<google_map.LatLng> _polylinePoints = [];
   List<google_map.LatLng> get polylinePoints => _polylinePoints;
 
+  Place? _myLocation;
+
+  String myLocationAddress = "";
+
   setStartPoint(Place place) {
     developer.log('setStartPoint');
     _startPoint = place;
@@ -91,6 +95,7 @@ class MapSearchProvider extends ChangeNotifier {
             ['address_name'] ??
         '';
     developer.log(address);
+    myLocationAddress = address;
     return address;
   }
 
@@ -139,6 +144,20 @@ class MapSearchProvider extends ChangeNotifier {
 
   clearPolyLine() {
     _polylinePoints = [];
+    notifyListeners();
+  }
+
+  setInitalLocation() async {
+    final address = await getMyLocationAddress();
+    setMyLocation(address);
+    _startPoint = _myLocation;
+  }
+
+  setMyLocation(address) async {
+    List<Place> tmpResult = (await NaverMapService().getPlaces(address)) ?? [];
+    _myLocation = tmpResult[0];
+    myLocationAddress = _myLocation!.title!;
+    _myLocation!.title = "내 위치";
     notifyListeners();
   }
 
