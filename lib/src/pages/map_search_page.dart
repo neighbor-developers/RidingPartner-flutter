@@ -26,10 +26,12 @@ class MapSampleState extends State<MapSearchPage> {
   final _destinationTextController = TextEditingController();
   final _startTextController = TextEditingController();
   final int polylineWidth = 5;
+  bool searchboxVisible = true;
   int startMarkerId = 0;
   int endMarkerId = 0;
+  int buttonsPositionAlpha = 50;
 
-  final Color _searchBoxColor = const Color(0xffF5F6F9);
+  Color _searchBoxColor = const Color(0xffF5F6F9);
   final Color _orangeColor = const Color(0xffF07805);
   final TextStyle _searchBoxTextStyle = const TextStyle(
       fontFamily: 'Pretended',
@@ -121,24 +123,27 @@ class MapSampleState extends State<MapSearchPage> {
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
             },
-            myLocationButtonEnabled: true,
+            myLocationButtonEnabled: false,
             myLocationEnabled: true,
           ),
-          Container(
-            margin: const EdgeInsets.only(top: 40, left: 35),
-            alignment: Alignment.topLeft,
-            padding:
-                const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
-            child: Column(
-              children: <Widget>[
-                searchBox(mapSearchProvider, "출발지", _startTextController,
-                    _startFocusNode),
-                SizedBox(
-                  height: 15,
-                ),
-                searchBox(mapSearchProvider, "도착지", _destinationTextController,
-                    _destinationFocusNode),
-              ],
+          Visibility(
+            visible: searchboxVisible,
+            child: Container(
+              margin: const EdgeInsets.only(top: 40, left: 35),
+              alignment: Alignment.topLeft,
+              padding:
+                  const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
+              child: Column(
+                children: <Widget>[
+                  searchBox(mapSearchProvider, "출발지", _startTextController,
+                      _startFocusNode),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  searchBox(mapSearchProvider, "도착지",
+                      _destinationTextController, _destinationFocusNode),
+                ],
+              ),
             ),
           ),
           Container(
@@ -170,7 +175,7 @@ class MapSampleState extends State<MapSearchPage> {
                 ]),
               )),
           Positioned(
-            bottom: 100,
+            bottom: buttonsPositionAlpha + 50,
             left: 20,
             child: FloatingActionButton(
               backgroundColor: Colors.white,
@@ -182,7 +187,21 @@ class MapSampleState extends State<MapSearchPage> {
               },
             ),
           ),
-          Positioned(bottom: 0, child: startNav(mapSearchProvider))
+          Positioned(
+            bottom: buttonsPositionAlpha + 120,
+            left: 20,
+            child: FloatingActionButton(
+              backgroundColor: Colors.white,
+              child: const ImageIcon(AssetImage('assets/icons/search.png'),
+                  color: Colors.orange),
+              onPressed: () {
+                _changeSearchBoxVisibility();
+              },
+            ),
+          ),
+          Visibility(
+              visible: !searchboxVisible,
+              child: Positioned(bottom: 0, child: startNav(mapSearchProvider)))
         ],
       ),
     );
@@ -245,6 +264,7 @@ class MapSampleState extends State<MapSearchPage> {
 
                     if (mapSearchProvider.startPoint != null &&
                         mapSearchProvider.destination != null) {
+                      _changeSearchBoxVisibility();
                       _drawPolyline(
                           mapSearchProvider,
                           mapSearchProvider.startPoint!,
@@ -435,6 +455,17 @@ class MapSampleState extends State<MapSearchPage> {
       mapSearchProvider.removeDestination();
     }
     textController.clear();
+  }
+
+  void _changeSearchBoxVisibility() {
+    setState(() {
+      if (searchboxVisible) {
+        buttonsPositionAlpha = 50;
+      } else {
+        buttonsPositionAlpha = 0;
+      }
+      searchboxVisible = !searchboxVisible;
+    });
   }
 
   void _drawPolyline(MapSearchProvider mapSearchProvider, Place startPlace,

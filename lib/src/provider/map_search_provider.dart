@@ -16,6 +16,7 @@ import '../service/naver_map_service.dart';
 class MapSearchProvider extends ChangeNotifier {
   var isStartSearching = false;
   var isEndSearching = false;
+  var searchBoxVisible = false;
 
   final NaverMapService _naverMapService = NaverMapService();
   final kakaoKey = dotenv.env['KAKAO_REST_API_KEY'];
