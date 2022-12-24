@@ -31,32 +31,32 @@ class MapSampleState extends State<MapSearchPage> {
   int endMarkerId = 0;
   int buttonsPositionAlpha = 50;
 
-  Color _searchBoxColor = const Color(0xffF5F6F9);
-  final Color _orangeColor = const Color(0xffF07805);
+  final Color _searchBoxColor = const Color.fromRGBO(245, 246, 249, 1);
+  final Color _orangeColor = const Color.fromRGBO(240, 120, 5, 1);
   final TextStyle _searchBoxTextStyle = const TextStyle(
-      fontFamily: 'Pretended',
-      color: Colors.black,
+      fontFamily: 'Pretendard',
+      color: Color.fromARGB(255, 80, 80, 80),
       fontSize: 16,
-      fontWeight: FontWeight.bold);
+      fontWeight: FontWeight.w500);
   final TextStyle _searchBoxHighlightStyle = const TextStyle(
-      fontFamily: 'Pretended',
-      color: Color(0xffF07805),
+      fontFamily: 'Pretendard',
+      color: Color.fromRGBO(240, 120, 5, 1),
       fontSize: 16,
-      fontWeight: FontWeight.w900);
+      fontWeight: FontWeight.w500);
   final TextStyle _hintTextStyle = const TextStyle(
-      fontFamily: 'Pretended',
-      color: Color(0xff666666),
+      fontFamily: 'Pretendard',
+      color: Color.fromRGBO(153, 153, 153, 1),
       fontSize: 16,
-      fontWeight: FontWeight.w200);
+      fontWeight: FontWeight.w400);
   final TextStyle _subTextStyle = const TextStyle(
-      fontFamily: 'Pretended',
-      color: Color(0xff666666),
+      fontFamily: 'Pretendard',
+      color: Color.fromRGBO(102, 102, 102, 1),
       fontSize: 12,
       fontWeight: FontWeight.w200);
 
   final TextStyle _subHighlightStyle = const TextStyle(
-      fontFamily: 'Pretended',
-      color: Color(0xffF07805),
+      fontFamily: 'Pretendard',
+      color: Color.fromRGBO(240, 120, 5, 1),
       fontSize: 12,
       fontWeight: FontWeight.w200);
 
@@ -139,7 +139,7 @@ class MapSampleState extends State<MapSearchPage> {
                 children: <Widget>[
                   searchBox(mapSearchProvider, "출발지", _startTextController,
                       _startFocusNode),
-                  SizedBox(
+                  const SizedBox(
                     height: 15,
                   ),
                   searchBox(mapSearchProvider, "도착지",
@@ -181,9 +181,9 @@ class MapSampleState extends State<MapSearchPage> {
             left: 20,
             child: FloatingActionButton(
               backgroundColor: Colors.white,
-              child: const ImageIcon(
-                  AssetImage('assets/icons/search_myLocation_button.png'),
-                  color: Colors.orange),
+              child: ImageIcon(
+                  const AssetImage('assets/icons/search_myLocation_button.png'),
+                  color: _orangeColor),
               onPressed: () {
                 _initLoaction();
               },
@@ -194,8 +194,8 @@ class MapSampleState extends State<MapSearchPage> {
             left: 20,
             child: FloatingActionButton(
               backgroundColor: Colors.white,
-              child: const ImageIcon(AssetImage('assets/icons/search.png'),
-                  color: Colors.orange),
+              child: ImageIcon(const AssetImage('assets/icons/search.png'),
+                  color: _orangeColor),
               onPressed: () {
                 _changeSearchBoxVisibility();
               },
@@ -324,7 +324,7 @@ class MapSampleState extends State<MapSearchPage> {
             decoration: InputDecoration(
               hintStyle: _hintTextStyle,
               hintText: type + "를 입력해주세요",
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: const Icon(Icons.search),
               suffixIcon: _xMarkBtn(mapSearchProvider, type, textController),
               filled: true,
               fillColor: _searchBoxColor,
@@ -354,13 +354,14 @@ class MapSampleState extends State<MapSearchPage> {
         width: MediaQuery.of(context).size.width,
         height: 60,
         child: FloatingActionButton.extended(
-            label: Text('안내 시작',
+            label: const Text('안내 시작',
                 style: TextStyle(
-                    fontFamily: 'Pretended',
+                    fontFamily: 'Pretendard',
                     color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold)),
-            shape: BeveledRectangleBorder(borderRadius: BorderRadius.zero),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700)),
+            shape:
+                const BeveledRectangleBorder(borderRadius: BorderRadius.zero),
             elevation: 10,
             heroTag: 'navigateStartBtn',
             onPressed: () {
@@ -383,7 +384,7 @@ class MapSampleState extends State<MapSearchPage> {
                               ChangeNotifierProvider(
                                   create: (context) => RidingProvider())
                             ],
-                            child: NavigationPage(),
+                            child: const NavigationPage(),
                           )),
                 );
               }
