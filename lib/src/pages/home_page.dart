@@ -14,7 +14,6 @@ import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/setting_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
-import 'package:ridingpartner_flutter/src/widgets/chartPainter.dart';
 
 class Data {
   String key;
@@ -418,25 +417,6 @@ class _HomePageState extends State<HomePage>
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w300,
                       color: Color.fromRGBO(51, 51, 51, 1)))),
-          Container(
-              margin: const EdgeInsets.fromLTRB(20, 40, 20, 20),
-              height: 164,
-              width: 300,
-              child: CustomPaint(
-                size: Size(MediaQuery.of(context).size.width,
-                    MediaQuery.of(context).size.height),
-                foregroundPainter: ChartPainter(
-                    records: _homeRecordProvider.allRecords,
-                    pointSize: 1,
-                    lineWidth: 1.0,
-                    lineColor: Color.fromRGBO(234, 234, 234, 1),
-                    pointColor: Color.fromRGBO(234, 234, 234, 1)),
-              )
-              // Row(children: [
-              //   const VerticalDivider(
-              //       color: Color.fromRGBO(234, 234, 234, 1), thickness: 1.0),
-              // ])
-              )
         ]));
   }
 
