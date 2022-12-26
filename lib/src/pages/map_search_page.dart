@@ -194,7 +194,7 @@ class MapSampleState extends State<MapSearchPage> {
               child: ImageIcon(const AssetImage('assets/icons/search.png'),
                   color: _orangeColor),
               onPressed: () {
-                _changeSearchBoxVisibility();
+                _changeSearchBoxVisibility(mapSearchProvider);
               },
             ),
           ),
@@ -263,7 +263,7 @@ class MapSampleState extends State<MapSearchPage> {
 
                     if (mapSearchProvider.startPoint != null &&
                         mapSearchProvider.destination != null) {
-                      _changeSearchBoxVisibility();
+                      _changeSearchBoxVisibility(mapSearchProvider);
                       _drawPolyline(
                           mapSearchProvider,
                           mapSearchProvider.startPoint!,
@@ -458,10 +458,12 @@ class MapSampleState extends State<MapSearchPage> {
     textController.clear();
   }
 
-  void _changeSearchBoxVisibility() {
+  void _changeSearchBoxVisibility(MapSearchProvider mapSearchProvider) {
     setState(() {
       if (searchboxVisible) {
         buttonsPositionAlpha = 50;
+        mapSearchProvider.isEndSearching = false;
+        mapSearchProvider.isStartSearching = false;
       } else {
         buttonsPositionAlpha = 0;
       }
