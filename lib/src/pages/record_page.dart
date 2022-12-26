@@ -39,9 +39,17 @@ class _RecordState extends State<RecordPage> {
       );
     } else if (_recordProvider.imageStatus == ImageStatus.imageSuccess) {
       return Container(
-          color: Colors.transparent,
           width: 64.0,
           height: 64.0,
+          padding: const EdgeInsets.all(4.0),
+          decoration: BoxDecoration(
+              border: Border.all(
+                  color: const Color.fromARGB(0xFF, 0xFD, 0xD3, 0xAB),
+                width: 2.0
+              ),
+            borderRadius: BorderRadius.circular(3.5),
+            color: Colors.transparent
+          ),
           child: Center(
               child: _recordProvider.image == null
                   ? const Text(
@@ -248,7 +256,9 @@ class _RecordState extends State<RecordPage> {
                         child: OutlinedButton(
                             onPressed: () {
                               if (imageStatus == ImageStatus.init) {
-                                _recordProvider.confirmPermissionGranted().then((_) => _recordProvider.getImage(ImageSource.gallery));
+                                _recordProvider.confirmPermissionGranted().then(
+                                    (_) => _recordProvider
+                                        .getImage(ImageSource.gallery));
                               } else if (imageStatus ==
                                   ImageStatus.permissionFail) {}
                             },
