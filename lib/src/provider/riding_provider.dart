@@ -91,13 +91,14 @@ class RidingProvider with ChangeNotifier {
 
   Future<void> startRiding() async {
     _befTime = DateTime.now().millisecondsSinceEpoch; // 이전 시간 저장용
-    setRidingState(RidingState.riding);
 
     if (_ridingState == RidingState.before) {
       _ridingDate =
           DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()); //format변경
     }
     // setCustomMarker();
+
+    setRidingState(RidingState.riding);
 
     _positionStream.controller.stream.listen((pos) {
       _position = pos;
