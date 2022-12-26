@@ -7,6 +7,7 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/provider/bottom_navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
+import 'package:ridingpartner_flutter/src/utils/permission_camera.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
 
 import '../models/record.dart';
@@ -14,10 +15,56 @@ import '../provider/riding_result_provider.dart';
 import '../provider/weather_provider.dart';
 import 'home_page.dart';
 
-class RecordPage extends StatelessWidget {
+class RecordPage extends StatefulWidget {
   RecordPage({super.key});
 
+  @override
+  _RecordState createState() => _RecordState();
+}
+
+class _RecordState extends State<RecordPage> {
   late RidingResultProvider _recordProvider;
+
+  File? _image;
+
+  // 이미지를 보여주는 위젯
+  Widget showImage() {
+    if (_recordProvider.imageStatus == ImageStatus.init) {
+      return const Text(
+        "이미지를\n선택해주세요.",
+        style: TextStyle(
+          fontSize: 14.0,
+          color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6),
+        ),
+        textAlign: TextAlign.center,
+      );
+    } else if (_recordProvider.imageStatus == ImageStatus.success) {
+      return Container(
+          color: Colors.transparent,
+          width: 64.0,
+          height: 64.0,
+          child: Center(
+              child: _image == null
+                  ? const Text(
+                      '이미지 없음',
+                      style: TextStyle(
+                        fontSize: 13.0,
+                        color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6),
+                      ),
+                      textAlign: TextAlign.center,
+                    )
+                  : Image.file(File(_image!.path))));
+    } else {
+      return const Text(
+        "업로드 실패",
+        style: TextStyle(
+          fontSize: 13.0,
+          color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6),
+        ),
+        textAlign: TextAlign.center,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,32 +89,6 @@ class RecordPage extends StatelessWidget {
     DateFormat format = DateFormat('yyyy년 MM월 dd일');
     String formattedDate = format.format(today);
     int hKcal = 401;
-
-    // File _image = _recordProvider.getImage()
-
-    // 이미지를 보여주는 위젯
-    /*Widget showImage() {
-      if (_recordProvider.imageStatus == ImageStatus.init) {
-        return const Text("init");
-      } else if (_recordProvider.imageStatus == ImageStatus.success) {
-        return Container(
-            color: const Color(0xffd0cece),
-            width: MediaQuery
-                .of(context)
-                .size
-                .width,
-            height: MediaQuery
-                .of(context)
-                .size
-                .width,
-            child: Center(
-                child: _image == null
-                    ? const Text('No image selected.')
-                    : Image.file(File(_image!.path))));
-      } else {
-        return const Text("fail");
-      }
-    }*/
 
     return Scaffold(
         appBar: AppBar(
@@ -114,6 +135,7 @@ class RecordPage extends StatelessWidget {
                               style: TextStyle(
                                   fontSize: 16.0,
                                   fontFamily: "Pretendard",
+                                  fontWeight: FontWeight.w500,
                                   color:
                                       Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
                             ),
@@ -122,6 +144,7 @@ class RecordPage extends StatelessWidget {
                               style: TextStyle(
                                   fontSize: 16.0,
                                   fontFamily: "Pretendard",
+                                  fontWeight: FontWeight.w500,
                                   color:
                                       Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
                             ),
@@ -130,6 +153,7 @@ class RecordPage extends StatelessWidget {
                               style: TextStyle(
                                   fontSize: 16.0,
                                   fontFamily: "Pretendard",
+                                  fontWeight: FontWeight.w500,
                                   color:
                                       Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
                             ),
@@ -138,6 +162,7 @@ class RecordPage extends StatelessWidget {
                               style: TextStyle(
                                   fontSize: 16.0,
                                   fontFamily: "Pretendard",
+                                  fontWeight: FontWeight.w500,
                                   color:
                                       Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
                             ),
@@ -146,6 +171,7 @@ class RecordPage extends StatelessWidget {
                               style: TextStyle(
                                   fontSize: 16.0,
                                   fontFamily: "Pretendard",
+                                  fontWeight: FontWeight.w500,
                                   color:
                                       Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
                             )
@@ -163,6 +189,7 @@ class RecordPage extends StatelessWidget {
                               formattedDate,
                               style: const TextStyle(
                                 fontFamily: "Pretendard",
+                                fontWeight: FontWeight.w500,
                                 fontSize: 16.0,
                                 color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6),
                               ),
@@ -172,6 +199,7 @@ class RecordPage extends StatelessWidget {
                               style: const TextStyle(
                                   fontSize: 16.0,
                                   fontFamily: "Pretendard",
+                                  fontWeight: FontWeight.w500,
                                   color:
                                       Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
                             ),
@@ -180,6 +208,7 @@ class RecordPage extends StatelessWidget {
                               style: const TextStyle(
                                   fontSize: 16.0,
                                   fontFamily: "Pretendard",
+                                  fontWeight: FontWeight.w500,
                                   color:
                                       Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
                             ),
@@ -188,6 +217,7 @@ class RecordPage extends StatelessWidget {
                               style: const TextStyle(
                                   fontSize: 16.0,
                                   fontFamily: "Pretendard",
+                                  fontWeight: FontWeight.w500,
                                   color:
                                       Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
                             ),
@@ -196,6 +226,7 @@ class RecordPage extends StatelessWidget {
                               style: const TextStyle(
                                   fontSize: 16.0,
                                   fontFamily: "Pretendard",
+                                  fontWeight: FontWeight.w500,
                                   color:
                                       Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
                             )
@@ -205,34 +236,44 @@ class RecordPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(
-                    width: 64.0,
-                    height: 64.0,
-                    child: OutlinedButton(
-                        onPressed: () {
-                          /*ShowImage()*/
-                        },
-                        style: ButtonStyle(
-                          side: MaterialStateProperty.all(const BorderSide(
-                            color: Color.fromARGB(0xFF, 0xFD, 0xD3, 0xAB),
-                            width: 2.0,
-                          )),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Image(
-                              image: AssetImage('assets/icons/add_image.png'),
-                              color: Color.fromARGB(255, 255, 255, 255),
+                Row(
+                  children: [
+                    Container(
+                        width: 64.0,
+                        height: 64.0,
+                        margin: const EdgeInsets.only(right: 20.0),
+                        child: OutlinedButton(
+                            onPressed: () {
+                              startCamera(context);
+                              _recordProvider.getImage(ImageSource.gallery);
+                              _image = _recordProvider.image;
+                            },
+                            style: ButtonStyle(
+                              side: MaterialStateProperty.all(const BorderSide(
+                                color: Color.fromARGB(0xFF, 0xFD, 0xD3, 0xAB),
+                                width: 2.0,
+                              )),
                             ),
-                            Text(
-                              "사진",
-                              style: TextStyle(
-                                  color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6),
-                                  fontSize: 12.0),
-                            )
-                          ],
-                        ))),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Image(
+                                  image:
+                                      AssetImage('assets/icons/add_image.png'),
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                ),
+                                Text(
+                                  "사진",
+                                  style: TextStyle(
+                                      color: Color.fromARGB(
+                                          0xFF, 0xDE, 0xE2, 0xE6),
+                                      fontSize: 12.0),
+                                )
+                              ],
+                            ))),
+                    SizedBox(width: 64.0, height: 64.0, child: showImage())
+                  ],
+                ),
                 const Divider(color: Color.fromARGB(0xFF, 0xF8, 0xF9, 0xFA)),
                 Container(
                   height: 160,
@@ -282,6 +323,7 @@ class RecordPage extends StatelessWidget {
                       "기록 저장하기",
                       style: TextStyle(
                           fontSize: 16.0,
+                          fontWeight: FontWeight.w700,
                           color: Color.fromARGB(0xFF, 0xF0, 0x78, 0x05)),
                     ),
                   ),

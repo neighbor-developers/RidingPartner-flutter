@@ -25,8 +25,8 @@ class RidingResultProvider with ChangeNotifier {
   late final Record _record;
   Record get record => _record;
 
-  late final File _image;
-  File get image => _image;
+  late final File? _image;
+  File? get image => _image;
 
 
   Future<void> getRidingData() async {
