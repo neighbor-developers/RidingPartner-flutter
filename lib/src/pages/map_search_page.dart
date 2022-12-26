@@ -392,7 +392,9 @@ class MapSampleState extends State<MapSearchPage> {
   }
 
   void clearMarker(String type, MapSearchProvider mapSearchProvider) {
-    if (type == "출발지" && mapSearchProvider.startPoint != null) {
+    if (type == "출발지" &&
+        mapSearchProvider.startPoint != null &&
+        _markers.length > 1) {
       _markers.removeAt(0);
     } else if (type == "도착지" && mapSearchProvider.destination != null) {
       _markers.removeAt(_markers.length - 1);
