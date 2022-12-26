@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -25,8 +26,6 @@ class RecordPage extends StatefulWidget {
 class _RecordState extends State<RecordPage> {
   late RidingResultProvider _recordProvider;
 
-  File? _image;
-
   // 이미지를 보여주는 위젯
   Widget showImage() {
     if (_recordProvider.imageStatus == ImageStatus.init) {
@@ -44,7 +43,7 @@ class _RecordState extends State<RecordPage> {
           width: 64.0,
           height: 64.0,
           child: Center(
-              child: _image == null
+              child: _recordProvider.image == null
                   ? const Text(
                       '이미지 없음',
                       style: TextStyle(
@@ -53,7 +52,7 @@ class _RecordState extends State<RecordPage> {
                       ),
                       textAlign: TextAlign.center,
                     )
-                  : Image.file(File(_image!.path))));
+                  : Image.file(File(_recordProvider.image!.path))));
     } else {
       return const Text(
         "업로드 실패",
@@ -74,6 +73,7 @@ class _RecordState extends State<RecordPage> {
     _recordProvider = Provider.of<RidingResultProvider>(context);
 
     final imageStatus = _recordProvider.imageStatus;
+    developer.log(imageStatus.name);
 
     if (_recordProvider.recordState == RecordState.loading) {
       _recordProvider.getRidingData();
@@ -248,11 +248,7 @@ class _RecordState extends State<RecordPage> {
                         child: OutlinedButton(
                             onPressed: () {
                               if (imageStatus == ImageStatus.init) {
-                                _recordProvider.confirmPermissionGranted();
-                              }
-                              if (imageStatus ==
-                                  ImageStatus.permissionSuccess) {
-                                _recordProvider.getImage(ImageSource.gallery);
+                                _recordProvider.confirmPermissionGranted().then((_) => _recordProvider.getImage(ImageSource.gallery));
                               } else if (imageStatus ==
                                   ImageStatus.permissionFail) {}
                             },

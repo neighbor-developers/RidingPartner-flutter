@@ -9,7 +9,6 @@ import 'package:permission_handler/permission_handler.dart';
 
 enum ImageStatus {
   init,
-  permissionSuccess,
   permissionFail,
   imageSuccess,
   imageFail
@@ -77,12 +76,9 @@ class RidingResultProvider with ChangeNotifier {
       }
     });
 
-    if (permitted) {
-      _imageStatus = ImageStatus.permissionSuccess;
-    } else {
+    if (!permitted) {
       _imageStatus = ImageStatus.permissionFail;
+      notifyListeners();
     }
-
-    notifyListeners();
   }
 }
