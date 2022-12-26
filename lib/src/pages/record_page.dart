@@ -76,6 +76,8 @@ class RecordPage extends StatelessWidget {
         ),
         resizeToAvoidBottomInset: false,
         body: Container(
+            padding:
+                const EdgeInsets.only(left: 34, bottom: 40, top: 10, right: 34),
             decoration: const BoxDecoration(
                 gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -84,214 +86,207 @@ class RecordPage extends StatelessWidget {
                   Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
                   Color.fromARGB(0xFF, 0xFF, 0xA0, 0x44)
                 ])),
-            child: Container(
-                margin: const EdgeInsets.only(left: 34.0, right: 20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "즐거운 라이딩\n되셨나요?",
-                      style: TextStyle(
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          fontSize: 40.0,
-                          fontFamily: "Pretendard",
-                          fontWeight: FontWeight.w700),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 30.0),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 100.0,
-                            height: 120.0,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
-                                  "날짜",
-                                  style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontFamily: "Pretendard",
-                                      color: Color.fromARGB(
-                                          0xFF, 0xDE, 0xE2, 0xE6)),
-                                ),
-                                Text(
-                                  "주행 시간",
-                                  style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontFamily: "Pretendard",
-                                      color: Color.fromARGB(
-                                          0xFF, 0xDE, 0xE2, 0xE6)),
-                                ),
-                                Text(
-                                  "평균 속도",
-                                  style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontFamily: "Pretendard",
-                                      color: Color.fromARGB(
-                                          0xFF, 0xDE, 0xE2, 0xE6)),
-                                ),
-                                Text(
-                                  "주행 총 거리",
-                                  style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontFamily: "Pretendard",
-                                      color: Color.fromARGB(
-                                          0xFF, 0xDE, 0xE2, 0xE6)),
-                                ),
-                                Text(
-                                  "소모 칼로리",
-                                  style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontFamily: "Pretendard",
-                                      color: Color.fromARGB(
-                                          0xFF, 0xDE, 0xE2, 0xE6)),
-                                )
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 120.0,
-                            width: 130.0,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  formattedDate,
-                                  style: const TextStyle(
-                                    fontFamily: "Pretendard",
-                                    fontSize: 16.0,
-                                    color:
-                                        Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6),
-                                  ),
-                                ),
-                                Text(
-                                  timestampToText(_record.timestamp!),
-                                  style: const TextStyle(
-                                      fontSize: 16.0,
-                                      fontFamily: "Pretendard",
-                                      color: Color.fromARGB(
-                                          0xFF, 0xDE, 0xE2, 0xE6)),
-                                ),
-                                Text(
-                                  "${_record.distance! / _record.timestamp!} km/h",
-                                  style: const TextStyle(
-                                      fontSize: 16.0,
-                                      fontFamily: "Pretendard",
-                                      color: Color.fromARGB(
-                                          0xFF, 0xDE, 0xE2, 0xE6)),
-                                ),
-                                Text(
-                                  "${_record.distance! / 1000} km",
-                                  style: const TextStyle(
-                                      fontSize: 16.0,
-                                      fontFamily: "Pretendard",
-                                      color: Color.fromARGB(
-                                          0xFF, 0xDE, 0xE2, 0xE6)),
-                                ),
-                                Text(
-                                  "${(hKcal * (_record.timestamp!) / 4000).toStringAsFixed(1)} kcal",
-                                  style: const TextStyle(
-                                      fontSize: 16.0,
-                                      fontFamily: "Pretendard",
-                                      color: Color.fromARGB(
-                                          0xFF, 0xDE, 0xE2, 0xE6)),
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                        margin: EdgeInsets.only(bottom: 24.0),
-                        width: 64.0,
-                        height: 64.0,
-                        child: OutlinedButton(
-                            onPressed: () {
-                              /*ShowImage()*/
-                            },
-                            style: ButtonStyle(
-                                side:
-                                    MaterialStateProperty.all(const BorderSide(
-                              color: Color.fromARGB(0xFF, 0xFD, 0xD3, 0xAB),
-                              width: 2.0,
-                            ))),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Image(
-                                  image:
-                                      AssetImage('assets/icons/add_image.png'),
-                                  color: Color.fromARGB(255, 255, 255, 255),
-                                ),
-                                Text(
-                                  "사진",
-                                  style: TextStyle(
-                                      color: Color.fromARGB(
-                                          0xFF, 0xDE, 0xE2, 0xE6),
-                                      fontSize: 12.0),
-                                )
-                              ],
-                            ))),
-                    const Divider(
-                        color: Color.fromARGB(0xFF, 0xF8, 0xF9, 0xFA)),
-                    Container(
-                        margin: const EdgeInsets.only(top: 24.0, bottom: 40.0),
-                        width: 327.0,
-                        child: const Opacity(
-                          opacity: 0.3,
-                          child: TextField(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                const Text(
+                  "즐거운 라이딩\n되셨나요?",
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      fontSize: 40.0,
+                      fontFamily: "Pretendard",
+                      fontWeight: FontWeight.w700),
+                ),
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 15.0),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 100.0,
+                        height: 120.0,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: const [
+                            Text(
+                              "날짜",
                               style: TextStyle(
-                                fontSize: 14.0,
-                                color: Colors.black,
+                                  fontSize: 16.0,
+                                  fontFamily: "Pretendard",
+                                  color:
+                                      Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
+                            ),
+                            Text(
+                              "주행 시간",
+                              style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontFamily: "Pretendard",
+                                  color:
+                                      Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
+                            ),
+                            Text(
+                              "평균 속도",
+                              style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontFamily: "Pretendard",
+                                  color:
+                                      Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
+                            ),
+                            Text(
+                              "주행 총 거리",
+                              style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontFamily: "Pretendard",
+                                  color:
+                                      Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
+                            ),
+                            Text(
+                              "소모 칼로리",
+                              style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontFamily: "Pretendard",
+                                  color:
+                                      Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 120.0,
+                        width: 130.0,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(
+                              formattedDate,
+                              style: const TextStyle(
+                                fontFamily: "Pretendard",
+                                fontSize: 16.0,
+                                color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6),
                               ),
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.white,
-                                contentPadding: EdgeInsets.only(bottom: 160.0),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      width: 3.0, color: Colors.white),
-                                ),
-                                hintText: "오늘의 라이딩은 어땠나요?",
-                                hintStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14.0,
-                                ),
-                              )),
-                        )),
-                    SizedBox(
-                      width: 327.0,
-                      height: 56.0,
-                      child: ElevatedButton(
+                            ),
+                            Text(
+                              timestampToText(_record.timestamp!),
+                              style: const TextStyle(
+                                  fontSize: 16.0,
+                                  fontFamily: "Pretendard",
+                                  color:
+                                      Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
+                            ),
+                            Text(
+                              "${_record.distance! / _record.timestamp!} km/h",
+                              style: const TextStyle(
+                                  fontSize: 16.0,
+                                  fontFamily: "Pretendard",
+                                  color:
+                                      Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
+                            ),
+                            Text(
+                              "${_record.distance! / 1000} km",
+                              style: const TextStyle(
+                                  fontSize: 16.0,
+                                  fontFamily: "Pretendard",
+                                  color:
+                                      Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
+                            ),
+                            Text(
+                              "${(hKcal * (_record.timestamp!) / 4000).toStringAsFixed(1)} kcal",
+                              style: const TextStyle(
+                                  fontSize: 16.0,
+                                  fontFamily: "Pretendard",
+                                  color:
+                                      Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                    width: 64.0,
+                    height: 64.0,
+                    child: OutlinedButton(
                         onPressed: () {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
+                          /*ShowImage()*/
                         },
                         style: ButtonStyle(
-                          shadowColor: MaterialStateProperty.all<Color>(
-                              Colors.transparent),
-                          padding: MaterialStateProperty.all<EdgeInsets>(
-                              const EdgeInsets.all(13.0)),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              const Color.fromARGB(0xFF, 0xFF, 0xFF, 0xFF)),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25.0),
+                          side: MaterialStateProperty.all(const BorderSide(
+                            color: Color.fromARGB(0xFF, 0xFD, 0xD3, 0xAB),
+                            width: 2.0,
                           )),
                         ),
-                        child: const Text(
-                          "기록 저장하기",
-                          style: TextStyle(
-                              fontSize: 16.0,
-                              color: Color.fromARGB(0xFF, 0xF0, 0x78, 0x05)),
-                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Image(
+                              image: AssetImage('assets/icons/add_image.png'),
+                              color: Color.fromARGB(255, 255, 255, 255),
+                            ),
+                            Text(
+                              "사진",
+                              style: TextStyle(
+                                  color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6),
+                                  fontSize: 12.0),
+                            )
+                          ],
+                        ))),
+                const Divider(color: Color.fromARGB(0xFF, 0xF8, 0xF9, 0xFA)),
+                Container(
+                  height: 160,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(17),
+                      color: Color.fromRGBO(255, 255, 255, 0.3)),
+                  child: TextField(
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: Colors.black,
                       ),
-                    )
-                  ],
-                ))));
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.all(16),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        hintText: "오늘의 라이딩은 어땠나요?",
+                        hintStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14.0,
+                        ),
+                      )),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56.0,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    style: ButtonStyle(
+                      shadowColor:
+                          MaterialStateProperty.all<Color>(Colors.transparent),
+                      padding: MaterialStateProperty.all<EdgeInsets>(
+                          const EdgeInsets.all(13.0)),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color.fromARGB(0xFF, 0xFF, 0xFF, 0xFF)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                      )),
+                    ),
+                    child: const Text(
+                      "기록 저장하기",
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          color: Color.fromARGB(0xFF, 0xF0, 0x78, 0x05)),
+                    ),
+                  ),
+                )
+              ],
+            )));
   }
 }
