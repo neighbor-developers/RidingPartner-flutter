@@ -31,32 +31,32 @@ class MapSampleState extends State<MapSearchPage> {
   int endMarkerId = 0;
   int buttonsPositionAlpha = 0;
 
-  Color _searchBoxColor = const Color(0xffF5F6F9);
-  final Color _orangeColor = const Color(0xffF07805);
+  final Color _searchBoxColor = const Color.fromRGBO(245, 246, 249, 1);
+  final Color _orangeColor = const Color.fromRGBO(240, 120, 5, 1);
   final TextStyle _searchBoxTextStyle = const TextStyle(
-      fontFamily: 'Pretended',
-      color: Colors.black,
+      fontFamily: 'Pretendard',
+      color: Color.fromARGB(255, 80, 80, 80),
       fontSize: 16,
-      fontWeight: FontWeight.bold);
+      fontWeight: FontWeight.w500);
   final TextStyle _searchBoxHighlightStyle = const TextStyle(
-      fontFamily: 'Pretended',
-      color: Color(0xffF07805),
+      fontFamily: 'Pretendard',
+      color: Color.fromRGBO(240, 120, 5, 1),
       fontSize: 16,
-      fontWeight: FontWeight.w900);
+      fontWeight: FontWeight.w500);
   final TextStyle _hintTextStyle = const TextStyle(
-      fontFamily: 'Pretended',
-      color: Color(0xff666666),
+      fontFamily: 'Pretendard',
+      color: Color.fromRGBO(153, 153, 153, 1),
       fontSize: 16,
-      fontWeight: FontWeight.w200);
+      fontWeight: FontWeight.w400);
   final TextStyle _subTextStyle = const TextStyle(
-      fontFamily: 'Pretended',
-      color: Color(0xff666666),
+      fontFamily: 'Pretendard',
+      color: Color.fromRGBO(102, 102, 102, 1),
       fontSize: 12,
       fontWeight: FontWeight.w200);
 
   final TextStyle _subHighlightStyle = const TextStyle(
-      fontFamily: 'Pretended',
-      color: Color(0xffF07805),
+      fontFamily: 'Pretendard',
+      color: Color.fromRGBO(240, 120, 5, 1),
       fontSize: 12,
       fontWeight: FontWeight.w200);
 
@@ -131,7 +131,7 @@ class MapSampleState extends State<MapSearchPage> {
           Visibility(
             visible: searchboxVisible,
             child: Container(
-              margin: const EdgeInsets.only(top: 40, left: 35),
+              margin: const EdgeInsets.symmetric(vertical: 40, horizontal: 35),
               alignment: Alignment.topLeft,
               padding:
                   const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
@@ -139,9 +139,6 @@ class MapSampleState extends State<MapSearchPage> {
                 children: <Widget>[
                   searchBox(mapSearchProvider, "출발지", _startTextController,
                       _startFocusNode),
-                  SizedBox(
-                    height: 15,
-                  ),
                   searchBox(mapSearchProvider, "도착지",
                       _destinationTextController, _destinationFocusNode),
                 ],
@@ -151,7 +148,7 @@ class MapSampleState extends State<MapSearchPage> {
           Container(
               alignment: Alignment.topLeft,
               width: MediaQuery.of(context).size.width - 40,
-              margin: const EdgeInsets.only(top: 100, left: 25),
+              margin: const EdgeInsets.only(top: 109.3, left: 35, right: 35),
               child: Visibility(
                 visible: mapSearchProvider.isStartSearching,
                 child: Column(children: [
@@ -165,7 +162,7 @@ class MapSampleState extends State<MapSearchPage> {
           Container(
               alignment: Alignment.topLeft,
               width: MediaQuery.of(context).size.width - 40,
-              margin: const EdgeInsets.only(top: 175, left: 25),
+              margin: const EdgeInsets.only(top: 189.5, left: 35, right: 35),
               child: Visibility(
                 visible: mapSearchProvider.isEndSearching,
                 child: Column(children: [
@@ -181,9 +178,9 @@ class MapSampleState extends State<MapSearchPage> {
             left: 20,
             child: FloatingActionButton(
               backgroundColor: Colors.white,
-              child: const ImageIcon(
-                  AssetImage('assets/icons/search_myLocation_button.png'),
-                  color: Colors.orange),
+              child: ImageIcon(
+                  const AssetImage('assets/icons/search_myLocation_button.png'),
+                  color: _orangeColor),
               onPressed: () {
                 _initLoaction();
               },
@@ -194,8 +191,8 @@ class MapSampleState extends State<MapSearchPage> {
             left: 20,
             child: FloatingActionButton(
               backgroundColor: Colors.white,
-              child: const ImageIcon(AssetImage('assets/icons/search.png'),
-                  color: Colors.orange),
+              child: ImageIcon(const AssetImage('assets/icons/search.png'),
+                  color: _orangeColor),
               onPressed: () {
                 _changeSearchBoxVisibility();
               },
@@ -217,7 +214,7 @@ class MapSampleState extends State<MapSearchPage> {
         itemBuilder: (BuildContext context, int index) {
           return Card(
               borderOnForeground: true,
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 0.3),
+              margin: const EdgeInsets.symmetric(vertical: 0.3),
               child: ListTile(
                   title: Row(
                     children: [
@@ -309,34 +306,35 @@ class MapSampleState extends State<MapSearchPage> {
 
   Widget searchBox(MapSearchProvider mapSearchProvider, String type,
       TextEditingController textController, FocusNode focusNode) {
-    return Column(children: [
-      Material(
-        elevation: 5,
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          width: MediaQuery.of(context).size.width - 60,
-          height: 60,
-          child: TextField(
-            style: _searchBoxTextStyle,
-            focusNode: focusNode,
-            onChanged: (value) => mapSearchProvider.searchPlace(value, type),
-            controller: textController,
-            decoration: InputDecoration(
-              hintStyle: _hintTextStyle,
-              hintText: type + "를 입력해주세요",
-              prefixIcon: Icon(Icons.search),
-              suffixIcon: _xMarkBtn(mapSearchProvider, type, textController),
-              filled: true,
-              fillColor: _searchBoxColor,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-            ),
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(boxShadow: [
+        BoxShadow(
+            spreadRadius: 5,
+            blurRadius: 10,
+            color: Color.fromRGBO(0, 0, 0, 0.07))
+      ]),
+      width: MediaQuery.of(context).size.width - 60,
+      height: 60,
+      child: TextField(
+        style: _searchBoxTextStyle,
+        focusNode: focusNode,
+        onChanged: (value) => mapSearchProvider.searchPlace(value, type),
+        controller: textController,
+        decoration: InputDecoration(
+          hintStyle: _hintTextStyle,
+          hintText: type + "를 입력해주세요",
+          prefixIcon: const Icon(Icons.search),
+          suffixIcon: _xMarkBtn(mapSearchProvider, type, textController),
+          filled: true,
+          fillColor: _searchBoxColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide.none,
           ),
         ),
       ),
-    ]);
+    );
   }
 
   Widget _xMarkBtn(MapSearchProvider mapSearchProvider, String type,
@@ -354,13 +352,14 @@ class MapSampleState extends State<MapSearchPage> {
         width: MediaQuery.of(context).size.width,
         height: 60,
         child: FloatingActionButton.extended(
-            label: Text('안내 시작',
+            label: const Text('안내 시작',
                 style: TextStyle(
-                    fontFamily: 'Pretended',
+                    fontFamily: 'Pretendard',
                     color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold)),
-            shape: BeveledRectangleBorder(borderRadius: BorderRadius.zero),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700)),
+            shape:
+                const BeveledRectangleBorder(borderRadius: BorderRadius.zero),
             elevation: 10,
             heroTag: 'navigateStartBtn',
             onPressed: () {
@@ -383,7 +382,7 @@ class MapSampleState extends State<MapSearchPage> {
                               ChangeNotifierProvider(
                                   create: (context) => RidingProvider())
                             ],
-                            child: NavigationPage(),
+                            child: const NavigationPage(),
                           )),
                 );
               }

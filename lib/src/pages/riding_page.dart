@@ -180,7 +180,7 @@ class _RidingPageState extends State<RidingPage> {
           width: MediaQuery.of(context).size.width,
           height: 61,
           child: const Text(
-            '안내 시작',
+            '주행 시작',
             style: TextStyle(
                 color: Colors.white,
                 fontFamily: 'Pretendard',
