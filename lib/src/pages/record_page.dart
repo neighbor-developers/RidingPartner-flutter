@@ -38,7 +38,7 @@ class _RecordState extends State<RecordPage> {
         ),
         textAlign: TextAlign.center,
       );
-    } else if (_recordProvider.imageStatus == ImageStatus.success) {
+    } else if (_recordProvider.imageStatus == ImageStatus.imageSuccess) {
       return Container(
           color: Colors.transparent,
           width: 64.0,
@@ -72,6 +72,9 @@ class _RecordState extends State<RecordPage> {
     num _speed = 0;
 
     _recordProvider = Provider.of<RidingResultProvider>(context);
+
+    final imageStatus = _recordProvider.imageStatus;
+
     if (_recordProvider.recordState == RecordState.loading) {
       _recordProvider.getRidingData();
     }
@@ -244,9 +247,14 @@ class _RecordState extends State<RecordPage> {
                         margin: const EdgeInsets.only(right: 20.0),
                         child: OutlinedButton(
                             onPressed: () {
-                              startCamera(context);
-                              _recordProvider.getImage(ImageSource.gallery);
-                              _image = _recordProvider.image;
+                              if (imageStatus == ImageStatus.init) {
+                                _recordProvider.confirmPermissionGranted();
+                              }
+                              if (imageStatus ==
+                                  ImageStatus.permissionSuccess) {
+                                _recordProvider.getImage(ImageSource.gallery);
+                              } else if (imageStatus ==
+                                  ImageStatus.permissionFail) {}
                             },
                             style: ButtonStyle(
                               side: MaterialStateProperty.all(const BorderSide(

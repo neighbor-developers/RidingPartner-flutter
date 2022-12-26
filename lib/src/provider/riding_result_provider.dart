@@ -5,8 +5,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-enum ImageStatus { init, success, fail }
+enum ImageStatus {
+  init,
+  permissionSuccess,
+  permissionFail,
+  imageSuccess,
+  imageFail
+}
 
 class RidingResultProvider with ChangeNotifier {
   final FirebaseDatabaseService _firebaseDb = FirebaseDatabaseService();
@@ -28,7 +35,6 @@ class RidingResultProvider with ChangeNotifier {
   late final File? _image;
   File? get image => _image;
 
-
   Future<void> getRidingData() async {
     _record = await _firebaseDb.getRecord(_ridingDate);
 
@@ -48,9 +54,33 @@ class RidingResultProvider with ChangeNotifier {
 
     if (imageFile != null) {
       _image = imageFile;
-      _imageStatus = ImageStatus.success;
+      _imageStatus = ImageStatus.imageSuccess;
     } else {
-      _imageStatus = ImageStatus.fail;
+      _imageStatus = ImageStatus.imageFail;
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> confirmPermissionGranted() async {
+    // storage와  camera의 권한을 요청
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+      Permission.camera,
+    ].request();
+
+    bool permitted = true;
+
+    statuses.forEach((key, value) {
+      if (!value.isGranted) {
+        permitted = false;
+      }
+    });
+
+    if (permitted) {
+      _imageStatus = ImageStatus.permissionSuccess;
+    } else {
+      _imageStatus = ImageStatus.permissionFail;
     }
 
     notifyListeners();
