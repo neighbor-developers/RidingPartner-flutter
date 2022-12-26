@@ -29,7 +29,7 @@ class MapSampleState extends State<MapSearchPage> {
   bool searchboxVisible = true;
   int startMarkerId = 0;
   int endMarkerId = 0;
-  int buttonsPositionAlpha = 50;
+  int buttonsPositionAlpha = 0;
 
   Color _searchBoxColor = const Color(0xffF5F6F9);
   final Color _orangeColor = const Color(0xffF07805);
