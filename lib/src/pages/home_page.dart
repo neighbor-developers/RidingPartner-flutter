@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:line_chart/charts/line-chart.widget.dart';
@@ -69,7 +71,7 @@ class _HomePageState extends State<HomePage>
     _weatherProvider = Provider.of<WeatherProvider>(context);
     _homeRecordProvider = Provider.of<HomeRecordProvider>(context);
     records = _homeRecordProvider.recordFor14Days;
-    // _incrementCounter(records);
+    _incrementCounter(records);
 
     return Scaffold(
         backgroundColor: const Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
@@ -295,6 +297,8 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget recordDetailView(Record record) {
+    developer.log('recordDetailView called');
+    developer.log('${record.date}');
     if (record == Record() || record.date == null) {
       return Container(
         padding: const EdgeInsets.all(20),
@@ -427,12 +431,12 @@ class _HomePageState extends State<HomePage>
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w700,
                       color: Color.fromRGBO(51, 51, 51, 1))),
-              Text('km',
-                  style: TextStyle(
-                      fontSize: 12,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w300,
-                      color: Color.fromRGBO(51, 51, 51, 1))),
+              // Text('km',
+              //     style: TextStyle(
+              //         fontSize: 12,
+              //         fontFamily: 'Pretendard',
+              //         fontWeight: FontWeight.w300,
+              //         color: Color.fromRGBO(51, 51, 51, 1))),
             ],
           ),
           Container(
@@ -440,9 +444,28 @@ class _HomePageState extends State<HomePage>
             width: MediaQuery.of(context).size.width - 90,
             padding: EdgeInsets.all(10),
             height: 230,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Stack(
               children: [
+                Positioned(
+                  left: 0,
+                  top: 0,
+                  child: Text('    ${_getMaxDistance(records)}km',
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w300,
+                          color: Color.fromRGBO(51, 51, 51, 1))),
+                ),
+                Positioned(
+                  right: 0,
+                  bottom: 20,
+                  child: Text('   ${_getLastRecordDate(records)}',
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w300,
+                          color: Color.fromRGBO(51, 51, 51, 1))),
+                ),
                 VerticalDivider(
                     width: 1,
                     color: Color.fromRGBO(234, 234, 234, 1),
@@ -451,15 +474,15 @@ class _HomePageState extends State<HomePage>
                   children: [
                     Container(
                       alignment: Alignment.center,
-                      height: 220,
+                      height: 200,
                       child: customLineChart(),
                     ),
                     Container(
-                        width: double.infinity,
-                        height: 1,
+                        width: 330,
+                        height: 0.5,
                         child: Divider(
                             color: Color.fromRGBO(234, 234, 234, 1),
-                            thickness: 1.0))
+                            thickness: 1.0)),
                   ],
                 )
               ],
@@ -476,13 +499,13 @@ class _HomePageState extends State<HomePage>
       ..color = const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32);
 
     Paint linePaint = Paint()
-      ..strokeWidth = 3
+      ..strokeWidth = 1
       ..style = PaintingStyle.stroke
       ..color = Colors.orange;
     return LineChart(
-      width: MediaQuery.of(context).size.width - 90,
-      height: 200,
-      insidePadding: 15,
+      width: MediaQuery.of(context).size.width - 110,
+      height: 120,
+      insidePadding: 30,
       data: data,
       linePaint: linePaint,
       circlePaint: circlePaint,
@@ -490,6 +513,7 @@ class _HomePageState extends State<HomePage>
       showCircles: true,
       customDraw: (Canvas canvas, Size size) {},
       linePointerDecoration: BoxDecoration(
+        shape: BoxShape.circle,
         color: Colors.orange,
       ),
       pointerDecoration: BoxDecoration(
@@ -758,6 +782,25 @@ class _HomePageState extends State<HomePage>
         )
       ],
     );
+  }
+
+  int _getMaxDistance(List<Record> records) {
+    double maxDistance = 0;
+    records.map((e) {
+      if (e.distance! > maxDistance) {
+        maxDistance = e.distance!;
+      }
+    });
+    return maxDistance.round();
+  }
+
+  String _getLastRecordDate(List<Record> records) {
+    List<String> dates = ["기록없음"];
+    if (records.last.date != null) {
+      dates = records.last.getYearMonthDay();
+      return "${dates[1]}월 ${dates[2]}일";
+    }
+    return dates.last;
   }
 
   void _incrementCounter(List<Record> records) {
