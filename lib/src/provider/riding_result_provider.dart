@@ -5,8 +5,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
 
-enum ImageStatus { init, success, fail }
+enum ImageStatus {
+  init,
+  permissionFail,
+  imageSuccess,
+  imageFail
+}
 
 class RidingResultProvider with ChangeNotifier {
   final FirebaseDatabaseService _firebaseDb = FirebaseDatabaseService();
@@ -25,9 +32,8 @@ class RidingResultProvider with ChangeNotifier {
   late final Record _record;
   Record get record => _record;
 
-  late final File _image;
-  File get image => _image;
-
+  late final File? _image;
+  File? get image => _image;
 
   Future<void> getRidingData() async {
     _record = await _firebaseDb.getRecord(_ridingDate);
@@ -41,6 +47,18 @@ class RidingResultProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  saveMemo(String memo) async {
+    _record = await _firebaseDb.getRecord(_ridingDate);
+    Record record = Record(
+      distance: _record.distance?.toDouble(),
+      date: _record.date,
+      timestamp: _record.timestamp,
+      memo: memo
+    );
+    _firebaseDb.saveRecordMemoFirebaseDb(record);
+    PreferenceUtils.saveRecordMemoPref(record);
+  }
+
   // 비동기 처리를 통해 카메라와 갤러리에서 이미지를 가져온다.
   Future<void> getImage(ImageSource imageSource) async {
     final imageXFile = await picker.pickImage(source: imageSource);
@@ -48,11 +66,32 @@ class RidingResultProvider with ChangeNotifier {
 
     if (imageFile != null) {
       _image = imageFile;
-      _imageStatus = ImageStatus.success;
+      _imageStatus = ImageStatus.imageSuccess;
     } else {
-      _imageStatus = ImageStatus.fail;
+      _imageStatus = ImageStatus.imageFail;
     }
 
     notifyListeners();
+  }
+
+  Future<void> confirmPermissionGranted() async {
+    // storage와  camera의 권한을 요청
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+      Permission.camera,
+    ].request();
+
+    bool permitted = true;
+
+    statuses.forEach((key, value) {
+      if (!value.isGranted) {
+        permitted = false;
+      }
+    });
+
+    if (!permitted) {
+      _imageStatus = ImageStatus.permissionFail;
+      notifyListeners();
+    }
   }
 }
