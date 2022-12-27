@@ -30,9 +30,6 @@ class RidingResultProvider with ChangeNotifier {
   late final File? _image;
   File? get image => _image;
 
-  String? _memo;
-  String? get memo => _memo;
-
   Future<void> getRidingData() async {
     _record = await _firebaseDb.getRecord(_ridingDate);
     print(_record);
@@ -46,13 +43,15 @@ class RidingResultProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  saveMemo(String str) async {
+  saveOtherRecord(String str, double cal) async {
     Record record = Record(
         distance: _record.distance?.toDouble(),
         date: _record.date,
         topSpeed: _record.topSpeed,
         timestamp: _record.timestamp,
-        memo: str);
+        memo: str,
+        kcal: cal
+    );
     _firebaseDb.saveRecordFirebaseDb(record);
     PreferenceUtils.saveRecordMemoPref(record);
   }

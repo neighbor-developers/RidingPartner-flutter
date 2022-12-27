@@ -4,8 +4,15 @@ class Record {
   String? date;
   double? topSpeed;
   String? memo;
+  double? kcal;
 
-  Record({this.distance, this.date, this.timestamp, this.topSpeed, this.memo});
+  Record(
+      {this.distance,
+      this.date,
+      this.timestamp,
+      this.topSpeed,
+      this.memo,
+      this.kcal});
 
   factory Record.fromDB(db) => Record(
         distance: db["distance"].toDouble(),
@@ -13,6 +20,7 @@ class Record {
         date: db["date"],
         topSpeed: db["topSpeed"].toDouble(),
         memo: db["memo"],
+        kcal: db["kcal"],
       );
 
   List<String> getYearMonthDay() {

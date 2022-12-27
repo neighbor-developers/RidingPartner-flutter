@@ -326,7 +326,7 @@ class _RecordState extends State<RecordPage> {
                   height: 56.0,
                   child: ElevatedButton(
                     onPressed: () {
-                      _recordProvider.saveMemo(memoText);
+                      _recordProvider.saveOtherRecord(memoText, (hKcal * (_record.timestamp!) / 3600));
                       Navigator.pop(context);
                       Navigator.pop(context);
                     },

@@ -156,7 +156,9 @@ class RidingProvider with ChangeNotifier {
         date: _ridingDate,
         timestamp: _time.inSeconds,
         topSpeed: _topSpeed,
-        memo: null);
+        memo: null,
+        kcal: null
+    );
     developer.log(_ridingDate.toString());
     _firebaseDb.saveRecordFirebaseDb(record);
     PreferenceUtils.saveRecordPref(record);

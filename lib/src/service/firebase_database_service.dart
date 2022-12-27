@@ -17,7 +17,8 @@ class FirebaseDatabaseService {
           "distance": record.distance,
           "timestamp": record.timestamp,
           "topSpeed": record.topSpeed,
-          "memo": record.memo
+          "memo": record.memo,
+          "kcal": record.kcal
         })
         .then((_) => {developer.log("firebase 기록 저장 성공 $record")})
         .catchError((onError) {
