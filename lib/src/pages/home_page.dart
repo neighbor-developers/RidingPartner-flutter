@@ -278,6 +278,10 @@ class _HomePageState extends State<HomePage>
               height: 330,
               width: MediaQuery.of(context).size.width,
               child: recordChart()),
+          SizedBox(
+            height: 40,
+            width: MediaQuery.of(context).size.width,
+          )
         ]);
 
       default:
@@ -408,32 +412,98 @@ class _HomePageState extends State<HomePage>
               )
             ],
             borderRadius: BorderRadius.all(Radius.circular(12))),
-        padding: const EdgeInsets.all(25),
-        margin: const EdgeInsets.fromLTRB(20, 15, 20, 40),
+        padding: const EdgeInsets.all(20),
+        margin: const EdgeInsets.all(20),
         alignment: Alignment.topLeft,
         width: MediaQuery.of(context).size.width,
-        child: Stack(children: [
-          const Positioned(
-            top: 0,
-            left: 0,
-            child: Text('주행기록',
-                style: TextStyle(
-                    fontSize: 14,
-                    fontFamily: 'Pretendard',
-                    fontWeight: FontWeight.w700,
-                    color: Color.fromRGBO(51, 51, 51, 1))),
-          ),
-          const Positioned(
-              top: 0,
-              right: 0,
-              child: Text('km',
+        height: 330,
+        child: Column(mainAxisSize: MainAxisSize.max, children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('주행기록',
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w700,
+                      color: Color.fromRGBO(51, 51, 51, 1))),
+              Text('km',
                   style: TextStyle(
                       fontSize: 12,
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w300,
-                      color: Color.fromRGBO(51, 51, 51, 1)))),
-          Positioned(bottom: 0, child: customLineChart())
+                      color: Color.fromRGBO(51, 51, 51, 1))),
+            ],
+          ),
+          Container(
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width - 90,
+            padding: EdgeInsets.all(10),
+            height: 230,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                VerticalDivider(
+                    width: 1,
+                    color: Color.fromRGBO(234, 234, 234, 1),
+                    thickness: 1.0),
+                Column(
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      height: 220,
+                      child: customLineChart(),
+                    ),
+                    Container(
+                        width: double.infinity,
+                        height: 1,
+                        child: Divider(
+                            color: Color.fromRGBO(234, 234, 234, 1),
+                            thickness: 1.0))
+                  ],
+                )
+              ],
+            ),
+          )
         ]));
+  }
+
+  Widget customLineChart() {
+    Paint circlePaint = Paint()
+      ..color = const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32);
+
+    Paint insideCirclePaint = Paint()
+      ..color = const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32);
+
+    Paint linePaint = Paint()
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke
+      ..color = Colors.orange;
+    return LineChart(
+      width: MediaQuery.of(context).size.width - 90,
+      height: 200,
+      insidePadding: 15,
+      data: data,
+      linePaint: linePaint,
+      circlePaint: circlePaint,
+      showPointer: true,
+      showCircles: true,
+      customDraw: (Canvas canvas, Size size) {},
+      linePointerDecoration: BoxDecoration(
+        color: Colors.orange,
+      ),
+      pointerDecoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.deepOrange,
+      ),
+      insideCirclePaint: insideCirclePaint,
+      onValuePointer: (LineChartModelCallback value) {
+        print('${value.chart} ${value.percentage}');
+      },
+      onDropPointer: () {
+        print('onDropPointer');
+      },
+    );
   }
 
   Widget weatherWidget() {
@@ -687,44 +757,6 @@ class _HomePageState extends State<HomePage>
           onTap: () {},
         )
       ],
-    );
-  }
-
-  Widget customLineChart() {
-    Paint circlePaint = Paint()
-      ..color = const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32);
-
-    Paint insideCirclePaint = Paint()
-      ..color = const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32);
-
-    Paint linePaint = Paint()
-      ..strokeWidth = 3
-      ..style = PaintingStyle.stroke
-      ..color = Colors.orange;
-    return LineChart(
-      width: MediaQuery.of(context).size.width / 6 * 5,
-      height: 180,
-      data: data,
-      linePaint: linePaint,
-      circlePaint: circlePaint,
-      showPointer: true,
-      showCircles: true,
-      customDraw: (Canvas canvas, Size size) {},
-      linePointerDecoration: BoxDecoration(
-        color: Colors.orange,
-      ),
-      pointerDecoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.deepOrange,
-      ),
-      insideCirclePaint: insideCirclePaint,
-      onValuePointer: (LineChartModelCallback value) {
-        print('${value.chart} ${value.percentage}');
-      },
-      onDropPointer: () {
-        print('onDropPointer');
-      },
-      insidePadding: 16,
     );
   }
 
