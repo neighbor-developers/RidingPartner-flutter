@@ -30,9 +30,7 @@ class FirebaseDatabaseService {
     DatabaseReference ref = _database.ref("$_uId/${record.date}");
     await ref
         .set({"memo": record.memo})
-        .then((_) => {
-          print("메모 내용: ${record.memo}")
-        })
+        .then((_) => {print("메모 내용: ${record.memo}")})
         .catchError((onError) {
           print(onError.toString());
         });
@@ -70,7 +68,16 @@ class FirebaseDatabaseService {
       if (snapshot.exists) {
         print("데이터 있음");
         Map<dynamic, dynamic> map = snapshot.value as Map<dynamic, dynamic>;
-        return map.values.map(Record.fromDB).toList();
+        // return map.values.map(Record.fromDB).toList();
+        final records = map.values.map((recordEl) {
+          try {
+            return Record.fromDB(recordEl);
+          } catch (e) {
+            return Record();
+          }
+        }).toList();
+
+        return records.where((record) => record != Record()).toList();
       } else {
         print("데이터 없음");
         return <Record>[];
