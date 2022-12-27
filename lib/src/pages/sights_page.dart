@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'dart:math';
+import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/src/painting/rounded_rectangle_border.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/provider/sights_provider.dart';
@@ -12,8 +13,6 @@ import '../provider/navigation_provider.dart';
 import '../provider/riding_provider.dart';
 import 'home_page.dart';
 import 'navigation_page.dart';
-import 'package:flutter/src/painting/rounded_rectangle_border.dart';
-import 'dart:developer' as developer;
 
 class SightsPage extends StatelessWidget {
   final Completer<GoogleMapController> _controller = Completer();
@@ -39,24 +38,26 @@ class SightsPage extends StatelessWidget {
           developer.log("넓이 : $width");
 
           return Column(
-              children: [
-                Container(
-                  height: height*0.5 - height*0.07,
+            children: [
+              Container(
+                  height: height * 0.5 - height * 0.07,
                   padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
                   child: Column(
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                      //padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
                       children: [
-                        Text(style: const TextStyle(
-                          fontSize: mainFontSize,
-                          color: Color.fromRGBO(51, 51, 51, 1),
-                          fontFamily: "Pretendard",
-                          height: 1.3,
-                          letterSpacing: 0.02,
-                          fontWeight: FontWeight.w800), place.title!),
+                        Text(
+                            style: const TextStyle(
+                                fontSize: mainFontSize,
+                                color: Color.fromRGBO(51, 51, 51, 1),
+                                fontFamily: "Pretendard",
+                                height: 1.3,
+                                letterSpacing: 0.02,
+                                fontWeight: FontWeight.w800),
+                            place.title!),
                         // Column(
                         //   mainAxisSize: MainAxisSize.min,
                         //   crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,14 +83,11 @@ class SightsPage extends StatelessWidget {
                             semanticContainer: true,
                             clipBehavior: Clip.antiAliasWithSaveLayer,
                             shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0)
-                          ),
-                          child: Image.asset(place.image!) 
-                        )
-                        
+                                borderRadius: BorderRadius.circular(12.0)),
+                            child: Image.asset(place.image!))
 
-                    // ),]
-  /*          ElevatedButton(
+                        // ),]
+                        /*          ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFE9E9E9)),
                   //maximumSize: Size(),
@@ -98,36 +96,35 @@ class SightsPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-              ),*/]
-                  )
-                ),
-                SizedBox(
-                    height: height*0.07,
-                    width: width,
-                    child:  ElevatedButton(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(Colors.orange[1100]!)),
-                      child: const Text("안내 시작",
-                          style: TextStyle(color: Colors.white)),
-                      onPressed: () async {
-                        final placeList = <Place>[place];
+              ),*/
+                      ])),
+              SizedBox(
+                  height: height * 0.07,
+                  width: width,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Color.fromARGB(0xFF, 0xFB, 0x95, 0x32))),
+                    child: const Text("안내 시작",
+                        style: TextStyle(color: Colors.white)),
+                    onPressed: () async {
+                      final placeList = <Place>[place];
 
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MultiProvider(
-                                  providers: [
-                                    ChangeNotifierProvider(
-                                        create: (context) =>
-                                            NavigationProvider(placeList)),
-                                    ChangeNotifierProvider(
-                                        create: (context) => RidingProvider())
-                                  ],
-                                  child: NavigationPage(),
-                                )));
-                      },
-                    )
-                ),
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MultiProvider(
+                                    providers: [
+                                      ChangeNotifierProvider(
+                                          create: (context) =>
+                                              NavigationProvider(placeList)),
+                                      ChangeNotifierProvider(
+                                          create: (context) => RidingProvider())
+                                    ],
+                                    child: NavigationPage(),
+                                  )));
+                    },
+                  )),
             ],
           );
         });
