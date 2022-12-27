@@ -228,7 +228,7 @@ class _RecordState extends State<RecordPage> {
                                       Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
                             ),
                             Text(
-                              "${(hKcal * (_record.timestamp!) / 4000).toStringAsFixed(1)} kcal",
+                              "${(hKcal * (_record.timestamp!) / 3600).toStringAsFixed(1)} kcal",
                               style: const TextStyle(
                                   fontSize: 16.0,
                                   fontFamily: "Pretendard",
