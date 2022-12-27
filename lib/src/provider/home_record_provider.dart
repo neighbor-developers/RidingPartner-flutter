@@ -62,24 +62,19 @@ class HomeRecordProvider extends ChangeNotifier {
   Future getRecord() async {
     setList();
     setDate();
-    List<Record>? records = await _firebaseDatabaseService.getAllRecords();
-    _prefRecord = PreferenceUtils.getRecordFromPref();
 
-    if (records == null) {
-      // 가져오기 실패
-      _recordState = RecordState.fail;
-    } else if (records.isEmpty) {
-      // 기록 없음
-      _recordState = RecordState.none;
-    } else {
-      // 성공, 기록 있음
-      _recordState = RecordState.success;
-      if (_prefRecord != records.last && _prefRecord != null) {
+    Map<String, dynamic> result =
+        await _firebaseDatabaseService.getAllRecords();
+    _recordState = result['state'];
+
+    if (_recordState == RecordState.success) {
+      List<Record> data = result['data'];
+      if (_prefRecord != data.last && _prefRecord != null) {
         // 마지막 기록과 다르면 다시 저장 (ex. 네트워크 문제)
         saveRecord(_prefRecord!);
-        records.add(_prefRecord!);
+        data.add(_prefRecord!);
       }
-      get14daysRecord(records);
+      get14daysRecord(data);
 
       notifyListeners();
     }

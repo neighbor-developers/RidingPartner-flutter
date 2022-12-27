@@ -10,9 +10,11 @@ import 'package:ridingpartner_flutter/src/models/place.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/models/weather.dart';
 import 'package:ridingpartner_flutter/src/pages/navigation_page.dart';
+import 'package:ridingpartner_flutter/src/pages/record_list_page.dart';
 import 'package:ridingpartner_flutter/src/pages/setting_page.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/record_list_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/setting_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
@@ -309,7 +311,9 @@ class _HomePageState extends State<HomePage>
           'assets/icons/home_distance.png');
       Data time = Data('시간', timestampToText(record.timestamp!),
           'assets/icons/home_time.png');
-      Data speed = Data('평균 속도', '${record.distance! / record.timestamp!}m/s',
+      Data speed = Data(
+          '평균 속도',
+          '${((record.distance! / 1000 / record.timestamp! / 3600 * 10).toInt()) / 10}km/h',
           'assets/icons/home_speed.png');
       Data speedMax = Data('순간 최고 속도', '${record.topSpeed}m/s',
           'assets/icons/home_max_speed.png');
@@ -776,7 +780,13 @@ class _HomePageState extends State<HomePage>
           labelBackgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
           labelStyle: const TextStyle(
               fontWeight: FontWeight.w500, color: Colors.white, fontSize: 13.0),
-          onTap: () {},
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ChangeNotifierProvider(
+                      create: (context) => RecordListProvider(),
+                      child: const RecordListPage(),
+                    )));
+          },
         )
       ],
     );

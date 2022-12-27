@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
+import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
 
 class FirebaseDatabaseService {
@@ -61,7 +62,7 @@ class FirebaseDatabaseService {
     }
   }
 
-  Future<List<Record>?> getAllRecords() async {
+  Future<Map<String, dynamic>> getAllRecords() async {
     try {
       List<Record> records = [];
       DatabaseReference ref = _database.ref("$_uId");
@@ -81,15 +82,18 @@ class FirebaseDatabaseService {
           }
         }).toList();
 
-        return records.where((record) => record != Record()).toList();
+        return {
+          'state': RecordState.success,
+          'data': records.where((record) => record != Record()).toList()
+        };
       } else {
         print("데이터 없음");
-        return <Record>[];
+        return {'state': RecordState.none};
       }
     } catch (e) {
       print("catch!");
       developer.log(e.toString());
-      return null;
+      return {'state': RecordState.fail};
     }
   }
 }

@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:ridingpartner_flutter/src/models/record.dart';
+import 'package:ridingpartner_flutter/src/pages/record_page.dart';
+import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/record_list_provider.dart';
+
+import '../provider/riding_result_provider.dart';
 
 class RecordListPage extends StatefulWidget {
   const RecordListPage({super.key});
@@ -10,137 +18,102 @@ class RecordListPage extends StatefulWidget {
 }
 
 class _RecordListPageState extends State<RecordListPage> {
-  // late RecordListProvider _recordListProvider;
+  late RecordListProvider _recordListProvider;
+
   TextStyle detailStyle = const TextStyle(
     fontFamily: 'Pretendard',
     fontSize: 15,
     fontWeight: FontWeight.bold,
     color: Colors.white,
   );
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
-    // _settingProvider = Provider.of<SettingProvider>(context);
-
+    _recordListProvider = Provider.of<RecordListProvider>(context);
+    if (_recordListProvider.recordState == RecordState.loading) {
+      _recordListProvider.getRecord();
+    }
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text('설정'),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.arrow_back),
-          color: Colors.indigo.shade900,
+        appBar: AppBar(
+          shadowColor: const Color.fromRGBO(255, 255, 255, 0.5),
+          backgroundColor: Colors.white,
+          title: Container(
+              padding: const EdgeInsets.fromLTRB(0, 0, 50, 0),
+              width: MediaQuery.of(context).size.width,
+              alignment: Alignment.center,
+              child: Image.asset(
+                'assets/icons/logo.png',
+                height: 25,
+              )),
+          leadingWidth: 50,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.arrow_back),
+            color: const Color.fromRGBO(240, 120, 5, 1),
+          ),
+          elevation: 10,
         ),
-      ),
-      body: Column(
-        children: [
-          mainStatement(),
-          recordInformtion(),
-        ],
-      ),
-    );
+        body: SizedBox(
+            height: double.infinity,
+            width: double.infinity,
+            child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                itemCount: _recordListProvider.records.length,
+                itemBuilder: (context, index) =>
+                    recordItem(_recordListProvider.records.elementAt(index)))));
   }
 
-  Widget mainStatement() {
-    return Container(
-        padding: EdgeInsets.only(left: 10),
-        color: Colors.deepOrangeAccent,
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height / 8,
-        alignment: Alignment.centerLeft,
-        child: const Text(
-          '즐거운 라이딩 되셨나요?',
-          style: TextStyle(
-            fontFamily: 'Pretendard',
-            fontSize: 40,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ));
-  }
-
-  Widget recordInformtion() {
-    return Container(
-      padding: EdgeInsets.only(left: 10),
-      color: Colors.deepOrangeAccent,
-      width: MediaQuery.of(context).size.width,
-      height: (MediaQuery.of(context).size.height / 8) * 6,
-      alignment: Alignment.center,
-      child: Column(
-        children: [
-          informationDetail("날짜", "2022년 12월 6일"),
-          informationDetail("주행시간", "시간"),
-          informationDetail("평균속도", "속도"),
-          informationDetail("주행총거리", "거리"),
-          informationDetail("소모칼로리", "칼로리"),
-          SizedBox(
-            height: 20,
-          ),
-          memoInput(),
-          saveButton(),
-        ],
-      ),
-    );
-  }
-
-  Widget memoInput() {
-    return Container(
-      padding: EdgeInsets.only(left: 10),
-      color: Colors.deepOrangeAccent,
-      width: MediaQuery.of(context).size.width,
-      height: (MediaQuery.of(context).size.height / 8) * 2,
-      alignment: Alignment.center,
-      child: TextField(
-        maxLines: 10,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          hintText: '메모를 입력해주세요',
-        ),
-      ),
-    );
-  }
-
-  Widget saveButton() {
-    return Container(
-      padding: EdgeInsets.only(left: 10),
-      color: Colors.deepOrangeAccent,
-      width: MediaQuery.of(context).size.width,
-      height: (MediaQuery.of(context).size.height / 10) * 1,
-      alignment: Alignment.center,
-      child: ElevatedButton(
-        onPressed: () {},
-        child: const Text('기록 저장하기'),
-      ),
-    );
-  }
-
-  Widget informationDetail(title, content) {
-    return Row(
-      children: [
-        Container(
-          height: (MediaQuery.of(context).size.height / 30) * 1,
-          width: MediaQuery.of(context).size.width / 4,
-          child: Text(
-            title,
-            style: detailStyle,
-          ),
-        ),
-        Container(
-          height: (MediaQuery.of(context).size.height / 30) * 1,
-          width: MediaQuery.of(context).size.width / 2,
-          child: Text(
-            content,
-            style: detailStyle,
-          ),
-        )
-      ],
-    );
+  Widget recordItem(Record? record) {
+    return record == null
+        ? Container()
+        : InkWell(
+            onTap: () => {
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => ChangeNotifierProvider(
+                  //               create: (context) =>
+                  //                   RidingResultProvider(record.date!),
+                  //               child: RecordPage(),
+                  //             )))
+                },
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(13),
+              child: Row(
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20.0),
+                      child: Image.asset(
+                        'assets/images/img_loading.png',
+                        fit: BoxFit.fill,
+                        width: 60,
+                        height: 60,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  Column(
+                    children: [
+                      Text(
+                          DateFormat('yyyy년 MM월 dd일')
+                              .format(DateTime.parse(record.date!)),
+                          style: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ))
+                    ],
+                  )
+                ],
+              ),
+            ));
   }
 }
