@@ -25,6 +25,7 @@ class Record {
 
   List<String> getYearMonthDay() {
     List<String> dateList = date!.split('-');
+    dateList.last = dateList.last.substring(0, 2);
     return dateList;
   }
 }

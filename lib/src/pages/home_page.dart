@@ -297,8 +297,6 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget recordDetailView(Record record) {
-    developer.log('recordDetailView called');
-    developer.log('${record.date}');
     if (record == Record() || record.date == null) {
       return Container(
         padding: const EdgeInsets.all(20),
@@ -804,14 +802,22 @@ class _HomePageState extends State<HomePage>
   }
 
   void _incrementCounter(List<Record> records) {
+    developer.log("records!!!: ${records.toString()}");
+    developer.log('date!!: ${records.last.date}');
     setState(() {
       data = [];
-      records.map((e) => data.add(LineChartModel(
-          amount: e.distance,
-          date: DateTime(
-              int.parse(e.getYearMonthDay()[0]),
-              int.parse(e.getYearMonthDay()[1]),
-              int.parse(e.getYearMonthDay()[2])))));
+      for (var e in records) {
+        if (e.date == null) {
+          continue;
+        }
+        data.add(LineChartModel(
+            amount: e.distance,
+            date: DateTime(
+                int.parse(e.getYearMonthDay()[0]),
+                int.parse(e.getYearMonthDay()[1]),
+                int.parse(e.getYearMonthDay()[2]))));
+      }
     });
+    developer.log("data: ${data.toString()}");
   }
 }
