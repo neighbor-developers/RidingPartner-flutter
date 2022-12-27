@@ -157,7 +157,9 @@ class RidingProvider with ChangeNotifier {
         distance: _sumDistance.toDouble(),
         date: _ridingDate,
         timestamp: _time.inSeconds,
-        topSpeed: _topSpeed);
+        topSpeed: _topSpeed,
+        memo: null
+    );
     developer.log(_ridingDate.toString());
     _firebaseDb.saveRecordFirebaseDb(record);
     PreferenceUtils.saveRecordPref(record);

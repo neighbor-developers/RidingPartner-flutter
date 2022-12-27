@@ -16,7 +16,8 @@ class FirebaseDatabaseService {
           "date": record.date,
           "distance": record.distance,
           "timestamp": record.timestamp,
-          "topSpeed": record.topSpeed
+          "topSpeed": record.topSpeed,
+          "memo": record.memo
         })
         .then((_) => {developer.log("firebase 기록 저장 성공 $record")})
         .catchError((onError) {
@@ -29,7 +30,9 @@ class FirebaseDatabaseService {
     DatabaseReference ref = _database.ref("$_uId/${record.date}");
     await ref
         .set({"memo": record.memo})
-        .then((_) => {developer.log("firebase 메모 저장 성공 $record")})
+        .then((_) => {
+          print("메모 내용: ${record.memo}")
+        })
         .catchError((onError) {
           print(onError.toString());
         });

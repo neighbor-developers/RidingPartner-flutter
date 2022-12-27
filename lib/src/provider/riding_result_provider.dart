@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'dart:developer' as developer;
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
@@ -35,6 +35,9 @@ class RidingResultProvider with ChangeNotifier {
   late final File? _image;
   File? get image => _image;
 
+  String? _memo;
+  String? get memo => _memo;
+
   Future<void> getRidingData() async {
     _record = await _firebaseDb.getRecord(_ridingDate);
 
@@ -47,16 +50,29 @@ class RidingResultProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  saveMemo(String memo) async {
-    _record = await _firebaseDb.getRecord(_ridingDate);
+  setMemo(String? memo) async{
+    if(memo != null){
+      saveMemo(memo);
+    } else{
+      memo = "메모가 없습니다.";
+      _memo = memo;
+    }
+  }
+
+  saveMemo(String? memo) async {
     Record record = Record(
-      distance: _record.distance?.toDouble(),
-      date: _record.date,
-      timestamp: _record.timestamp,
-      memo: memo
+        distance: _record.distance?.toDouble(),
+        date: _record.date,
+        timestamp: _record.timestamp,
+        memo: _memo
     );
-    _firebaseDb.saveRecordMemoFirebaseDb(record);
-    PreferenceUtils.saveRecordMemoPref(record);
+    if (memo != null) {
+      developer.log("메모 저장 성공 $memo");
+      _firebaseDb.saveRecordMemoFirebaseDb(record);
+      PreferenceUtils.saveRecordMemoPref(record);
+    } else{
+      developer.log("메모 저장 실패");
+    }
   }
 
   // 비동기 처리를 통해 카메라와 갤러리에서 이미지를 가져온다.

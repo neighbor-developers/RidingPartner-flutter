@@ -1,20 +1,16 @@
-import 'dart:ffi';
 import 'dart:developer' as developer;
 import 'dart:io';
+
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:provider/provider.dart';
-import 'package:ridingpartner_flutter/src/provider/bottom_navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
-import 'package:ridingpartner_flutter/src/utils/permission_camera.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
 
 import '../models/record.dart';
 import '../provider/riding_result_provider.dart';
-import '../provider/weather_provider.dart';
-import 'home_page.dart';
 
 class RecordPage extends StatefulWidget {
   RecordPage({super.key});
@@ -260,7 +256,17 @@ class _RecordState extends State<RecordPage> {
                                     (_) => _recordProvider
                                         .getImage(ImageSource.gallery));
                               } else if (imageStatus ==
-                                  ImageStatus.permissionFail) {}
+                                  ImageStatus.permissionFail) {
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                  content: const Text("사진, 파일, 마이크 접근을 허용 해주셔야 카메라 사용이 가능합니다."),
+                                  action: SnackBarAction(
+                                    label: "OK",
+                                    onPressed: () {
+                                      AppSettings.openAppSettings();
+                                    },
+                                  ),
+                                ));
+                              }
                             },
                             style: ButtonStyle(
                               side: MaterialStateProperty.all(const BorderSide(
@@ -300,7 +306,7 @@ class _RecordState extends State<RecordPage> {
                         fontSize: 14.0,
                         color: Colors.black,
                       ),
-                      onChanged: (value) => _recordProvider.saveMemo(value),
+                      onChanged: (value) => _recordProvider.setMemo(value),
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.all(16),
                         enabledBorder: OutlineInputBorder(
@@ -319,6 +325,7 @@ class _RecordState extends State<RecordPage> {
                   height: 56.0,
                   child: ElevatedButton(
                     onPressed: () {
+                      _recordProvider.saveMemo(_recordProvider.memo);
                       Navigator.pop(context);
                       Navigator.pop(context);
                     },
