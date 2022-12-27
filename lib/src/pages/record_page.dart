@@ -294,20 +294,21 @@ class _RecordState extends State<RecordPage> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(17),
-                      color: Color.fromRGBO(255, 255, 255, 0.3)),
+                      color: const Color.fromRGBO(255, 255, 255, 0.3)),
                   child: TextField(
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14.0,
                         color: Colors.black,
                       ),
+                      onChanged: (value) => _recordProvider.saveMemo(value),
                       decoration: InputDecoration(
-                        contentPadding: EdgeInsets.all(16),
+                        contentPadding: const EdgeInsets.all(16),
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide.none,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         hintText: "오늘의 라이딩은 어땠나요?",
-                        hintStyle: TextStyle(
+                        hintStyle: const TextStyle(
                           color: Colors.white,
                           fontSize: 14.0,
                         ),

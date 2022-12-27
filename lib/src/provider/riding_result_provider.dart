@@ -6,6 +6,7 @@ import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
 
 enum ImageStatus {
   init,
@@ -44,6 +45,18 @@ class RidingResultProvider with ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  saveMemo(String memo) async {
+    _record = await _firebaseDb.getRecord(_ridingDate);
+    Record record = Record(
+      distance: _record.distance?.toDouble(),
+      date: _record.date,
+      timestamp: _record.timestamp,
+      memo: memo
+    );
+    _firebaseDb.saveRecordMemoFirebaseDb(record);
+    PreferenceUtils.saveRecordMemoPref(record);
   }
 
   // 비동기 처리를 통해 카메라와 갤러리에서 이미지를 가져온다.

@@ -15,17 +15,22 @@ class PreferenceUtils {
     setDouble('topSpeed', record.topSpeed!);
   }
 
+  static saveRecordMemoPref(Record record) {
+    setString("memo", record.memo!);
+  }
+
   static Record? getRecordFromPref() {
     double? distance = getDouble("distance");
     String? date = getString("date");
     int? time = getInt("timeStamp");
     double? topSpeed = getDouble('topSpeed');
+    String? memo = getString("memo");
 
     if (distance == null) {
       return null;
     } else {
       return Record(
-          distance: distance, date: date, timestamp: time, topSpeed: topSpeed);
+          distance: distance, date: date, timestamp: time, topSpeed: topSpeed, memo: memo);
     }
   }
 

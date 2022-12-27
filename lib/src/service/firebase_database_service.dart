@@ -25,6 +25,17 @@ class FirebaseDatabaseService {
     PreferenceUtils.saveRecordPref(record);
   }
 
+  saveRecordMemoFirebaseDb(Record record) async {
+    DatabaseReference ref = _database.ref("$_uId/${record.date}");
+    await ref
+        .set({"memo": record.memo})
+        .then((_) => {developer.log("firebase 메모 저장 성공 $record")})
+        .catchError((onError) {
+          print(onError.toString());
+        });
+    PreferenceUtils.saveRecordMemoPref(record);
+  }
+
   Future<Record> getRecord(String ridingDate) async {
     try {
       DatabaseReference ref = _database.ref("$_uId/$ridingDate");
