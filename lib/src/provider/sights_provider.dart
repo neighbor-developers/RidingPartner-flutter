@@ -16,6 +16,7 @@ enum MarkerListState {
 class SightsProvider with ChangeNotifier {
   MarkerListState _state = MarkerListState.searching;
   MarkerListState get state => _state;
+
   setState(state) {
     _state = state;
     notifyListeners();

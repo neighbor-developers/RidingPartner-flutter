@@ -14,15 +14,26 @@ import '../provider/riding_provider.dart';
 import 'home_page.dart';
 import 'navigation_page.dart';
 
-class SightsPage extends StatelessWidget {
+class SightsPage extends StatefulWidget {
+  @override
+  State<SightsPage> createState() => _SightsPageState();
+}
+
+class _SightsPageState extends State<SightsPage> {
   final Completer<GoogleMapController> _controller = Completer();
-  late Set<Marker> markers;
+
+  Set<Marker> markers = {};
+  late SightsProvider _sightsProvider;
+
+  @override
+  void initState() {
+    Provider.of<SightsProvider>(context, listen: false).getPlaceList();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final sightsProvider = Provider.of<SightsProvider>(context);
-
-    final state = sightsProvider.state;
+    _sightsProvider = Provider.of<SightsProvider>(context);
+    final state = _sightsProvider.state;
 
     void routeDialog(Place place) => showModalBottomSheet<void>(
         context: context,
@@ -38,105 +49,83 @@ class SightsPage extends StatelessWidget {
           developer.log("넓이 : $width");
 
           return Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                  height: height * 0.5 - height * 0.07,
-                  padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(24, 38, 24, 30),
                   child: Column(
-                      mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
                       children: [
                         Text(
                             style: const TextStyle(
-                                fontSize: mainFontSize,
-                                color: Color.fromRGBO(51, 51, 51, 1),
-                                fontFamily: "Pretendard",
-                                height: 1.3,
-                                letterSpacing: 0.02,
-                                fontWeight: FontWeight.w800),
+                                fontFamily: 'Pretendard',
+                                fontSize: 24,
+                                fontWeight: FontWeight.w700),
                             place.title!),
-                        // Column(
-                        //   mainAxisSize: MainAxisSize.min,
-                        //   crossAxisAlignment: CrossAxisAlignment.start,
-                        //   children: <Widget>[
-                        //     Row(
-                        //       //mainAxisAlignment: MainAxisAlignment.start,
-                        //         children: <Widget>[
-                        //           Text(place.roadAddress ?? "위치 로드에 실패하였습니다. 재접속해주세요",
-                        //               style: const TextStyle(
-                        //                 color: Color(0xFFE9E9E9),
-                        //               )),
-                        //           //Text(sightsProvider.distance+"km")
-                        //         ]),
-                        //     Image.asset(place.image!),
-                        //   ],
-                        Text(place.roadAddress ?? "위치 로드에 실패하였습니다. 재접속해주세요",
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        Text(place.roadAddress ?? "",
                             style: const TextStyle(
-                              fontSize: recordFontSize,
-                              color: Color(0xFF999999),
-                            )),
-                        const Divider(color: Colors.grey, thickness: 1.0),
-                        Card(
-                            semanticContainer: true,
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0)),
-                            child: Image.asset(place.image!))
-
-                        // ),]
-                        /*          ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFE9E9E9)),
-                  //maximumSize: Size(),
-                ),
-                child: const Text(style: TextStyle(color: Color(0xFF666666)), "취소"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),*/
+                                fontFamily: 'Pretendard',
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: Color.fromRGBO(51, 51, 51, 0.5))),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        const Divider(
+                          color: Color.fromRGBO(233, 236, 239, 1),
+                          thickness: 1.0,
+                        ),
+                        const SizedBox(height: 16.0),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.asset(
+                            place.image!,
+                            height: 160.0,
+                            width: MediaQuery.of(context).size.width,
+                            fit: BoxFit.fill,
+                          ),
+                        )
                       ])),
-              SizedBox(
-                  height: height * 0.07,
-                  width: width,
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            Color.fromARGB(0xFF, 0xFB, 0x95, 0x32))),
-                    child: const Text("안내 시작",
-                        style: TextStyle(color: Colors.white)),
-                    onPressed: () async {
-                      final placeList = <Place>[place];
-
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MultiProvider(
-                                    providers: [
-                                      ChangeNotifierProvider(
-                                          create: (context) =>
-                                              NavigationProvider(placeList)),
-                                      ChangeNotifierProvider(
-                                          create: (context) => RidingProvider())
-                                    ],
-                                    child: NavigationPage(),
-                                  )));
-                    },
-                  )),
+              InkWell(
+                  onTap: () async {
+                    final placeList = <Place>[place];
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MultiProvider(
+                                  providers: [
+                                    ChangeNotifierProvider(
+                                        create: (context) =>
+                                            NavigationProvider(placeList)),
+                                    ChangeNotifierProvider(
+                                        create: (context) => RidingProvider())
+                                  ],
+                                  child: const NavigationPage(),
+                                )));
+                  },
+                  child: Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width,
+                      height: 60,
+                      color: const Color.fromRGBO(240, 120, 5, 1),
+                      child: const Text('안내 시작',
+                          style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700))))
             ],
           );
         });
 
-    if (state == MarkerListState.searching) {
-      sightsProvider.getPlaceList();
-      markers = <Marker>{};
-    }
-
     Future<void> setCustomMarker() async {
       try {
-        await Future.forEach(sightsProvider.sightList, (place) async {
+        await Future.forEach(_sightsProvider.sightList, (place) async {
           final customIcon =
               await CustomMarker().getPictuerMarker(place.marker!);
           markers.add(Marker(
@@ -147,9 +136,9 @@ class SightsPage extends StatelessWidget {
                   double.parse(place.longitude ?? "")) //예외처리해주기
               ));
         });
-        sightsProvider.setState(MarkerListState.markerCompleted);
+        _sightsProvider.setState(MarkerListState.markerCompleted);
       } catch (e) {
-        sightsProvider.setState(MarkerListState.empty);
+        _sightsProvider.setState(MarkerListState.empty);
       }
     }
 
