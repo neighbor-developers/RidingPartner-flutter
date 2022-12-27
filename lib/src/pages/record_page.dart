@@ -21,6 +21,7 @@ class RecordPage extends StatefulWidget {
 
 class _RecordState extends State<RecordPage> {
   late RidingResultProvider _recordProvider;
+  String memoText = '';
 
   // 이미지를 보여주는 위젯
   Widget showImage() {
@@ -41,11 +42,9 @@ class _RecordState extends State<RecordPage> {
           decoration: BoxDecoration(
               border: Border.all(
                   color: const Color.fromARGB(0xFF, 0xFD, 0xD3, 0xAB),
-                width: 2.0
-              ),
-            borderRadius: BorderRadius.circular(3.5),
-            color: Colors.transparent
-          ),
+                  width: 2.0),
+              borderRadius: BorderRadius.circular(3.5),
+              color: Colors.transparent),
           child: Center(
               child: _recordProvider.image == null
                   ? const Text(
@@ -257,8 +256,10 @@ class _RecordState extends State<RecordPage> {
                                         .getImage(ImageSource.gallery));
                               } else if (imageStatus ==
                                   ImageStatus.permissionFail) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  content: const Text("사진, 파일, 마이크 접근을 허용 해주셔야 카메라 사용이 가능합니다."),
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: const Text(
+                                      "사진, 파일, 마이크 접근을 허용 해주셔야 카메라 사용이 가능합니다."),
                                   action: SnackBarAction(
                                     label: "OK",
                                     onPressed: () {
@@ -306,7 +307,7 @@ class _RecordState extends State<RecordPage> {
                         fontSize: 14.0,
                         color: Colors.black,
                       ),
-                      onChanged: (value) => _recordProvider.setMemo(value),
+                      onChanged: (value) => memoText = value,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.all(16),
                         enabledBorder: OutlineInputBorder(
@@ -325,7 +326,7 @@ class _RecordState extends State<RecordPage> {
                   height: 56.0,
                   child: ElevatedButton(
                     onPressed: () {
-                      _recordProvider.saveMemo(_recordProvider.memo);
+                      _recordProvider.saveMemo(memoText);
                       Navigator.pop(context);
                       Navigator.pop(context);
                     },

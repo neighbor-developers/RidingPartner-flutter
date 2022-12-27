@@ -90,8 +90,6 @@ class RidingProvider with ChangeNotifier {
   }
 
   Future<void> startRiding() async {
-    _befTime = DateTime.now().millisecondsSinceEpoch; // 이전 시간 저장용
-
     if (_ridingState == RidingState.before) {
       _ridingDate =
           DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()); //format변경
@@ -158,8 +156,7 @@ class RidingProvider with ChangeNotifier {
         date: _ridingDate,
         timestamp: _time.inSeconds,
         topSpeed: _topSpeed,
-        memo: null
-    );
+        memo: null);
     developer.log(_ridingDate.toString());
     _firebaseDb.saveRecordFirebaseDb(record);
     PreferenceUtils.saveRecordPref(record);

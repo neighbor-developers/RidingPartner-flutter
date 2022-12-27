@@ -8,12 +8,7 @@ import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart
 import 'package:permission_handler/permission_handler.dart';
 import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
 
-enum ImageStatus {
-  init,
-  permissionFail,
-  imageSuccess,
-  imageFail
-}
+enum ImageStatus { init, permissionFail, imageSuccess, imageFail }
 
 class RidingResultProvider with ChangeNotifier {
   final FirebaseDatabaseService _firebaseDb = FirebaseDatabaseService();
@@ -40,6 +35,7 @@ class RidingResultProvider with ChangeNotifier {
 
   Future<void> getRidingData() async {
     _record = await _firebaseDb.getRecord(_ridingDate);
+    print(_record);
 
     if (_record != Record() && _record.date != null) {
       _recordState = RecordState.success;
@@ -50,29 +46,15 @@ class RidingResultProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setMemo(String? memo) async{
-    if(memo != null){
-      saveMemo(memo);
-    } else{
-      memo = "메모가 없습니다.";
-      _memo = memo;
-    }
-  }
-
-  saveMemo(String? memo) async {
+  saveMemo(String str) async {
     Record record = Record(
         distance: _record.distance?.toDouble(),
         date: _record.date,
+        topSpeed: _record.topSpeed,
         timestamp: _record.timestamp,
-        memo: _memo
-    );
-    if (memo != null) {
-      developer.log("메모 저장 성공 $memo");
-      _firebaseDb.saveRecordMemoFirebaseDb(record);
-      PreferenceUtils.saveRecordMemoPref(record);
-    } else{
-      developer.log("메모 저장 실패");
-    }
+        memo: str);
+    _firebaseDb.saveRecordFirebaseDb(record);
+    PreferenceUtils.saveRecordMemoPref(record);
   }
 
   // 비동기 처리를 통해 카메라와 갤러리에서 이미지를 가져온다.
