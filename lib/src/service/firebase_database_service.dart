@@ -63,6 +63,7 @@ class FirebaseDatabaseService {
 
   Future<List<Record>?> getAllRecords() async {
     try {
+      List<Record> records = [];
       DatabaseReference ref = _database.ref("$_uId");
       final DataSnapshot snapshot = await ref.get();
 
@@ -70,10 +71,12 @@ class FirebaseDatabaseService {
         print("데이터 있음");
         Map<dynamic, dynamic> map = snapshot.value as Map<dynamic, dynamic>;
         // return map.values.map(Record.fromDB).toList();
-        final records = map.values.map((recordEl) {
+        records = map.values.map((recordEl) {
           try {
+            developer.log('recordEl: $recordEl');
             return Record.fromDB(recordEl);
           } catch (e) {
+            developer.log(e.toString());
             return Record();
           }
         }).toList();
