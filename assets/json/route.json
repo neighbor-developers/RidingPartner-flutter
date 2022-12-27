@@ -2,24 +2,24 @@
     {
         "id": "1",
         "title": "한국공학대학교 통학로",
-        "image": "assets/images/places/tukorea.jpeg",
-        "routeImage": "assets/images/places/tukorea.jpeg",
+        "titleImageUrl": "assets/images/places/tukorea.jpeg",
+        "routeImageUrl": "assets/images/places/tukorea.jpeg",
         "description": "한국공학대 통학로",
         "route": ["정왕역", "한국공학대학교"]
     },
     {
         "id": "2",
         "title": "그린웨이",
-        "image": "assets/images/places/lotus_flower_theme_park.jpeg",
-        "routeImage": "assets/images/places/lotus_flower_theme_park.jpeg",
+        "titleImageUrl": "assets/images/places/lotus_flower_theme_park.jpeg",
+        "routeImageUrl": "assets/images/places/lotus_flower_theme_park.jpeg",
         "description": "그린웨이",
         "route": ["물왕호수", "연꽃테마파크", "갯골생태공원"]
     },
     {
         "id": "3",
         "title": "오이도 해안도로",
-        "image": "assets/images/places/okgu_park.jpeg",
-        "routeImage": "assets/images/places/okgu_park.jpeg",
+        "titleImageUrl": "assets/images/places/okgu_park.jpeg",
+        "routeImageUrl": "assets/images/places/okgu_park.jpeg",
         "description": "오이도 해안도로",
         "route": [
             "오이도역",
@@ -33,8 +33,8 @@
     {
         "id": "4",
         "title": "시화 방조제",
-        "image": "assets/images/places/sihwa_seawall.jpeg",
-        "routeImage": "assets/images/places/sihwa_seawall.jpeg",
+        "titleImageUrl": "assets/images/places/sihwa_seawall.jpeg",
+        "routeImageUrl": "assets/images/places/sihwa_seawall.jpeg",
         "description": "시화 방조제",
         "route": [
             "오이도역",
@@ -48,8 +48,8 @@
     {
         "id": "5",
         "title": "테스트용1",
-        "image": "assets/images/places/wolgot_port.jpeg",
-        "routeImage": "assets/images/places/wolgot_port.jpeg",
+        "titleImageUrl": "assets/images/places/wolgot_port.jpeg",
+        "routeImageUrl": "assets/images/places/wolgot_port.jpeg",
         "description": "테스트용1",
         "route": [
             "정왕동체육공원",
@@ -64,8 +64,8 @@
     {
         "id": "6",
         "title": "테스트용2",
-        "image": "assets/images/places/red_lighthouse.jpeg",
-        "routeImage": "assets/images/places/red_lighthouse.jpeg",
+        "titleImageUrl": "assets/images/places/red_lighthouse.jpeg",
+        "routeImageUrl": "assets/images/places/red_lighthouse.jpeg",
         "description": "테스트용2",
         "route": [
             "옥구공원",

@@ -1,35 +1,42 @@
 import 'dart:convert';
+import 'dart:io';
 
 class RidingRoute {
   String? id;
   String? title;
   String? description;
-  String? image;
-  String? routeImage;
+  String? titleImageUrl;
+  String? routeImageTitle;
+  String? routeImageUrl;
+  File? routeImageFile;
   List<String>? route;
 
   RidingRoute(
       {this.id,
       this.title,
       this.description,
-      this.image,
-      this.routeImage,
+      this.titleImageUrl,
+      this.routeImageTitle,
+      this.routeImageUrl,
+      this.routeImageFile,
       this.route});
 
   factory RidingRoute.fromJson(Map<String, dynamic> json) => RidingRoute(
         id: json["id"],
         title: json["title"],
         description: json["description"],
-        image: json["image"],
-        routeImage: json["routeImage"],
+        titleImageUrl: json["titleImageUrl"],
+        routeImageUrl: json["routeImageUrl"],
         route: List<String>.from(json['route']),
       );
+
   factory RidingRoute.fromDB(db) => RidingRoute(
         id: db?["id"],
         title: db?["title"],
         description: db?["description"],
-        image: db?["image"],
-        routeImage: db?["routeImage"],
+        titleImageUrl: db?["titleImageUrl"],
+        routeImageTitle: db?["routeImageTitle"],
+        routeImageUrl: db?["routeImageUrl"],
         route: List<String>.from(json.decode(db?['route'])),
       );
 
@@ -38,8 +45,9 @@ class RidingRoute {
       if (id != null) "id": id,
       if (title != null) "title": title,
       if (description != null) "description": description,
-      if (image != null) "image": image,
-      if (routeImage != null) "routeImage": routeImage,
+      if (titleImageUrl != null) "titleImageUrl": titleImageUrl,
+      if (routeImageTitle != null) "routeImageTitle": routeImageTitle,
+      if (routeImageUrl != null) "routeImageUrl": routeImageUrl,
       if (route != null) "route": json.encode(route),
     };
   }

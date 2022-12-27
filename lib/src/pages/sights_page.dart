@@ -84,7 +84,7 @@ class _SightsPageState extends State<SightsPage> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image.asset(
-                            place.image!,
+                            place.imageUrl!,
                             height: 160.0,
                             width: MediaQuery.of(context).size.width,
                             fit: BoxFit.fill,

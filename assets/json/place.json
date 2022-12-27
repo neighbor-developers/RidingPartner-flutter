@@ -2,7 +2,7 @@
     {
         "id": "11591658",
         "title": "한국공학대학교",
-        "image": "assets/images/places/tukorea.jpeg",
+        "imageUrl": "assets/images/places/tukorea.jpeg",
         "marker": "assets/icons/place_tower.png",
         "latitude": "37.3400342",
         "longitude": "126.7335061",
@@ -13,7 +13,7 @@
     {
         "id": "18253566",
         "title": "정왕역",
-        "image": "assets/images/places/jeongwang_station.jpeg",
+        "imageUrl": "assets/images/places/jeongwang_station.jpeg",
         "marker": "assets/icons/place_rental.png",
         "type": "rental",
         "latitude": "37.3515042",
@@ -24,7 +24,7 @@
     {
         "id": "1869342267",
         "title": "오이도빨간등대",
-        "image": "assets/images/places/red_lighthouse.jpeg",
+        "imageUrl": "assets/images/places/red_lighthouse.jpeg",
         "marker": "assets/icons/place_tower.png",
         "type": "tower",
         "latitude": "37.3456389",
@@ -36,7 +36,7 @@
     {
         "id": "13143571",
         "title": "연꽃테마파크",
-        "image": "assets/images/places/lotus_flower_theme_park.jpeg",
+        "imageUrl": "assets/images/places/lotus_flower_theme_park.jpeg",
         "marker": "assets/icons/place_park.png",
         "type": "park",
         "latitude": "37.4023275",
@@ -48,7 +48,7 @@
     {
         "id": "13491058",
         "title": "물왕호수",
-        "image": "assets/images/places/waterking_lake.jpeg",
+        "imageUrl": "assets/images/places/waterking_lake.jpeg",
         "marker": "assets/icons/place_river.png",
         "type": "river",
         "latitude": "37.3823899",
@@ -59,7 +59,7 @@
     {
         "id": "11622429",
         "title": "옥구공원",
-        "image": "assets/images/places/okgu_park.jpeg",
+        "imageUrl": "assets/images/places/okgu_park.jpeg",
         "marker": "assets/icons/place_park.png",
         "type": "park",
         "latitude": "37.3555974",
@@ -71,7 +71,7 @@
     {
         "id": "13491554",
         "title": "월곶포구",
-        "image": "assets/images/places/wolgot_port.jpeg",
+        "imageUrl": "assets/images/places/wolgot_port.jpeg",
         "marker": "assets/icons/place_ocean.png",
         "type": "ocean",
         "latitude": "37.3869561",
@@ -82,7 +82,7 @@
     {
         "id": "1199341197",
         "title": "갯골생태공원",
-        "image": "assets/images/places/gaetgol_park.jpeg",
+        "imageUrl": "assets/images/places/gaetgol_park.jpeg",
         "marker": "assets/icons/place_park.png",
         "type": "park",
         "latitude": "37.3889771",
@@ -93,7 +93,7 @@
     {
         "id": "37310952",
         "title": "배곧생명공원",
-        "image": "assets/images/places/baegot_park.jpeg",
+        "imageUrl": "assets/images/places/baegot_park.jpeg",
         "marker": "assets/icons/place_park.png",
         "type": "park",
         "latitude": "37.3720949",
@@ -105,7 +105,7 @@
     {
         "id": "401141219",
         "title": "거북섬",
-        "image": "assets/images/places/turtle_island.jpeg",
+        "imageUrl": "assets/images/places/turtle_island.jpeg",
         "marker": "assets/icons/place_river.png",
         "type": "river",
         "latitude": "37.3208803",
@@ -117,7 +117,7 @@
     {
         "id": "35795149",
         "title": "반달섬",
-        "image": "assets/images/places/halfmoon_island.jpeg",
+        "imageUrl": "assets/images/places/halfmoon_island.jpeg",
         "marker": "assets/icons/place_river.png",
         "type": "river",
         "latitude": "37.3000201",
@@ -128,7 +128,7 @@
     {
         "id": "19029247",
         "title": "시화방조제",
-        "image": "assets/images/places/sihwa_seawall.jpeg",
+        "imageUrl": "assets/images/places/sihwa_seawall.jpeg",
         "marker": "assets/icons/place_ocean.png",
         "type": "ocean",
         "latitude": "37.3093672",
@@ -139,7 +139,7 @@
     {
         "id": "19029571",
         "title": "대부도공원",
-        "image": "assets/images/places/daebu_island.jpeg",
+        "imageUrl": "assets/images/places/daebu_island.jpeg",
         "marker": "assets/icons/place_park.png",
         "type": "park",
         "latitude": "37.2902425",
@@ -151,7 +151,7 @@
     {
         "id": "13479320",
         "title": "고잔역 4호선",
-        "image": "assets/images/places/gojan_station.png",
+        "imageUrl": "assets/images/places/gojan_station.png",
         "marker": "assets/icons/place_park.png",
         "type": "park",
         "latitude": "37.3168245",
@@ -163,7 +163,7 @@
     {
         "id": "19009887",
         "title": "화정천",
-        "image": "assets/images/places/hwajeong_river.jpeg",
+        "imageUrl": "assets/images/places/hwajeong_river.jpeg",
         "marker": "assets/icons/place_river.png",
         "type": "river",
         "latitude": "37.3119297",
@@ -174,7 +174,7 @@
     {
         "id": "36480728",
         "title": "소래습지생태공원",
-        "image": "assets/images/places/sorae_park.png",
+        "imageUrl": "assets/images/places/sorae_park.png",
         "marker": "assets/icons/place_park.png",
         "type": "park",
         "latitude": "37.4134966",
@@ -185,7 +185,7 @@
     {
         "id": "18249566",
         "title": "오이도역",
-        "image": "assets/images/places/oido_station.jpeg",
+        "imageUrl": "assets/images/places/oido_station.jpeg",
         "marker":  "assets/icons/place_rental.png",
         "type": "rental",
         "latitude": "37.3624987",
@@ -196,7 +196,7 @@
     {
         "id": "18254017",
         "title": "정왕동체육공원",
-        "image": "assets/images/places/tukorea.jpeg",
+        "imageUrl": "assets/images/places/tukorea.jpeg",
         "marker": "assets/icons/place_park.png",
         "type": "park",
         "latitude": "37.3395459",

@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Place {
   String? id;
@@ -9,48 +12,67 @@ class Place {
   String? jibunAddress;
   String? roadAddress;
   String? description;
-  String? image;
+  String? imageTitle;
+  String? imageUrl;
+  File? imageFile;
   String? marker;
   String? type;
 
-  Place({
-    this.id,
-    this.title,
-    this.latitude,
-    this.longitude,
-    this.jibunAddress,
-    this.roadAddress,
-    this.description,
-    this.image,
-    this.marker,
-    this.type
-  });
+  Place(
+      {this.id,
+      this.title,
+      this.latitude,
+      this.longitude,
+      this.jibunAddress,
+      this.roadAddress,
+      this.description,
+      this.imageTitle,
+      this.imageUrl,
+      this.imageFile,
+      this.marker,
+      this.type});
 
   factory Place.fromJson(Map<String, dynamic> json) => Place(
-        id: json["id"],
-        title: json["title"],
-        latitude: json["latitude"],
-        longitude: json["longitude"],
-        jibunAddress: json["jibunAddress"],
-        roadAddress: json["roadAddress"],
-        description: json["description"],
-        image: json["image"],
-        marker: json["marker"],
-        type: json["type"]
-      );
+      id: json["id"],
+      title: json["title"],
+      latitude: json["latitude"],
+      longitude: json["longitude"],
+      jibunAddress: json["jibunAddress"],
+      roadAddress: json["roadAddress"],
+      description: json["description"],
+      imageTitle: json["imageTitle"],
+      imageUrl: json["imageUrl"],
+      marker: json["marker"],
+      type: json["type"]);
 
   factory Place.fromDB(db) => Place(
-        id: db?["id"],
-        title: db?["title"],
-        latitude: db?["latitude"],
-        longitude: db?["longitude"],
-        jibunAddress: db?["jibunAddress"],
-        roadAddress: db?["roadAddress"],
-        description: db?["description"],
-        image: db?["image"],
-        marker: db?["marker"],
-        type: db?["type"]
-      );
+      id: db?["id"],
+      title: db?["title"],
+      latitude: db?["latitude"],
+      longitude: db?["longitude"],
+      jibunAddress: db?["jibunAddress"],
+      roadAddress: db?["roadAddress"],
+      description: db?["description"],
+      imageTitle: db?["imageTitle"],
+      imageUrl: db?["imageUrl"],
+      marker: db?["marker"],
+      type: db?["type"]);
+
+  Map<String, dynamic> toDB() {
+    return {
+      if (id != null) "id": id,
+      if (title != null) "title": title,
+      if (latitude != null) "latitude": latitude,
+      if (longitude != null) "longitude": longitude,
+      if (jibunAddress != null) "jibunAddress": jibunAddress,
+      if (roadAddress != null) "roadAddress": roadAddress,
+      if (description != null) "description": description,
+      if (imageTitle != null) "imageTitle": imageTitle,
+      if (imageUrl != null) "imageUrl": imageUrl,
+      if (marker != null) "marker": marker,
+      if (type != null) "type": type,
+    };
+  }
 }
 
 class PlaceList {

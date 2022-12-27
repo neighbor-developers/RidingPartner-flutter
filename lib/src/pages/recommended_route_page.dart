@@ -98,7 +98,7 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
                         child: Image.asset(
-                          route.image!,
+                          route.titleImageUrl!,
                           height: 160.0,
                           width: MediaQuery.of(context).size.width,
                           fit: BoxFit.fill,
@@ -173,7 +173,7 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
               },
               child: Stack(fit: StackFit.expand, children: <Widget>[
                 Image.asset(
-                  route.image!,
+                  route.titleImageUrl!,
                   fit: BoxFit.fill,
                 ),
                 Container(

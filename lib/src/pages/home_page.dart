@@ -15,6 +15,9 @@ import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/setting_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
+import '../provider/admin_provider.dart';
+import 'admin_page.dart';
+// import 'package:ridingpartner_flutter/src/widgets/chartPainter.dart';
 
 class Data {
   String key;
@@ -150,7 +153,7 @@ class _HomePageState extends State<HomePage>
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
                         child: Image.network(
-                          place.image!,
+                          place.imageUrl!,
                           height: 180.0,
                           width: MediaQuery.of(context).size.width,
                           fit: BoxFit.fill,
@@ -650,7 +653,7 @@ class _HomePageState extends State<HomePage>
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20.0),
                               child: Image.network(
-                                place.image!,
+                                place.imageUrl!,
                                 height: 130.0,
                                 width: MediaQuery.of(context).size.width,
                                 fit: BoxFit.fill,
@@ -755,7 +758,23 @@ class _HomePageState extends State<HomePage>
           labelStyle: const TextStyle(
               fontWeight: FontWeight.w500, color: Colors.white, fontSize: 13.0),
           onTap: () {},
-        )
+        ),
+        SpeedDialChild(
+            child: const Icon(Icons.settings_sharp, color: Colors.white),
+            label: "관리자",
+            labelStyle: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+                fontSize: 13.0),
+            backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+            labelBackgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ChangeNotifierProvider(
+                        create: (context) => AdminProvider(),
+                        child: AdminPage(),
+                      )));
+            }),
       ],
     );
   }
