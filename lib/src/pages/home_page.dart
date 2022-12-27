@@ -1,6 +1,7 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:line_chart/charts/line-chart.widget.dart';
+import 'package:line_chart/model/line-chart.model.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/models/place.dart';
@@ -41,6 +42,19 @@ class _HomePageState extends State<HomePage>
   late List<Record> records;
   late TabController _tabController;
   int state = 0;
+
+  List<LineChartModel> data = [
+    LineChartModel(amount: 300, date: DateTime(2020, 1, 1)),
+    LineChartModel(amount: 200, date: DateTime(2020, 1, 2)),
+    LineChartModel(amount: 300, date: DateTime(2020, 1, 3)),
+    LineChartModel(amount: 500, date: DateTime(2020, 1, 4)),
+    LineChartModel(amount: 800, date: DateTime(2020, 1, 5)),
+    LineChartModel(amount: 200, date: DateTime(2020, 1, 6)),
+    LineChartModel(amount: 120, date: DateTime(2020, 1, 7)),
+  ];
+
+  int _counter = 0;
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +69,7 @@ class _HomePageState extends State<HomePage>
     _weatherProvider = Provider.of<WeatherProvider>(context);
     _homeRecordProvider = Provider.of<HomeRecordProvider>(context);
     records = _homeRecordProvider.recordFor14Days;
+    // _incrementCounter(records);
 
     return Scaffold(
         backgroundColor: const Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
@@ -417,6 +432,7 @@ class _HomePageState extends State<HomePage>
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w300,
                       color: Color.fromRGBO(51, 51, 51, 1)))),
+          Positioned(bottom: 0, child: customLineChart())
         ]));
   }
 
@@ -672,5 +688,55 @@ class _HomePageState extends State<HomePage>
         )
       ],
     );
+  }
+
+  Widget customLineChart() {
+    Paint circlePaint = Paint()
+      ..color = const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32);
+
+    Paint insideCirclePaint = Paint()
+      ..color = const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32);
+
+    Paint linePaint = Paint()
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke
+      ..color = Colors.orange;
+    return LineChart(
+      width: MediaQuery.of(context).size.width / 6 * 5,
+      height: 180,
+      data: data,
+      linePaint: linePaint,
+      circlePaint: circlePaint,
+      showPointer: true,
+      showCircles: true,
+      customDraw: (Canvas canvas, Size size) {},
+      linePointerDecoration: BoxDecoration(
+        color: Colors.orange,
+      ),
+      pointerDecoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.deepOrange,
+      ),
+      insideCirclePaint: insideCirclePaint,
+      onValuePointer: (LineChartModelCallback value) {
+        print('${value.chart} ${value.percentage}');
+      },
+      onDropPointer: () {
+        print('onDropPointer');
+      },
+      insidePadding: 16,
+    );
+  }
+
+  void _incrementCounter(List<Record> records) {
+    setState(() {
+      data = [];
+      records.map((e) => data.add(LineChartModel(
+          amount: e.distance,
+          date: DateTime(
+              int.parse(e.getYearMonthDay()[0]),
+              int.parse(e.getYearMonthDay()[1]),
+              int.parse(e.getYearMonthDay()[2])))));
+    });
   }
 }

@@ -12,4 +12,9 @@ class Record {
         date: db["date"],
         topSpeed: db["topSpeed"].toDouble(),
       );
+
+  List<String> getYearMonthDay() {
+    List<String> dateList = date!.split('-');
+    return dateList;
+  }
 }
