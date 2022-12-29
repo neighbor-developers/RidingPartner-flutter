@@ -4,11 +4,13 @@ import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
 
 class RecordListProvider extends ChangeNotifier {
+
   List<Record> _records = [];
+  List<Record> get records => _records;
+
   FirebaseDatabaseService _firebaseDatabaseService = FirebaseDatabaseService();
 
   RecordState _recordState = RecordState.loading;
-  List<Record> get records => _records;
   RecordState get recordState => _recordState;
 
   Future getRecord() async {
@@ -16,7 +18,7 @@ class RecordListProvider extends ChangeNotifier {
         await _firebaseDatabaseService.getAllRecords();
     _recordState = result['state'];
 
-    if (_recordState == RecordState.success) {
+    if (_recordState == RecordState.success) {  //   성공
       _records = result['data'];
     }
 
