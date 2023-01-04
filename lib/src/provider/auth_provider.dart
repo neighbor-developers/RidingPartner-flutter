@@ -1,5 +1,3 @@
-import 'dart:developer' as developer;
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -33,13 +31,11 @@ class AuthProvider with ChangeNotifier {
 
   signInWithGoogle() async {
     User? user = await socialLogin.siginInwithGoogle();
-    developer.log(user.toString());
     _setUser(user);
   }
 
   signInWithApple() async {
     User? user = await socialLogin.siginInwithApple();
-    developer.log(user.toString());
     _setUser(user);
   }
 }

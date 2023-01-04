@@ -1,5 +1,3 @@
-import 'dart:developer' as developer;
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart' as naver_flutter;
@@ -102,7 +100,6 @@ class SocialLoginService {
     UserCredential result =
         await FirebaseAuth.instance.signInWithCredential(credential);
     if (result.user != null) {
-      developer.log(result.user.toString());
       saveUserInfo(result.user!);
       return result.user;
     } else {
@@ -124,7 +121,6 @@ class SocialLoginService {
         await FirebaseAuth.instance.signInWithCredential(oauthCredential);
 
     if (result.user != null) {
-      developer.log(result.user.toString());
       saveUserInfo(result.user!);
       return result.user;
     } else {

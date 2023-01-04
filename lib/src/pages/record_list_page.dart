@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
-import 'package:ridingpartner_flutter/src/pages/record_page.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/record_list_provider.dart';
-import 'dart:developer' as developer;
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
 
-import '../provider/riding_result_provider.dart';
 import '../utils/timestampToText.dart';
 
 class RecordListPage extends StatefulWidget {
@@ -39,12 +35,10 @@ class _RecordListPageState extends State<RecordListPage> {
 
     if (_recordListProvider.recordState == RecordState.loading) {
       _recordListProvider.getRecord();
-    }
-    else if(_recordListProvider.recordState == RecordState.none){
+    } else if (_recordListProvider.recordState == RecordState.none) {
       message = "기록이 존재하지 않습니다.";
-    }
-    else{
-      message="로딩에 실패하였습니다. 다시 접속해주세요.";
+    } else {
+      message = "로딩에 실패하였습니다. 다시 접속해주세요.";
     }
 
     return Scaffold(
@@ -81,14 +75,13 @@ class _RecordListPageState extends State<RecordListPage> {
   }
 
   Widget recordItem(Record? record) {
-    developer.log("record is null???? -> {$record}");
-    return record == null ? SizedBox(
-          child: Text( message,
-              style: const TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400))
-        )
+    return record == null
+        ? SizedBox(
+            child: Text(message,
+                style: const TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400)))
         : InkWell(
             onTap: () => {
                   // Navigator.push(
@@ -124,29 +117,26 @@ class _RecordListPageState extends State<RecordListPage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Row(
-                        children:[
-                          Text(
-                              DateFormat('yyyy년 MM월 dd일')
-                                  .format(DateTime.parse(record.date!)),
-                              style: const TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              )),
-                          const SizedBox(width: 15),
-                          Text(
-                            DateFormat('EEEEE',"ko_KR")
+                      Row(children: [
+                        Text(
+                            DateFormat('yyyy년 MM월 dd일')
                                 .format(DateTime.parse(record.date!)),
-                            style: detailStyle,
-                          ),
-
-                        ]
-                      ),
-                     Text(
+                            style: const TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            )),
+                        const SizedBox(width: 15),
+                        Text(
+                          DateFormat('EEEEE', "ko_KR")
+                              .format(DateTime.parse(record.date!)),
+                          style: detailStyle,
+                        ),
+                      ]),
+                      Text(
                         timestampToText(record.timestamp!),
                         style: detailStyle,
-                     ),
+                      ),
                       Text(
                         "${record.distance.toString()}km",
                         style: detailStyle,
@@ -155,9 +145,7 @@ class _RecordListPageState extends State<RecordListPage> {
                   ),
                   const Divider(color: Colors.black)
                 ],
-
               ),
             ));
-
   }
 }

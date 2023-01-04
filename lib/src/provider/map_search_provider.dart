@@ -46,9 +46,7 @@ class MapSearchProvider extends ChangeNotifier {
   String myLocationAddress = "";
 
   setStartPoint(Place place) {
-    developer.log('setStartPoint');
     _startPoint = place;
-    developer.log(_startPoint!.title.toString());
     notifyListeners();
   }
 
@@ -94,7 +92,6 @@ class MapSearchProvider extends ChangeNotifier {
     final address = json.decode(response.body)['documents'][0]['address']
             ['address_name'] ??
         '';
-    developer.log(address);
     myLocationAddress = address;
     return address;
   }
@@ -148,6 +145,7 @@ class MapSearchProvider extends ChangeNotifier {
   }
 
   setInitalLocation() async {
+    developer.log('initial location');
     final address = await getMyLocationAddress();
     setMyLocation(address);
     _startPoint = _myLocation;

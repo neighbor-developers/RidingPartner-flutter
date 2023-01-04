@@ -1,5 +1,3 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:line_chart/charts/line-chart.widget.dart';
@@ -812,8 +810,6 @@ class _HomePageState extends State<HomePage>
   }
 
   void _incrementCounter(List<Record> records) {
-    developer.log("records!!!: ${records.toString()}");
-    developer.log('date!!: ${records.last.date}');
     setState(() {
       data = [];
       for (var e in records) {
@@ -828,6 +824,5 @@ class _HomePageState extends State<HomePage>
                 int.parse(e.getYearMonthDay()[2]))));
       }
     });
-    developer.log("data: ${data.toString()}");
   }
 }

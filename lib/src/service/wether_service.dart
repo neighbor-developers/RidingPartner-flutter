@@ -15,9 +15,7 @@ class OpenWeatherService {
 
     try {
       await myLocation.getMyCurrentLocation().timeout(Duration(seconds: 3));
-    } catch (e) {
-      developer.log("error : getLocation ${e.toString()}");
-    }
+    } catch (e) {}
 
     final result = await NetworkHelper().getData(
         '$_baseUrl?lat=${myLocation.position?.latitude}&lon=${myLocation.position?.longitude}&appid=$_apiKey&units=metric');

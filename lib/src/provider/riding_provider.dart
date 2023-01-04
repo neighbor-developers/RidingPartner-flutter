@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer' as developer;
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
@@ -157,9 +156,7 @@ class RidingProvider with ChangeNotifier {
         timestamp: _time.inSeconds,
         topSpeed: _topSpeed,
         memo: null,
-        kcal: null
-    );
-    developer.log(_ridingDate.toString());
+        kcal: null);
     _firebaseDb.saveRecordFirebaseDb(record);
     PreferenceUtils.saveRecordPref(record);
   }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/src/painting/rounded_rectangle_border.dart';
@@ -11,7 +10,6 @@ import 'package:ridingpartner_flutter/src/utils/custom_marker.dart';
 import '../models/place.dart';
 import '../provider/navigation_provider.dart';
 import '../provider/riding_provider.dart';
-import 'home_page.dart';
 import 'navigation_page.dart';
 
 class SightsPage extends StatefulWidget {
@@ -45,8 +43,6 @@ class _SightsPageState extends State<SightsPage> {
         builder: (BuildContext context) {
           double height = MediaQuery.of(context).size.height;
           double width = MediaQuery.of(context).size.width;
-          developer.log("높이: $height");
-          developer.log("넓이 : $width");
 
           return Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

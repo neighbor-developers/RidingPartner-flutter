@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -15,8 +14,6 @@ import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 import 'firebase_options.dart';
 
 void main() async {
-  developer.log("시작은 되니?");
-
   // 테스트 환경에서만 사용 실제 출시때는 삭제
   HttpOverrides.global = NoCheckCertificateHttpOverrides();
 

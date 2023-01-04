@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer' as developer;
 
 class Place {
   String? id;
@@ -13,44 +12,41 @@ class Place {
   String? marker;
   String? type;
 
-  Place({
-    this.id,
-    this.title,
-    this.latitude,
-    this.longitude,
-    this.jibunAddress,
-    this.roadAddress,
-    this.description,
-    this.image,
-    this.marker,
-    this.type
-  });
+  Place(
+      {this.id,
+      this.title,
+      this.latitude,
+      this.longitude,
+      this.jibunAddress,
+      this.roadAddress,
+      this.description,
+      this.image,
+      this.marker,
+      this.type});
 
   factory Place.fromJson(Map<String, dynamic> json) => Place(
-        id: json["id"],
-        title: json["title"],
-        latitude: json["latitude"],
-        longitude: json["longitude"],
-        jibunAddress: json["jibunAddress"],
-        roadAddress: json["roadAddress"],
-        description: json["description"],
-        image: json["image"],
-        marker: json["marker"],
-        type: json["type"]
-      );
+      id: json["id"],
+      title: json["title"],
+      latitude: json["latitude"],
+      longitude: json["longitude"],
+      jibunAddress: json["jibunAddress"],
+      roadAddress: json["roadAddress"],
+      description: json["description"],
+      image: json["image"],
+      marker: json["marker"],
+      type: json["type"]);
 
   factory Place.fromDB(db) => Place(
-        id: db?["id"],
-        title: db?["title"],
-        latitude: db?["latitude"],
-        longitude: db?["longitude"],
-        jibunAddress: db?["jibunAddress"],
-        roadAddress: db?["roadAddress"],
-        description: db?["description"],
-        image: db?["image"],
-        marker: db?["marker"],
-        type: db?["type"]
-      );
+      id: db?["id"],
+      title: db?["title"],
+      latitude: db?["latitude"],
+      longitude: db?["longitude"],
+      jibunAddress: db?["jibunAddress"],
+      roadAddress: db?["roadAddress"],
+      description: db?["description"],
+      image: db?["image"],
+      marker: db?["marker"],
+      type: db?["type"]);
 }
 
 class PlaceList {
@@ -87,7 +83,6 @@ class NaverPlaceData {
       json['address'].forEach((v) {
         address!.add(Address.fromJson(v));
       });
-      developer.log("address called");
     }
     // if (json['all'] != null) {
     //   all = <All>[];
@@ -136,7 +131,6 @@ class Address {
       this.shortAddress});
 
   Address.fromJson(Map<String, dynamic> json) {
-    developer.log("4 address from json called");
     type = json['type'];
     id = json['id'];
     title = json['title'];
@@ -146,7 +140,6 @@ class Address {
     totalScore = json['totalScore'];
     fullAddress = json['fullAddress'];
     shortAddress = json['fullAddress'];
-    developer.log("4 address from json finished${fullAddress}");
   }
 }
 

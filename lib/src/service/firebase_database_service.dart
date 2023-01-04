@@ -48,7 +48,6 @@ class FirebaseDatabaseService {
       }
       throw Exception("getRecord: snapshot not exist");
     } catch (e) {
-      developer.log(e.toString());
       return Record();
     }
   }
@@ -74,10 +73,8 @@ class FirebaseDatabaseService {
         // return map.values.map(Record.fromDB).toList();
         records = map.values.map((recordEl) {
           try {
-            developer.log('recordEl: $recordEl');
             return Record.fromDB(recordEl);
           } catch (e) {
-            developer.log(e.toString());
             return Record();
           }
         }).toList();
@@ -92,7 +89,6 @@ class FirebaseDatabaseService {
       }
     } catch (e) {
       print("catch!");
-      developer.log(e.toString());
       return {'state': RecordState.fail};
     }
   }

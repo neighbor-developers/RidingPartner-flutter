@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer' as developer;
 
 import 'package:http/http.dart' as http;
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
@@ -29,18 +28,14 @@ class NaverMapService {
       final requestUrl =
           Uri.https(_naverMapUrl, '/v5/api/instantSearch', queryParams);
 
-      developer.log("1 ${requestUrl.toString()}");
       var response = await http.get(requestUrl);
-      developer.log("2 ${requestUrl.toString()}");
 
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
 
-        developer.log("3 ");
         var placeData = NaverPlaceData.fromJson(jsonResponse);
 
         if (placeData.place != null) {
-          developer.log("place called");
           place = placeData.place!
               .map<Place>((place) => Place(
                   id: place.id,
@@ -52,7 +47,6 @@ class NaverMapService {
               .toList();
         }
         if (place.isEmpty) {
-          developer.log("else called");
           place = placeData.address!
               .map<Place>((address) => Place(
                   id: address.id,
@@ -69,7 +63,6 @@ class NaverMapService {
         return place;
       }
     } catch (e) {
-      developer.log(e.toString());
       throw Exception(e.toString());
     }
   }
@@ -96,7 +89,6 @@ class NaverMapService {
       final requestUrl =
           Uri.https(_naverMapUrl, 'v5/api/dir/findbicycle', queryParams);
 
-      developer.log(requestUrl.toString());
       var response = await http.get(requestUrl);
 
       if (response.statusCode == 200) {
@@ -129,7 +121,6 @@ class NaverMapService {
         return {'result': SearchRouteState.fail};
       }
     } catch (e) {
-      developer.log(e.toString());
       throw Exception(e.toString());
     }
   }

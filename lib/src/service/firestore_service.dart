@@ -1,5 +1,3 @@
-import 'dart:developer' as developer;
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
 
@@ -17,7 +15,6 @@ class FireStoreService {
           .map((docs) => Place.fromDB(docs.data()))
           .toList();
     } catch (e) {
-      developer.log(e.toString());
       return <Place>[];
     }
   }
@@ -31,7 +28,6 @@ class FireStoreService {
       }
       throw Exception("getPlace: snapshot not exist");
     } catch (e) {
-      developer.log(e.toString());
       return Place();
     }
   }
@@ -46,7 +42,6 @@ class FireStoreService {
         return RidingRoute.fromDB(data);
       }).toList();
     } catch (e) {
-      developer.log(e.toString());
       return <RidingRoute>[];
     }
   }
@@ -60,7 +55,6 @@ class FireStoreService {
       }
       throw Exception("getRoute: snapshot not exist");
     } catch (e) {
-      developer.log(e.toString());
       return RidingRoute();
     }
   }
@@ -80,7 +74,6 @@ class FireStoreService {
       await batch.commit();
       return "성공";
     } catch (e) {
-      developer.log(e.toString());
       return "실패";
     }
   }
