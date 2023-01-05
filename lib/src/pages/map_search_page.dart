@@ -83,9 +83,12 @@ class MapSampleState extends State<MapSearchPage> {
             .clearStartPointSearchResult();
       }
     });
-    Provider.of<MapSearchProvider>(context, listen: false).setInitalLocation();
-    _startTextController.text =
-        "현재 위치: ${Provider.of<MapSearchProvider>(context, listen: false).myLocationAddress}";
+    Provider.of<MapSearchProvider>(context, listen: false)
+        .setInitalLocation()
+        .then((value) {
+      _startTextController.text =
+          "현재 위치: ${Provider.of<MapSearchProvider>(context, listen: false).myLocationAddress}";
+    });
     _markers.clear();
     _initLoaction();
   }
