@@ -60,14 +60,7 @@ class MapSearchProvider extends ChangeNotifier {
   }
 
   setEndPoint(Place place) {
-    // developer.log('setEndPoint');
     _destination = place;
-    // developer.log(_startPoint!.title.toString());
-    // developer.log(_destination!.jibunAddress.toString());
-    // if (_startPoint != null && _destination != null) {
-    //   developer.log('draw polyline');
-    //   polyline(_startPoint!, _destination!);
-    // }
     notifyListeners();
   }
 
@@ -148,7 +141,6 @@ class MapSearchProvider extends ChangeNotifier {
     developer.log('initial location');
     final address = await getMyLocationAddress();
     setMyLocation(address);
-    _startPoint = _myLocation;
   }
 
   setMyLocation(address) async {
@@ -156,6 +148,7 @@ class MapSearchProvider extends ChangeNotifier {
     _myLocation = tmpResult[0];
     myLocationAddress = _myLocation!.title!;
     _myLocation!.title = "내 위치";
+    setStartPoint(_myLocation!);
     notifyListeners();
   }
 

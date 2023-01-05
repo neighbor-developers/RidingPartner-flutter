@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -88,9 +89,10 @@ class MapSampleState extends State<MapSearchPage> {
         .then((value) {
       _startTextController.text =
           "현재 위치: ${Provider.of<MapSearchProvider>(context, listen: false).myLocationAddress}";
+
+      _markers.clear();
+      _initLoaction();
     });
-    _markers.clear();
-    _initLoaction();
   }
 
   @override
@@ -263,6 +265,8 @@ class MapSampleState extends State<MapSearchPage> {
                       mapSearchProvider.setEndPoint(list[index]);
                       mapSearchProvider.clearEndPointSearchResult();
                     }
+                    developer.log('출발지: ${mapSearchProvider.startPoint}');
+                    developer.log('도착지: ${mapSearchProvider.destination}');
 
                     if (mapSearchProvider.startPoint != null &&
                         mapSearchProvider.destination != null) {
