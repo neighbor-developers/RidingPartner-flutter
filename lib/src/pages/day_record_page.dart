@@ -84,6 +84,7 @@ class DayRecordPage extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 16.0,
                         fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w400,
                         color: Color(0xFF666666)),
                   ),
                   Text(
@@ -91,6 +92,7 @@ class DayRecordPage extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 16.0,
                         fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w400,
                         color: Color(0xFF666666)),
                   ),
                   Text(
@@ -98,6 +100,7 @@ class DayRecordPage extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 16.0,
                         fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w400,
                         color: Color(0xFF666666)),
                   ),
                   Text(
@@ -105,6 +108,7 @@ class DayRecordPage extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 16.0,
                         fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w400,
                         color: Color(0xFF666666)),
                   ),
                   Text(
@@ -112,6 +116,7 @@ class DayRecordPage extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 16.0,
                         fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w400,
                         color: Color(0xFF666666)),
                   )
                 ],
@@ -129,6 +134,7 @@ class DayRecordPage extends StatelessWidget {
                     style: const TextStyle(
                       fontFamily: "Pretendard",
                       fontSize: 16.0,
+                      fontWeight: FontWeight.w500,
                       color: Color(0xFF666666),
                     ),
                   ),
@@ -160,10 +166,11 @@ class DayRecordPage extends StatelessWidget {
                         Color(0xFF666666)),
                   ),
                   Text(
-                    "${_record.kcal.toString()} kcal",
+                    "${(_record.kcal)?.toStringAsFixed(1).toString()} kcal",
                     style: const TextStyle(
                         fontSize: 16.0,
                         fontFamily: "Pretendard",
+                        fontWeight: FontWeight.w500,
                         color: Color(0xFF666666)),
                   )
                 ],
@@ -188,7 +195,8 @@ class DayRecordPage extends StatelessWidget {
           _record.memo!,
           style: TextStyle(
       fontSize: 14.0,
-      color: const Color(0x333333).withOpacity(0.8),
+      fontWeight: FontWeight.w400,
+      color: const Color(0x00333333).withOpacity(0.8),
     )))
     ]
     ,
