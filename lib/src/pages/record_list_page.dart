@@ -11,6 +11,7 @@ import 'package:ridingpartner_flutter/src/provider/record_list_provider.dart';
 
 import '../provider/riding_result_provider.dart';
 import '../utils/timestampToText.dart';
+import 'day_record_page.dart';
 
 class RecordListPage extends StatefulWidget {
   const RecordListPage({super.key});
@@ -92,7 +93,7 @@ class _RecordListPageState extends State<RecordListPage> {
                   builder: (context) => ChangeNotifierProvider(
                   create: (context) => RidingResultProvider(
                   record.date!),
-                  child: RecordPage(),
+                  child: DayRecordPage(),
               )))
               },
             child: Card(
