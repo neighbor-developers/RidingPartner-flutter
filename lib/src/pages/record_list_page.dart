@@ -5,9 +5,11 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
+import 'package:ridingpartner_flutter/src/pages/record_page.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/record_list_provider.dart';
 
+import '../provider/riding_result_provider.dart';
 import '../utils/timestampToText.dart';
 
 class RecordListPage extends StatefulWidget {
@@ -84,15 +86,15 @@ class _RecordListPageState extends State<RecordListPage> {
                     fontWeight: FontWeight.w400)))
         : InkWell(
             onTap: () => {
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => ChangeNotifierProvider(
-                  //               create: (context) =>
-                  //                   RidingResultProvider(record.date!),
-                  //               child: RecordPage(),
-                  //             )))
-                },
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChangeNotifierProvider(
+                  create: (context) => RidingResultProvider(
+                  record.date!),
+                  child: RecordPage(),
+              )))
+              },
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.all(13),
@@ -123,8 +125,8 @@ class _RecordListPageState extends State<RecordListPage> {
                                 .format(DateTime.parse(record.date!)),
                             style: const TextStyle(
                               fontFamily: 'Pretendard',
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
                             )),
                         const SizedBox(width: 15),
                         Text(
