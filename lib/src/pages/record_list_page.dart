@@ -26,7 +26,7 @@ class _RecordListPageState extends State<RecordListPage> {
   TextStyle detailStyle = const TextStyle(
     fontFamily: 'Pretendard',
     fontSize: 15,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w500,
     color: Colors.grey,
   );
 
@@ -66,8 +66,8 @@ class _RecordListPageState extends State<RecordListPage> {
           elevation: 10,
         ),
         body: SizedBox(
-            height: double.infinity,
-            width: double.infinity,
+            //height: double.infinity,
+            //width: double.infinity,
             child: ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
@@ -82,7 +82,7 @@ class _RecordListPageState extends State<RecordListPage> {
             child: Text(message,
                 style: const TextStyle(
                     fontFamily: 'Pretendard',
-                    fontSize: 16,
+                    fontSize: 18,
                     fontWeight: FontWeight.w400)))
         : InkWell(
             onTap: () => {
@@ -95,59 +95,66 @@ class _RecordListPageState extends State<RecordListPage> {
                   child: RecordPage(),
               )))
               },
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(13),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20.0),
-                      child: Image.asset(
-                        'assets/images/img_loading.png',
-                        fit: BoxFit.fill,
-                        width: 70,
-                        height: 70,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+            child: Card(
+              color: const Color.fromRGBO(248, 248, 248, 1),
+              margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+              child: Container(
+                height: MediaQuery.of(context).size.height/9,
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Row(children: [
-                        Text(
-                            DateFormat('yyyy년 MM월 dd일')
-                                .format(DateTime.parse(record.date!)),
-                            style: const TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            )),
-                        const SizedBox(width: 15),
-                        Text(
-                          DateFormat('EEEEE', "ko_KR")
-                              .format(DateTime.parse(record.date!)),
-                          style: detailStyle,
+                      Container(
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
-                      ]),
-                      Text(
-                        timestampToText(record.timestamp!),
-                        style: detailStyle,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image.asset(
+                            'assets/images/img_loading.png',
+                            fit: BoxFit.cover,
+                            width: 100,
+                            height: 70,
+                          ),
+                        ),
                       ),
-                      Text(
-                        "${record.distance.toString()}km",
-                        style: detailStyle,
-                      )
+                      //const SizedBox(width: 15),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(children: [
+                            Text(
+                                DateFormat('yyyy년 MM월 dd일')
+                                    .format(DateTime.parse(record.date!)),
+                                style: const TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                )),
+                            const SizedBox(width: 15),
+                            Text(
+                              DateFormat('EEEEE', "ko_KR")
+                                  .format(DateTime.parse(record.date!)),
+                              style: detailStyle,
+                            ),
+                          ]),
+                          Text(
+                            timestampToText(record.timestamp!),
+                            style: detailStyle,
+                          ),
+                          Text(
+                            "${record.distance.toString()}km",
+                            style: detailStyle,
+                          )
+                        ],
+                      ),
+                      //const Divider(color: Colors.black)
                     ],
                   ),
-                  const Divider(color: Colors.black)
-                ],
-              ),
+                )
+              )
             ));
   }
 }
