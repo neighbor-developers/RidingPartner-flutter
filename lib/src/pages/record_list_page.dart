@@ -26,9 +26,9 @@ class _RecordListPageState extends State<RecordListPage> {
 
   TextStyle detailStyle = const TextStyle(
     fontFamily: 'Pretendard',
-    fontSize: 15,
-    fontWeight: FontWeight.w500,
-    color: Colors.grey,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    color: Color.fromRGBO(102, 102, 102, 1),
   );
 
   @override
@@ -83,7 +83,7 @@ class _RecordListPageState extends State<RecordListPage> {
             child: Text(message,
                 style: const TextStyle(
                     fontFamily: 'Pretendard',
-                    fontSize: 18,
+                    fontSize: 20,
                     fontWeight: FontWeight.w400)))
         : InkWell(
             onTap: () => {
@@ -105,7 +105,7 @@ class _RecordListPageState extends State<RecordListPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,  //spaceAround
                     children: [
                       Container(
                         decoration: const BoxDecoration(
@@ -123,16 +123,18 @@ class _RecordListPageState extends State<RecordListPage> {
                       ),
                       //const SizedBox(width: 15),
                       Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Row(children: [
                             Text(
                                 DateFormat('yyyy년 MM월 dd일')
                                     .format(DateTime.parse(record.date!)),
                                 style: const TextStyle(
+                                  color: Color.fromRGBO(50, 50, 50, 0.9),
                                   fontFamily: 'Pretendard',
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
                                 )),
                             const SizedBox(width: 15),
                             Text(
@@ -140,6 +142,7 @@ class _RecordListPageState extends State<RecordListPage> {
                                   .format(DateTime.parse(record.date!)),
                               style: detailStyle,
                             ),
+                            const SizedBox(width: 40),
                           ]),
                           Text(
                             timestampToText(record.timestamp!),
