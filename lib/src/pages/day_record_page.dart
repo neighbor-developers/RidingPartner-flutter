@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../models/record.dart';
@@ -130,7 +131,8 @@ class DayRecordPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
-                    _record.date!,
+                    DateFormat('yyyy년 MM월 dd일')
+                                    .format(DateTime.parse(_record.date!)),
                     style: const TextStyle(
                       fontFamily: "Pretendard",
                       fontSize: 16.0,
@@ -187,7 +189,7 @@ class DayRecordPage extends StatelessWidget {
                 color: Colors.transparent
               ),
               borderRadius: BorderRadius.circular(10.0),
-              color: const Color.fromARGB(0xFF, 0xEE, 0xF1, 0xF4)
+              color: const Color.fromARGB(0xFF, 0xEE, 0xF1, 0xF4).withOpacity(0.3)
           ),
           margin: const EdgeInsets.only(left: 24.0, right: 24.0),
           padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 12.0),
