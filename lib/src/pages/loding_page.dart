@@ -10,6 +10,7 @@ import 'package:ridingpartner_flutter/src/provider/bottom_navigation_provider.da
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/map_search_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/place_list_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/record_list_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/route_list_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/sights_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
@@ -62,7 +63,9 @@ class _LodingPageState extends State<LodingPage> {
                       ChangeNotifierProvider(
                           create: (context) => PlaceListProvider()),
                       ChangeNotifierProvider(
-                          create: (context) => HomeRecordProvider())
+                          create: (context) => HomeRecordProvider()),
+                      ChangeNotifierProvider(
+                          create: (context) => RecordListProvider())
                     ], child: BottomNavigation())),
             (route) => false);
       } else {
@@ -222,4 +225,93 @@ class _LodingPageState extends State<LodingPage> {
       return Column();
     }
   }
+  // return Container(
+  //     width: double.infinity,
+  //     height: double.infinity,
+  //     alignment: Alignment.center,
+  //     // decoration: const BoxDecoration(
+  //     //   image: DecorationImage(
+  //     //       image: AssetImage('assets/images/img_loading.png'),
+  //     //       fit: BoxFit.cover),
+  //     // ),
+  //     child: Column(
+  //       children: [
+  //         Flexible(
+  //           flex: 3,
+  //           child: Container(
+  //             alignment: Alignment.center,
+  //             decoration: const BoxDecoration(
+  //               image: DecorationImage(
+  //                 image: AssetImage('assets/images/img_loading.png'),
+  //                 fit: BoxFit.cover,
+  //               ),
+  //               // gradient: LinearGradient(
+  //               //       begin: FractionalOffset.topCenter,
+  //               //       end: FractionalOffset.bottomCenter,
+  //               //       colors: [
+  //               //     Colors.black.withOpacity(0.0),
+  //               //     Colors.white.withOpacity(1.0),
+  //               //   ],)
+  //             ),
+  //             child: Container(
+  //               alignment: Alignment.bottomCenter,
+  //               decoration: BoxDecoration(
+  //                   gradient: LinearGradient(
+  //                       begin: FractionalOffset.topCenter,
+  //                       end: FractionalOffset.bottomCenter,
+  //                       colors: [
+  //                     Colors.black.withOpacity(0.0),
+  //                     Colors.white.withOpacity(1.0),
+  //                   ])),
+  //               padding: EdgeInsets.all(60),
+  //               child: Container(
+  //                   width: 140.0,
+  //                   height: 100.0,
+  //                   decoration: const BoxDecoration(
+  //                     image: DecorationImage(
+  //                         image: AssetImage('assets/icons/logo_white.png')),
+  //                   )),
+  //             ),
+  //           ),
+  //         ),
+  //         Flexible(
+  //             flex: 2,
+  //             child: Container(
+  //                 alignment: Alignment.center,
+  //                 color: Colors.white,
+  //                 child: Column(
+  //                   mainAxisAlignment: MainAxisAlignment.end,
+  //                   children: [
+  //                     _kakaoLoginButton(),
+  //                     _naverLoginButton(),
+  //                     _googleLoginButton(),
+  //                     _appleLoginButton(),
+  //                     Row(
+  //                       mainAxisAlignment: MainAxisAlignment.center,
+  //                       children: [
+  //                         Container(
+  //                           width: 70.0,
+  //                           height: 70.0,
+  //                           decoration: const BoxDecoration(
+  //                             image: DecorationImage(
+  //                                 image: AssetImage(
+  //                                     'assets/icons/logo_siheung.png')),
+  //                           ),
+  //                         ),
+  //                         Container(
+  //                           width: 125.0,
+  //                           height: 100.0,
+  //                           decoration: const BoxDecoration(
+  //                             image: DecorationImage(
+  //                                 image:
+  //                                     AssetImage('assets/icons/logo_tuk.png')),
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     )
+  //                   ],
+  //                 )))
+  //       ],
+  //     ),
+  //   );
 }

@@ -220,9 +220,9 @@ class NavigationProvider with ChangeNotifier {
             distanceToPoint > distanceToNextPoint + 50) {
           // 턴 포인트 도착이거나 a > b일때
           _isDestination(); // 경유지인지 확인
-          if (_route!.length == 2) {
-            _route!.removeAt(0);
-            _goalPoint = _route![0]; //
+          if (_route.length == 2) {
+            _route.removeAt(0);
+            _goalPoint = _route[0]; //
             _nextPoint = null;
             if (isFirst) {
               _polylinePoints.removeAt(0);
@@ -231,9 +231,9 @@ class NavigationProvider with ChangeNotifier {
             _remainedDistance -= _distances.last;
             _distances.removeLast();
           } else {
-            _route!.removeAt(0);
-            _goalPoint = _route![0]; //
-            _nextPoint = _route![1];
+            _route.removeAt(0);
+            _goalPoint = _route[0]; //
+            _nextPoint = _route[1];
             if (isFirst) {
               isFirst = false;
             } else {
@@ -298,15 +298,15 @@ class NavigationProvider with ChangeNotifier {
 
   void _polyline() {
     List<PolylineWayPoint>? turnPoints = _route
-        ?.map((route) => PolylineWayPoint(location: route.turnPoint ?? ""))
+        .map((route) => PolylineWayPoint(location: route.turnPoint ?? ""))
         .toList();
     List<google_map.LatLng> pointLatLngs = [];
 
-    turnPoints?.forEach((element) {
+    for (var element in turnPoints) {
       List<String> a = element.location.split(',');
       pointLatLngs
           .add(google_map.LatLng(double.parse(a[1]), double.parse(a[0])));
-    });
+    }
 
     _polylinePoints = pointLatLngs;
     if (_disposed) return;

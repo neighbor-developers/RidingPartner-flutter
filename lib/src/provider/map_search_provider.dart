@@ -167,11 +167,11 @@ class MapSearchProvider extends ChangeNotifier {
 
       route = response['guides'];
       List<PolylineWayPoint>? turnPoints = route
-          ?.map((route) => PolylineWayPoint(location: route.turnPoint ?? ""))
+          .map((route) => PolylineWayPoint(location: route.turnPoint ?? ""))
           .toList();
       List<google_map.LatLng> pointLatLngs = [];
 
-      turnPoints?.forEach((element) {
+      turnPoints.forEach((element) {
         List<String> a = element.location.split(',');
         pointLatLngs
             .add(google_map.LatLng(double.parse(a[1]), double.parse(a[0])));

@@ -85,7 +85,8 @@ class HomeRecordProvider extends ChangeNotifier {
   void setList() {
     _recordFor14Days = [];
     for (int i = 0; i < 14; i++) {
-      _recordFor14Days.add(Record());
+      _recordFor14Days
+          .add(Record(distance: 0.0, date: '', timestamp: 0, topSpeed: 0.0));
     }
   }
 
@@ -110,7 +111,7 @@ class HomeRecordProvider extends ChangeNotifier {
 
     for (var element in records) {
       int days = int.parse(
-          today.difference(DateTime.parse(element.date!)).inDays.toString());
+          today.difference(DateTime.parse(element.date)).inDays.toString());
       if (days < _recordLength) {
         _count++;
         // 14일 이내이면 그 자리에 넣기

@@ -500,7 +500,7 @@ class MapSampleState extends State<MapSearchPage> {
 
     var nLat, nLon, sLat, sLon;
 
-    if (southWest!.latitude <= northEast!.latitude) {
+    if (southWest.latitude <= northEast.latitude) {
       sLat = southWest.latitude;
       nLat = northEast.latitude;
     } else {

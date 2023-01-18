@@ -1,16 +1,18 @@
+import 'package:intl/intl.dart';
+
 class Record {
-  double? distance;
-  int? timestamp;
-  String? date;
-  double? topSpeed;
+  double distance;
+  int timestamp;
+  String date;
+  double topSpeed;
   String? memo;
   double? kcal;
 
   Record(
-      {this.distance,
-      this.date,
-      this.timestamp,
-      this.topSpeed,
+      {required this.distance,
+      required this.date,
+      required this.timestamp,
+      required this.topSpeed,
       this.memo,
       this.kcal});
 
@@ -23,9 +25,7 @@ class Record {
         kcal: db["kcal"],
       );
 
-  List<String> getYearMonthDay() {
-    List<String> dateList = date!.split('-');
-    dateList.last = dateList.last.substring(0, 2);
-    return dateList;
+  DateTime getYearMonthDay() {
+    return DateFormat('yyyy-MM-dd HH:mm:ss').parse(date);
   }
 }

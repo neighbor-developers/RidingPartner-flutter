@@ -9,10 +9,10 @@ class PreferenceUtils {
       _prefs = await SharedPreferences.getInstance();
 
   static saveRecordPref(Record record) {
-    setString("date", record.date!);
-    setDouble("distance", record.distance!.toDouble());
-    setInt("timeStamp", record.timestamp!.toInt());
-    setDouble('topSpeed', record.topSpeed!);
+    setString("date", record.date);
+    setDouble("distance", record.distance.toDouble());
+    setInt("timeStamp", record.timestamp.toInt());
+    setDouble('topSpeed', record.topSpeed);
   }
 
   static saveRecordMemoPref(Record record) {
@@ -30,7 +30,11 @@ class PreferenceUtils {
       return null;
     } else {
       return Record(
-          distance: distance, date: date, timestamp: time, topSpeed: topSpeed, memo: memo);
+          distance: distance,
+          date: date!,
+          timestamp: time!,
+          topSpeed: topSpeed!,
+          memo: memo);
     }
   }
 

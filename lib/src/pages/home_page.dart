@@ -297,7 +297,7 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget recordDetailView(Record record) {
-    if (record == Record() || record.date == null) {
+    if (record.timestamp == 0) {
       return Container(
         padding: const EdgeInsets.all(20),
         height: 50,
@@ -305,14 +305,20 @@ class _HomePageState extends State<HomePage>
         child: const Text('라이딩한 기록이 없습니다'),
       );
     } else {
-      Data distance = Data('거리', '${record.distance! / 1000}km',
+      Data distance = Data('거리', '${record.distance / 1000}km',
           'assets/icons/home_distance.png');
-      Data time = Data('시간', timestampToText(record.timestamp!),
+      Data time = Data('시간', timestampToText(record.timestamp),
           'assets/icons/home_time.png');
-      Data speed = Data(
-          '평균 속도',
-          '${((record.distance! / 1000 / record.timestamp! / 3600 * 10).toInt()) / 10}km/h',
-          'assets/icons/home_speed.png');
+
+      Data speed;
+      try {
+        speed = Data(
+            '평균 속도',
+            '${((record.distance / 1000 / record.timestamp / 3600 * 10).toInt()) / 10}km/h',
+            'assets/icons/home_speed.png');
+      } catch (e) {
+        speed = Data('평균 속도', '0km/h', 'assets/icons/home_speed.png');
+      }
       Data speedMax = Data('순간 최고 속도', '${record.topSpeed}m/s',
           'assets/icons/home_max_speed.png');
 
@@ -424,7 +430,7 @@ class _HomePageState extends State<HomePage>
         child: Column(mainAxisSize: MainAxisSize.max, children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+            children: const [
               Text('주행기록',
                   style: TextStyle(
                       fontSize: 14,
@@ -442,7 +448,7 @@ class _HomePageState extends State<HomePage>
           Container(
             alignment: Alignment.center,
             width: MediaQuery.of(context).size.width - 90,
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             height: 230,
             child: Stack(
               children: [
@@ -450,7 +456,7 @@ class _HomePageState extends State<HomePage>
                   left: 0,
                   top: 0,
                   child: Text('    ${_getMaxDistance(records)}km',
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 12,
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w300,
@@ -460,13 +466,13 @@ class _HomePageState extends State<HomePage>
                   right: 0,
                   bottom: 20,
                   child: Text('   ${_getLastRecordDate(records)}',
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 12,
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w300,
                           color: Color.fromRGBO(51, 51, 51, 1))),
                 ),
-                VerticalDivider(
+                const VerticalDivider(
                     width: 1,
                     color: Color.fromRGBO(234, 234, 234, 1),
                     thickness: 1.0),
@@ -480,7 +486,7 @@ class _HomePageState extends State<HomePage>
                     Container(
                         width: 330,
                         height: 0.5,
-                        child: Divider(
+                        child: const Divider(
                             color: Color.fromRGBO(234, 234, 234, 1),
                             thickness: 1.0)),
                   ],
@@ -512,11 +518,11 @@ class _HomePageState extends State<HomePage>
       showPointer: true,
       showCircles: true,
       customDraw: (Canvas canvas, Size size) {},
-      linePointerDecoration: BoxDecoration(
+      linePointerDecoration: const BoxDecoration(
         shape: BoxShape.circle,
         color: Colors.orange,
       ),
-      pointerDecoration: BoxDecoration(
+      pointerDecoration: const BoxDecoration(
         shape: BoxShape.circle,
         color: Colors.deepOrange,
       ),
@@ -793,35 +799,26 @@ class _HomePageState extends State<HomePage>
   int _getMaxDistance(List<Record> records) {
     double maxDistance = 0;
     records.map((e) {
-      if (e.distance! > maxDistance) {
-        maxDistance = e.distance!;
+      if (e.distance > maxDistance) {
+        maxDistance = e.distance;
       }
     });
     return maxDistance.round();
   }
 
   String _getLastRecordDate(List<Record> records) {
-    List<String> dates = ["기록없음"];
-    if (records.last.date != null) {
-      dates = records.last.getYearMonthDay();
-      return "${dates[1]}월 ${dates[2]}일";
-    }
-    return dates.last;
+    DateTime date = records.last.getYearMonthDay();
+    return "${date.month}월 ${date.day}일";
   }
 
   void _incrementCounter(List<Record> records) {
     setState(() {
       data = [];
-      for (var e in records) {
-        if (e.date == null) {
-          continue;
+      for (var element in records) {
+        if (element.date != '') {
+          DateTime day = element.getYearMonthDay();
+          data.add(LineChartModel(amount: element.distance, date: day));
         }
-        data.add(LineChartModel(
-            amount: e.distance,
-            date: DateTime(
-                int.parse(e.getYearMonthDay()[0]),
-                int.parse(e.getYearMonthDay()[1]),
-                int.parse(e.getYearMonthDay()[2]))));
       }
     });
   }

@@ -34,7 +34,6 @@ class RidingProvider with ChangeNotifier {
 
   late Timer _timer;
   final Stopwatch _stopwatch = Stopwatch();
-  late int _befTime;
   bool visivility = false;
   LatLng? _bearingPoint;
 

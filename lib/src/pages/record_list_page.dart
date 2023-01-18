@@ -83,7 +83,7 @@ class _RecordListPageState extends State<RecordListPage> {
                   MaterialPageRoute(
                       builder: (context) => ChangeNotifierProvider(
                             create: (context) =>
-                                RidingResultProvider(record.date!),
+                                RidingResultProvider(record.date),
                             child: DayRecordPage(),
                           )))
             },
@@ -121,7 +121,7 @@ class _RecordListPageState extends State<RecordListPage> {
                           Row(children: [
                             Text(
                                 DateFormat('yyyy년 MM월 dd일')
-                                    .format(DateTime.parse(record.date!)),
+                                    .format(DateTime.parse(record.date)),
                                 style: const TextStyle(
                                   color: Color.fromRGBO(50, 50, 50, 0.9),
                                   fontFamily: 'Pretendard',
@@ -131,13 +131,13 @@ class _RecordListPageState extends State<RecordListPage> {
                             const SizedBox(width: 15),
                             Text(
                               DateFormat('EEEEE', "ko_KR")
-                                  .format(DateTime.parse(record.date!)),
+                                  .format(DateTime.parse(record.date)),
                               style: detailStyle,
                             ),
                             const SizedBox(width: 40),
                           ]),
                           Text(
-                            timestampToText(record.timestamp!),
+                            timestampToText(record.timestamp),
                             style: detailStyle,
                           ),
                           Text(

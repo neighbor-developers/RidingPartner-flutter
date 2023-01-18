@@ -8,6 +8,8 @@ import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart
 import 'package:permission_handler/permission_handler.dart';
 import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
 
+import '../models/result.dart';
+
 enum ImageStatus { init, permissionFail, imageSuccess, imageFail }
 
 class RidingResultProvider with ChangeNotifier {
@@ -24,34 +26,31 @@ class RidingResultProvider with ChangeNotifier {
   ImageStatus _imageStatus = ImageStatus.init;
   ImageStatus get imageStatus => _imageStatus;
 
-  late final Record _record;
+  late Record _record;
   Record get record => _record;
 
   late final File? _image;
   File? get image => _image;
 
   Future<void> getRidingData() async {
-    _record = await _firebaseDb.getRecord(_ridingDate);
-    print(_record);
-
-    if (_record != Record() && _record.date != null) {
+    Result result = await _firebaseDb.getRecord(_ridingDate);
+    if (result.isSuccess) {
       _recordState = RecordState.success;
+      _record = result.response;
     } else {
       _recordState = RecordState.fail;
     }
-
     notifyListeners();
   }
 
   saveOtherRecord(String str, double cal) async {
     Record record = Record(
-        distance: _record.distance?.toDouble(),
+        distance: _record.distance.toDouble(),
         date: _record.date,
         topSpeed: _record.topSpeed,
         timestamp: _record.timestamp,
         memo: str,
-        kcal: cal
-    );
+        kcal: cal);
     _firebaseDb.saveRecordFirebaseDb(record);
     PreferenceUtils.saveRecordMemoPref(record);
   }

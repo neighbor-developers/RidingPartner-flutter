@@ -22,7 +22,7 @@ class RecordListProvider extends ChangeNotifier {
       //   성공
       _records = result['data'];
       _records.sort((a, b) {
-        return DateTime.parse(a.date!).compareTo(DateTime.parse(b.date!));
+        return DateTime.parse(a.date).compareTo(DateTime.parse(b.date));
       });
     }
 

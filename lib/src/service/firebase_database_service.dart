@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
+import 'package:ridingpartner_flutter/src/models/result.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
 
@@ -39,16 +40,16 @@ class FirebaseDatabaseService {
     PreferenceUtils.saveRecordMemoPref(record);
   }
 
-  Future<Record> getRecord(String ridingDate) async {
+  Future<Result> getRecord(String ridingDate) async {
     try {
       DatabaseReference ref = _database.ref("$_uId/$ridingDate");
       final DataSnapshot snapshot = await ref.get();
       if (snapshot.exists) {
-        return Record.fromDB(snapshot.value);
+        return Result(isSuccess: true, response: Record.fromDB(snapshot.value));
       }
       throw Exception("getRecord: snapshot not exist");
     } catch (e) {
-      return Record();
+      return Result(isSuccess: false, response: e.toString());
     }
   }
 
@@ -75,13 +76,17 @@ class FirebaseDatabaseService {
           try {
             return Record.fromDB(recordEl);
           } catch (e) {
-            return Record();
+            return Record(distance: 0.0, date: '', timestamp: 0, topSpeed: 0.0);
           }
         }).toList();
 
         return {
           'state': RecordState.success,
-          'data': records.where((record) => record != Record()).toList()
+          'data': records
+          // .where((record) =>
+          //     record !=
+          //     Record(distance: 0.0, date: '', timestamp: 0, topSpeed: 0.0))
+          // .toList()
         };
       } else {
         print("데이터 없음");
