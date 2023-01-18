@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late WeatherProvider _weatherProvider;
   late HomeRecordProvider _homeRecordProvider;
-  late List<Record> records;
+  late List<Record> _records;
   late TabController _tabController;
   int state = 0;
 
@@ -70,8 +70,8 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     _weatherProvider = Provider.of<WeatherProvider>(context);
     _homeRecordProvider = Provider.of<HomeRecordProvider>(context);
-    records = _homeRecordProvider.recordFor14Days;
-    _incrementCounter(records);
+    _records = _homeRecordProvider.recordFor14Days;
+    _incrementCounter(_records);
 
     return Scaffold(
         backgroundColor: const Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
@@ -275,7 +275,7 @@ class _HomePageState extends State<HomePage>
               width: MediaQuery.of(context).size.width,
               child: TabBarView(
                   controller: _tabController,
-                  children: records.map((e) => recordDetailView(e)).toList())),
+                  children: _records.map((e) => recordDetailView(e)).toList())),
           SizedBox(
               height: 330,
               width: MediaQuery.of(context).size.width,
@@ -455,7 +455,7 @@ class _HomePageState extends State<HomePage>
                 Positioned(
                   left: 0,
                   top: 0,
-                  child: Text('    ${_getMaxDistance(records)}km',
+                  child: Text('    ${_getMaxDistance(_records)}km',
                       style: const TextStyle(
                           fontSize: 12,
                           fontFamily: 'Pretendard',
@@ -465,7 +465,7 @@ class _HomePageState extends State<HomePage>
                 Positioned(
                   right: 0,
                   bottom: 20,
-                  child: Text('   ${_getLastRecordDate(records)}',
+                  child: Text('   ${_getLastRecordDate(_records)}',
                       style: const TextStyle(
                           fontSize: 12,
                           fontFamily: 'Pretendard',
@@ -796,9 +796,9 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  int _getMaxDistance(List<Record> records) {
+  int _getMaxDistance(List<Record> _records) {
     double maxDistance = 0;
-    records.map((e) {
+    _records.map((e) {
       if (e.distance > maxDistance) {
         maxDistance = e.distance;
       }
@@ -806,15 +806,21 @@ class _HomePageState extends State<HomePage>
     return maxDistance.round();
   }
 
-  String _getLastRecordDate(List<Record> records) {
-    DateTime date = records.last.getYearMonthDay();
-    return "${date.month}월 ${date.day}일";
+  String _getLastRecordDate(List<Record> _records) {
+    String dateStr = '';
+    for (var element in _records) {
+      if (element.date != '') {
+        DateTime date = element.getYearMonthDay();
+        dateStr = "${date.month}월 ${date.day}일";
+      }
+    }
+    return dateStr;
   }
 
-  void _incrementCounter(List<Record> records) {
+  void _incrementCounter(List<Record> _records) {
     setState(() {
       data = [];
-      for (var element in records) {
+      for (var element in _records) {
         if (element.date != '') {
           DateTime day = element.getYearMonthDay();
           data.add(LineChartModel(amount: element.distance, date: day));
