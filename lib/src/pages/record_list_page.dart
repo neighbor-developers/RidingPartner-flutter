@@ -21,6 +21,12 @@ class RecordListPage extends StatefulWidget {
 }
 
 class _RecordListPageState extends State<RecordListPage> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<RecordListProvider>(context, listen: false).getRecord();
+  }
+
   late RecordListProvider _recordListProvider;
   String message = "";
 
@@ -35,14 +41,6 @@ class _RecordListPageState extends State<RecordListPage> {
   Widget build(BuildContext context) {
     _recordListProvider = Provider.of<RecordListProvider>(context);
     initializeDateFormatting('ko_KR', null);
-
-    if (_recordListProvider.recordState == RecordState.loading) {
-      _recordListProvider.getRecord();
-    } else if (_recordListProvider.recordState == RecordState.none) {
-      message = "기록이 존재하지 않습니다.";
-    } else {
-      message = "로딩에 실패하였습니다. 다시 접속해주세요.";
-    }
 
     return Scaffold(
         appBar: AppBar(
@@ -77,35 +75,29 @@ class _RecordListPageState extends State<RecordListPage> {
                     recordItem(_recordListProvider.records.elementAt(index)))));
   }
 
-  Widget recordItem(Record? record) {
-    return record == null
-        ? SizedBox(
-            child: Text(message,
-                style: const TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w400)))
-        : InkWell(
-            onTap: () => {
+  Widget recordItem(Record record) {
+    return InkWell(
+        onTap: () => {
               Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChangeNotifierProvider(
-                  create: (context) => RidingResultProvider(
-                  record.date!),
-                  child: DayRecordPage(),
-              )))
-              },
-            child: Card(
-              color: const Color.fromRGBO(248, 248, 248, 1),
-              margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-              child: Container(
-                height: MediaQuery.of(context).size.height/9,
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChangeNotifierProvider(
+                            create: (context) =>
+                                RidingResultProvider(record.date!),
+                            child: DayRecordPage(),
+                          )))
+            },
+        child: Card(
+            color: const Color.fromRGBO(248, 248, 248, 1),
+            margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+            child: Container(
+                height: MediaQuery.of(context).size.height / 9,
                 width: double.infinity,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,  //spaceAround
+                    mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween, //spaceAround
                     children: [
                       Container(
                         decoration: const BoxDecoration(
@@ -157,8 +149,6 @@ class _RecordListPageState extends State<RecordListPage> {
                       //const Divider(color: Colors.black)
                     ],
                   ),
-                )
-              )
-            ));
+                ))));
   }
 }
