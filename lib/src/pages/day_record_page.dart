@@ -1,58 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:ridingpartner_flutter/src/widgets/appbar.dart';
 
 import '../models/record.dart';
 import '../provider/home_record_provider.dart';
 import '../provider/riding_result_provider.dart';
 import '../utils/timestampToText.dart';
 
-class DayRecordPage extends StatelessWidget {
+class DayRecordPage extends StatefulWidget {
   DayRecordPage({super.key});
 
+  @override
+  State<DayRecordPage> createState() => _DayRecordPageState();
+}
+
+class _DayRecordPageState extends State<DayRecordPage> {
   late RidingResultProvider _recordProvider;
   late Record _record;
 
   @override
   Widget build(BuildContext context) {
     _recordProvider = Provider.of<RidingResultProvider>(context);
-    num _speed = 0;
+    num speed = 0;
 
-    if (_recordProvider.recordState == RecordState.loading) {
-      _recordProvider.getRidingData();
-    }
-
-    if (_recordProvider.recordState == RecordState.success) {
-      _record = _recordProvider.record;
-      _speed = _record.distance;
-      _speed = _speed / 3 * 3600;
-    }
-
-    _record.memo ??= "그 날의 메모가 존재하지 않습니다.";
-    _record.kcal ??= 0.0;
-
-    return Scaffold(
-        appBar: AppBar(
-          shadowColor: const Color.fromRGBO(255, 255, 255, 0.5),
-          backgroundColor: Colors.white,
-          title: Container(
-              padding: const EdgeInsets.fromLTRB(0, 0, 50, 0),
-              width: MediaQuery.of(context).size.width,
-              alignment: Alignment.center,
-              child: Image.asset(
-                'assets/icons/logo.png',
-                height: 25,
-              )),
-          leadingWidth: 50,
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.arrow_back),
-            color: const Color(0xFF343A40),
-          ),
-          elevation: 0.0,
-        ),
+    Widget successWidget() => Scaffold(
+        appBar: appBar(context),
         resizeToAvoidBottomInset: false,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,7 +155,7 @@ class DayRecordPage extends StatelessWidget {
                 margin: const EdgeInsets.only(left: 24.0, right: 24.0),
                 padding:
                     const EdgeInsets.only(left: 16.0, right: 16.0, top: 12.0),
-                child: Text(_record.memo!,
+                child: Text(_record.memo ?? '',
                     style: TextStyle(
                       fontSize: 14.0,
                       fontWeight: FontWeight.w400,
@@ -190,5 +163,34 @@ class DayRecordPage extends StatelessWidget {
                     )))
           ],
         ));
+
+    switch (_recordProvider.recordState) {
+      case RecordState.loading:
+        _recordProvider.getRidingData();
+        return loadingWidget();
+      case RecordState.fail:
+        return failWidget();
+      case RecordState.success:
+        _record = _recordProvider.record;
+        speed = _record.distance;
+        speed = speed / 3 * 3600;
+        return successWidget();
+      default:
+        return loadingWidget();
+    }
   }
+
+  Widget loadingWidget() => Scaffold(
+      appBar: appBar(context),
+      resizeToAvoidBottomInset: false,
+      body: Center(
+        child: Text('데이터 불러오는 증'),
+      ));
+
+  Widget failWidget() => Scaffold(
+      appBar: appBar(context),
+      resizeToAvoidBottomInset: false,
+      body: Center(
+        child: Text('데이터를 불러오는 데에 실패했습니다'),
+      ));
 }
