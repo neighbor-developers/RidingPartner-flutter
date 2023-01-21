@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
+import 'package:ridingpartner_flutter/src/widgets/appbar.dart';
 
 import '../models/record.dart';
 import '../provider/riding_result_provider.dart';
@@ -53,19 +54,13 @@ class _RecordState extends State<RecordPage> {
   }
 
   Widget loadingWidget() => Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
-        elevation: 0.0,
-      ),
+      appBar: appBar(context),
       resizeToAvoidBottomInset: false,
       body: Center(
         child: Text('데이터 불러오는 증'),
       ));
   Widget failWidget() => Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
-        elevation: 0.0,
-      ),
+      appBar: appBar(context),
       resizeToAvoidBottomInset: false,
       body: Center(
         child: Text('데이터를 불러오는 데에 실패했습니다'),
