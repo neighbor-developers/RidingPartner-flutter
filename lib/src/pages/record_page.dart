@@ -267,17 +267,21 @@ class _RecordState extends State<RecordPage> {
                     borderRadius: BorderRadius.circular(17),
                     color: const Color.fromRGBO(255, 255, 255, 0.3)),
                 child: TextField(
+                    cursorColor: Colors.white,
                     style: const TextStyle(
                       fontSize: 14.0,
                       color: Colors.black,
                     ),
                     onChanged: (value) => memoText = value,
                     decoration: InputDecoration(
+                      focusedBorder:
+                          UnderlineInputBorder(borderSide: BorderSide.none),
                       contentPadding: const EdgeInsets.all(16),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide.none,
                         borderRadius: BorderRadius.circular(12),
                       ),
+                      focusColor: Colors.transparent,
                       hintText: "오늘의 라이딩은 어땠나요?",
                       hintStyle: const TextStyle(
                         color: Colors.white,

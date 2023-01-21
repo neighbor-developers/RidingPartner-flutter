@@ -107,41 +107,46 @@ class _LodingPageState extends State<LodingPage> {
                                 image:
                                     AssetImage('assets/icons/logo_white.png')),
                             color: Colors.transparent)),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     _kakaoLoginButton(),
                     _naverLoginButton(),
                     _googleLoginButton(),
                     _appleLoginButton(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                            width: 70.0,
-                            height: 70.0,
-                            margin:
-                                const EdgeInsets.fromLTRB(0.0, 40.0, 30.0, 0.0),
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/icons/logo_siheung.png')),
+                    Container(
+                        alignment: Alignment.center,
+                        margin: const EdgeInsets.fromLTRB(0.0, 20.0, 0, 0.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                                width: 70.0,
+                                height: 70.0,
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/icons/logo_siheung.png')),
+                                ),
+                                child: const Scaffold(
+                                  backgroundColor: Colors.transparent,
+                                )),
+                            const SizedBox(
+                              width: 30,
                             ),
-                            child: const Scaffold(
-                              backgroundColor: Colors.transparent,
-                            )),
-                        Container(
-                            width: 125.0,
-                            height: 100.0,
-                            margin:
-                                const EdgeInsets.fromLTRB(10.0, 40.0, 0.0, 0.0),
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                  image:
-                                      AssetImage('assets/icons/logo_tuk.png')),
-                            ),
-                            child: const Scaffold(
-                              backgroundColor: Colors.transparent,
-                            )),
-                      ],
-                    )
+                            Container(
+                                width: 125.0,
+                                height: 100.0,
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/icons/logo_tuk.png')),
+                                ),
+                                child: const Scaffold(
+                                  backgroundColor: Colors.transparent,
+                                )),
+                          ],
+                        ))
                   ],
                 ))));
   }
@@ -149,17 +154,22 @@ class _LodingPageState extends State<LodingPage> {
   Widget _naverLoginButton() {
     return SizedBox(
         width: MediaQuery.of(context).size.width,
-        height: 65.0,
+        height: 70.0,
         child: Visibility(
             visible: _authProvider.user == null,
             child: Card(
-                margin: const EdgeInsets.only(top: 20),
+                elevation: 0,
+                color: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                margin: const EdgeInsets.only(top: 10),
                 child: InkWell(
                     onTap: () {
                       _authProvider.signInWithNaver();
                     },
                     child: Ink.image(
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitHeight,
                       image:
                           const AssetImage("assets/icons/btn_naver_login.png"),
                     )))));
@@ -167,37 +177,48 @@ class _LodingPageState extends State<LodingPage> {
 
   Widget _kakaoLoginButton() {
     return SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: 65.0,
+        width: MediaQuery.of(context).size.width - 60,
+        height: 70.0,
         child: Visibility(
             visible: _authProvider.user == null,
             child: Card(
-                margin: const EdgeInsets.only(top: 20),
+                elevation: 0,
+                color: Colors.transparent,
+                margin: const EdgeInsets.only(top: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
                 child: InkWell(
                     onTap: () {
                       _authProvider.signInWithKakao();
                     },
                     child: Ink.image(
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitHeight,
                       image:
                           const AssetImage("assets/icons/btn_kakao_login.png"),
                     )))));
+    ;
   }
 
   Widget _googleLoginButton() {
     return SizedBox(
         width: MediaQuery.of(context).size.width,
-        height: 65.0,
+        height: 70.0,
         child: Visibility(
             visible: _authProvider.user == null,
             child: Card(
-                margin: const EdgeInsets.only(top: 20),
+                elevation: 0,
+                color: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                margin: const EdgeInsets.only(top: 10),
                 child: InkWell(
                     onTap: () {
                       _authProvider.signInWithGoogle();
                     },
                     child: Ink.image(
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitHeight,
                       image:
                           const AssetImage("assets/icons/btn_google_login.png"),
                     )))));
@@ -207,17 +228,22 @@ class _LodingPageState extends State<LodingPage> {
     if (Platform.isIOS) {
       return SizedBox(
           width: MediaQuery.of(context).size.width,
-          height: 65.0,
+          height: 70.0,
           child: Visibility(
               visible: _authProvider.user == null,
               child: Card(
-                  margin: const EdgeInsets.only(top: 20),
+                  elevation: 0,
+                  color: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  margin: const EdgeInsets.only(top: 10),
                   child: InkWell(
                       onTap: () {
                         _authProvider.signInWithApple();
                       },
                       child: Ink.image(
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fitHeight,
                         image: const AssetImage(
                             "assets/icons/btn_apple_login.png"),
                       )))));
