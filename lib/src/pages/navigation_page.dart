@@ -138,10 +138,11 @@ class _NavigationPageState extends State<NavigationPage> {
                 zoom: 19,
                 bearing: bearing)));
 
-        markers.removeWhere((element) => element.markerId == "currentPosition");
+        markers.removeWhere(
+            (element) => element.markerId.value == 'currentPosition');
         markers.add(Marker(
             icon: myPositionIcon,
-            markerId: const MarkerId("currentPosition"),
+            markerId: const MarkerId('currentPosition'),
             position: LatLng(position.latitude, position.longitude)));
       }
     }
@@ -171,7 +172,7 @@ class _NavigationPageState extends State<NavigationPage> {
                   style: plainStyle, textAlign: TextAlign.center));
         default:
           return Center(
-              child: Text("같은 에러가 반복되면문의해주세요",
+              child: Text("같은 에러가 반복되면 문의해주세요",
                   style: plainStyle, textAlign: TextAlign.center));
       }
     }
@@ -501,7 +502,8 @@ class _NavigationPageState extends State<NavigationPage> {
                 }
               },
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 decoration: const BoxDecoration(
                   boxShadow: [
                     BoxShadow(
@@ -530,8 +532,8 @@ class _NavigationPageState extends State<NavigationPage> {
                           )));
             },
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              margin: EdgeInsets.symmetric(vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              margin: const EdgeInsets.symmetric(vertical: 15),
               decoration: const BoxDecoration(
                 boxShadow: [
                   BoxShadow(
@@ -543,13 +545,13 @@ class _NavigationPageState extends State<NavigationPage> {
                 color: Colors.white,
                 borderRadius: BorderRadius.all(Radius.circular(7)),
               ),
-              child: Text('종료', style: testStyle),
+              child: const Text('종료', style: testStyle),
             ),
           )
         ],
       );
     } else {
-      return SizedBox(
+      return const SizedBox(
         height: 0,
         width: 0,
       );

@@ -314,8 +314,8 @@ class MapSampleState extends State<MapSearchPage> {
   Widget searchBox(MapSearchProvider mapSearchProvider, String type,
       TextEditingController textController, FocusNode focusNode) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(boxShadow: [
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      decoration: const BoxDecoration(boxShadow: [
         BoxShadow(
             spreadRadius: 5,
             blurRadius: 10,
@@ -330,7 +330,7 @@ class MapSampleState extends State<MapSearchPage> {
         controller: textController,
         decoration: InputDecoration(
           hintStyle: _hintTextStyle,
-          hintText: type + "를 입력해주세요",
+          hintText: "$type를 입력해주세요",
           prefixIcon: const Icon(Icons.search),
           suffixIcon: _xMarkBtn(mapSearchProvider, type, textController),
           filled: true,
@@ -424,7 +424,7 @@ class MapSampleState extends State<MapSearchPage> {
           index,
           Marker(
             icon: customIcon,
-            markerId: MarkerId('' + position.latitude! + position.longitude!),
+            markerId: MarkerId('${position.latitude!}${position.longitude!}'),
             position: LatLng(double.parse(position.latitude!),
                 double.parse(position.longitude!)),
             draggable: true,
@@ -444,7 +444,7 @@ class MapSampleState extends State<MapSearchPage> {
       // 출발지와 도착지 마커를 구분하기 위해 index를 사용
       Marker(
         icon: customIcon,
-        markerId: MarkerId('' + position.latitude! + position.longitude!),
+        markerId: MarkerId('${position.latitude!}${position.longitude!}'),
         position: LatLng(double.parse(position.latitude!),
             double.parse(position.longitude!)),
         draggable: true,

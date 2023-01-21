@@ -141,7 +141,7 @@ class _RidingPageState extends State<RidingPage> {
                   myLocationButtonEnabled: false,
                   polylines: {
                     Polyline(
-                        polylineId: PolylineId("poly"),
+                        polylineId: const PolylineId("poly"),
                         width: 5,
                         points: _ridingProvider.polylineCoordinates),
                   },
@@ -310,7 +310,8 @@ class _RidingPageState extends State<RidingPage> {
                   }
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   decoration: const BoxDecoration(
                     boxShadow: [
                       BoxShadow(
@@ -343,8 +344,9 @@ class _RidingPageState extends State<RidingPage> {
                               )));
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  margin: EdgeInsets.symmetric(vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  margin: const EdgeInsets.symmetric(vertical: 15),
                   decoration: const BoxDecoration(
                     boxShadow: [
                       BoxShadow(
@@ -356,13 +358,13 @@ class _RidingPageState extends State<RidingPage> {
                     color: Colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(7)),
                   ),
-                  child: Text('종료', style: testStyle),
+                  child: const Text('종료', style: testStyle),
                 ),
               ))
         ],
       );
     } else {
-      return SizedBox(
+      return const SizedBox(
         height: 0,
         width: 0,
       );

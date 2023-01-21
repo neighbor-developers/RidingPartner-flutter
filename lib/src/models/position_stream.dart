@@ -2,16 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:geolocator_android/geolocator_android.dart';
-import 'package:geolocator_apple/geolocator_apple.dart';
 
 class PositionStream {
   late LocationSettings locationSettings;
   static final PositionStream _instance = PositionStream._internal();
   static StreamController<Position> _controller =
       StreamController<Position>.broadcast();
-  static final int DISTANCE = 30;
-  static final int DURATION_SECNOD = 2;
+  static const int DISTANCE = 30;
+  static const int DURATION_SECNOD = 2;
 
   StreamController<Position> get controller => _controller;
 
@@ -31,7 +29,7 @@ class PositionStream {
           accuracy: LocationAccuracy.high,
           distanceFilter: DISTANCE,
           forceLocationManager: true,
-          intervalDuration: Duration(seconds: DURATION_SECNOD),
+          intervalDuration: const Duration(seconds: DURATION_SECNOD),
           //(Optional) Set foreground notification config to keep the app alive
           //when going to the background
           foregroundNotificationConfig: const ForegroundNotificationConfig(
@@ -49,7 +47,7 @@ class PositionStream {
         showBackgroundLocationIndicator: false,
       );
     } else {
-      locationSettings = LocationSettings(
+      locationSettings = const LocationSettings(
         accuracy: LocationAccuracy.high,
         distanceFilter: DISTANCE,
       );

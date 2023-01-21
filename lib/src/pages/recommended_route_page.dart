@@ -27,7 +27,7 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
 
     return Scaffold(
         body: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -160,32 +160,31 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
     }
   }
 
-  Widget listCard(RidingRoute route) => Container(
-      child: Card(
-          semanticContainer: true,
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          child: InkWell(
-              onTap: () {
-                routeDialog(route);
-              },
-              child: Stack(fit: StackFit.expand, children: <Widget>[
-                Image.asset(
-                  route.image!,
-                  fit: BoxFit.fill,
-                ),
-                Container(
-                    alignment: Alignment.bottomRight,
-                    padding: EdgeInsets.all(7),
-                    child: Text(route.title! + "  ",
-                        style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600))),
-              ]))));
+  Widget listCard(RidingRoute route) => Card(
+      semanticContainer: true,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: InkWell(
+          onTap: () {
+            routeDialog(route);
+          },
+          child: Stack(fit: StackFit.expand, children: <Widget>[
+            Image.asset(
+              route.image!,
+              fit: BoxFit.fill,
+            ),
+            Container(
+                alignment: Alignment.bottomRight,
+                padding: const EdgeInsets.all(7),
+                child: Text("${route.title!}  ",
+                    style: const TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600))),
+          ])));
 
   Widget recommendTitleWidget() => Container(
         margin: const EdgeInsets.fromLTRB(0, 32, 0, 24),

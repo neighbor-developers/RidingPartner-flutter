@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage>
     LineChartModel(amount: 120, date: DateTime(2020, 1, 7)),
   ];
 
-  int _counter = 0;
+  // int _counter = 0;
 
   @override
   void initState() {
@@ -483,10 +483,10 @@ class _HomePageState extends State<HomePage>
                       height: 200,
                       child: customLineChart(),
                     ),
-                    Container(
+                    const SizedBox(
                         width: 330,
                         height: 0.5,
-                        child: const Divider(
+                        child: Divider(
                             color: Color.fromRGBO(234, 234, 234, 1),
                             thickness: 1.0)),
                   ],
@@ -796,9 +796,9 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  int _getMaxDistance(List<Record> _records) {
+  int _getMaxDistance(List<Record> records) {
     double maxDistance = 0;
-    _records.map((e) {
+    records.map((e) {
       if (e.distance > maxDistance) {
         maxDistance = e.distance;
       }
@@ -806,9 +806,9 @@ class _HomePageState extends State<HomePage>
     return maxDistance.round();
   }
 
-  String _getLastRecordDate(List<Record> _records) {
+  String _getLastRecordDate(List<Record> records) {
     String dateStr = '';
-    for (var element in _records) {
+    for (var element in records) {
       if (element.date != '') {
         DateTime date = element.getYearMonthDay();
         dateStr = "${date.month}월 ${date.day}일";

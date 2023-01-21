@@ -6,7 +6,6 @@ import 'package:ridingpartner_flutter/src/pages/recommended_route_page.dart';
 import 'package:ridingpartner_flutter/src/pages/riding_page.dart';
 import 'package:ridingpartner_flutter/src/pages/sights_page.dart';
 import 'package:ridingpartner_flutter/src/provider/bottom_navigation_provider.dart';
-import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 
 class BottomNavigation extends StatelessWidget {
@@ -24,7 +23,7 @@ class BottomNavigation extends StatelessWidget {
       appBar: AppBar(
         shadowColor: const Color.fromRGBO(255, 255, 255, 0.5),
         backgroundColor: Colors.white,
-        title: Container(
+        title: SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Image.asset(
               'assets/icons/logo.png',
