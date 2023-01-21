@@ -27,6 +27,11 @@ class _RecordState extends State<RecordPage> {
   DateTime today = DateTime.now();
   int hKcal = 401;
   String memoText = '';
+  final textStyle = const TextStyle(
+      fontSize: 16.0,
+      fontFamily: "Pretendard",
+      fontWeight: FontWeight.w500,
+      color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6));
 
   @override
   Widget build(BuildContext context) {
@@ -104,47 +109,12 @@ class _RecordState extends State<RecordPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text(
-                            "날짜",
-                            style: TextStyle(
-                                fontSize: 16.0,
-                                fontFamily: "Pretendard",
-                                fontWeight: FontWeight.w500,
-                                color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
-                          ),
-                          Text(
-                            "주행 시간",
-                            style: TextStyle(
-                                fontSize: 16.0,
-                                fontFamily: "Pretendard",
-                                fontWeight: FontWeight.w500,
-                                color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
-                          ),
-                          Text(
-                            "평균 속도",
-                            style: TextStyle(
-                                fontSize: 16.0,
-                                fontFamily: "Pretendard",
-                                fontWeight: FontWeight.w500,
-                                color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
-                          ),
-                          Text(
-                            "주행 총 거리",
-                            style: TextStyle(
-                                fontSize: 16.0,
-                                fontFamily: "Pretendard",
-                                fontWeight: FontWeight.w500,
-                                color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
-                          ),
-                          Text(
-                            "소모 칼로리",
-                            style: TextStyle(
-                                fontSize: 16.0,
-                                fontFamily: "Pretendard",
-                                fontWeight: FontWeight.w500,
-                                color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
-                          )
+                        children: [
+                          Text("날짜", style: textStyle),
+                          Text("주행 시간", style: textStyle),
+                          Text("평균 속도", style: textStyle),
+                          Text("주행 총 거리", style: textStyle),
+                          Text("소모 칼로리", style: textStyle)
                         ],
                       ),
                     ),
@@ -155,47 +125,17 @@ class _RecordState extends State<RecordPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
+                          Text(DateFormat('yyyy년 MM월 dd일').format(today),
+                              style: textStyle),
+                          Text(timestampToText(_record.timestamp),
+                              style: textStyle),
+                          Text("${_record.distance / _record.timestamp} km/h",
+                              style: textStyle),
+                          Text("${_record.distance / 1000} km",
+                              style: textStyle),
                           Text(
-                            DateFormat('yyyy년 MM월 dd일').format(today),
-                            style: const TextStyle(
-                              fontFamily: "Pretendard",
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16.0,
-                              color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6),
-                            ),
-                          ),
-                          Text(
-                            timestampToText(_record.timestamp),
-                            style: const TextStyle(
-                                fontSize: 16.0,
-                                fontFamily: "Pretendard",
-                                fontWeight: FontWeight.w500,
-                                color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
-                          ),
-                          Text(
-                            "${_record.distance / _record.timestamp} km/h",
-                            style: const TextStyle(
-                                fontSize: 16.0,
-                                fontFamily: "Pretendard",
-                                fontWeight: FontWeight.w500,
-                                color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
-                          ),
-                          Text(
-                            "${_record.distance / 1000} km",
-                            style: const TextStyle(
-                                fontSize: 16.0,
-                                fontFamily: "Pretendard",
-                                fontWeight: FontWeight.w500,
-                                color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
-                          ),
-                          Text(
-                            "${(hKcal * (_record.timestamp) / 3600).toStringAsFixed(1)} kcal",
-                            style: const TextStyle(
-                                fontSize: 16.0,
-                                fontFamily: "Pretendard",
-                                fontWeight: FontWeight.w500,
-                                color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6)),
-                          )
+                              "${(hKcal * (_record.timestamp) / 3600).toStringAsFixed(1)} kcal",
+                              style: textStyle)
                         ],
                       ),
                     ),

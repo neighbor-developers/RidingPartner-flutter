@@ -18,11 +18,17 @@ class DayRecordPage extends StatefulWidget {
 class _DayRecordPageState extends State<DayRecordPage> {
   late RidingResultProvider _recordProvider;
   late Record _record;
+  int hKcal = 401;
 
   @override
   Widget build(BuildContext context) {
     _recordProvider = Provider.of<RidingResultProvider>(context);
     num speed = 0;
+    const textStyle = TextStyle(
+        fontSize: 18.5,
+        fontFamily: "Pretendard",
+        fontWeight: FontWeight.w400,
+        color: Color.fromARGB(255, 76, 76, 76));
 
     Widget successWidget() => Scaffold(
         appBar: appBar(context),
@@ -35,109 +41,54 @@ class _DayRecordPageState extends State<DayRecordPage> {
                 height: 240,
                 child: Image(
                     image: AssetImage('assets/images/img_loading.png'),
-                    fit: BoxFit.fill)),
+                    fit: BoxFit.cover)),
             Container(
-              margin: const EdgeInsets.only(left: 24.0, right: 24.0, top: 30),
+              margin:
+                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30),
               child: Row(
                 children: [
                   SizedBox(
-                    width: 100.0,
-                    height: 120.0,
+                    height: 140.0,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: const [
                         Text(
                           "날짜",
-                          style: TextStyle(
-                              fontSize: 16.0,
-                              fontFamily: "Pretendard",
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF666666)),
+                          style: textStyle,
                         ),
                         Text(
                           "주행 시간",
-                          style: TextStyle(
-                              fontSize: 16.0,
-                              fontFamily: "Pretendard",
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF666666)),
+                          style: textStyle,
                         ),
                         Text(
                           "평균 속도",
-                          style: TextStyle(
-                              fontSize: 16.0,
-                              fontFamily: "Pretendard",
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF666666)),
+                          style: textStyle,
                         ),
-                        Text(
-                          "주행 총 거리",
-                          style: TextStyle(
-                              fontSize: 16.0,
-                              fontFamily: "Pretendard",
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF666666)),
-                        ),
-                        Text(
-                          "소모 칼로리",
-                          style: TextStyle(
-                              fontSize: 16.0,
-                              fontFamily: "Pretendard",
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF666666)),
-                        )
+                        Text("주행 총 거리", style: textStyle),
+                        Text("소모 칼로리", style: textStyle)
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 120.0,
-                    width: 220.0,
+                  Container(
+                    margin: const EdgeInsets.only(left: 30),
+                    height: 140.0,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          DateFormat('yyyy년 MM월 dd일')
-                              .format(DateTime.parse(_record.date)),
-                          style: const TextStyle(
-                            fontFamily: "Pretendard",
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF666666),
-                          ),
-                        ),
+                            DateFormat('yyyy년 MM월 dd일')
+                                .format(DateTime.parse(_record.date)),
+                            style: textStyle),
+                        Text(timestampToText(_record.timestamp),
+                            style: textStyle),
+                        Text("${_record.distance / _record.timestamp} km/h",
+                            style: textStyle),
+                        Text("${_record.distance / 1000} km", style: textStyle),
                         Text(
-                          timestampToText(_record.timestamp),
-                          style: const TextStyle(
-                              fontSize: 16.0,
-                              fontFamily: "Pretendard",
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF666666)),
-                        ),
-                        Text(
-                          "${_record.distance / _record.timestamp} km/h",
-                          style: const TextStyle(
-                              fontSize: 16.0,
-                              fontFamily: "Pretendard",
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF666666)),
-                        ),
-                        Text(
-                          "${_record.distance / 1000} km",
-                          style: const TextStyle(
-                              fontSize: 16.0,
-                              fontFamily: "Pretendard",
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF666666)),
-                        ),
-                        Text(
-                          "${(_record.kcal)?.toStringAsFixed(1).toString()} kcal",
-                          style: const TextStyle(
-                              fontSize: 16.0,
-                              fontFamily: "Pretendard",
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF666666)),
-                        )
+                            "${(hKcal * (_record.timestamp) / 3600).toStringAsFixed(1)} kcal",
+                            style: textStyle)
                       ],
                     ),
                   ),
@@ -183,8 +134,8 @@ class _DayRecordPageState extends State<DayRecordPage> {
   Widget loadingWidget() => Scaffold(
       appBar: appBar(context),
       resizeToAvoidBottomInset: false,
-      body: Center(
-        child: Text('데이터 불러오는 증'),
+      body: CircularProgressIndicator(
+        color: const Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
       ));
 
   Widget failWidget() => Scaffold(
