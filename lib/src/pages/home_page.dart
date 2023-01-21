@@ -73,6 +73,10 @@ class _HomePageState extends State<HomePage>
     _records = _homeRecordProvider.recordFor14Days;
     _incrementCounter(_records);
 
+    if (_weatherProvider.loadingStatus == WeatherState.searching) {
+      _weatherProvider.getWeather();
+    }
+
     return Scaffold(
         backgroundColor: const Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
         floatingActionButton: floatingButtons(),
