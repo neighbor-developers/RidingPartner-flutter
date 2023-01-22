@@ -20,6 +20,9 @@ import 'package:ridingpartner_flutter/src/provider/setting_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
 
+import '../provider/auth_provider.dart';
+import 'loding_page.dart';
+
 class Data {
   String key;
   String data;
@@ -43,6 +46,7 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late WeatherProvider _weatherProvider;
   late HomeRecordProvider _homeRecordProvider;
+  late SettingProvider _settingProvider;
   late List<Record> _records;
   late TabController _tabController;
   int state = 0;
@@ -64,14 +68,22 @@ class _HomePageState extends State<HomePage>
     super.initState();
     Provider.of<WeatherProvider>(context, listen: false).getWeather();
     Provider.of<HomeRecordProvider>(context, listen: false).getData();
+    Provider.of<SettingProvider>(context, listen: false).Version();
     _tabController = TabController(
         length: numberOfRecentRecords, vsync: this, initialIndex: 13);
   }
+
+  final settingTextStyle = const TextStyle(
+      fontFamily: 'Pretendard',
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      color: Color.fromARGB(185, 51, 57, 62));
 
   @override
   Widget build(BuildContext context) {
     _weatherProvider = Provider.of<WeatherProvider>(context);
     _homeRecordProvider = Provider.of<HomeRecordProvider>(context);
+    _settingProvider = Provider.of<SettingProvider>(context);
     _records = _homeRecordProvider.recordFor14Days;
     _incrementCounter(_records);
 
@@ -81,7 +93,7 @@ class _HomePageState extends State<HomePage>
 
     return Scaffold(
         backgroundColor: const Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
-        floatingActionButton: floatingButtons(),
+        // floatingActionButton: floatingButtons(),
         body: Stack(
           children: [
             Container(
@@ -217,14 +229,30 @@ class _HomePageState extends State<HomePage>
               ),
             ));
       case RecordState.empty:
-        return const SizedBox(
+        return SizedBox(
             height: 100,
             child: Center(
-              child: Text(
-                "최근 2주간 라이딩한 기록이 없습니다\n라이딩 파트너와 함께 달려보세요!",
-                textAlign: TextAlign.center,
-              ),
-            ));
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Text(
+                  "최근 2주간 라이딩한 기록이 없습니다\n라이딩 파트너와 함께 달려보세요!",
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  '기록 전체보기',
+                  style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Color.fromARGB(185, 51, 57, 62)),
+                ),
+              ],
+            )));
       case RecordState.fail:
         return const SizedBox(
             height: 100,
@@ -233,7 +261,7 @@ class _HomePageState extends State<HomePage>
                   textAlign: TextAlign.center),
             ));
       case RecordState.success:
-        return Column(children: [
+        return Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           TabBar(
               padding: const EdgeInsets.fromLTRB(0, 20, 0, 15),
               onTap: (value) {
@@ -282,12 +310,37 @@ class _HomePageState extends State<HomePage>
               child: TabBarView(
                   controller: _tabController,
                   children: _records.map((e) => recordDetailView(e)).toList())),
+          InkWell(
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ChangeNotifierProvider(
+                      create: (context) => RecordListProvider(),
+                      child: const RecordListPage(),
+                    ))),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text('기록 전체보기', style: settingTextStyle),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  const Icon(
+                    Icons.add_chart_rounded,
+                    color: Color.fromARGB(185, 51, 57, 62),
+                    size: 17,
+                  ),
+                ],
+              ),
+            ),
+          ),
           SizedBox(
               height: 330,
               width: MediaQuery.of(context).size.width,
               child: recordChart()),
+          settingBox(),
           SizedBox(
-            height: 40,
+            height: 60,
             width: MediaQuery.of(context).size.width,
           )
         ]);
@@ -300,6 +353,58 @@ class _HomePageState extends State<HomePage>
                   color: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32)),
             ));
     }
+  }
+
+  Widget settingBox() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text('앱 버전 : ${_settingProvider.version}', style: settingTextStyle),
+        const Text('   |   '),
+        InkWell(
+          onTap: () async {
+            bool result = await _settingProvider.signOut();
+            if (result) {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChangeNotifierProvider(
+                            create: (context) => AuthProvider(),
+                            child: const LodingPage(),
+                          )),
+                  ((route) => false));
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('로그아웃에 실패했습니다. 잠시후 다시 시도해주세요.',
+                      style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400)),
+                ),
+              );
+            }
+          },
+          child: Text('로그아웃', style: settingTextStyle),
+        ),
+        const Text('   |   '),
+        InkWell(
+          onTap: () async {
+            await _settingProvider.withdrawal();
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ChangeNotifierProvider(
+                          create: (context) => AuthProvider(),
+                          child: const LodingPage(),
+                        )),
+                ((route) => false));
+          },
+          child: Text('계정 탈퇴', style: settingTextStyle),
+        ),
+      ],
+    );
   }
 
   Widget recordDetailView(Record record) {
@@ -429,7 +534,7 @@ class _HomePageState extends State<HomePage>
             ],
             borderRadius: BorderRadius.all(Radius.circular(12))),
         padding: const EdgeInsets.all(20),
-        margin: const EdgeInsets.all(20),
+        margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
         alignment: Alignment.topLeft,
         width: MediaQuery.of(context).size.width,
         height: 330,
@@ -757,50 +862,50 @@ class _HomePageState extends State<HomePage>
         )));
   }
 
-  Widget? floatingButtons() {
-    return SpeedDial(
-      animatedIcon: AnimatedIcons.menu_close,
-      visible: true,
-      curve: Curves.bounceIn,
-      backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-      children: [
-        SpeedDialChild(
-            child: const Icon(Icons.settings_sharp, color: Colors.white),
-            label: "설정",
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 13.0),
-            backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-            labelBackgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ChangeNotifierProvider(
-                        create: (context) => SettingProvider(),
-                        child: const SettingPage(),
-                      )));
-            }),
-        SpeedDialChild(
-          child: const Icon(
-            Icons.add_chart_rounded,
-            color: Colors.white,
-          ),
-          label: "내 기록",
-          backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-          labelBackgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-          labelStyle: const TextStyle(
-              fontWeight: FontWeight.w500, color: Colors.white, fontSize: 13.0),
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ChangeNotifierProvider(
-                      create: (context) => RecordListProvider(),
-                      child: const RecordListPage(),
-                    )));
-          },
-        )
-      ],
-    );
-  }
+  // Widget? floatingButtons() {
+  //   return SpeedDial(
+  //     animatedIcon: AnimatedIcons.menu_close,
+  //     visible: true,
+  //     curve: Curves.bounceIn,
+  //     backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+  //     children: [
+  //       SpeedDialChild(
+  //           child: const Icon(Icons.settings_sharp, color: Colors.white),
+  //           label: "설정",
+  //           labelStyle: const TextStyle(
+  //               fontWeight: FontWeight.w500,
+  //               color: Colors.white,
+  //               fontSize: 13.0),
+  //           backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+  //           labelBackgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+  //           onTap: () {
+  //             Navigator.of(context).push(MaterialPageRoute(
+  //                 builder: (context) => ChangeNotifierProvider(
+  //                       create: (context) => SettingProvider(),
+  //                       child: const SettingPage(),
+  //                     )));
+  //           }),
+  //       SpeedDialChild(
+  //         child: const Icon(
+  //           Icons.add_chart_rounded,
+  //           color: Colors.white,
+  //         ),
+  //         label: "내 기록",
+  //         backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+  //         labelBackgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
+  //         labelStyle: const TextStyle(
+  //             fontWeight: FontWeight.w500, color: Colors.white, fontSize: 13.0),
+  //         onTap: () {
+  //           Navigator.of(context).push(MaterialPageRoute(
+  //               builder: (context) => ChangeNotifierProvider(
+  //                     create: (context) => RecordListProvider(),
+  //                     child: const RecordListPage(),
+  //                   )));
+  //         },
+  //       )
+  //     ],
+  //   );
+  // }
 
   int _getMaxDistance(List<Record> records) {
     double maxDistance = 0;

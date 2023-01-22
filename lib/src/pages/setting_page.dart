@@ -19,6 +19,9 @@ class _SettingPageState extends State<SettingPage> {
     Provider.of<SettingProvider>(context, listen: false).Version();
   }
 
+  final textStyle = const TextStyle(
+      fontFamily: 'Pretendard', fontSize: 16, fontWeight: FontWeight.w400);
+
   @override
   Widget build(BuildContext context) {
     _settingProvider = Provider.of<SettingProvider>(context);
@@ -59,10 +62,7 @@ class _SettingPageState extends State<SettingPage> {
                   height: 50,
                   child: Text(
                     '앱 버전 : ${_settingProvider.version}',
-                    style: const TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400),
+                    style: textStyle,
                   ))),
           settingBox('계정 관리'),
           accountSettingWidget()
@@ -90,15 +90,11 @@ class _SettingPageState extends State<SettingPage> {
     return Column(children: [
       InkWell(
         child: Container(
-          padding: const EdgeInsets.only(left: 10),
+          margin: const EdgeInsets.only(left: 10),
           width: MediaQuery.of(context).size.width,
           height: 40,
           alignment: Alignment.centerLeft,
-          child: const Text('로그아웃',
-              style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400)),
+          child: Text('로그아웃', style: textStyle),
         ),
         onTap: () async {
           bool result = await _settingProvider.signOut();
@@ -127,15 +123,13 @@ class _SettingPageState extends State<SettingPage> {
       const Divider(color: Color.fromARGB(128, 193, 193, 193), thickness: 0.8),
       InkWell(
         child: Container(
-          margin: const EdgeInsets.only(left: 10),
+          margin: const EdgeInsets.only(
+            left: 10,
+          ),
           alignment: Alignment.centerLeft,
           width: MediaQuery.of(context).size.width,
           height: 40,
-          child: const Text('계정 탈퇴',
-              style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400)),
+          child: Text('계정 탈퇴', style: textStyle),
         ),
         onTap: () async {
           await _settingProvider.withdrawal();

@@ -12,6 +12,7 @@ import 'package:ridingpartner_flutter/src/provider/map_search_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/place_list_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/record_list_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/route_list_provider.dart';
+import 'package:ridingpartner_flutter/src/provider/setting_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/sights_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 
@@ -65,7 +66,9 @@ class _LodingPageState extends State<LodingPage> {
                       ChangeNotifierProvider(
                           create: (context) => HomeRecordProvider()),
                       ChangeNotifierProvider(
-                          create: (context) => RecordListProvider())
+                          create: (context) => RecordListProvider()),
+                      ChangeNotifierProvider(
+                          create: (context) => SettingProvider())
                     ], child: BottomNavigation())),
             (route) => false);
       } else {
