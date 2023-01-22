@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart' as naver_flutter;
@@ -29,38 +31,25 @@ class SocialLoginService {
         saveUserInfo(user);
       } catch (error) {
         print('카카오톡 로그인 실패 $error');
-        try {
-          await kakao_flutter.UserApi.instance.loginWithKakaoAccount();
-          kakao_flutter.User kakaoUser =
-              await kakao_flutter.UserApi.instance.me();
-          User user = await loginWithUser({
-            'platform': 'kakao',
-            'uId': kakaoUser.id.toString(),
-            'name': kakaoUser.kakaoAccount!.name,
-            'email': kakaoUser.kakaoAccount!.email,
-          });
-          saveUserInfo(user);
-        } catch (error) {
-          print('카카오톡 로그인 실패 $error');
-          return null;
-        }
-      }
-    } else {
-      try {
-        await kakao_flutter.UserApi.instance.loginWithKakaoAccount();
-        kakao_flutter.User kakaoUser =
-            await kakao_flutter.UserApi.instance.me();
-        User user = await loginWithUser({
-          'platform': 'kakao',
-          'uId': kakaoUser.id.toString(),
-          'name': kakaoUser.kakaoAccount!.name,
-          'email': kakaoUser.kakaoAccount!.email,
-        });
-        saveUserInfo(user);
-      } catch (error) {
         return null;
       }
+    } else {
+      // try {
+      await kakao_flutter.UserApi.instance.loginWithKakaoAccount();
+      kakao_flutter.User kakaoUser = await kakao_flutter.UserApi.instance.me();
+      developer.log('kakaoUser: $kakaoUser');
+      User user = await loginWithUser({
+        'platform': 'kakao',
+        'uId': kakaoUser.id.toString(),
+        'name': kakaoUser.kakaoAccount!.name,
+        'email': kakaoUser.kakaoAccount!.email,
+      });
+      saveUserInfo(user);
+      // } catch (error) {
+      //   return null;
+      // }
     }
+    return null;
   }
 
   // naver

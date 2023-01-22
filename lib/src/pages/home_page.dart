@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:line_chart/charts/line-chart.widget.dart';
@@ -802,11 +804,14 @@ class _HomePageState extends State<HomePage>
 
   int _getMaxDistance(List<Record> records) {
     double maxDistance = 0;
-    records.map((e) {
-      if (e.distance > maxDistance) {
-        maxDistance = e.distance;
+    int recoredCount = 0;
+    for (var element in records) {
+      developer.log('반복 횟수${recoredCount++}');
+      developer.log(element.distance.toString());
+      if (element.distance > maxDistance) {
+        maxDistance = element.distance;
       }
-    });
+    }
     return maxDistance.round();
   }
 
