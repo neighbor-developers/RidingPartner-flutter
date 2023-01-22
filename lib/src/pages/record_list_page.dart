@@ -11,6 +11,7 @@ import 'package:ridingpartner_flutter/src/provider/record_list_provider.dart';
 
 import '../provider/riding_result_provider.dart';
 import '../utils/timestampToText.dart';
+import '../widgets/appbar.dart';
 import 'day_record_page.dart';
 
 class RecordListPage extends StatefulWidget {
@@ -32,9 +33,9 @@ class _RecordListPageState extends State<RecordListPage> {
 
   TextStyle detailStyle = const TextStyle(
     fontFamily: 'Pretendard',
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: FontWeight.w400,
-    color: Color.fromRGBO(102, 102, 102, 1),
+    color: Color.fromARGB(224, 38, 38, 38),
   );
 
   @override
@@ -43,27 +44,8 @@ class _RecordListPageState extends State<RecordListPage> {
     initializeDateFormatting('ko_KR', null);
 
     return Scaffold(
-        appBar: AppBar(
-          shadowColor: const Color.fromRGBO(255, 255, 255, 0.5),
-          backgroundColor: Colors.white,
-          title: Container(
-              padding: const EdgeInsets.fromLTRB(0, 0, 50, 0),
-              width: MediaQuery.of(context).size.width,
-              alignment: Alignment.center,
-              child: Image.asset(
-                'assets/icons/logo.png',
-                height: 25,
-              )),
-          leadingWidth: 50,
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.arrow_back),
-            color: const Color.fromRGBO(240, 120, 5, 1),
-          ),
-          elevation: 10,
-        ),
+        appBar: appBar(context),
+        backgroundColor: Colors.white,
         body: SizedBox(
             //height: double.infinity,
             //width: double.infinity,
@@ -71,8 +53,20 @@ class _RecordListPageState extends State<RecordListPage> {
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: _recordListProvider.records.length,
-                itemBuilder: (context, index) =>
-                    recordItem(_recordListProvider.records.elementAt(index)))));
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      recordItem(_recordListProvider.records.elementAt(index)),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        child: const Divider(
+                            height: 1,
+                            color: Color.fromARGB(128, 193, 193, 193),
+                            thickness: 0.8),
+                      )
+                    ],
+                  );
+                })));
   }
 
   Widget recordItem(Record record) {
@@ -87,68 +81,108 @@ class _RecordListPageState extends State<RecordListPage> {
                             child: DayRecordPage(),
                           )))
             },
-        child: Card(
-            color: const Color.fromRGBO(248, 248, 248, 1),
-            margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-            child: Container(
-                height: MediaQuery.of(context).size.height / 9,
-                width: double.infinity,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween, //spaceAround
+        child: Container(
+            padding: EdgeInsets.only(top: 15, bottom: 10, left: 15, right: 13),
+            // // color: Color.fromARGB(167, 251, 150, 50),
+            // height: MediaQuery.of(context).size.height / 8,
+            width: double.infinity,
+            child: Stack(
+              alignment: Alignment.topLeft,
+              children: [
+                // Image.asset(
+                //   'assets/images/white_back.png',
+                //   fit: BoxFit.fitWidth,
+                //   width: double.infinity,
+                // ),
+                Container(
+                  width: double.infinity,
+                  alignment: Alignment.topLeft,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
                     children: [
-                      Container(
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image.asset(
-                            'assets/images/img_loading.png',
-                            fit: BoxFit.cover,
-                            width: 100,
-                            height: 70,
-                          ),
+                      Text(
+                        DateFormat('yyyy.MM.dd')
+                            .format(DateTime.parse(record.date)),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Color.fromARGB(241, 120, 120, 120),
                         ),
                       ),
-                      //const SizedBox(width: 15),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Row(children: [
-                            Text(
-                                DateFormat('yyyy년 MM월 dd일')
-                                    .format(DateTime.parse(record.date)),
-                                style: const TextStyle(
-                                  color: Color.fromRGBO(50, 50, 50, 0.9),
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                )),
-                            const SizedBox(width: 15),
-                            Text(
-                              DateFormat('EEEEE', "ko_KR")
-                                  .format(DateTime.parse(record.date)),
-                              style: detailStyle,
-                            ),
-                            const SizedBox(width: 40),
-                          ]),
-                          Text(
-                            timestampToText(record.timestamp),
-                            style: detailStyle,
-                          ),
-                          Text(
-                            "${record.distance.toString()}km",
-                            style: detailStyle,
-                          )
-                        ],
-                      ),
-                      //const Divider(color: Colors.black)
+                      // Container(
+                      //   width: 70,
+                      //   height: 70,
+                      //   margin: EdgeInsets.only(top: 10),
+                      //   decoration: BoxDecoration(
+                      //       // borderRadius: BorderRadius.circular(10),
+                      //       image: DecorationImage(
+                      //     image: AssetImage(
+                      //       'assets/images/img_loading.png',
+                      //     ),
+                      //     fit: BoxFit.cover,
+                      //   )),
+                      // ),
                     ],
                   ),
-                ))));
+                ),
+
+                // Container(
+                //   child:
+                //   alignment: Alignment.bottomRight,
+                // ),
+                Container(
+                    alignment: Alignment.centerRight,
+                    width: double.infinity,
+                    margin: EdgeInsets.only(right: 10, top: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '${record.distance / 1000}km',
+                          style: detailStyle,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          '기록 자세히 보기 ->',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color.fromARGB(226, 155, 155, 155),
+                          ),
+                        )
+                      ],
+                    ))
+                // Text(
+                //     DateFormat('yyyy년 MM월 dd일')
+                //         .format(DateTime.parse(record.date)),
+                //     style: const TextStyle(
+                //       color: Color.fromARGB(223, 0, 0, 0),
+                //       fontFamily: 'Pretendard',
+                //       fontSize: 14,
+                //       fontWeight: FontWeight.w400,
+                // //     )),
+                // Text(
+                //   timestampToText(record.timestamp),
+                //   style: detailStyle,
+                // ),
+
+                // ),
+                // Container(
+                //   // margin:
+                //   //     const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                //   width: double.infinity,
+                //   alignment: Alignment.topLeft,
+                //   child: Text(
+                //       DateFormat('yyyy.MM.dd')
+                //           .format(DateTime.parse(record.date)),
+                //       style: const TextStyle(
+                //         color: Color.fromARGB(188, 21, 21, 21),
+                //         fontFamily: 'Pretendard',
+                //         fontSize: 19,
+                //         fontWeight: FontWeight.w800,
+                //       )),
+                // ),
+              ],
+            )));
   }
 }
