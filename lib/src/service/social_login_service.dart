@@ -41,7 +41,7 @@ class SocialLoginService {
       User user = await loginWithUser({
         'platform': 'kakao',
         'uId': kakaoUser.id.toString(),
-        'name': kakaoUser.kakaoAccount!.name,
+        'name': kakaoUser.kakaoAccount!.profile!.nickname,
         'email': kakaoUser.kakaoAccount!.email,
       });
       saveUserInfo(user);
