@@ -1,7 +1,6 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:line_chart/charts/line-chart.widget.dart';
 import 'package:line_chart/model/line-chart.model.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -11,7 +10,6 @@ import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/models/weather.dart';
 import 'package:ridingpartner_flutter/src/pages/navigation_page.dart';
 import 'package:ridingpartner_flutter/src/pages/record_list_page.dart';
-import 'package:ridingpartner_flutter/src/pages/setting_page.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/record_list_provider.dart';
@@ -907,7 +905,7 @@ class _HomePageState extends State<HomePage>
         maxDistance = element.distance;
       }
     }
-    return maxDistance.round();
+    return (maxDistance / 1000).round();
   }
 
   String _getLastRecordDate(List<Record> records) {
