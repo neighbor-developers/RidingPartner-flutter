@@ -298,13 +298,7 @@ class _RecordState extends State<RecordPage> {
                       ),
                       textAlign: TextAlign.center,
                     )
-                  : Wrap(
-                    children: _recordProvider.images.map(
-                      (image){
-                        return Card(
-                          child: Image.file(File(image!.path)),
-                        );
-                      }).toList(), )
+                  : Image.file(File(_recordProvider.images.first!.path))
                       ));
     } else {
       return const Text(
