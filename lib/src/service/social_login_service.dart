@@ -5,7 +5,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart' as naver_flutter;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart' as kakao_flutter;
-import 'package:ridingpartner_flutter/src/network/network_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
@@ -22,32 +21,36 @@ class SocialLoginService {
         await kakao_flutter.UserApi.instance.loginWithKakaoTalk();
         kakao_flutter.User kakaoUser =
             await kakao_flutter.UserApi.instance.me();
-        User user = await loginWithUser({
+        UserCredential user = await loginWithUser({
           'platform': 'kakao',
           'uId': kakaoUser.id.toString(),
           'name': kakaoUser.kakaoAccount!.name,
           'email': kakaoUser.kakaoAccount!.email,
         });
-        saveUserInfo(user);
+        saveUserInfo(user.user!);
+        return user.user!;
       } catch (error) {
         print('카카오톡 로그인 실패 $error');
         return null;
       }
     } else {
-      // try {
-      await kakao_flutter.UserApi.instance.loginWithKakaoAccount();
-      kakao_flutter.User kakaoUser = await kakao_flutter.UserApi.instance.me();
-      developer.log('kakaoUser: $kakaoUser');
-      User user = await loginWithUser({
-        'platform': 'kakao',
-        'uId': kakaoUser.id.toString(),
-        'name': kakaoUser.kakaoAccount!.profile!.nickname,
-        'email': kakaoUser.kakaoAccount!.email,
-      });
-      saveUserInfo(user);
-      // } catch (error) {
-      //   return null;
-      // }
+      try {
+        await kakao_flutter.UserApi.instance.loginWithKakaoAccount();
+        kakao_flutter.User kakaoUser =
+            await kakao_flutter.UserApi.instance.me();
+        developer.log('kakaoUser: $kakaoUser');
+        UserCredential user = await loginWithUser({
+          'platform': 'kakao',
+          'uId': kakaoUser.id.toString(),
+          'name': kakaoUser.kakaoAccount!.profile!.nickname,
+          'email': kakaoUser.kakaoAccount!.email,
+        });
+        saveUserInfo(user.user!);
+        return user.user;
+      } catch (error) {
+        developer.log(error.toString());
+        return null;
+      }
     }
     return null;
   }
@@ -60,20 +63,29 @@ class SocialLoginService {
       naver_flutter.NaverAccessToken tokenRes =
           await naver_flutter.FlutterNaverLogin.currentAccessToken;
 
-      User user = await loginWithUser({'platform': 'naver', 'token': tokenRes});
-      saveUserInfo(user);
+      UserCredential user =
+          await loginWithUser({'platform': 'naver', 'token': tokenRes});
+      saveUserInfo(user.user!);
     } catch (error) {
       null;
     }
     return null;
   }
 
-  Future<User> loginWithUser(Map<String, dynamic> user) async {
+  Future<UserCredential> loginWithUser(Map<String, dynamic> user) async {
     // 카카오는 uId로 인증하는듯??
-    final customToken = await NetworkHelper().post("", user);
-    var credencial =
-        await FirebaseAuth.instance.signInWithCustomToken(customToken);
-    return credencial.user!;
+    UserCredential credencial;
+    try {
+      credencial = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: user['email'], password: user['uId']);
+    } catch (error) {
+      developer.log(error.toString());
+    } finally {
+      credencial = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: user['email'], password: user['uId']);
+      credencial.user!.updateDisplayName(user['name']);
+      return credencial;
+    }
   }
 
   Future<User?> siginInwithGoogle() async {
@@ -119,7 +131,7 @@ class SocialLoginService {
 
   Future<void> saveUserInfo(User user) async {
     final prefs = await SharedPreferences.getInstance();
-
+    developer.log('save');
     prefs.setString('name', user.displayName.toString());
     prefs.setString('email', user.email.toString());
     prefs.setString('token', user.getIdToken().toString());

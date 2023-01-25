@@ -3,13 +3,10 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
-import 'package:ridingpartner_flutter/src/models/route.dart';
-import 'package:ridingpartner_flutter/src/pages/home_page.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
 import 'package:ridingpartner_flutter/src/service/firestore_service.dart';
 
 import '../models/place.dart';
-import '../service/shared_preference.dart';
 
 enum RecordState { loading, fail, none, success, empty }
 
@@ -19,7 +16,9 @@ class HomeRecordProvider extends ChangeNotifier {
   final FireStoreService _fireStoreService = FireStoreService();
   final _random = Random();
 
-  final String _auth = FirebaseAuth.instance.currentUser!.displayName!;
+  final String _auth = FirebaseAuth.instance.currentUser!.displayName == null
+      ? 'User'
+      : FirebaseAuth.instance.currentUser!.displayName!;
   int _selectedIndex = 13;
   List<String> _daysFor14 = [];
   List<Record> _recordFor14Days = [];
