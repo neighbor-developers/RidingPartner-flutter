@@ -15,20 +15,25 @@ class RidingResultProvider with ChangeNotifier {
   final FirebaseDatabaseService _firebaseDb = FirebaseDatabaseService();
 
   RidingResultProvider(this._ridingDate);
+
   final String _ridingDate;
 
   final picker = ImagePicker();
 
   RecordState _recordState = RecordState.loading;
+
   RecordState get recordState => _recordState;
 
   ImageStatus _imageStatus = ImageStatus.init;
+
   ImageStatus get imageStatus => _imageStatus;
 
   late Record _record;
+
   Record get record => _record;
 
   late final List<XFile?> _images;
+
   List<XFile?> get images => _images;
 
   Future<void> getRidingData() async {
@@ -56,17 +61,21 @@ class RidingResultProvider with ChangeNotifier {
 
   // 비동기 처리를 통해 카메라와 갤러리에서 이미지를 가져온다.
   Future<void> getImage(ImageSource imageSource) async {
-    final imageXFiles = await picker.pickMultiImage();
-
-    if (imageXFiles.isNotEmpty) {
+    final List<XFile> imageXFiles = await picker.pickMultiImage();
+    if (imageXFiles.isNotEmpty && _imageStatus == ImageStatus.init) {
       _images = imageXFiles;
       _imageStatus = ImageStatus.imageSuccess;
       developer.log(_images.toString());
+    } else if (imageXFiles.isNotEmpty && imageStatus != ImageStatus.init) {
+      if (_images.isEmpty) {
+        _images.addAll(imageXFiles);
+        _imageStatus = ImageStatus.imageSuccess;
+      } else {
+        _images.clear();
+      }
     } else {
       _imageStatus = ImageStatus.imageFail;
-      _images = [null];
     }
-
     notifyListeners();
   }
 

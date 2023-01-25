@@ -64,12 +64,14 @@ class _RecordState extends State<RecordPage> {
       body: const Center(
         child: Text('데이터 불러오는 증'),
       ));
+
   Widget failWidget() => Scaffold(
       appBar: appBar(context),
       resizeToAvoidBottomInset: false,
       body: const Center(
         child: Text('데이터를 불러오는 데에 실패했습니다'),
       ));
+
   Widget successWidget() => Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
@@ -167,14 +169,9 @@ class _RecordState extends State<RecordPage> {
                                   },
                                 ),
                               ));
-                            }
-                            else if(_imageStatus == ImageStatus.imageSuccess){
-                              _imageStatus = ImageStatus.init;
-                              _recordProvider.confirmPermissionGranted().then(
-                                  (_) => _recordProvider
-                                      .getImage(ImageSource.gallery));
-                            } else if(_imageStatus == ImageStatus.imageFail){
-                              _imageStatus = ImageStatus.init;
+                            } else if (_imageStatus != ImageStatus.init) {
+                              _recordProvider.images.clear();
+                              _recordProvider.getImage(ImageSource.gallery);
                             }
                           },
                           style: ButtonStyle(
@@ -217,8 +214,8 @@ class _RecordState extends State<RecordPage> {
                     ),
                     onChanged: (value) => memoText = value,
                     decoration: InputDecoration(
-                      focusedBorder:
-                          const UnderlineInputBorder(borderSide: BorderSide.none),
+                      focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide.none),
                       contentPadding: const EdgeInsets.all(16),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide.none,
@@ -298,8 +295,7 @@ class _RecordState extends State<RecordPage> {
                       ),
                       textAlign: TextAlign.center,
                     )
-                  : Image.file(File(_recordProvider.images.first!.path))
-                      ));
+                  : Image.file(File(_recordProvider.images.first!.path))));
     } else {
       return const Text(
         "업로드 실패",
