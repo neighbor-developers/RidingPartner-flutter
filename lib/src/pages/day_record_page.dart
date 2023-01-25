@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/widgets/appbar.dart';
-
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../models/record.dart';
 import '../provider/home_record_provider.dart';
 import '../provider/riding_result_provider.dart';
@@ -19,29 +20,52 @@ class _DayRecordPageState extends State<DayRecordPage> {
   late RidingResultProvider _recordProvider;
   late Record _record;
   int hKcal = 401;
+      final images = ['assets/images/places/baegot_park.jpeg',
+                    'assets/images/places/halfmoon_island.jpeg',
+                    'assets/images/img_loading.png',
+                    'assets/images/places/tukorea.jpeg'
+    ];
+
+    int activeIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     _recordProvider = Provider.of<RidingResultProvider>(context);
     num speed = 0;
+
     const textStyle = TextStyle(
         fontSize: 18.5,
         fontFamily: "Pretendard",
         fontWeight: FontWeight.w400,
         color: Color.fromARGB(255, 76, 76, 76));
-
     Widget successWidget() => Scaffold(
         appBar: appBar(context),
         resizeToAvoidBottomInset: false,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-                width: double.infinity,
-                height: 240,
-                child: Image(
-                    image: AssetImage('assets/images/img_loading.png'),
-                    fit: BoxFit.cover)),
+            Stack(
+              alignment: Alignment.bottomCenter,
+              children: <Widget> [
+              CarouselSlider.builder(
+              options: CarouselOptions(
+                initialPage: 0,
+                viewportFraction: 1,
+                enlargeCenterPage: true,
+                onPageChanged: (index, reason) => setState(() {
+                  activeIndex = index;
+                }),
+              ),
+              itemCount: images.length,
+              itemBuilder: (context, index, realIndex) {
+                final path = images[index];
+                return buildImage(path, index);
+              },
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: buildIndicator())
+            ]),
             Container(
               margin:
                   const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30),
@@ -134,14 +158,37 @@ class _DayRecordPageState extends State<DayRecordPage> {
   Widget loadingWidget() => Scaffold(
       appBar: appBar(context),
       resizeToAvoidBottomInset: false,
-      body: CircularProgressIndicator(
-        color: const Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
+      body: const CircularProgressIndicator(
+        color: Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
       ));
 
   Widget failWidget() => Scaffold(
       appBar: appBar(context),
       resizeToAvoidBottomInset: false,
-      body: Center(
+      body: const Center(
         child: Text('데이터를 불러오는 데에 실패했습니다'),
+      ));
+
+  Widget buildImage(path, index) => Container(
+      width: double.infinity,
+      height: 240,
+      color: Colors.grey,
+      child: Image.asset(
+        path,
+        fit: BoxFit.cover
+        ),
+      );
+
+  Widget buildIndicator() => Container(
+    margin: const EdgeInsets.only(bottom: 20.0),
+    alignment: Alignment.bottomCenter,
+    child: AnimatedSmoothIndicator(
+        activeIndex: activeIndex,
+        count: images.length,
+        effect: JumpingDotEffect(
+            dotHeight: 6,
+            dotWidth: 6,
+            activeDotColor: Colors.white,
+            dotColor: Colors.white.withOpacity(0.6)),
       ));
 }

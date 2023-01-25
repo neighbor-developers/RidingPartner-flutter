@@ -1,6 +1,5 @@
-import 'dart:io';
-import 'dart:developer' as developer;
 import 'package:flutter/cupertino.dart';
+import 'dart:developer' as developer;
 import 'package:image_picker/image_picker.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
@@ -16,21 +15,26 @@ class RidingResultProvider with ChangeNotifier {
   final FirebaseDatabaseService _firebaseDb = FirebaseDatabaseService();
 
   RidingResultProvider(this._ridingDate);
+
   final String _ridingDate;
 
   final picker = ImagePicker();
 
   RecordState _recordState = RecordState.loading;
+
   RecordState get recordState => _recordState;
 
   ImageStatus _imageStatus = ImageStatus.init;
+
   ImageStatus get imageStatus => _imageStatus;
 
   late Record _record;
+
   Record get record => _record;
 
-  late final File? _image;
-  File? get image => _image;
+  late final List<XFile?> _images;
+
+  List<XFile?> get images => _images;
 
   Future<void> getRidingData() async {
     Result result = await _firebaseDb.getRecord(_ridingDate);
@@ -57,16 +61,21 @@ class RidingResultProvider with ChangeNotifier {
 
   // 비동기 처리를 통해 카메라와 갤러리에서 이미지를 가져온다.
   Future<void> getImage(ImageSource imageSource) async {
-    final imageXFile = await picker.pickImage(source: imageSource);
-    File imageFile = File(imageXFile!.path); // 가져온 이미지를 _image에 저장
-
-    if (imageFile != null) {
-      _image = imageFile;
+    final List<XFile> imageXFiles = await picker.pickMultiImage();
+    if (imageXFiles.isNotEmpty && _imageStatus == ImageStatus.init) {
+      _images = imageXFiles;
       _imageStatus = ImageStatus.imageSuccess;
+      developer.log(_images.toString());
+    } else if (imageXFiles.isNotEmpty && imageStatus != ImageStatus.init) {
+      if (_images.isEmpty) {
+        _images.addAll(imageXFiles);
+        _imageStatus = ImageStatus.imageSuccess;
+      } else {
+        _images.clear();
+      }
     } else {
       _imageStatus = ImageStatus.imageFail;
     }
-
     notifyListeners();
   }
 

@@ -67,7 +67,10 @@ dependencies:
   latlong2: ^0.8.1
   dio: ^4.0.6
   flutter_cache_manager: ^3.3.0
+  multi_image_picker: ^4.7.14
   package_info_plus: ^3.0.2
+  carousel_slider: ^4.2.1
+  smooth_page_indicator: ^1.0.0+2
 
 dev_dependencies:
   flutter_test:
