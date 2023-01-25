@@ -1,6 +1,5 @@
-import 'dart:io';
-import 'dart:developer' as developer;
 import 'package:flutter/cupertino.dart';
+import 'dart:developer' as developer;
 import 'package:image_picker/image_picker.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
@@ -29,8 +28,8 @@ class RidingResultProvider with ChangeNotifier {
   late Record _record;
   Record get record => _record;
 
-  late final File? _image;
-  File? get image => _image;
+  late final List<XFile?> _images;
+  List<XFile?> get images => _images;
 
   Future<void> getRidingData() async {
     Result result = await _firebaseDb.getRecord(_ridingDate);
@@ -57,14 +56,15 @@ class RidingResultProvider with ChangeNotifier {
 
   // 비동기 처리를 통해 카메라와 갤러리에서 이미지를 가져온다.
   Future<void> getImage(ImageSource imageSource) async {
-    final imageXFile = await picker.pickImage(source: imageSource);
-    File imageFile = File(imageXFile!.path); // 가져온 이미지를 _image에 저장
+    final imageXFiles = await picker.pickMultiImage();
 
-    if (imageFile != null) {
-      _image = imageFile;
+    if (imageXFiles.isNotEmpty) {
+      _images = imageXFiles;
       _imageStatus = ImageStatus.imageSuccess;
+      developer.log(_images.toString());
     } else {
       _imageStatus = ImageStatus.imageFail;
+      _images = [null];
     }
 
     notifyListeners();
