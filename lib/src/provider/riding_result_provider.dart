@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:developer' as developer;
 import 'package:image_picker/image_picker.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
@@ -62,19 +63,23 @@ class RidingResultProvider with ChangeNotifier {
   // 비동기 처리를 통해 카메라와 갤러리에서 이미지를 가져온다.
   Future<void> getImage(ImageSource imageSource) async {
     final List<XFile> imageXFiles = await picker.pickMultiImage();
-    if (imageXFiles.isNotEmpty && _imageStatus == ImageStatus.init) {
-      _images = imageXFiles;
-      _imageStatus = ImageStatus.imageSuccess;
-      developer.log(_images.toString());
-    } else if (imageXFiles.isNotEmpty && imageStatus != ImageStatus.init) {
-      if (_images.isEmpty) {
-        _images.addAll(imageXFiles);
+    if (imageXFiles.length <= 4) {
+      if (imageXFiles.isNotEmpty && _imageStatus == ImageStatus.init) {
+        _images = imageXFiles;
         _imageStatus = ImageStatus.imageSuccess;
+        developer.log(_images.toString());
+      } else if (imageXFiles.isNotEmpty && imageStatus != ImageStatus.init) {
+        if (_images.isEmpty) {
+          _images.addAll(imageXFiles);
+          _imageStatus = ImageStatus.imageSuccess;
+        } else {
+          _images.clear();
+        }
       } else {
-        _images.clear();
+        _imageStatus = ImageStatus.imageFail;
       }
     } else {
-      _imageStatus = ImageStatus.imageFail;
+        Fluttertoast.showToast(msg: "사진은 최대 4장까지 선택 가능합니다.");
     }
     notifyListeners();
   }
