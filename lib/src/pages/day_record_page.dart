@@ -20,13 +20,14 @@ class _DayRecordPageState extends State<DayRecordPage> {
   late RidingResultProvider _recordProvider;
   late Record _record;
   int hKcal = 401;
-      final images = ['assets/images/places/baegot_park.jpeg',
-                    'assets/images/places/halfmoon_island.jpeg',
-                    'assets/images/img_loading.png',
-                    'assets/images/places/tukorea.jpeg'
-    ];
+  final images = [
+    'assets/images/places/baegot_park.jpeg',
+    'assets/images/places/halfmoon_island.jpeg',
+    'assets/images/img_loading.png',
+    'assets/images/places/tukorea.jpeg'
+  ];
 
-    int activeIndex = 0;
+  int activeIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -37,34 +38,37 @@ class _DayRecordPageState extends State<DayRecordPage> {
         fontSize: 18.5,
         fontFamily: "Pretendard",
         fontWeight: FontWeight.w400,
-        color: Color.fromARGB(255, 76, 76, 76));
+        color: Color.fromARGB(255, 66, 66, 66));
+
+    const recordStyle = TextStyle(
+        fontSize: 18.5,
+        fontFamily: "Pretendard",
+        fontWeight: FontWeight.w500,
+        color: Color.fromARGB(255, 66, 66, 66));
+
     Widget successWidget() => Scaffold(
         appBar: appBar(context),
         resizeToAvoidBottomInset: false,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Stack(
-              alignment: Alignment.bottomCenter,
-              children: <Widget> [
+            Stack(alignment: Alignment.bottomCenter, children: <Widget>[
               CarouselSlider.builder(
-              options: CarouselOptions(
-                initialPage: 0,
-                viewportFraction: 1,
-                enlargeCenterPage: true,
-                onPageChanged: (index, reason) => setState(() {
-                  activeIndex = index;
-                }),
+                options: CarouselOptions(
+                  initialPage: 0,
+                  viewportFraction: 1,
+                  enlargeCenterPage: true,
+                  onPageChanged: (index, reason) => setState(() {
+                    activeIndex = index;
+                  }),
+                ),
+                itemCount: images.length,
+                itemBuilder: (context, index, realIndex) {
+                  final path = images[index];
+                  return buildImage(path, index);
+                },
               ),
-              itemCount: images.length,
-              itemBuilder: (context, index, realIndex) {
-                final path = images[index];
-                return buildImage(path, index);
-              },
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: buildIndicator())
+              Align(alignment: Alignment.bottomCenter, child: buildIndicator())
             ]),
             Container(
               margin:
@@ -104,15 +108,16 @@ class _DayRecordPageState extends State<DayRecordPage> {
                         Text(
                             DateFormat('yyyy년 MM월 dd일')
                                 .format(DateTime.parse(_record.date)),
-                            style: textStyle),
+                            style: recordStyle),
                         Text(timestampToText(_record.timestamp),
-                            style: textStyle),
+                            style: recordStyle),
                         Text("${_record.distance / _record.timestamp} km/h",
-                            style: textStyle),
-                        Text("${_record.distance / 1000} km", style: textStyle),
+                            style: recordStyle),
+                        Text("${_record.distance / 1000} km",
+                            style: recordStyle),
                         Text(
                             "${(hKcal * (_record.timestamp) / 3600).toStringAsFixed(1)} kcal",
-                            style: textStyle)
+                            style: recordStyle)
                       ],
                     ),
                   ),
@@ -134,7 +139,7 @@ class _DayRecordPageState extends State<DayRecordPage> {
                     style: TextStyle(
                       fontSize: 14.0,
                       fontWeight: FontWeight.w400,
-                      color: const Color(0x00333333).withOpacity(0.8),
+                      color: const Color(0x00333333).withOpacity(0.6),
                     )))
           ],
         ));
@@ -170,19 +175,16 @@ class _DayRecordPageState extends State<DayRecordPage> {
       ));
 
   Widget buildImage(path, index) => Container(
-      width: double.infinity,
-      height: 240,
-      color: Colors.grey,
-      child: Image.asset(
-        path,
-        fit: BoxFit.cover
-        ),
+        width: double.infinity,
+        height: 240,
+        color: Colors.grey,
+        child: Image.asset(path, fit: BoxFit.cover),
       );
 
   Widget buildIndicator() => Container(
-    margin: const EdgeInsets.only(bottom: 20.0),
-    alignment: Alignment.bottomCenter,
-    child: AnimatedSmoothIndicator(
+      margin: const EdgeInsets.only(bottom: 20.0),
+      alignment: Alignment.bottomCenter,
+      child: AnimatedSmoothIndicator(
         activeIndex: activeIndex,
         count: images.length,
         effect: JumpingDotEffect(
