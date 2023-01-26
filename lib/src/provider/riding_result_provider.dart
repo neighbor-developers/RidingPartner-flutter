@@ -60,9 +60,9 @@ class RidingResultProvider with ChangeNotifier {
     PreferenceUtils.saveRecordMemoPref(record);
   }
 
-  // 비동기 처리를 통해 카메라와 갤러리에서 이미지를 가져온다.
   Future<void> getImage(ImageSource imageSource) async {
     final List<XFile> imageXFiles = await picker.pickMultiImage();
+    // picker의 사진은 최대 4장까지 선택
     if (imageXFiles.length <= 4) {
       if (imageXFiles.isNotEmpty && _imageStatus == ImageStatus.init) {
         _images = imageXFiles;

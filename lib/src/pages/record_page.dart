@@ -25,7 +25,7 @@ class _RecordState extends State<RecordPage> {
   late Record _record;
   late ImageStatus _imageStatus;
   DateTime today = DateTime.now();
-  int hKcal = 401;
+  int hKcal = 550;
   String memoText = '';
   final textStyle = const TextStyle(
       fontSize: 16.0,

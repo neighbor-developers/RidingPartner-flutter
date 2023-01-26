@@ -19,7 +19,7 @@ class DayRecordPage extends StatefulWidget {
 class _DayRecordPageState extends State<DayRecordPage> {
   late RidingResultProvider _recordProvider;
   late Record _record;
-  int hKcal = 401;
+  int hKcal = 550;
   final images = [
     'assets/images/places/baegot_park.jpeg',
     'assets/images/places/halfmoon_island.jpeg',
