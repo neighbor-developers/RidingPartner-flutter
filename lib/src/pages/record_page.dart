@@ -208,6 +208,8 @@ class _RecordState extends State<RecordPage> {
                     color: const Color.fromRGBO(255, 255, 255, 0.3)),
                 child: TextField(
                     cursorColor: Colors.white,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: 5,
                     style: const TextStyle(
                       fontSize: 14.0,
                       color: Colors.black,
