@@ -5,7 +5,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart' as naver_flutter;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart' as kakao_flutter;
-import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
@@ -63,10 +62,20 @@ class SocialLoginService {
           await naver_flutter.FlutterNaverLogin.logIn();
       naver_flutter.NaverAccessToken tokenRes =
           await naver_flutter.FlutterNaverLogin.currentAccessToken;
+      naver_flutter.NaverAccountResult naverUser =
+          await naver_flutter.FlutterNaverLogin.currentAccount();
+      UserCredential user = await loginWithUser({
+        'platform': 'kakao',
+        'uId': naverUser.id.toString(),
+        'name': naverUser.name,
+        'email': naverUser.email
+      });
+      // UserCredential user =
+      //     await loginWithUser({'platform': 'naver', 'token': tokenRes});
 
-      UserCredential user =
-          await loginWithUser({'platform': 'naver', 'token': tokenRes});
       saveUserInfo(user.user!);
+      return user.user;
+      return null;
     } catch (error) {
       null;
     }
