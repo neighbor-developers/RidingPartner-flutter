@@ -143,6 +143,7 @@ class _RidingPageState extends State<RidingPage> {
                     Polyline(
                         polylineId: const PolylineId("poly"),
                         width: 5,
+                        color: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
                         points: _ridingProvider.polylineCoordinates),
                   },
                   markers: myPositionMarker,

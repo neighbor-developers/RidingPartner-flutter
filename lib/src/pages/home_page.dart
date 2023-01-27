@@ -94,12 +94,12 @@ class _HomePageState extends State<HomePage>
         // floatingActionButton: floatingButtons(),
         body: Stack(
           children: [
-            Container(
+            SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
                 child: SingleChildScrollView(
                     child: SizedBox(
-                  width: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
                   child: Column(
                     children: [
                       recommendPlaceText(
@@ -114,7 +114,12 @@ class _HomePageState extends State<HomePage>
                           recommendPlace(_homeRecordProvider.recommendPlace2)
                         ]),
                       ),
-                      weekWidget()
+                      weekWidget(),
+                      settingBox(),
+                      SizedBox(
+                        height: 60,
+                        width: MediaQuery.of(context).size.width,
+                      )
                     ],
                   ),
                 ))),
@@ -210,7 +215,7 @@ class _HomePageState extends State<HomePage>
     switch (_homeRecordProvider.recordState) {
       case RecordState.loading:
         return const SizedBox(
-            height: 100,
+            height: 200,
             child: Center(
               child: Text(
                 "라이더님의 주행 기록을 불러오는 중입니다",
@@ -219,7 +224,7 @@ class _HomePageState extends State<HomePage>
             ));
       case RecordState.none:
         return const SizedBox(
-            height: 100,
+            height: 200,
             child: Center(
               child: Text(
                 "아직 주행한 기록이 없습니다\n라이딩 파트너와 함께 달려보세요!",
@@ -228,7 +233,7 @@ class _HomePageState extends State<HomePage>
             ));
       case RecordState.empty:
         return SizedBox(
-            height: 100,
+            height: 200,
             child: Center(
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -336,11 +341,6 @@ class _HomePageState extends State<HomePage>
               height: 330,
               width: MediaQuery.of(context).size.width,
               child: recordChart()),
-          settingBox(),
-          SizedBox(
-            height: 60,
-            width: MediaQuery.of(context).size.width,
-          )
         ]);
 
       default:
