@@ -48,7 +48,7 @@ class SocialLoginService {
         saveUserInfo(user.user!);
         return user.user;
       } catch (error) {
-        developer.log(error.toString());
+        developer.log('카카오톡 로그인 실패 $error');
         return null;
       }
     }
