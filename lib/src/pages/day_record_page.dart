@@ -135,12 +135,14 @@ class _DayRecordPageState extends State<DayRecordPage> {
                 margin: const EdgeInsets.only(left: 24.0, right: 24.0),
                 padding:
                     const EdgeInsets.only(left: 16.0, right: 16.0, top: 12.0),
-                child: Text(_record.memo ?? '',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w400,
-                      color: const Color(0x00333333).withOpacity(0.6),
-                    )))
+                child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Text(_record.memo ?? '',
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w400,
+                          color: const Color(0x00333333).withOpacity(0.6),
+                        ))))
           ],
         ));
 

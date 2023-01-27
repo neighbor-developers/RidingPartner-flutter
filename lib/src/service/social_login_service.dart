@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart' as naver_flutter;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart' as kakao_flutter;
+import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
@@ -143,6 +144,16 @@ class SocialLoginService {
 
   Future<bool> withdrawal() async {
     while (true) {
+      final googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser!.authentication;
+
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await fAuth.currentUser?.reauthenticateWithCredential(credential);
       _databaseService.delRecord();
       try {
         await fAuth.currentUser?.delete();
@@ -151,7 +162,7 @@ class SocialLoginService {
       } catch (e) {
         print('계정탈퇴에 실패했습니다.');
       }
-      Future.delayed(Duration(seconds: 3));
+      Future.delayed(const Duration(seconds: 3));
     }
     return true;
   }

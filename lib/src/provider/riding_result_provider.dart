@@ -64,10 +64,14 @@ class RidingResultProvider with ChangeNotifier {
     final List<XFile> imageXFiles = await picker.pickMultiImage();
     // picker의 사진은 최대 4장까지 선택
     if (imageXFiles.length <= 4) {
-      if (imageXFiles.isNotEmpty && _imageStatus == ImageStatus.init) {
-        _images = imageXFiles;
-        _imageStatus = ImageStatus.imageSuccess;
-        developer.log(_images.toString());
+      if (_imageStatus == ImageStatus.init) {
+        if(imageXFiles.isNotEmpty) {
+          _images = imageXFiles;
+          _imageStatus = ImageStatus.imageSuccess;
+          developer.log(_images.toString());
+        } else{
+          _imageStatus = ImageStatus.init;
+        }
       } else if (imageXFiles.isNotEmpty && imageStatus != ImageStatus.init) {
         if (_images.isEmpty) {
           _images.addAll(imageXFiles);
