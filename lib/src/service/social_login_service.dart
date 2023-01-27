@@ -48,7 +48,7 @@ class SocialLoginService {
         saveUserInfo(user.user!);
         return user.user;
       } catch (error) {
-        developer.log('카카오톡 로그인 실패 $error');
+        developer.log('카카오톡 로그인 실패: $error');
         return null;
       }
     }
@@ -70,13 +70,11 @@ class SocialLoginService {
         'name': naverUser.name,
         'email': naverUser.email
       });
-      // UserCredential user =
-      //     await loginWithUser({'platform': 'naver', 'token': tokenRes});
 
       saveUserInfo(user.user!);
       return user.user;
-      return null;
     } catch (error) {
+      developer.log('네이버 로그인 실패: $error');
       null;
     }
     return null;
