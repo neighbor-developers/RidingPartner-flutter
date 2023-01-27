@@ -209,7 +209,8 @@ class _RecordState extends State<RecordPage> {
                 child: TextField(
                     cursorColor: Colors.white,
                     keyboardType: TextInputType.multiline,
-                    maxLines: 5,
+                    maxLines: 6,
+                    maxLength: 300,
                     style: const TextStyle(
                       fontSize: 14.0,
                       color: Colors.black,
