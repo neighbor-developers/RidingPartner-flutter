@@ -178,7 +178,7 @@ class _HomePageState extends State<HomePage>
                       const SizedBox(height: 16.0),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network(
+                        child: Image.asset(
                           place.image!,
                           height: 180.0,
                           width: MediaQuery.of(context).size.width,
