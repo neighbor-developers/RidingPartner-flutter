@@ -803,7 +803,7 @@ class _HomePageState extends State<HomePage>
                               decoration: const BoxDecoration(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(20)),
-                                  color: Color.fromARGB(90, 0, 0, 0)))
+                                  color: Color.fromARGB(45, 0, 0, 0)))
                         ]))),
                 Container(
                   height: 130,
