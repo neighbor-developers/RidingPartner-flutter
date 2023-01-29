@@ -61,12 +61,17 @@ class HomeRecordProvider extends ChangeNotifier {
     }
 
     // List<Place> places = await _fireStoreService.getPlaces();
-    _recommendPlace = places[_random.nextInt(places.length)];
-    _recommendPlace2 = places[_random.nextInt(places.length)];
-
-    while (_recommendPlace == _recommendPlace2) {
-      _recommendPlace2 = places[_random.nextInt(places.length)];
+    int num1 = _random.nextInt(places.length);
+    while (num1 == 14 || num1 == 16) {
+      num1 = _random.nextInt(places.length);
     }
+    int num2 = _random.nextInt(places.length);
+    while (num2 == 14 || num2 == 16 || num2 == num1) {
+      num2 = _random.nextInt(places.length);
+    }
+
+    _recommendPlace = places[num1];
+    _recommendPlace2 = places[num2];
   }
 
   Future getRecord() async {

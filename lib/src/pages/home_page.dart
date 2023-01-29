@@ -816,6 +816,7 @@ class _HomePageState extends State<HomePage>
                         fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w600,
                         color: Colors.white),
+                    textAlign: TextAlign.end,
                   ),
                 )
               ],

@@ -14,7 +14,7 @@
     {
         "id": "1903881322",
         "title": "거북섬",
-        "image": "assets/images/places/gaetgol_park.jpeg",
+        "image": "assets/images/places/turtle_island.jpeg",
         "marker": "assets/icons/place_ocean.png",
         "type": "ocean",
         "latitude": "37.3214043",
@@ -50,7 +50,7 @@
     {
         "id": "13491058",
         "title": "물왕호수",
-        "image": "assets/images/places/picture_soraesan_forest_park.jpg",
+        "image": "assets/images/places/picture_water_king_lake.jpg",
         "marker": "assets/icons/place_river.png",
         "type": "river",
         "latitude": "37.3823899",
@@ -62,7 +62,7 @@
     {
         "id": "",
         "title": "미생의 다리",
-        "image": "assets/images/places/gaetgol_park.jpeg",
+        "image": "assets/images/places/picture_gaetgol_ecological_park.jpg",
         "marker": "assets/icons/place_park.png",
         "type": "park",
         "latitude": "37.399584399999995",
