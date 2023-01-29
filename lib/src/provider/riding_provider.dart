@@ -35,7 +35,6 @@ class RidingProvider with ChangeNotifier {
   late Timer _timer;
   final Stopwatch _stopwatch = Stopwatch();
   bool visivility = false;
-  LatLng? _bearingPoint;
 
   //final 붙여도 되나? -> 안돼요
   List<google_map.LatLng> _polylineCoordinates = [];
@@ -52,7 +51,6 @@ class RidingProvider with ChangeNotifier {
   Duration get time => _time;
   RidingState get state => _ridingState;
   Position? get position => _position;
-  LatLng? get bearingPoint => _bearingPoint;
 
   Uint8List? customIcon;
   google_map.BitmapDescriptor pictureIcon =

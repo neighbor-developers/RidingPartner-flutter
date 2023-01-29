@@ -62,7 +62,6 @@ class _RidingPageState extends State<RidingPage> {
 
   String floatBtnLabel = "일시중지";
   IconData floatBtnIcon = Icons.pause;
-  double bearing = 180;
 
   @override
   Widget build(BuildContext context) {
@@ -72,18 +71,11 @@ class _RidingPageState extends State<RidingPage> {
     void setController() async {
       GoogleMapController googleMapController = await _controller.future;
       if (position != null) {
-        if (_ridingProvider.bearingPoint != null) {
-          bearing = Geolocator.bearingBetween(
-              position.latitude,
-              position.longitude,
-              _ridingProvider.bearingPoint!.latitude,
-              _ridingProvider.bearingPoint!.longitude);
-        }
         googleMapController.animateCamera(CameraUpdate.newCameraPosition(
             CameraPosition(
                 target: LatLng(position.latitude, position.longitude),
                 zoom: 19,
-                bearing: bearing)));
+                bearing: position.heading)));
 
         myPositionMarker = {
           Marker(
