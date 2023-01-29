@@ -1,7 +1,10 @@
+import 'dart:developer' as developer;
 import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
 import 'package:ridingpartner_flutter/src/service/firestore_service.dart';
@@ -49,7 +52,15 @@ class HomeRecordProvider extends ChangeNotifier {
   }
 
   getRecomendPlace() async {
-    List<Place> places = await _fireStoreService.getPlaces();
+    final placeFromJsonFile =
+        await rootBundle.loadString('assets/json/place.json');
+    List<Place> places =
+        PlaceList.fromJson(placeFromJsonFile).places ?? <Place>[];
+    for (var element in places) {
+      developer.log(element.image!);
+    }
+
+    // List<Place> places = await _fireStoreService.getPlaces();
     _recommendPlace = places[_random.nextInt(places.length)];
     _recommendPlace2 = places[_random.nextInt(places.length)];
 

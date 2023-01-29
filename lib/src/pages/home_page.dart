@@ -778,7 +778,7 @@ class _HomePageState extends State<HomePage>
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20.0),
-                              child: Image.network(
+                              child: Image.asset(
                                 place.image!,
                                 height: 130.0,
                                 width: MediaQuery.of(context).size.width,
