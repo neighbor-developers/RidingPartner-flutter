@@ -24,6 +24,7 @@ class RecordListProvider extends ChangeNotifier {
       _records.sort((a, b) {
         return DateTime.parse(a.date).compareTo(DateTime.parse(b.date));
       });
+      _records = _records.reversed.toList();
     }
 
     notifyListeners();
