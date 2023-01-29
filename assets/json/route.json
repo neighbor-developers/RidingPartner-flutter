@@ -1,19 +1,31 @@
 [
     {
         "id": "1",
-        "title": "한국공학대학교 통학로",
+        "title": "바라지 물길",
         "image": "assets/images/places/tukorea.jpeg",
         "routeImage": "assets/images/places/tukorea.jpeg",
-        "description": "한국공학대 통학로",
-        "route": ["정왕역", "한국공학대학교"]
+        "description": "자전거도로가 잘 되어 있음",
+        "route": [
+            "월곶포구",
+            "갯골생태공원",
+            "백도한울공원",
+            "오이도 빨간등대",
+            "거북섬"
+        ]
     },
     {
         "id": "2",
-        "title": "그린웨이",
+        "title": "그린웨이 자전거길",
         "image": "assets/images/places/lotus_flower_theme_park.jpeg",
         "routeImage": "assets/images/places/lotus_flower_theme_park.jpeg",
-        "description": "그린웨이",
-        "route": ["물왕호수", "연꽃테마파크", "갯골생태공원"]
+        "description": "자전거 코스, 평지 구간으로 초보자에게 추천천",
+       "route": [
+            "정왕역 자전거 대여소",
+            "물왕호수",
+            "연꽃테마파크",
+            "관곡지",
+            "갯골생태공원"
+        ]
     },
     {
         "id": "3",
@@ -22,57 +34,23 @@
         "routeImage": "assets/images/places/okgu_park.jpeg",
         "description": "오이도 해안도로",
         "route": [
-            "오이도역",
-            "배곧생명공원",
+            "정왕역 자전거 대여소",
             "옥구공원",
             "오이도빨간등대",
-            "거북섬",
-            "반달섬"
+            "시화방조제"
         ]
     },
     {
         "id": "4",
-        "title": "시화 방조제",
-        "image": "assets/images/places/sihwa_seawall.jpeg",
-        "routeImage": "assets/images/places/sihwa_seawall.jpeg",
-        "description": "시화 방조제",
-        "route": [
-            "오이도역",
-            "배곧생명공원",
-            "옥구공원",
-            "오이도빨간등대",
-            "시화방조제",
-            "대부도공원"
-        ]
-    },
-    {
-        "id": "5",
-        "title": "테스트용1",
-        "image": "assets/images/places/wolgot_port.jpeg",
-        "routeImage": "assets/images/places/wolgot_port.jpeg",
-        "description": "테스트용1",
-        "route": [
-            "정왕동체육공원",
-            "물왕호수",
-            "연꽃테마파크",
-            "갯골생태공원",
-            "월곶포구",
-            "배곧생명공원",
-            "옥구공원"
-        ]
-    },
-    {
-        "id": "6",
-        "title": "테스트용2",
+        "title": "갯골생태공원 내 자전거코스",
         "image": "assets/images/places/red_lighthouse.jpeg",
         "routeImage": "assets/images/places/red_lighthouse.jpeg",
-        "description": "테스트용2",
+        "description": "갯골생태공원을 가로질러 빙 돌아서 다시 입구로 돌아오는 코스",
         "route": [
-            "옥구공원",
-            "오이도빨간등대",
-            "거북섬",
-            "반달섬",
-            "정왕동체육공원"
+            "갯골생태공원",
+            "갯골생태공원 벚꽃터널",
+            "미생의 다리",
+            "갯골생태공원"
         ]
     }
 ]

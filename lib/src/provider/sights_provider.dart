@@ -35,7 +35,7 @@ class SightsProvider with ChangeNotifier {
       final routeFromJsonFile =
           await rootBundle.loadString('assets/json/place.json');
       _sightList = PlaceList.fromJson(routeFromJsonFile).places ?? <Place>[];
-
+      _sightList = _sightList.where((element) => element.marker!="").toList();
       if (_sightList.isEmpty) {
         _state = MarkerListState.empty;
       } else {

@@ -156,14 +156,25 @@ class _HomePageState extends State<HomePage>
                       const SizedBox(
                         height: 8,
                       ),
-                      Text(
-                        place.roadAddress!,
-                        style: const TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            color: Color.fromRGBO(51, 51, 51, 0.5)),
-                      ),
+                      if (place.roadAddress == null) ...[
+                        Text(
+                          place.jibunAddress!,
+                          style: const TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Color.fromRGBO(51, 51, 51, 0.5)),
+                        )
+                      ] else ...[
+                        Text(
+                          place.roadAddress!,
+                          style: const TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Color.fromRGBO(51, 51, 51, 0.5)),
+                        )
+                      ],
                       const SizedBox(height: 16.0),
                       const Divider(
                         color: Color.fromRGBO(233, 236, 239, 1),
@@ -172,7 +183,7 @@ class _HomePageState extends State<HomePage>
                       const SizedBox(height: 16.0),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network(
+                        child: Image.asset(
                           place.image!,
                           height: 180.0,
                           width: MediaQuery.of(context).size.width,
@@ -778,7 +789,7 @@ class _HomePageState extends State<HomePage>
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20.0),
-                              child: Image.network(
+                              child: Image.asset(
                                 place.image!,
                                 height: 130.0,
                                 width: MediaQuery.of(context).size.width,

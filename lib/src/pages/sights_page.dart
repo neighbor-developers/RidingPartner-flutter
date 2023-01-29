@@ -11,6 +11,7 @@ import '../models/place.dart';
 import '../provider/navigation_provider.dart';
 import '../provider/riding_provider.dart';
 import 'navigation_page.dart';
+import 'package:logging/logging.dart';
 
 class SightsPage extends StatefulWidget {
   @override
@@ -32,6 +33,8 @@ class _SightsPageState extends State<SightsPage> {
   Widget build(BuildContext context) {
     _sightsProvider = Provider.of<SightsProvider>(context);
     final state = _sightsProvider.state;
+    var logger = Logger('Logger');
+
 
     void routeDialog(Place place) => showModalBottomSheet<void>(
         context: context,
@@ -89,7 +92,7 @@ class _SightsPageState extends State<SightsPage> {
                       ])),
               InkWell(
                   onTap: () async {
-                    final placeList = <Place>[place];
+                    logger.fine("placeList : $place");
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -97,7 +100,7 @@ class _SightsPageState extends State<SightsPage> {
                                   providers: [
                                     ChangeNotifierProvider(
                                         create: (context) =>
-                                            NavigationProvider(placeList)),
+                                            NavigationProvider([place])),
                                     ChangeNotifierProvider(
                                         create: (context) => RidingProvider())
                                   ],
