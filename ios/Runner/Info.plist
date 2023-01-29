@@ -38,7 +38,7 @@
 		<string>Dh1BA99PHE</string>
 
 		<key>naverServiceAppName</key>
-		<string>라이딩 파트너 in 시릉</string>
+		<string>라이딩 파트너 in 시흥</string>
 
 		<key>googleMapApiKey</key>
 		<string>AIzaSyARG3LSKycrXF8VAYBX52hC0XcOwH_x_Rc</string>
@@ -48,7 +48,7 @@
 		<dict>
 			<key>NSAllowsArbitraryLoads</key>
 			<true/>
-			<key>NSExceptionDomains</key>
+			<key>NSExceptionDomains</key흥
 			<dict>
 				<key>naver.com</key>
 				<dict>

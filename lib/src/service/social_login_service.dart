@@ -58,10 +58,7 @@ class SocialLoginService {
   // naver
   Future<User?> signInWithNaver() async {
     try {
-      naver_flutter.NaverLoginResult result =
-          await naver_flutter.FlutterNaverLogin.logIn();
-      naver_flutter.NaverAccessToken tokenRes =
-          await naver_flutter.FlutterNaverLogin.currentAccessToken;
+      await naver_flutter.FlutterNaverLogin.logIn();
       naver_flutter.NaverAccountResult naverUser =
           await naver_flutter.FlutterNaverLogin.currentAccount();
       UserCredential user = await loginWithUser({
