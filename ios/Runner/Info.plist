@@ -48,7 +48,7 @@
 		<dict>
 			<key>NSAllowsArbitraryLoads</key>
 			<true/>
-			<key>NSExceptionDomains</key흥
+			<key>NSExceptionDomains</key>
 			<dict>
 				<key>naver.com</key>
 				<dict>
