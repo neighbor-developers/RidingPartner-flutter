@@ -156,7 +156,7 @@ class _HomePageState extends State<HomePage>
                       const SizedBox(
                         height: 8,
                       ),
-                      if (place.roadAddress == null) ...[
+                      if (place.roadAddress == null || place.roadAddress == "") ...[
                         Text(
                           place.jibunAddress!,
                           style: const TextStyle(
