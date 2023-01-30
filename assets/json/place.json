@@ -12,16 +12,28 @@
         "description": "한국관광공사 사진 갤러리, 촬영자 박윤준"
     },
     {
+        "id": "1199341197",
+        "title": "갯골생태공원 벚꽃터널",
+        "image": "assets/images/places/picture_gaetgol_ecological_park.jpg",
+        "marker": "",
+        "type": "",
+        "latitude": "37.3889771",
+        "longitude": "126.7804387",
+        "jibunAddress": "경기도 시흥시 장곡동 724-10",
+        "roadAddress": "경기도 시흥시 동서로 287",
+        "description": ""
+    },
+    {
         "id": "1903881322",
         "title": "거북섬",
-        "image": "assets/images/places/turtle_island.jpeg",
+        "image": "assets/images/places/picture_turtle_island.jpeg",
         "marker": "assets/icons/place_ocean.png",
         "type": "ocean",
         "latitude": "37.3214043",
         "longitude": "126.6793288",
         "jibunAddress": "경기도 시흥시 정왕동 2724",
         "roadAddress": "경기도 시흥시 거북섬로 113",
-        "description": ""
+        "description": "한국향토문화 전자대전"
     },
     {
         "id": "13491079",
@@ -38,38 +50,38 @@
     {
         "id": "19029571",
         "title": "대부도공원",
-        "image": "assets/images/places/daebu_island.jpeg",
+        "image": "assets/images/places/picture_daebudo_island.JPG",
         "marker": "assets/icons/place_park.png",
         "type": "park",
         "latitude": "37.2902425",
         "longitude": "126.5792887",
         "jibunAddress": "경기도 안산시 단원구 대부북동 1984",
         "roadAddress": "경기도 안산시 단원구 대부황금로 1546 시화호환경문화관",
-        "description": "방아머리공원은 경기도 안산시 단원구에 있는 공원이다. 시화호 환경 문화관이 있는 곳에 있다. 공원 내 경기해양안전체험관이 있다. 산책로와 축구장, 족구장과 같은 체육 시설이 있다. 넓은 무료 주차장이 있어 편하게 이용할 수 있다. 근처에 시화방조제와 대부도, 방아머리 해수욕장이 있어 함께 둘러보기 좋다. 도시공원 및 녹지 등에 관한 법률에 따라 취사, 야영(텐트), 불을 피우는 행위가 금지다. 대부도 관광지역을 대표하는 유리 상징물인 '하트 투 하트(Heart to Heart)'가 있다. 각양각색 사랑의 모습을 거대한 유리알 집합체로 나타냈으며, 수많은 유리구슬은 사랑하는 이와 함께 한 행복한 순간을 표현한 조형물이다.\n[출처] 관광지랭킹/대부도공원"
+        "description": "한국관광공사 대부도공원"
     },
     {
         "id": "13491058",
         "title": "물왕호수",
-        "image": "assets/images/places/picture_water_king_lake.jpg",
+        "image": "assets/images/places/picture_soraesan_forest_park.jpg",
         "marker": "assets/icons/place_river.png",
         "type": "river",
         "latitude": "37.3823899",
         "longitude": "126.8343379",
-        "jibunAddress": "경기도 시흥시 물왕동 420",
+        "jibunAddress": "경기도 시흥시 물왕동",
         "roadAddress": "",
         "description": "시흥 홈페이지, 물왕저수지 사진 작성자 김도현"
     },
     {
         "id": "",
         "title": "미생의 다리",
-        "image": "assets/images/places/picture_gaetgol_ecological_park.jpg",
+        "image": "assets/images/places/picture_misaeng's_bridge.jpg",
         "marker": "assets/icons/place_park.png",
         "type": "park",
         "latitude": "37.399584399999995",
         "longitude": "126.75299469999999",
-        "jibunAddress": "경기도 시흥시 방산동 779-43",
+        "jibunAddress": "경기도 시흥시 방산동 서해안로 779-43 미생의 다리",
         "roadAddress": "",
-        "description": ""
+        "description": "경기관광공사에 허락맡기"
     },
     {
         "id": "35795149",
@@ -171,10 +183,10 @@
         "image": "assets/images/places/gojan_station.png",
         "marker": "assets/icons/place_rental.png",
         "type": "rental",
-        "latitude": "37.391875420",
-        "longitude": "126.742697493",
-        "jibunAddress": "경기도 시흥시 월곶동 992-8 월곶역",
-        "roadAddress": "경기 시흥시 월곶중앙로14번길 56",
+        "latitude": "37.3168245",
+        "longitude": "126.8234083",
+        "jibunAddress": "경기도 안산시 단원구 고잔동 453-53",
+        "roadAddress": "경기도 안산시 단원구 중앙대로 784 고잔역",
         "description": ""
     },
     {
