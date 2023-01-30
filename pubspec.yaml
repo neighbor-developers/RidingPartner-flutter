@@ -46,7 +46,7 @@ dependencies:
   cloud_firestore: ^3.5.1
   intl: ^0.17.0
   google_sign_in: ^5.4.2
-  image_picker: ^0.8.4+4
+  image_picker: ^0.8.6+1
   permission_handler: ^8.3.0
   file_picker: ^5.2.0+1
   provider: ^6.0.3
@@ -64,6 +64,7 @@ dependencies:
   wakelock: ^0.6.2
   shared_preferences: ^2.0.15
   firebase_database: ^9.1.7
+  firebase_storage: ^10.3.11
   latlong2: ^0.8.1
   dio: ^4.0.6
   flutter_cache_manager: ^3.3.0

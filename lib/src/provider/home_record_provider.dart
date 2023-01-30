@@ -90,7 +90,6 @@ class HomeRecordProvider extends ChangeNotifier {
         data.add(_prefRecord!);
       }
       get14daysRecord(data);
-
       notifyListeners();
     }
 

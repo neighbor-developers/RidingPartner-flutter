@@ -35,6 +35,7 @@ class _RecordState extends State<RecordPage> {
 
   @override
   Widget build(BuildContext context) {
+    developer.log("hi");
     num speed = 0;
 
     _recordProvider = Provider.of<RidingResultProvider>(context);

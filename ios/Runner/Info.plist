@@ -120,17 +120,13 @@
 		<string>위치정보 권한이 필요합니다. (항상 위치정보를 수신합니다.)</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>위치정보 권한이 필요합니다. (앱을 사용하는 동안에만 위치정보를 수신합니다.)</string>
-		<!-- ios 위치 권한설정 -->
-
+		<!-- ios 앨범 권한설정 -->
 		<key>NSCameraUsageDescription</key>
-        <string>Used to demonstrate image picker plugin</string>
-        <key>NSMicrophoneUsageDescription</key>
-        <string>Used to capture audio for image picker plugin</string>
-        <key>NSCameraUsageDescription</key>
-        <string>임시 스트링</string>
-        <key>NSPhotoLibraryUsageDescription</key>
-        <string>This app needs access to your photos in order to lad them into the app.</string>
-
+		<string>카메라 권한이 필요합니다</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>마이크 권한이 필요합니다</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>앨범 권한이 필요합니다</string>
 	</dict>
 </plist>
 

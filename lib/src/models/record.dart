@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:intl/intl.dart';
 
 class Record {
@@ -7,6 +9,7 @@ class Record {
   double topSpeed;
   String? memo;
   double? kcal;
+  List<String>? images;
 
   Record(
       {required this.distance,
@@ -14,7 +17,8 @@ class Record {
       required this.timestamp,
       required this.topSpeed,
       this.memo,
-      this.kcal});
+      this.kcal,
+      this.images});
 
   factory Record.fromDB(db) => Record(
         distance: db["distance"].toDouble(),
@@ -23,6 +27,9 @@ class Record {
         topSpeed: db["topSpeed"].toDouble(),
         memo: db["memo"],
         kcal: db["kcal"],
+        images: db?['images'] != null
+            ? List<String>.from(json.decode(db?['images']))
+            : null,
       );
 
   DateTime getYearMonthDay() {

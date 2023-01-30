@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,7 +21,8 @@ class FirebaseDatabaseService {
           "timestamp": record.timestamp,
           "topSpeed": record.topSpeed,
           "memo": record.memo,
-          "kcal": record.kcal
+          "kcal": record.kcal,
+          "images": record.images != null ? json.encode(record.images) : null
         })
         .then((_) => {developer.log("firebase 기록 저장 성공 $record")})
         .catchError((onError) {
