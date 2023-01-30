@@ -566,7 +566,7 @@ class _HomePageState extends State<HomePage>
                 Positioned(
                   left: 0,
                   top: 0,
-                  child: Text('    ${_getMaxDistance(_records)}km',
+                  child: Text('    ${_getMaxDistance(_records) + 1}km',
                       style: const TextStyle(
                           fontSize: 12,
                           fontFamily: 'Pretendard',
