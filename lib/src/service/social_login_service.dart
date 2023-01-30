@@ -31,6 +31,7 @@ class SocialLoginService {
         saveUserInfo(user.user!);
         return user.user!;
       } catch (error) {
+        developer.log(error.toString());
         Fluttertoast.showToast(
             msg: "error: 해당 계정의 이메일이 네이버 혹은 구글 로그인으로 이미 등록된 이메일인지 확인해주세요.",
             toastLength: Toast.LENGTH_LONG);
@@ -51,6 +52,7 @@ class SocialLoginService {
         saveUserInfo(user.user!);
         return user.user;
       } catch (error) {
+        developer.log(error.toString());
         Fluttertoast.showToast(
             msg: "error: 해당 계정의 이메일이 네이버 혹은 구글 로그인으로 이미 등록된 이메일인지 확인해주세요.",
             toastLength: Toast.LENGTH_LONG);
@@ -76,6 +78,7 @@ class SocialLoginService {
       saveUserInfo(user.user!);
       return user.user;
     } catch (error) {
+      developer.log(error.toString());
       Fluttertoast.showToast(
           msg: "error: 해당 계정의 이메일이 카카오톡 혹은 구글 로그인으로 이미 등록된 이메일인지 확인해주세요.",
           toastLength: Toast.LENGTH_LONG);
