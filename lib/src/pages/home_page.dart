@@ -156,7 +156,8 @@ class _HomePageState extends State<HomePage>
                       const SizedBox(
                         height: 8,
                       ),
-                      if (place.roadAddress == null || place.roadAddress == "") ...[
+                      if (place.roadAddress == null ||
+                          place.roadAddress == "") ...[
                         Text(
                           place.jibunAddress!,
                           style: const TextStyle(
@@ -575,17 +576,22 @@ class _HomePageState extends State<HomePage>
                 Positioned(
                   right: 0,
                   bottom: 20,
-                  child: Text('   ${_getLastRecordDate(_records)}',
-                      style: const TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w300,
-                          color: Color.fromRGBO(51, 51, 51, 1))),
+                  child:
+                      //Text('최근 기록 \n----->',
+                      Text('   ${_getLastRecordDate(_records)}',
+                          style: const TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w300,
+                              color: Color.fromRGBO(51, 51, 51, 1))),
                 ),
-                const VerticalDivider(
-                    width: 1,
-                    color: Color.fromRGBO(234, 234, 234, 1),
-                    thickness: 1.0),
+                Container(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: const VerticalDivider(
+                      width: 1,
+                      color: Color.fromRGBO(234, 234, 234, 1),
+                      thickness: 1.0),
+                ),
                 Column(
                   children: [
                     Container(
@@ -595,7 +601,7 @@ class _HomePageState extends State<HomePage>
                     ),
                     const SizedBox(
                         width: 330,
-                        height: 0.5,
+                        height: 0,
                         child: Divider(
                             color: Color.fromRGBO(234, 234, 234, 1),
                             thickness: 1.0)),
