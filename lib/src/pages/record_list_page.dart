@@ -58,7 +58,7 @@ class _RecordListPageState extends State<RecordListPage> {
                     children: [
                       recordItem(_recordListProvider.records.elementAt(index)),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: const Divider(
                             height: 1,
                             color: Color.fromARGB(128, 193, 193, 193),
@@ -82,7 +82,7 @@ class _RecordListPageState extends State<RecordListPage> {
                           )))
             },
         child: Container(
-            padding: EdgeInsets.only(top: 15, bottom: 10, left: 15, right: 13),
+            padding: const EdgeInsets.only(top: 15, bottom: 10, left: 15, right: 13),
             // // color: Color.fromARGB(167, 251, 150, 50),
             // height: MediaQuery.of(context).size.height / 8,
             width: double.infinity,
@@ -103,7 +103,7 @@ class _RecordListPageState extends State<RecordListPage> {
                       Text(
                         DateFormat('yyyy.MM.dd')
                             .format(DateTime.parse(record.date)),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
                           color: Color.fromARGB(241, 120, 120, 120),
                         ),
@@ -132,7 +132,7 @@ class _RecordListPageState extends State<RecordListPage> {
                 Container(
                     alignment: Alignment.centerRight,
                     width: double.infinity,
-                    margin: EdgeInsets.only(right: 10, top: 10),
+                    margin: const EdgeInsets.only(right: 10, top: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -140,10 +140,10 @@ class _RecordListPageState extends State<RecordListPage> {
                           '${record.distance / 1000}km',
                           style: detailStyle,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
-                        Text(
+                        const Text(
                           '기록 자세히 보기 ->',
                           style: TextStyle(
                             fontSize: 12,

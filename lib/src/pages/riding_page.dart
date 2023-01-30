@@ -252,7 +252,7 @@ class _RidingPageState extends State<RidingPage> {
                           onTap: () {
                             _ridingProvider.setVisivility();
                           },
-                          child: Container(
+                          child: SizedBox(
                             width: 18,
                             child: Image.asset('assets/icons/menu_bar.png',
                                 fit: BoxFit.fitWidth),
@@ -333,7 +333,7 @@ class _RidingPageState extends State<RidingPage> {
                           builder: (context) => ChangeNotifierProvider(
                                 create: (context) => RidingResultProvider(
                                     _ridingProvider.ridingDate),
-                                child: RecordPage(),
+                                child: const RecordPage(),
                               )));
                 },
                 child: Container(

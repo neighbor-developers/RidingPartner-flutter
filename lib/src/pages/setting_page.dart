@@ -74,7 +74,7 @@ class _SettingPageState extends State<SettingPage> {
   Widget settingBox(String item) {
     return Container(
       padding: const EdgeInsets.only(left: 10),
-      color: Color.fromARGB(64, 220, 220, 220),
+      color: const Color.fromARGB(64, 220, 220, 220),
       width: MediaQuery.of(context).size.width,
       height: 40,
       alignment: Alignment.centerLeft,

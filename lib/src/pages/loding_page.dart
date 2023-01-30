@@ -200,7 +200,6 @@ class _LodingPageState extends State<LodingPage> {
                       image:
                           const AssetImage("assets/icons/btn_kakao_login.png"),
                     )))));
-    ;
   }
 
   Widget _googleLoginButton() {
