@@ -171,10 +171,10 @@
         "image": "assets/images/places/gojan_station.png",
         "marker": "assets/icons/place_rental.png",
         "type": "rental",
-        "latitude": "37.3168245",
-        "longitude": "126.8234083",
-        "jibunAddress": "경기도 안산시 단원구 고잔동 453-53",
-        "roadAddress": "경기도 안산시 단원구 중앙대로 784 고잔역",
+        "latitude": "37.391875420",
+        "longitude": "126.742697493",
+        "jibunAddress": "경기도 시흥시 월곶동 992-8 월곶역",
+        "roadAddress": "경기 시흥시 월곶중앙로14번길 56",
         "description": ""
     },
     {

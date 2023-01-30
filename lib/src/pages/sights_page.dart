@@ -66,12 +66,25 @@ class _SightsPageState extends State<SightsPage> {
                         const SizedBox(
                           height: 8,
                         ),
-                        Text(place.roadAddress ?? "",
-                            style: const TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: Color.fromRGBO(51, 51, 51, 0.5))),
+                        if (place.roadAddress == null || place.roadAddress == "") ...[
+                        Text(
+                          place.jibunAddress!,
+                          style: const TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Color.fromRGBO(51, 51, 51, 0.5)),
+                        )
+                      ] else ...[
+                        Text(
+                          place.roadAddress!,
+                          style: const TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Color.fromRGBO(51, 51, 51, 0.5)),
+                        )
+                      ],
                         const SizedBox(
                           height: 8,
                         ),
