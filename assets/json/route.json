@@ -2,8 +2,8 @@
     {
         "id": "1",
         "title": "바라지 물길",
-        "image": "assets/images/places/tukorea.jpeg",
-        "routeImage": "assets/images/places/tukorea.jpeg",
+        "image": "assets/images/places/picture_wolgot_port.jpg",
+        "routeImage": "assets/images/places/picture_wolgot_port.jpg",
         "description": "자전거도로가 잘 되어 있음",
         "route": [
             "월곶포구",
@@ -16,10 +16,10 @@
     {
         "id": "2",
         "title": "그린웨이 자전거길",
-        "image": "assets/images/places/lotus_flower_theme_park.jpeg",
-        "routeImage": "assets/images/places/lotus_flower_theme_park.jpeg",
-        "description": "자전거 코스, 평지 구간으로 초보자에게 추천천",
-       "route": [
+        "image": "assets/images/places/picture_lotus_themepark.jpg",
+        "routeImage": "assets/images/places/picture_lotus_themepark.jpg",
+        "description": "자전거 코스, 평지 구간으로 초보자에게 추천",
+        "route": [
             "정왕역 자전거 대여소",
             "물왕호수",
             "연꽃테마파크",
@@ -30,8 +30,8 @@
     {
         "id": "3",
         "title": "오이도 해안도로",
-        "image": "assets/images/places/okgu_park.jpeg",
-        "routeImage": "assets/images/places/okgu_park.jpeg",
+        "image": "assets/images/places/picture_Oido_Red_Lighthouse.jpg",
+        "routeImage": "assets/images/places/picture_Oido_Red_Lighthouse.jpeg",
         "description": "오이도 해안도로",
         "route": [
             "정왕역 자전거 대여소",
@@ -42,9 +42,9 @@
     },
     {
         "id": "4",
-        "title": "갯골생태공원 내 자전거코스",
-        "image": "assets/images/places/red_lighthouse.jpeg",
-        "routeImage": "assets/images/places/red_lighthouse.jpeg",
+        "title": "갯골생태공원 내\n자전거길",
+        "image": "assets/images/places/picture_gaetgol_ecological_park.jpg",
+        "routeImage": "assets/images/places/picture_gaetgol_ecological_park.jpg",
         "description": "갯골생태공원을 가로질러 빙 돌아서 다시 입구로 돌아오는 코스",
         "route": [
             "갯골생태공원",
