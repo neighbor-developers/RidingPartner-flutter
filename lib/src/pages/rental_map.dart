@@ -36,7 +36,7 @@ class RentalMapState extends State<RentalMap> {
         body: GoogleMap(
       mapType: MapType.normal,
       markers: Set.from(_markers),
-      initialCameraPosition: CameraPosition(
+      initialCameraPosition: const CameraPosition(
           target: LatLng(37.349741467772, 126.76182486561), zoom: 12.9),
       onMapCreated: (GoogleMapController controller) {
         _controller.complete(controller);

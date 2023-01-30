@@ -14,7 +14,7 @@ import '../models/record.dart';
 import '../provider/riding_result_provider.dart';
 
 class RecordPage extends StatefulWidget {
-  RecordPage({super.key});
+  const RecordPage({super.key});
 
   @override
   _RecordState createState() => _RecordState();

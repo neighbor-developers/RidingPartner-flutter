@@ -408,7 +408,7 @@ class _NavigationPageState extends State<NavigationPage> {
                               onTap: () {
                                 _navigationProvider.setVisivility();
                               },
-                              child: Container(
+                              child: SizedBox(
                                 width: 18,
                                 child: Image.asset('assets/icons/menu_bar.png',
                                     fit: BoxFit.fitWidth),
