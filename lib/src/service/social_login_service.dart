@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart' as naver_flutter;
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart' as kakao_flutter;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,7 +31,9 @@ class SocialLoginService {
         saveUserInfo(user.user!);
         return user.user!;
       } catch (error) {
-        print('카카오톡 로그인 실패 $error');
+        Fluttertoast.showToast(
+            msg: "error: 해당 계정의 이메일이 네이버 혹은 구글 로그인으로 이미 등록된 이메일인지 확인해주세요.",
+            toastLength: Toast.LENGTH_LONG);
         return null;
       }
     } else {
@@ -48,7 +51,9 @@ class SocialLoginService {
         saveUserInfo(user.user!);
         return user.user;
       } catch (error) {
-        developer.log('카카오톡 로그인 실패: $error');
+        Fluttertoast.showToast(
+            msg: "error: 해당 계정의 이메일이 네이버 혹은 구글 로그인으로 이미 등록된 이메일인지 확인해주세요.",
+            toastLength: Toast.LENGTH_LONG);
         return null;
       }
     }
@@ -71,7 +76,9 @@ class SocialLoginService {
       saveUserInfo(user.user!);
       return user.user;
     } catch (error) {
-      developer.log('네이버 로그인 실패: $error');
+      Fluttertoast.showToast(
+          msg: "error: 해당 계정의 이메일이 카카오톡 혹은 구글 로그인으로 이미 등록된 이메일인지 확인해주세요.",
+          toastLength: Toast.LENGTH_LONG);
       null;
     }
     return null;
