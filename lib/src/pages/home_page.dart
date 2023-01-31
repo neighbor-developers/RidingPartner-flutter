@@ -1,5 +1,3 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:line_chart/charts/line-chart.widget.dart';
 import 'package:line_chart/model/line-chart.model.dart';
@@ -637,12 +635,8 @@ class _HomePageState extends State<HomePage>
         color: Colors.deepOrange,
       ),
       insideCirclePaint: insideCirclePaint,
-      onValuePointer: (LineChartModelCallback value) {
-        print('${value.chart} ${value.percentage}');
-      },
-      onDropPointer: () {
-        print('onDropPointer');
-      },
+      onValuePointer: (LineChartModelCallback value) {},
+      onDropPointer: () {},
     );
   }
 
@@ -866,8 +860,6 @@ class _HomePageState extends State<HomePage>
     double maxDistance = 0;
     int recoredCount = 0;
     for (var element in records) {
-      developer.log('반복 횟수${recoredCount++}');
-      developer.log(element.distance.toString());
       if (element.distance > maxDistance) {
         maxDistance = element.distance;
       }

@@ -110,7 +110,6 @@ class RidingProvider with ChangeNotifier {
       }
       if (isDisposed) return;
       notifyListeners();
-      print('noti');
       _time = _stopwatch.elapsed;
       if (_time.inSeconds / 60 == 0) {
         _saveRecord();

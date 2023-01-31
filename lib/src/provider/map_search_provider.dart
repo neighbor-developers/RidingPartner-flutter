@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -138,7 +137,6 @@ class MapSearchProvider extends ChangeNotifier {
   }
 
   setInitalLocation() async {
-    developer.log('initial location');
     final address = await getMyLocationAddress();
     setMyLocation(address);
   }

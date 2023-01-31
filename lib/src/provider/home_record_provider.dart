@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -56,9 +55,7 @@ class HomeRecordProvider extends ChangeNotifier {
         await rootBundle.loadString('assets/json/place.json');
     List<Place> places =
         PlaceList.fromJson(placeFromJsonFile).places ?? <Place>[];
-    for (var element in places) {
-      developer.log(element.image!);
-    }
+    for (var element in places) {}
 
     // List<Place> places = await _fireStoreService.getPlaces();
     int num1 = _random.nextInt(places.length);

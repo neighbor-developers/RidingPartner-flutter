@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -265,8 +264,6 @@ class MapSampleState extends State<MapSearchPage> {
                       mapSearchProvider.setEndPoint(list[index]);
                       mapSearchProvider.clearEndPointSearchResult();
                     }
-                    developer.log('출발지: ${mapSearchProvider.startPoint}');
-                    developer.log('도착지: ${mapSearchProvider.destination}');
 
                     if (mapSearchProvider.startPoint != null &&
                         mapSearchProvider.destination != null) {
