@@ -165,61 +165,27 @@ class RecommendedRoutePageState extends State<StatefulWidget> {
       semanticContainer: true,
       clipBehavior: Clip.antiAliasWithSaveLayer,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(13.0),
+        borderRadius: BorderRadius.circular(10.0),
       ),
       child: InkWell(
-        onTap: () {
-          routeDialog(route);
-        },
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            SizedBox(
-                child: InkWell(
-                    onTap: () {
-                      routeDialog(route);
-                    },
-                    child: Stack(children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(13)),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(13.0),
-                          child: Image.asset(
-                            route.image!,
-                            width: MediaQuery.of(context).size.width,
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      ),
-                      Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height,
-                          decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(13)),
-                              color: Color.fromARGB(46, 0, 0, 0)))
-                    ]))),
+          onTap: () {
+            routeDialog(route);
+          },
+          child: Stack(fit: StackFit.expand, children: <Widget>[
+            Image.asset(
+              route.image!,
+              fit: BoxFit.fill,
+            ),
             Container(
-              height: 130,
-              padding: const EdgeInsets.all(13),
-              alignment: Alignment.bottomRight,
-              child: Text(
-                "${route.title}",
-                style: const TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Pretendard',
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white),
-                textAlign: TextAlign.end,
-              ),
-            )
-          ],
-        ),
-      ));
+                alignment: Alignment.bottomRight,
+                padding: const EdgeInsets.all(7),
+                child: Text("${route.title!}  ",
+                    style: const TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600))),
+          ])));
 
   Widget recommendTitleWidget() => Container(
         margin: const EdgeInsets.fromLTRB(0, 32, 0, 24),
