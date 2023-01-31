@@ -74,14 +74,14 @@
     {
         "id": "",
         "title": "미생의 다리",
-        "image": "assets/images/places/picture_misaeng's_bridge.jpg",
+        "image": "assets/images/places/picture_misaeng's_bridge_2.jpg",
         "marker": "assets/icons/place_park.png",
         "type": "park",
         "latitude": "37.399584399999995",
         "longitude": "126.75299469999999",
         "jibunAddress": "경기도 시흥시 방산동 서해안로 779-43 미생의 다리",
         "roadAddress": "",
-        "description": "경기관광공사에 허락맡기"
+        "description": "한국관광공사 미생의 다리"
     },
     {
         "id": "35795149",
