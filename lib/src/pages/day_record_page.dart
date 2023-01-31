@@ -10,7 +10,7 @@ import '../provider/riding_result_provider.dart';
 import '../utils/timestampToText.dart';
 
 class DayRecordPage extends StatefulWidget {
-  DayRecordPage({super.key});
+  const DayRecordPage({super.key});
 
   @override
   State<DayRecordPage> createState() => _DayRecordPageState();
@@ -20,12 +20,6 @@ class _DayRecordPageState extends State<DayRecordPage> {
   late RidingResultProvider _recordProvider;
   late Record _record;
   int hKcal = 550;
-  final images = [
-    'assets/images/places/baegot_park.jpeg',
-    'assets/images/places/halfmoon_island.jpeg',
-    'assets/images/img_loading.png',
-    'assets/images/places/tukorea.jpeg'
-  ];
 
   int activeIndex = 0;
 
@@ -53,6 +47,7 @@ class _DayRecordPageState extends State<DayRecordPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(alignment: Alignment.bottomCenter, children: <Widget>[
+               if(_record.images != null && _record.images!.length > 1)...[
               CarouselSlider.builder(
                 options: CarouselOptions(
                   initialPage: 0,
@@ -62,12 +57,23 @@ class _DayRecordPageState extends State<DayRecordPage> {
                     activeIndex = index;
                   }),
                 ),
-                itemCount: images.length,
+                itemCount: _record.images!.length,
                 itemBuilder: (context, index, realIndex) {
-                  final path = images[index];
+                  final path = _record.images![index];
                   return buildImage(path, index);
                 },
-              ),
+              )] else if(_record.images != null && _record.images!.length == 1)...[
+                  SizedBox(
+                  width: double.infinity,
+                  height: 240,
+                  child: Image.network(_record.images![0], fit: BoxFit.cover))
+              ] else...[
+                SizedBox(
+                  width: double.infinity,
+                  height: 240,
+                  child: Image.asset("assets/images/img_loading.png", fit: BoxFit.cover))
+              ],
+
               Align(alignment: Alignment.bottomCenter, child: buildIndicator())
             ]),
             Container(
@@ -180,7 +186,7 @@ class _DayRecordPageState extends State<DayRecordPage> {
         width: double.infinity,
         height: 240,
         color: Colors.grey,
-        child: Image.asset(path, fit: BoxFit.cover),
+        child: Image.network(path, fit: BoxFit.cover),
       );
 
   Widget buildIndicator() => Container(
@@ -188,7 +194,7 @@ class _DayRecordPageState extends State<DayRecordPage> {
       alignment: Alignment.bottomCenter,
       child: AnimatedSmoothIndicator(
         activeIndex: activeIndex,
-        count: images.length,
+        count: _record.images?.length ?? 1,
         effect: JumpingDotEffect(
             dotHeight: 6,
             dotWidth: 6,
