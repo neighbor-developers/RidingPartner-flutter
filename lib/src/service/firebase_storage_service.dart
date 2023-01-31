@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
@@ -16,7 +15,6 @@ class FirebaseStorageService {
 
       return downloadUrl;
     } catch (e) {
-      developer.log(e.toString());
       return "err";
     }
   }

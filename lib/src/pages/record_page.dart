@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:app_settings/app_settings.dart';
@@ -35,13 +34,11 @@ class _RecordState extends State<RecordPage> {
 
   @override
   Widget build(BuildContext context) {
-    developer.log("hi");
     num speed = 0;
 
     _recordProvider = Provider.of<RidingResultProvider>(context);
 
     _imageStatus = _recordProvider.imageStatus;
-    developer.log(_imageStatus.name);
 
     switch (_recordProvider.recordState) {
       case RecordState.loading:

@@ -1,5 +1,3 @@
-import 'dart:developer' as developer;
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart' as naver_flutter;
@@ -31,7 +29,6 @@ class SocialLoginService {
         saveUserInfo(user.user!);
         return user.user!;
       } catch (error) {
-        developer.log(error.toString());
         Fluttertoast.showToast(
             msg: "error: 해당 계정의 이메일이 네이버 혹은 구글 로그인으로 이미 등록된 이메일인지 확인해주세요.",
             toastLength: Toast.LENGTH_LONG);
@@ -42,7 +39,6 @@ class SocialLoginService {
         await kakao_flutter.UserApi.instance.loginWithKakaoAccount();
         kakao_flutter.User kakaoUser =
             await kakao_flutter.UserApi.instance.me();
-        developer.log('kakaoUser: $kakaoUser');
         UserCredential user = await loginWithUser({
           'platform': 'kakao',
           'uId': kakaoUser.id.toString(),
@@ -52,7 +48,6 @@ class SocialLoginService {
         saveUserInfo(user.user!);
         return user.user;
       } catch (error) {
-        developer.log(error.toString());
         Fluttertoast.showToast(
             msg: "error: 해당 계정의 이메일이 네이버 혹은 구글 로그인으로 이미 등록된 이메일인지 확인해주세요.",
             toastLength: Toast.LENGTH_LONG);
@@ -78,7 +73,6 @@ class SocialLoginService {
       saveUserInfo(user.user!);
       return user.user;
     } catch (error) {
-      developer.log(error.toString());
       Fluttertoast.showToast(
           msg: "error: 해당 계정의 이메일이 카카오톡 혹은 구글 로그인으로 이미 등록된 이메일인지 확인해주세요.",
           toastLength: Toast.LENGTH_LONG);
@@ -94,7 +88,6 @@ class SocialLoginService {
       credencial = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: user['email'], password: user['uId']);
     } catch (error) {
-      developer.log(error.toString());
     } finally {
       credencial = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: user['email'], password: user['uId']);
@@ -146,7 +139,6 @@ class SocialLoginService {
 
   Future<void> saveUserInfo(User user) async {
     final prefs = await SharedPreferences.getInstance();
-    developer.log('save');
     prefs.setString('name', user.displayName.toString());
     prefs.setString('email', user.email.toString());
     prefs.setString('token', user.getIdToken().toString());
@@ -161,9 +153,7 @@ class SocialLoginService {
     try {
       await fAuth.currentUser?.delete();
       fAuth.signOut();
-    } catch (e) {
-      print('계정탈퇴에 실패했습니다.');
-    }
+    } catch (e) {}
     Future.delayed(const Duration(seconds: 3));
 
     return true;
@@ -174,7 +164,6 @@ class SocialLoginService {
       await fAuth.signOut();
       return true;
     } catch (e) {
-      print(e.toString());
       return false;
     }
   }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/painting/rounded_rectangle_border.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/provider/sights_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/custom_marker.dart';
@@ -11,7 +12,6 @@ import '../models/place.dart';
 import '../provider/navigation_provider.dart';
 import '../provider/riding_provider.dart';
 import 'navigation_page.dart';
-import 'package:logging/logging.dart';
 
 class SightsPage extends StatefulWidget {
   @override
@@ -34,7 +34,6 @@ class _SightsPageState extends State<SightsPage> {
     _sightsProvider = Provider.of<SightsProvider>(context);
     final state = _sightsProvider.state;
     var logger = Logger('Logger');
-
 
     void routeDialog(Place place) => showModalBottomSheet<void>(
         context: context,
@@ -66,25 +65,26 @@ class _SightsPageState extends State<SightsPage> {
                         const SizedBox(
                           height: 8,
                         ),
-                        if (place.roadAddress == null || place.roadAddress == "") ...[
-                        Text(
-                          place.jibunAddress!,
-                          style: const TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: Color.fromRGBO(51, 51, 51, 0.5)),
-                        )
-                      ] else ...[
-                        Text(
-                          place.roadAddress!,
-                          style: const TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: Color.fromRGBO(51, 51, 51, 0.5)),
-                        )
-                      ],
+                        if (place.roadAddress == null ||
+                            place.roadAddress == "") ...[
+                          Text(
+                            place.jibunAddress!,
+                            style: const TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: Color.fromRGBO(51, 51, 51, 0.5)),
+                          )
+                        ] else ...[
+                          Text(
+                            place.roadAddress!,
+                            style: const TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: Color.fromRGBO(51, 51, 51, 0.5)),
+                          )
+                        ],
                         const SizedBox(
                           height: 8,
                         ),
@@ -173,22 +173,3 @@ class _SightsPageState extends State<SightsPage> {
     ));
   }
 }
-
-
-  // List<MarkerInfo> location = [
-  //   MarkerInfo("정왕 자전거 대여소", LatLng(37.343991285297, 126.74729588817),
-  //       "월 ~ 금\n(07시 ~ 21시)\n토요일, 일요일, 공휴일 휴무\n☎ 031-433-0101"),
-  //   MarkerInfo("월곧 자전거 대여소", LatLng(37.3917953, 126.742692),
-  //       "수 ~ 일\n(09시 ~ 20시)\n월요일, 화요일, 공휴일 휴무\n☎ 031-433-0101")
-  // ];
-
-  // @override
-  // void initState(){
-  //   super.initState();
-  //   _markers.add(Marker(
-  //       markerId: MarkerId("1"),
-  //       draggable: true,
-  //       onTap: () => print("Marker!"),
-  //       position: const LatLng(37.343991285297, 126.74729588817)
-  //   ));
-  // }
