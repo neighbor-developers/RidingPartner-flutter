@@ -814,7 +814,7 @@ class _HomePageState extends State<HomePage>
                 Container(
                   height: 130,
                   padding: const EdgeInsets.all(15),
-                  alignment: Alignment.bottomLeft,
+                  alignment: Alignment.bottomRight,
                   child: Text(
                     "${place.title}",
                     style: const TextStyle(
