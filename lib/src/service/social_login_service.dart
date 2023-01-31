@@ -147,27 +147,15 @@ class SocialLoginService {
   final FirebaseDatabaseService _databaseService = FirebaseDatabaseService();
 
   Future<bool> withdrawal() async {
-    while (true) {
-      final googleUser = await GoogleSignIn().signIn();
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser!.authentication;
-
-      final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      await fAuth.currentUser?.reauthenticateWithCredential(credential);
-      _databaseService.delRecord();
-      try {
-        await fAuth.currentUser?.delete();
-        fAuth.signOut();
-        break;
-      } catch (e) {
-        print('계정탈퇴에 실패했습니다.');
-      }
-      Future.delayed(const Duration(seconds: 3));
+    _databaseService.delRecord();
+    try {
+      await fAuth.currentUser?.delete();
+      fAuth.signOut();
+    } catch (e) {
+      print('계정탈퇴에 실패했습니다.');
     }
+    Future.delayed(const Duration(seconds: 3));
+
     return true;
   }
 
