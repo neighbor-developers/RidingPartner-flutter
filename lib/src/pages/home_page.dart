@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage>
                 height: MediaQuery.of(context).size.height,
                 child: SingleChildScrollView(
                     child: SizedBox(
-                  width: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
                   child: Column(
                     children: [
                       recommendPlaceText(
@@ -114,7 +114,12 @@ class _HomePageState extends State<HomePage>
                           recommendPlace(_homeRecordProvider.recommendPlace2)
                         ]),
                       ),
-                      weekWidget()
+                      weekWidget(),
+                      settingBox(),
+                      SizedBox(
+                        height: 60,
+                        width: MediaQuery.of(context).size.width,
+                      )
                     ],
                   ),
                 ))),
@@ -151,7 +156,8 @@ class _HomePageState extends State<HomePage>
                       const SizedBox(
                         height: 8,
                       ),
-                      if (place.roadAddress == null) ...[
+                      if (place.roadAddress == null ||
+                          place.roadAddress == "") ...[
                         Text(
                           place.jibunAddress!,
                           style: const TextStyle(
@@ -221,7 +227,7 @@ class _HomePageState extends State<HomePage>
     switch (_homeRecordProvider.recordState) {
       case RecordState.loading:
         return const SizedBox(
-            height: 100,
+            height: 200,
             child: Center(
               child: Text(
                 "라이더님의 주행 기록을 불러오는 중입니다",
@@ -230,7 +236,7 @@ class _HomePageState extends State<HomePage>
             ));
       case RecordState.none:
         return const SizedBox(
-            height: 100,
+            height: 200,
             child: Center(
               child: Text(
                 "아직 주행한 기록이 없습니다\n라이딩 파트너와 함께 달려보세요!",
@@ -239,7 +245,7 @@ class _HomePageState extends State<HomePage>
             ));
       case RecordState.empty:
         return SizedBox(
-            height: 100,
+            height: 200,
             child: Center(
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -347,11 +353,6 @@ class _HomePageState extends State<HomePage>
               height: 330,
               width: MediaQuery.of(context).size.width,
               child: recordChart()),
-          settingBox(),
-          SizedBox(
-            height: 60,
-            width: MediaQuery.of(context).size.width,
-          )
         ]);
 
       default:
@@ -547,12 +548,6 @@ class _HomePageState extends State<HomePage>
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w700,
                       color: Color.fromRGBO(51, 51, 51, 1))),
-              // Text('km',
-              //     style: TextStyle(
-              //         fontSize: 12,
-              //         fontFamily: 'Pretendard',
-              //         fontWeight: FontWeight.w300,
-              //         color: Color.fromRGBO(51, 51, 51, 1))),
             ],
           ),
           Container(
@@ -565,7 +560,7 @@ class _HomePageState extends State<HomePage>
                 Positioned(
                   left: 0,
                   top: 0,
-                  child: Text('    ${_getMaxDistance(_records)}km',
+                  child: Text('    ${_getMaxDistance(_records) + 1}km',
                       style: const TextStyle(
                           fontSize: 12,
                           fontFamily: 'Pretendard',
@@ -575,17 +570,22 @@ class _HomePageState extends State<HomePage>
                 Positioned(
                   right: 0,
                   bottom: 20,
-                  child: Text('   ${_getLastRecordDate(_records)}',
-                      style: const TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w300,
-                          color: Color.fromRGBO(51, 51, 51, 1))),
+                  child:
+                      //Text('최근 기록 \n----->',
+                      Text('   ${_getLastRecordDate(_records)}',
+                          style: const TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w300,
+                              color: Color.fromRGBO(51, 51, 51, 1))),
                 ),
-                const VerticalDivider(
-                    width: 1,
-                    color: Color.fromRGBO(234, 234, 234, 1),
-                    thickness: 1.0),
+                Container(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: const VerticalDivider(
+                      width: 1,
+                      color: Color.fromRGBO(234, 234, 234, 1),
+                      thickness: 1.0),
+                ),
                 Column(
                   children: [
                     Container(
@@ -595,7 +595,7 @@ class _HomePageState extends State<HomePage>
                     ),
                     const SizedBox(
                         width: 330,
-                        height: 0.5,
+                        height: 0,
                         child: Divider(
                             color: Color.fromRGBO(234, 234, 234, 1),
                             thickness: 1.0)),
@@ -803,7 +803,7 @@ class _HomePageState extends State<HomePage>
                               decoration: const BoxDecoration(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(20)),
-                                  color: Color.fromARGB(90, 0, 0, 0)))
+                                  color: Color.fromARGB(45, 0, 0, 0)))
                         ]))),
                 Container(
                   height: 130,
@@ -816,6 +816,7 @@ class _HomePageState extends State<HomePage>
                         fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w600,
                         color: Colors.white),
+                    textAlign: TextAlign.end,
                   ),
                 )
               ],
@@ -860,51 +861,6 @@ class _HomePageState extends State<HomePage>
           ],
         )));
   }
-
-  // Widget? floatingButtons() {
-  //   return SpeedDial(
-  //     animatedIcon: AnimatedIcons.menu_close,
-  //     visible: true,
-  //     curve: Curves.bounceIn,
-  //     backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-  //     children: [
-  //       SpeedDialChild(
-  //           child: const Icon(Icons.settings_sharp, color: Colors.white),
-  //           label: "설정",
-  //           labelStyle: const TextStyle(
-  //               fontWeight: FontWeight.w500,
-  //               color: Colors.white,
-  //               fontSize: 13.0),
-  //           backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-  //           labelBackgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-  //           onTap: () {
-  //             Navigator.of(context).push(MaterialPageRoute(
-  //                 builder: (context) => ChangeNotifierProvider(
-  //                       create: (context) => SettingProvider(),
-  //                       child: const SettingPage(),
-  //                     )));
-  //           }),
-  //       SpeedDialChild(
-  //         child: const Icon(
-  //           Icons.add_chart_rounded,
-  //           color: Colors.white,
-  //         ),
-  //         label: "내 기록",
-  //         backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-  //         labelBackgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-  //         labelStyle: const TextStyle(
-  //             fontWeight: FontWeight.w500, color: Colors.white, fontSize: 13.0),
-  //         onTap: () {
-  //           Navigator.of(context).push(MaterialPageRoute(
-  //               builder: (context) => ChangeNotifierProvider(
-  //                     create: (context) => RecordListProvider(),
-  //                     child: const RecordListPage(),
-  //                   )));
-  //         },
-  //       )
-  //     ],
-  //   );
-  // }
 
   int _getMaxDistance(List<Record> records) {
     double maxDistance = 0;
