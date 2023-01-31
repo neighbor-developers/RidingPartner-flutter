@@ -13,11 +13,7 @@
     },
     {
         "id": "1199341197",
-<<<<<<< HEAD
         "title": "갯골생태공원 벚꽃터널",
-=======
-        "title": "갯골생태공원\n벚꽃터널",
->>>>>>> refs/remotes/origin/dev
         "image": "assets/images/places/picture_gaetgol_ecological_park.jpg",
         "marker": "",
         "type": "",
@@ -78,14 +74,14 @@
     {
         "id": "",
         "title": "미생의 다리",
-        "image": "assets/images/places/picture_misaeng's_bridge.jpg",
+        "image": "assets/images/places/picture_misaeng's_bridge_2.jpg",
         "marker": "assets/icons/place_park.png",
         "type": "park",
         "latitude": "37.399584399999995",
         "longitude": "126.75299469999999",
         "jibunAddress": "경기도 시흥시 방산동 서해안로 779-43 미생의 다리",
         "roadAddress": "",
-        "description": "경기관광공사에 허락맡기"
+        "description": "한국관광공사 미생의 다리"
     },
     {
         "id": "35795149",
@@ -219,13 +215,13 @@
     {
         "id": "18254017",
         "title": "정왕동 체육공원",
-        "image": "assets/images/places/tukorea.jpeg",
+        "image": "assets/images/places/picture_jeongwang_sports_park.jpeg",
         "marker": "assets/icons/place_park.png",
         "type": "park",
         "latitude": "37.3395459",
         "longitude": "126.7579547",
         "jibunAddress": "경기도 시흥시 정왕동 2158",
-        "roadAddress": "경기도 시흥시 역전로 50 시흥시 배드민턴장",
+        "roadAddress": "한국관광공사",
         "description": ""
     }
 ]
