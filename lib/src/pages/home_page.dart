@@ -548,12 +548,6 @@ class _HomePageState extends State<HomePage>
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w700,
                       color: Color.fromRGBO(51, 51, 51, 1))),
-              // Text('km',
-              //     style: TextStyle(
-              //         fontSize: 12,
-              //         fontFamily: 'Pretendard',
-              //         fontWeight: FontWeight.w300,
-              //         color: Color.fromRGBO(51, 51, 51, 1))),
             ],
           ),
           Container(
@@ -586,7 +580,7 @@ class _HomePageState extends State<HomePage>
                               color: Color.fromRGBO(51, 51, 51, 1))),
                 ),
                 Container(
-                  padding: EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.only(bottom: 10),
                   child: const VerticalDivider(
                       width: 1,
                       color: Color.fromRGBO(234, 234, 234, 1),
@@ -867,51 +861,6 @@ class _HomePageState extends State<HomePage>
           ],
         )));
   }
-
-  // Widget? floatingButtons() {
-  //   return SpeedDial(
-  //     animatedIcon: AnimatedIcons.menu_close,
-  //     visible: true,
-  //     curve: Curves.bounceIn,
-  //     backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-  //     children: [
-  //       SpeedDialChild(
-  //           child: const Icon(Icons.settings_sharp, color: Colors.white),
-  //           label: "설정",
-  //           labelStyle: const TextStyle(
-  //               fontWeight: FontWeight.w500,
-  //               color: Colors.white,
-  //               fontSize: 13.0),
-  //           backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-  //           labelBackgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-  //           onTap: () {
-  //             Navigator.of(context).push(MaterialPageRoute(
-  //                 builder: (context) => ChangeNotifierProvider(
-  //                       create: (context) => SettingProvider(),
-  //                       child: const SettingPage(),
-  //                     )));
-  //           }),
-  //       SpeedDialChild(
-  //         child: const Icon(
-  //           Icons.add_chart_rounded,
-  //           color: Colors.white,
-  //         ),
-  //         label: "내 기록",
-  //         backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-  //         labelBackgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-  //         labelStyle: const TextStyle(
-  //             fontWeight: FontWeight.w500, color: Colors.white, fontSize: 13.0),
-  //         onTap: () {
-  //           Navigator.of(context).push(MaterialPageRoute(
-  //               builder: (context) => ChangeNotifierProvider(
-  //                     create: (context) => RecordListProvider(),
-  //                     child: const RecordListPage(),
-  //                   )));
-  //         },
-  //       )
-  //     ],
-  //   );
-  // }
 
   int _getMaxDistance(List<Record> records) {
     double maxDistance = 0;
