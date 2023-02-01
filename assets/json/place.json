@@ -180,14 +180,14 @@
     {
         "id": "21805866",
         "title": "월곶역 자전거 대여소",
-        "image": "assets/images/places/gojan_station.png",
+        "image": "assets/images/places/picture_wolgot_station.JPG",
         "marker": "assets/icons/place_rental.png",
         "type": "rental",
         "latitude": "37.3168245",
         "longitude": "126.8234083",
         "jibunAddress": "경기도 안산시 단원구 고잔동 453-53",
         "roadAddress": "경기도 안산시 단원구 중앙대로 784 고잔역",
-        "description": ""
+        "description": "교통평론가 한우진 - 출처 표기 요청"
     },
     {
         "id": "13491554",
