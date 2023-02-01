@@ -12,16 +12,16 @@
         "description": "한국관광공사 사진 갤러리, 촬영자 박윤준"
     },
     {
-        "id": "1199341197",
-        "title": "갯골생태공원\n벚꽃터널",
+        "id": "FOhqoDZZ",
+        "title": "갯골생태공원 벚꽃터널",
         "image": "assets/images/places/picture_gaetgol_ecological_park.jpg",
         "marker": "",
-        "type": "",
-        "latitude": "37.3889771",
-        "longitude": "126.7804387",
-        "jibunAddress": "경기도 시흥시 장곡동 724-10",
-        "roadAddress": "경기도 시흥시 동서로 287",
-        "description": ""
+        "type": "park",
+        "latitude": "37.390592483462605",
+        "longitude": "126.78099832254267",
+        "jibunAddress": "경기 시흥시 장곡동 724-32",
+        "roadAddress": "",
+        "description": "한국관광공사 사진 갤러리, 촬영자 박윤준"
     },
     {
         "id": "1903881322",
