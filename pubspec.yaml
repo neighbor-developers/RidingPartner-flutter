@@ -75,6 +75,7 @@ dependencies:
   logging: ^1.1.1
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.11.0
   flutter_test:
     sdk: flutter
     
