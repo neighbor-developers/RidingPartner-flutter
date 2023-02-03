@@ -215,13 +215,13 @@
     {
         "id": "18254017",
         "title": "정왕동 체육공원",
-        "image": "assets/images/places/tukorea.jpeg",
+        "image": "assets/images/places/picture_jeongwang_sports_park.jpeg",
         "marker": "assets/icons/place_park.png",
         "type": "park",
         "latitude": "37.3395459",
         "longitude": "126.7579547",
         "jibunAddress": "경기도 시흥시 정왕동 2158",
         "roadAddress": "경기도 시흥시 역전로 50 시흥시 배드민턴장",
-        "description": ""
+        "description": "한국관광공사 정왕체육공원"
     }
 ]
