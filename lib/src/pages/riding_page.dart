@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
@@ -54,9 +53,6 @@ class _RidingPageState extends State<RidingPage> {
   }
 
   final myLocation = MyLocation();
-
-  String floatBtnLabel = "일시중지";
-  IconData floatBtnIcon = Icons.pause;
 
   @override
   Widget build(BuildContext context) {

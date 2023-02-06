@@ -176,6 +176,7 @@ class MapSampleState extends State<MapSearchPage> {
             bottom: buttonsPositionAlpha + 50,
             left: 20,
             child: FloatingActionButton(
+              heroTag: 'mypos',
               backgroundColor: Colors.white,
               child: ImageIcon(
                   const AssetImage('assets/icons/search_myLocation_button.png'),
@@ -365,7 +366,6 @@ class MapSampleState extends State<MapSearchPage> {
             shape:
                 const BeveledRectangleBorder(borderRadius: BorderRadius.zero),
             elevation: 10,
-            heroTag: 'navigateStartBtn',
             onPressed: () {
               if (mapSearchProvider.destination == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
