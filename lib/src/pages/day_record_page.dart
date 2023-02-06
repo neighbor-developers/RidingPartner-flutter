@@ -27,6 +27,7 @@ class _DayRecordPageState extends State<DayRecordPage> {
   Widget build(BuildContext context) {
     _recordProvider = Provider.of<RidingResultProvider>(context);
     num speed = 0;
+    late List<String>? image = _record.images;
 
     const textStyle = TextStyle(
         fontSize: 18.5,
@@ -47,7 +48,7 @@ class _DayRecordPageState extends State<DayRecordPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-               if(_record.images != null && _record.images!.length > 1)...[
+               if(image != null && image.length > 1)...[
               CarouselSlider.builder(
                 options: CarouselOptions(
                   initialPage: 0,
@@ -57,16 +58,16 @@ class _DayRecordPageState extends State<DayRecordPage> {
                     activeIndex = index;
                   }),
                 ),
-                itemCount: _record.images!.length,
+                itemCount: image.length,
                 itemBuilder: (context, index, realIndex) {
                   final path = _record.images![index];
                   return buildImage(path, index);
                 },
-              )] else if(_record.images != null && _record.images!.length == 1)...[
+              )] else if(image != null && image.length == 1)...[
                   SizedBox(
                   width: double.infinity,
                   height: 240,
-                  child: Image.network(_record.images![0], fit: BoxFit.cover))
+                  child: Image.network(image[0], fit: BoxFit.cover))
               ] else...[
                 SizedBox(
                   width: double.infinity,
