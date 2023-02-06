@@ -26,7 +26,7 @@ class _NavigationPageState extends State<NavigationPage> {
   late NavigationProvider _navigationProvider;
   late RidingProvider _ridingProvider;
 
-  LocationTrackingMode _locationTrackingMode = LocationTrackingMode.NoFollow;
+  LocationTrackingMode _locationTrackingMode = LocationTrackingMode.None;
   late List<Marker> _markers = [];
   late OverlayImage _markerIcon;
   Completer<NaverMapController> _controller = Completer();
@@ -48,13 +48,6 @@ class _NavigationPageState extends State<NavigationPage> {
     setRouteMarkers();
 
     if (_navigationProvider.position != null) {
-      initCameraPosition = LatLng(
-          (_navigationProvider.position!.latitude +
-                  double.parse(_navigationProvider.course.last.latitude!)) /
-              2,
-          ((_navigationProvider.position!.longitude) +
-                  double.parse(_navigationProvider.course.last.longitude!)) /
-              2);
       _markerIcon = await OverlayImage.fromAssetImage(
           assetName: 'assets/icons/my_location.png');
 
@@ -66,8 +59,6 @@ class _NavigationPageState extends State<NavigationPage> {
         position: LatLng(_navigationProvider.position!.latitude,
             _navigationProvider.position!.longitude),
       ));
-    } else {
-      initCameraPosition = const LatLng(37.37731944, 126.8050778);
     }
   }
 
@@ -105,7 +96,7 @@ class _NavigationPageState extends State<NavigationPage> {
         markerId: _navigationProvider.course.last.title ?? "",
         position: LatLng(
             double.parse(_navigationProvider.course.last.latitude!),
-            double.parse(_navigationProvider.course[0].longitude!)));
+            double.parse(_navigationProvider.course.last.longitude!)));
   }
 
   int polylineWidth = 6;
@@ -198,8 +189,6 @@ class _NavigationPageState extends State<NavigationPage> {
                         children: <Widget>[
                           NaverMap(
                             onMapCreated: onMapCreated,
-                            initialCameraPosition:
-                                CameraPosition(target: initCameraPosition),
                             pathOverlays:
                                 _navigationProvider.polylinePoints.length > 1
                                     ? {
