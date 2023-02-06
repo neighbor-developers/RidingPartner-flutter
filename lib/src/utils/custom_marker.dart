@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CustomMarker {
   // 마커 asset 아이콘으로 넣기, width로 사이즈 조절
@@ -19,10 +18,5 @@ class CustomMarker {
     return (await fi.image.toByteData(format: ImageByteFormat.png))!
         .buffer
         .asUint8List();
-  }
-
-  Future<BitmapDescriptor> getPictuerMarker(String path) async {
-    Uint8List makerIconBytes = await getBytesFromAsset(path);
-    return BitmapDescriptor.fromBytes(makerIconBytes);
   }
 }

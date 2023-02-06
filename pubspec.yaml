@@ -74,6 +74,7 @@ dependencies:
   smooth_page_indicator: ^1.0.0+2
   logging: ^1.1.1
   shared_preferences_ios: ^2.1.1
+  flutter_naver_map: ^0.10.6
 
 dev_dependencies:
   flutter_launcher_icons: ^0.11.0

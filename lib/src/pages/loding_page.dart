@@ -114,7 +114,6 @@ class _LodingPageState extends State<LodingPage> {
                       height: 20,
                     ),
                     _kakaoLoginButton(),
-                    _naverLoginButton(),
                     _googleLoginButton(),
                     _appleLoginButton(),
                     Container(
