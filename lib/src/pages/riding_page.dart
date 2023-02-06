@@ -1,21 +1,16 @@
-import 'dart:async';
-import 'dart:typed_data';
 
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/pages/record_page.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:wakelock/wakelock.dart';
-
 import '../provider/riding_result_provider.dart';
-import '../utils/bytesFromAsset.dart';
 import '../utils/timestampToText.dart';
 import '../utils/user_location.dart';
 import '../widgets/dialog.dart';
-
-// https://funncy.github.io/flutter/2020/07/21/flutter-google-map-marker/
 
 class RidingPage extends StatefulWidget {
   const RidingPage({super.key});
@@ -25,11 +20,11 @@ class RidingPage extends StatefulWidget {
 }
 
 class _RidingPageState extends State<RidingPage> {
-  Completer<GoogleMapController> _controller = Completer();
   late RidingProvider _ridingProvider;
-  LatLng initCameraPosition = const LatLng(37.37731944, 126.8050778);
-  Set<Marker> myPositionMarker = {};
-  late BitmapDescriptor myPositionIcon;
+  LocationTrackingMode _locationTrackingMode = LocationTrackingMode.Face;
+  late List<Marker> _markers = [];
+  late OverlayImage _markerIcon;
+  Completer<NaverMapController> _controller = Completer();
 
   @override
   void initState() {
@@ -41,20 +36,20 @@ class _RidingPageState extends State<RidingPage> {
     await Provider.of<RidingProvider>(context, listen: false).getLocation();
 
     if (_ridingProvider.position != null) {
-      initCameraPosition = LatLng(_ridingProvider.position!.latitude,
-          _ridingProvider.position!.longitude);
-      final Uint8List markerIcon =
-          await getBytesFromAsset('assets/icons/my_location.png', 200);
-      myPositionIcon = BitmapDescriptor.fromBytes(markerIcon);
-
-      myPositionMarker.add(Marker(
-          markerId: const MarkerId("currentLocation"),
-          icon: BitmapDescriptor.fromBytes(markerIcon),
-          position: LatLng(_ridingProvider.position!.latitude,
-              _ridingProvider.position!.longitude)));
+      _markerIcon = await OverlayImage.fromAssetImage(
+          assetName: 'assets/icons/my_location.png');
       _ridingProvider.setMapComponent();
-    } else {
-      initCameraPosition = const LatLng(37.37731944, 126.8050778);
+
+      _markers = [
+        Marker(
+            anchor: AnchorPoint(0.5, 0.5),
+            markerId: "currentLocation",
+            width: 45,
+            height: 45,
+            icon: _markerIcon,
+            position: LatLng(_ridingProvider.position!.latitude,
+                _ridingProvider.position!.longitude))
+      ];
     }
   }
 
@@ -68,27 +63,22 @@ class _RidingPageState extends State<RidingPage> {
     _ridingProvider = Provider.of<RidingProvider>(context);
     Position? position = _ridingProvider.position;
 
-    void setController() async {
-      GoogleMapController googleMapController = await _controller.future;
+    if (_ridingProvider.state != RidingState.before) {
       if (position != null) {
-        googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-            CameraPosition(
-                target: LatLng(position.latitude, position.longitude),
-                zoom: 19,
-                bearing: position.heading)));
-
-        myPositionMarker = {
+        _markers = [
           Marker(
-              markerId: const MarkerId("currentLocation"),
-              icon: myPositionIcon,
+              anchor: AnchorPoint(0.5, 0.5),
+              markerId: "currentLocation",
+              width: 45,
+              height: 45,
+              icon: _markerIcon,
               position: LatLng(_ridingProvider.position!.latitude,
                   _ridingProvider.position!.longitude))
-        };
+        ];
       }
-    }
-
-    if (_ridingProvider.state != RidingState.before) {
-      setController();
+      if (_locationTrackingMode != LocationTrackingMode.Face) {
+        _locationTrackingMode = LocationTrackingMode.Face;
+      }
     }
 
     return WillPopScope(
@@ -120,25 +110,21 @@ class _RidingPageState extends State<RidingPage> {
             ),
             body: Stack(
               children: <Widget>[
-                GoogleMap(
-                  mapType: MapType.normal,
+                NaverMap(
+                  onMapCreated: onMapCreated,
+                  pathOverlays: _ridingProvider.polylineCoordinates.length > 1
+                      ? {
+                          PathOverlay(PathOverlayId('path'),
+                              _ridingProvider.polylineCoordinates)
+                        }
+                      : {},
+                  mapType: MapType.Basic,
+                  initLocationTrackingMode: LocationTrackingMode.Face,
                   initialCameraPosition: CameraPosition(
-                    target: LatLng(myLocation.position?.latitude ?? 37.0,
-                        myLocation.position?.longitude ?? 126.0),
-                    zoom: 12.6,
-                  ),
-                  onMapCreated: (GoogleMapController controller) {
-                    _controller.complete(controller);
-                  },
-                  myLocationButtonEnabled: false,
-                  polylines: {
-                    Polyline(
-                        polylineId: const PolylineId("poly"),
-                        width: 5,
-                        color: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-                        points: _ridingProvider.polylineCoordinates),
-                  },
-                  markers: myPositionMarker,
+                      target: LatLng(position!.latitude, position.longitude),
+                      zoom: 19),
+                  locationButtonEnable: false,
+                  markers: _markers,
                 ),
                 Positioned(bottom: 0, child: record(_ridingProvider.state))
               ],
@@ -151,6 +137,11 @@ class _RidingPageState extends State<RidingPage> {
             return backDialog(context, 1);
           }
         });
+  }
+
+  void onMapCreated(NaverMapController controller) {
+    if (_controller.isCompleted) _controller = Completer();
+    _controller.complete(controller);
   }
 
   Widget record(RidingState state) {

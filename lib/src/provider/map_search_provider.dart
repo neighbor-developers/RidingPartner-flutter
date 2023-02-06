@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart' as google_map;
 import 'package:http/http.dart' as http;
 import 'package:ridingpartner_flutter/src/models/place.dart';
 import 'package:ridingpartner_flutter/src/utils/user_location.dart';
@@ -37,8 +37,8 @@ class MapSearchProvider extends ChangeNotifier {
 
   List<Guide> route = [];
 
-  List<google_map.LatLng> _polylinePoints = [];
-  List<google_map.LatLng> get polylinePoints => _polylinePoints;
+  List<LatLng> _polylinePoints = [];
+  List<LatLng> get polylinePoints => _polylinePoints;
 
   Place? _myLocation;
 
@@ -167,12 +167,11 @@ class MapSearchProvider extends ChangeNotifier {
       List<PolylineWayPoint>? turnPoints = route
           .map((route) => PolylineWayPoint(location: route.turnPoint ?? ""))
           .toList();
-      List<google_map.LatLng> pointLatLngs = [];
+      List<LatLng> pointLatLngs = [];
 
       turnPoints.forEach((element) {
         List<String> a = element.location.split(',');
-        pointLatLngs
-            .add(google_map.LatLng(double.parse(a[1]), double.parse(a[0])));
+        pointLatLngs.add(LatLng(double.parse(a[1]), double.parse(a[0])));
       });
 
       _polylinePoints = pointLatLngs;

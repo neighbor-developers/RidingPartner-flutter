@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart' as naver;
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart' as google_map;
 import 'package:latlong2/latlong.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
@@ -33,8 +33,8 @@ class NavigationProvider with ChangeNotifier {
   late List<Place> _ridingCourse;
   List<Guide> _route = [];
   List<int> _distances = [];
-  List<google_map.LatLng> _polylinePoints = [];
-  List<google_map.LatLng> get polylinePoints => _polylinePoints;
+  List<naver.LatLng> _polylinePoints = [];
+  List<naver.LatLng> get polylinePoints => _polylinePoints;
 
   late Guide _goalPoint;
   late Place _goalDestination;
@@ -209,7 +209,7 @@ class NavigationProvider with ChangeNotifier {
             _goalPoint = _route[0]; //
             _nextPoint = null;
             if (isFirst) {
-              _polylinePoints.removeAt(0);
+              // _polylinePoints.removeAt(0);
               isFirst = false;
             }
             _remainedDistance -= _distances.last;
@@ -221,7 +221,7 @@ class NavigationProvider with ChangeNotifier {
             if (isFirst) {
               isFirst = false;
             } else {
-              _polylinePoints.removeAt(0);
+              // _polylinePoints.removeAt(0);
             }
             _remainedDistance -= _distances.last;
             _distances.removeLast();
@@ -284,12 +284,11 @@ class NavigationProvider with ChangeNotifier {
     List<PolylineWayPoint>? turnPoints = _route
         .map((route) => PolylineWayPoint(location: route.turnPoint ?? ""))
         .toList();
-    List<google_map.LatLng> pointLatLngs = [];
+    List<naver.LatLng> pointLatLngs = [];
 
     for (var element in turnPoints) {
       List<String> a = element.location.split(',');
-      pointLatLngs
-          .add(google_map.LatLng(double.parse(a[1]), double.parse(a[0])));
+      pointLatLngs.add(naver.LatLng(double.parse(a[1]), double.parse(a[0])));
     }
 
     _polylinePoints = pointLatLngs;

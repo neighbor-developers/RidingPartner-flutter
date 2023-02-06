@@ -3,9 +3,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart' as naver;
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart' as google_map;
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
@@ -37,8 +37,8 @@ class RidingProvider with ChangeNotifier {
   bool visivility = false;
 
   //final 붙여도 되나? -> 안돼요
-  List<google_map.LatLng> _polylineCoordinates = [];
-  List<google_map.LatLng> get polylineCoordinates => _polylineCoordinates;
+  List<naver.LatLng> _polylineCoordinates = [];
+  List<naver.LatLng> get polylineCoordinates => _polylineCoordinates;
   PolylinePoints polylinePoints = PolylinePoints();
 
   double _sumDistance = 0.0; // 총거리
@@ -53,8 +53,6 @@ class RidingProvider with ChangeNotifier {
   Position? get position => _position;
 
   Uint8List? customIcon;
-  google_map.BitmapDescriptor pictureIcon =
-      google_map.BitmapDescriptor.defaultMarker;
 
   setRidingState(RidingState state) {
     _ridingState = state;
@@ -97,7 +95,7 @@ class RidingProvider with ChangeNotifier {
     _positionStream.controller.stream.listen((pos) {
       _position = pos;
       _polylineCoordinates
-          .add(google_map.LatLng(_position!.latitude, _position!.longitude));
+          .add(naver.LatLng(_position!.latitude, _position!.longitude));
       //addPolyline();
     });
     _stopwatch.start();

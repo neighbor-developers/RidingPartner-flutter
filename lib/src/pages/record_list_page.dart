@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
-import 'package:ridingpartner_flutter/src/pages/record_page.dart';
-import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/record_list_provider.dart';
 
 import '../provider/riding_result_provider.dart';
-import '../utils/timestampToText.dart';
 import '../widgets/appbar.dart';
 import 'day_record_page.dart';
 
@@ -82,7 +77,8 @@ class _RecordListPageState extends State<RecordListPage> {
                           )))
             },
         child: Container(
-            padding: const EdgeInsets.only(top: 15, bottom: 10, left: 15, right: 13),
+            padding:
+                const EdgeInsets.only(top: 15, bottom: 10, left: 15, right: 13),
             // // color: Color.fromARGB(167, 251, 150, 50),
             // height: MediaQuery.of(context).size.height / 8,
             width: double.infinity,

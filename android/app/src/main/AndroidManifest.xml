@@ -11,11 +11,12 @@
         android:label="ridingpartner_flutter"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+       
         <meta-data
-              android:name="com.google.android.geo.API_KEY"
-              android:value="@string/google_geo_api_key"
-              />
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="@string/naver_client_id" />
         <activity 
+
             android:name="com.kakao.sdk.flutter.AuthCodeCustomTabsActivity"
             android:exported="true">
             <intent-filter android:label="flutter_web_auth">
@@ -58,7 +59,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <meta-data
+        <!-- <meta-data
             android:name="com.naver.sdk.clientId"
             android:value="@string/client_id" />
         <meta-data
@@ -66,7 +67,7 @@
             android:value="@string/client_secret" />
         <meta-data
             android:name="com.naver.sdk.clientName"
-            android:value="@string/client_name" />
+            android:value="@string/client_name" /> -->
                 
     </application>
 </manifest>
