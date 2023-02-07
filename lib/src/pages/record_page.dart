@@ -134,7 +134,7 @@ class _RecordState extends State<RecordPage> {
                               Text(timestampToText(_record.timestamp),
                                   style: textStyle),
                               Text(
-                                  "${_record.distance / _record.timestamp} km/h",
+                                  "${(_record.distance / _record.timestamp).toStringAsFixed(1)} km/h",
                                   style: textStyle),
                               Text("${_record.distance / 1000} km",
                                   style: textStyle),
