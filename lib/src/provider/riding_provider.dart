@@ -102,14 +102,14 @@ class RidingProvider with ChangeNotifier {
 
     _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
       if (_position != null) {
-        if (_time.inSeconds / 3 == 0) {
+        if (_stopwatch.elapsed.inSeconds % 3 == 0) {
           _calRecord(_position!);
         }
       }
       if (isDisposed) return;
       notifyListeners();
       _time = _stopwatch.elapsed;
-      if (_time.inSeconds / 60 == 0) {
+      if (_time.inSeconds % 60 == 0) {
         _saveRecord();
       }
     }));
