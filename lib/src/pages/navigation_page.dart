@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:math';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -402,7 +400,7 @@ class _NavigationPageState extends State<NavigationPage> {
                               children: [
                                 const Text('남은거리', style: titleStyle),
                                 Text(
-                                  ("${(((_navigationProvider.remainedDistance) / 100).roundToDouble()) / 10}km")
+                                  ("${_navigationProvider.remainedDistance.toStringAsFixed(2)}km")
                                       .toString(),
                                   style: dataStyle,
                                 )
@@ -416,7 +414,7 @@ class _NavigationPageState extends State<NavigationPage> {
                                   style: titleStyle,
                                 ),
                                 Text(
-                                  "${_ridingProvider.speed.roundToDouble()}km/h",
+                                  "${_ridingProvider.speed.toStringAsFixed(1)}km/h",
                                   style: dataStyle,
                                 )
                               ],

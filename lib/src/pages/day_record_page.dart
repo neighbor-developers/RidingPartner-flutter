@@ -48,33 +48,34 @@ class _DayRecordPageState extends State<DayRecordPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-               if(image != null && image.length > 1)...[
-              CarouselSlider.builder(
-                options: CarouselOptions(
-                  initialPage: 0,
-                  viewportFraction: 1,
-                  enlargeCenterPage: true,
-                  onPageChanged: (index, reason) => setState(() {
-                    activeIndex = index;
-                  }),
-                ),
-                itemCount: image.length,
-                itemBuilder: (context, index, realIndex) {
-                  final path = _record.images![index];
-                  return buildImage(path, index);
-                },
-              )] else if(image != null && image.length == 1)...[
-                  SizedBox(
-                  width: double.infinity,
-                  height: 240,
-                  child: Image.network(image[0], fit: BoxFit.cover))
-              ] else...[
+              if (image != null && image.length > 1) ...[
+                CarouselSlider.builder(
+                  options: CarouselOptions(
+                    initialPage: 0,
+                    viewportFraction: 1,
+                    enlargeCenterPage: true,
+                    onPageChanged: (index, reason) => setState(() {
+                      activeIndex = index;
+                    }),
+                  ),
+                  itemCount: image.length,
+                  itemBuilder: (context, index, realIndex) {
+                    final path = _record.images![index];
+                    return buildImage(path, index);
+                  },
+                )
+              ] else if (image != null && image.length == 1) ...[
                 SizedBox(
-                  width: double.infinity,
-                  height: 240,
-                  child: Image.asset("assets/images/img_loading.png", fit: BoxFit.cover))
+                    width: double.infinity,
+                    height: 240,
+                    child: Image.network(image[0], fit: BoxFit.cover))
+              ] else ...[
+                SizedBox(
+                    width: double.infinity,
+                    height: 240,
+                    child: Image.asset("assets/images/img_loading.png",
+                        fit: BoxFit.cover))
               ],
-
               Align(alignment: Alignment.bottomCenter, child: buildIndicator())
             ]),
             Container(
@@ -118,16 +119,15 @@ class _DayRecordPageState extends State<DayRecordPage> {
                             style: recordStyle),
                         Text(timestampToText(_record.timestamp),
                             style: recordStyle),
-                        if(_record.timestamp != 0)...[
+                        if (_record.timestamp != 0) ...[
                           Text(
                               "${(_record.distance / _record.timestamp).toStringAsFixed(1)} km/h",
-                              style: recordStyle)]
-                        else...[
-                          const Text(
-                              "0.0 km/h",
                               style: recordStyle)
+                        ] else ...[
+                          const Text("0.0 km/h", style: recordStyle)
                         ],
-                        Text("${_record.distance / 1000} km",
+                        Text(
+                            "${(_record.distance / 1000).toStringAsFixed(2)} km",
                             style: recordStyle),
                         Text(
                             "${(hKcal * (_record.timestamp) / 3600).toStringAsFixed(1)} kcal",
