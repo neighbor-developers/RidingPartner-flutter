@@ -133,16 +133,15 @@ class _RecordState extends State<RecordPage> {
                                   style: textStyle),
                               Text(timestampToText(_record.timestamp),
                                   style: textStyle),
-                              if(_record.timestamp != 0)...[
-                              Text(
-                                  "${(_record.distance / _record.timestamp).toStringAsFixed(1)} km/h",
-                                  style: textStyle)]
-                              else...[
+                              if (_record.timestamp != 0) ...[
                                 Text(
-                                    "0.0 km/h",
+                                    "${(_record.distance / _record.timestamp).toStringAsFixed(1)} km/h",
                                     style: textStyle)
+                              ] else ...[
+                                Text("0.0 km/h", style: textStyle)
                               ],
-                              Text("${_record.distance / 1000} km",
+                              Text(
+                                  "${(_record.distance / 1000).toStringAsFixed(2)} km",
                                   style: textStyle),
                               Text(
                                   "${(hKcal * (_record.timestamp) / 3600).toStringAsFixed(1)} kcal",

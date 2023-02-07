@@ -209,7 +209,8 @@ class _RidingPageState extends State<RidingPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             const Text('거리', style: titleStyle),
-                            Text("${_ridingProvider.distance}km",
+                            Text(
+                                "${(_ridingProvider.distance / 1000).toStringAsFixed(2)}km",
                                 style: dataStyle)
                           ],
                         ),
@@ -221,7 +222,7 @@ class _RidingPageState extends State<RidingPage> {
                               style: titleStyle,
                             ),
                             Text(
-                              "${_ridingProvider.speed.roundToDouble()}km/h",
+                              "${_ridingProvider.speed.toStringAsFixed(1)}km/h",
                               style: dataStyle,
                             )
                           ],
