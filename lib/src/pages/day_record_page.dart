@@ -118,7 +118,7 @@ class _DayRecordPageState extends State<DayRecordPage> {
                             style: recordStyle),
                         Text(timestampToText(_record.timestamp),
                             style: recordStyle),
-                        Text("${_record.distance / _record.timestamp} km/h",
+                        Text("${(_record.distance / _record.timestamp).toStringAsFixed(1)} km/h",
                             style: recordStyle),
                         Text("${_record.distance / 1000} km",
                             style: recordStyle),
