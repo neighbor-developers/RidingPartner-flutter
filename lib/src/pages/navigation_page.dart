@@ -53,8 +53,8 @@ class _NavigationPageState extends State<NavigationPage> {
 
       _markers.add(Marker(
         icon: _markerIcon,
-        width: 45,
-        height: 45,
+        width: 65,
+        height: 65,
         markerId: "currentPosition",
         position: LatLng(_navigationProvider.position!.latitude,
             _navigationProvider.position!.longitude),
@@ -99,7 +99,7 @@ class _NavigationPageState extends State<NavigationPage> {
             double.parse(_navigationProvider.course.last.longitude!)));
   }
 
-  int polylineWidth = 6;
+  int polylineWidth = 7;
   TextStyle plainStyle = const TextStyle(
       fontSize: 12,
       fontFamily: 'Pretendard',
@@ -118,8 +118,8 @@ class _NavigationPageState extends State<NavigationPage> {
           Marker(
               anchor: AnchorPoint(0.5, 0.5),
               markerId: "currentLocation",
-              width: 45,
-              height: 45,
+              width: 65,
+              height: 65,
               icon: _markerIcon,
               position: LatLng(position.latitude, position.longitude))
         ];
