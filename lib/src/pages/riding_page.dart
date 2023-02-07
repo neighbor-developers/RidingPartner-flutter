@@ -43,8 +43,8 @@ class _RidingPageState extends State<RidingPage> {
         Marker(
             anchor: AnchorPoint(0.5, 0.5),
             markerId: "currentLocation",
-            width: 45,
-            height: 45,
+            width: 65,
+            height: 65,
             icon: _markerIcon,
             position: LatLng(_ridingProvider.position!.latitude,
                 _ridingProvider.position!.longitude))
@@ -52,7 +52,7 @@ class _RidingPageState extends State<RidingPage> {
     }
   }
 
-  final myLocation = MyLocation();
+  int polylineWidth = 7;
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +65,8 @@ class _RidingPageState extends State<RidingPage> {
           Marker(
               anchor: AnchorPoint(0.5, 0.5),
               markerId: "currentLocation",
-              width: 45,
-              height: 45,
+              width: 65,
+              height: 65,
               icon: _markerIcon,
               position: LatLng(_ridingProvider.position!.latitude,
                   _ridingProvider.position!.longitude))
@@ -111,7 +111,11 @@ class _RidingPageState extends State<RidingPage> {
                   pathOverlays: _ridingProvider.polylineCoordinates.length > 1
                       ? {
                           PathOverlay(PathOverlayId('path'),
-                              _ridingProvider.polylineCoordinates)
+                              _ridingProvider.polylineCoordinates,
+                              width: polylineWidth,
+                              outlineWidth: 0,
+                              color:
+                                  const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32))
                         }
                       : {},
                   mapType: MapType.Basic,
