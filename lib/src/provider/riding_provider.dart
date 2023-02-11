@@ -15,7 +15,7 @@ import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 
 import '../models/position_stream.dart';
 
-enum RidingState { before, riding, pause, stop }
+enum RidingState { before, riding, pause, stop, error }
 
 class RidingProvider with ChangeNotifier {
   final Distance _calDistance = const Distance();
@@ -78,25 +78,31 @@ class RidingProvider with ChangeNotifier {
 
   Future<void> getLocation() async {
     _position = MyLocation().position;
-    if (_position != null) {
+    try {
       _befLatLng = LatLng(_position!.latitude, position!.longitude);
+    } catch (e) {
+      if (_position == null) {
+        _ridingState = RidingState.error;
+      }
     }
   }
 
   Future<void> startRiding() async {
+    if (_ridingState == RidingState.error) {
+      notifyListeners();
+      return;
+    }
     if (_ridingState == RidingState.before) {
       _ridingDate =
           DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()); //format변경
     }
-    // setCustomMarker();
-
     setRidingState(RidingState.riding);
 
     _positionStream.controller.stream.listen((pos) {
       _position = pos;
       _polylineCoordinates
           .add(naver.LatLng(_position!.latitude, _position!.longitude));
-      //addPolyline();
+      notifyListeners();
     });
     _stopwatch.start();
 
@@ -160,22 +166,4 @@ class RidingProvider with ChangeNotifier {
     _stopwatch.stop();
     _timer.cancel();
   }
-
-/*  void addPolyline(){
-    google_map.Polyline poliline = google_map.Polyline(
-      polylineId: const google_map.PolylineId("poly"),
-      color: Colors.blue,
-      points: polylineCoordinates
-    );
-    polylines.add();
-
-    notifyListeners();
-  }*/
-  // Future<void> setCustomMarker() async {
-  //   customIcon = await CustomMarker().getBytesFromAsset("path", 130);
-  // }
-
-  // Future<void> setPictureMarker() async {
-  //   pictureIcon = await CustomMarker().getPictuerMarker("");
-  // }
 }

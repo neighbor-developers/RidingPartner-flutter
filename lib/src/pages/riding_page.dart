@@ -24,6 +24,7 @@ class _RidingPageState extends State<RidingPage> {
   late List<Marker> _markers = [];
   late OverlayImage _markerIcon;
   Completer<NaverMapController> _controller = Completer();
+  double floatingBtnPosition = 80;
 
   @override
   void initState() {
@@ -40,14 +41,14 @@ class _RidingPageState extends State<RidingPage> {
       _ridingProvider.setMapComponent();
 
       _markers = [
-        Marker(
-            anchor: AnchorPoint(0.5, 0.5),
-            markerId: "currentLocation",
-            width: 65,
-            height: 65,
-            icon: _markerIcon,
-            position: LatLng(_ridingProvider.position!.latitude,
-                _ridingProvider.position!.longitude))
+        // Marker(
+        //     anchor: AnchorPoint(0.5, 0.5),
+        //     markerId: "currentLocation",
+        //     width: 65,
+        //     height: 65,
+        //     icon: _markerIcon,
+        //     position: LatLng(_ridingProvider.position!.latitude,
+        //         _ridingProvider.position!.longitude))
       ];
     }
   }
@@ -59,23 +60,28 @@ class _RidingPageState extends State<RidingPage> {
     _ridingProvider = Provider.of<RidingProvider>(context);
     Position? position = _ridingProvider.position;
 
-    if (_ridingProvider.state != RidingState.before) {
-      if (position != null) {
-        _markers = [
-          Marker(
-              anchor: AnchorPoint(0.5, 0.5),
-              markerId: "currentLocation",
-              width: 65,
-              height: 65,
-              icon: _markerIcon,
-              position: LatLng(_ridingProvider.position!.latitude,
-                  _ridingProvider.position!.longitude))
-        ];
-      }
-      if (_locationTrackingMode != LocationTrackingMode.Face) {
-        _locationTrackingMode = LocationTrackingMode.Face;
-      }
+    if (_ridingProvider.state == RidingState.error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('사용자 위치를 불러올 수 없습니다.'),
+        ),
+      );
     }
+
+    // if (_ridingProvider.state != RidingState.before) {
+    //   if (position != null) {
+    //     _markers = [
+    //       Marker(
+    //           anchor: AnchorPoint(0.5, 0.5),
+    //           markerId: "currentLocation",
+    //           width: 65,
+    //           height: 65,
+    //           icon: _markerIcon,
+    //           position: LatLng(_ridingProvider.position!.latitude,
+    //               _ridingProvider.position!.longitude))
+    //     ];
+    //   }
+    // }
 
     return WillPopScope(
         child: Scaffold(
@@ -122,9 +128,30 @@ class _RidingPageState extends State<RidingPage> {
                   initLocationTrackingMode: LocationTrackingMode.Face,
                   initialCameraPosition: CameraPosition(
                       target: LatLng(position!.latitude, position.longitude),
-                      zoom: 19),
+                      zoom: 14),
                   locationButtonEnable: false,
                   markers: _markers,
+                ),
+                Positioned(
+                  bottom: floatingBtnPosition,
+                  left: 20,
+                  child: FloatingActionButton(
+                    heroTag: 'mypos',
+                    backgroundColor: Colors.white,
+                    child: const ImageIcon(
+                        AssetImage('assets/icons/search_myLocation_button.png'),
+                        color: Color.fromRGBO(240, 120, 5, 1)),
+                    onPressed: () async {
+                      final controller = await _controller.future;
+                      await controller.moveCamera(CameraUpdate.toCameraPosition(
+                          CameraPosition(
+                              target: LatLng(_ridingProvider.position!.latitude,
+                                  _ridingProvider.position!.longitude),
+                              zoom: 18)));
+                      controller
+                          .setLocationTrackingMode(LocationTrackingMode.Face);
+                    },
+                  ),
                 ),
                 Positioned(bottom: 0, child: record(_ridingProvider.state))
               ],
@@ -156,28 +183,43 @@ class _RidingPageState extends State<RidingPage> {
         fontWeight: FontWeight.w400,
         color: Color.fromRGBO(52, 58, 64, 1));
 
-    if (state == RidingState.before) {
+    if (state == RidingState.before || state == RidingState.error) {
       return InkWell(
-        child: Container(
-          color: const Color.fromRGBO(240, 120, 5, 1),
-          alignment: Alignment.center,
-          width: MediaQuery.of(context).size.width,
-          height: 61,
-          child: const Text(
-            '주행 시작',
-            style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w700,
-                fontSize: 18),
-            textAlign: TextAlign.center,
+          child: Container(
+            color: const Color.fromRGBO(240, 120, 5, 1),
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width,
+            height: 61,
+            child: const Text(
+              '주행 시작',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
           ),
-        ),
-        onTap: () {
-          _ridingProvider.startRiding();
-          screenKeepOn();
-        },
-      );
+          onTap: () async {
+            try {
+              floatingBtnPosition = 130;
+              _ridingProvider.startRiding();
+              screenKeepOn();
+              final controller = await _controller.future;
+              await controller.moveCamera(CameraUpdate.toCameraPosition(
+                  CameraPosition(
+                      target: LatLng(_ridingProvider.position!.latitude,
+                          _ridingProvider.position!.longitude),
+                      zoom: 18)));
+              controller.setLocationTrackingMode(LocationTrackingMode.Face);
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('주행을 시작하는 데에 실패했습니다'),
+                ),
+              );
+            }
+          });
     } else {
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
@@ -210,7 +252,7 @@ class _RidingPageState extends State<RidingPage> {
                           children: [
                             const Text('거리', style: titleStyle),
                             Text(
-                                "${(_ridingProvider.distance / 1000).toStringAsFixed(2)}km",
+                                "${((_ridingProvider.distance / 10000).roundToDouble()) * 10}km",
                                 style: dataStyle)
                           ],
                         ),
