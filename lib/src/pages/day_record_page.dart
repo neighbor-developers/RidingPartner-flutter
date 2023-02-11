@@ -24,22 +24,29 @@ class _DayRecordPageState extends State<DayRecordPage> {
   int activeIndex = 0;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    Provider.of<RidingResultProvider>(context, listen: false).getRidingData();
+  }
+
+  static const textStyle = TextStyle(
+      fontSize: 18.5,
+      fontFamily: "Pretendard",
+      fontWeight: FontWeight.w400,
+      color: Color.fromARGB(255, 66, 66, 66));
+
+  static const recordStyle = TextStyle(
+      fontSize: 18.5,
+      fontFamily: "Pretendard",
+      fontWeight: FontWeight.w500,
+      color: Color.fromARGB(255, 66, 66, 66));
+  num speed = 0;
+  late List<String>? images = _record.images;
+  @override
   Widget build(BuildContext context) {
     _recordProvider = Provider.of<RidingResultProvider>(context);
-    num speed = 0;
-    late List<String>? image = _record.images;
-
-    const textStyle = TextStyle(
-        fontSize: 18.5,
-        fontFamily: "Pretendard",
-        fontWeight: FontWeight.w400,
-        color: Color.fromARGB(255, 66, 66, 66));
-
-    const recordStyle = TextStyle(
-        fontSize: 18.5,
-        fontFamily: "Pretendard",
-        fontWeight: FontWeight.w500,
-        color: Color.fromARGB(255, 66, 66, 66));
 
     Widget successWidget() => Scaffold(
         appBar: appBar(context),
@@ -48,7 +55,19 @@ class _DayRecordPageState extends State<DayRecordPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-              if (image != null && image.length > 1) ...[
+              if (images == null) ...[
+                SizedBox(
+                    width: double.infinity,
+                    height: 240,
+                    child: Image.asset("assets/images/img_loading.png",
+                        fit: BoxFit.cover))
+              ] else if (_recordProvider.record.images!.length == 1) ...[
+                SizedBox(
+                    width: double.infinity,
+                    height: 240,
+                    child: Image.network(_recordProvider.record.images![0],
+                        fit: BoxFit.cover))
+              ] else ...[
                 CarouselSlider.builder(
                   options: CarouselOptions(
                     initialPage: 0,
@@ -58,23 +77,12 @@ class _DayRecordPageState extends State<DayRecordPage> {
                       activeIndex = index;
                     }),
                   ),
-                  itemCount: image.length,
+                  itemCount: images?.length,
                   itemBuilder: (context, index, realIndex) {
                     final path = _record.images![index];
-                    return buildImage(path, index);
+                    return buildImage(path);
                   },
                 )
-              ] else if (image != null && image.length == 1) ...[
-                SizedBox(
-                    width: double.infinity,
-                    height: 240,
-                    child: Image.network(image[0], fit: BoxFit.cover))
-              ] else ...[
-                SizedBox(
-                    width: double.infinity,
-                    height: 240,
-                    child: Image.asset("assets/images/img_loading.png",
-                        fit: BoxFit.cover))
               ],
               Align(alignment: Alignment.bottomCenter, child: buildIndicator())
             ]),
@@ -169,7 +177,6 @@ class _DayRecordPageState extends State<DayRecordPage> {
 
     switch (_recordProvider.recordState) {
       case RecordState.loading:
-        _recordProvider.getRidingData();
         return loadingWidget();
       case RecordState.fail:
         return failWidget();
@@ -198,7 +205,7 @@ class _DayRecordPageState extends State<DayRecordPage> {
         child: Text('데이터를 불러오는 데에 실패했습니다'),
       ));
 
-  Widget buildImage(path, index) => Container(
+  Widget buildImage(path) => Container(
         width: double.infinity,
         height: 240,
         color: Colors.grey,
