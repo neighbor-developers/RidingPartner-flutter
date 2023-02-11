@@ -1,7 +1,8 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:line_chart/charts/line-chart.widget.dart';
 import 'package:line_chart/model/line-chart.model.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/models/place.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
@@ -74,6 +75,7 @@ class _HomePageState extends State<HomePage>
       fontSize: 14,
       fontWeight: FontWeight.w400,
       color: Color.fromARGB(185, 51, 57, 62));
+  GlobalKey _one = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -612,11 +614,10 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget customLineChart() {
-    Paint circlePaint = Paint()
-      ..color = const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32);
+    Paint circlePaint = Paint()..color = ui.Color.fromARGB(109, 255, 177, 104);
 
     Paint insideCirclePaint = Paint()
-      ..color = const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32);
+      ..color = ui.Color.fromARGB(255, 255, 147, 40);
 
     Paint linePaint = Paint()
       ..strokeWidth = 1
@@ -823,89 +824,6 @@ class _HomePageState extends State<HomePage>
             ),
     );
   }
-
-  Widget recordRateProgress(double distance) {
-    double percent = distance / 1000;
-    if (percent > 1) {
-      percent = 1;
-    }
-    return SizedBox(
-        width: MediaQuery.of(context).size.width,
-        child: Card(
-            child: Stack(
-          children: [
-            Positioned(
-                left: 0,
-                child: Column(
-                  children: [
-                    const Text(
-                      '오늘의 목표거리 달성률',
-                      style: TextStyle(
-                          fontSize: recordFontSize, color: Colors.black54),
-                    ),
-                    Text(
-                      '${distance / 1000}km / 10km',
-                      style: const TextStyle(
-                          fontSize: recordFontSize, color: Colors.black54),
-                    )
-                  ],
-                )),
-            Positioned(
-                right: 0,
-                child: CircularPercentIndicator(
-                    percent: percent,
-                    radius: 100,
-                    backgroundColor: Colors.black12,
-                    progressColor:
-                        const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32)))
-          ],
-        )));
-  }
-
-  // Widget? floatingButtons() {
-  //   return SpeedDial(
-  //     animatedIcon: AnimatedIcons.menu_close,
-  //     visible: true,
-  //     curve: Curves.bounceIn,
-  //     backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-  //     children: [
-  //       SpeedDialChild(
-  //           child: const Icon(Icons.settings_sharp, color: Colors.white),
-  //           label: "설정",
-  //           labelStyle: const TextStyle(
-  //               fontWeight: FontWeight.w500,
-  //               color: Colors.white,
-  //               fontSize: 13.0),
-  //           backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-  //           labelBackgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-  //           onTap: () {
-  //             Navigator.of(context).push(MaterialPageRoute(
-  //                 builder: (context) => ChangeNotifierProvider(
-  //                       create: (context) => SettingProvider(),
-  //                       child: const SettingPage(),
-  //                     )));
-  //           }),
-  //       SpeedDialChild(
-  //         child: const Icon(
-  //           Icons.add_chart_rounded,
-  //           color: Colors.white,
-  //         ),
-  //         label: "내 기록",
-  //         backgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-  //         labelBackgroundColor: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-  //         labelStyle: const TextStyle(
-  //             fontWeight: FontWeight.w500, color: Colors.white, fontSize: 13.0),
-  //         onTap: () {
-  //           Navigator.of(context).push(MaterialPageRoute(
-  //               builder: (context) => ChangeNotifierProvider(
-  //                     create: (context) => RecordListProvider(),
-  //                     child: const RecordListPage(),
-  //                   )));
-  //         },
-  //       )
-  //     ],
-  //   );
-  // }
 
   int _getMaxDistance(List<Record> records) {
     double maxDistance = 0;
