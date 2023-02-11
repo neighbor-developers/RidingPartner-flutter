@@ -129,9 +129,16 @@ class _DayRecordPageState extends State<DayRecordPage> {
                         Text(
                             "${(_record.distance / 1000).toStringAsFixed(2)} km",
                             style: recordStyle),
-                        Text(
-                            "${(hKcal * (_record.timestamp) / 3600).toStringAsFixed(1)} kcal",
-                            style: recordStyle)
+                        if (_record.distance == 0) ...[
+                          const Text(
+                            '0 kcal',
+                            style: recordStyle,
+                          )
+                        ] else ...[
+                          Text(
+                              "${(hKcal * (_record.timestamp) / 3600).toStringAsFixed(1)} kcal",
+                              style: recordStyle)
+                        ]
                       ],
                     ),
                   ),
@@ -179,9 +186,10 @@ class _DayRecordPageState extends State<DayRecordPage> {
   Widget loadingWidget() => Scaffold(
       appBar: appBar(context),
       resizeToAvoidBottomInset: false,
-      body: const CircularProgressIndicator(
+      body: const Center(
+          child: CircularProgressIndicator(
         color: Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
-      ));
+      )));
 
   Widget failWidget() => Scaffold(
       appBar: appBar(context),
