@@ -31,7 +31,7 @@ class RidingResultProvider with ChangeNotifier {
   late Record _record;
   Record get record => _record;
 
-  late final List<XFile?> _images;
+  List<XFile?> _images = [];
   List<XFile?> get images => _images;
 
   List<String>? _downloadImages;

@@ -143,73 +143,88 @@ class _RecordState extends State<RecordPage> {
                               Text(
                                   "${(_record.distance / 1000).toStringAsFixed(2)} km",
                                   style: textStyle),
-                              Text(
-                                  "${(hKcal * (_record.timestamp) / 3600).toStringAsFixed(1)} kcal",
-                                  style: textStyle)
+                              if (_record.distance == 0) ...[
+                                Text(
+                                  '0 kcal',
+                                  style: textStyle,
+                                )
+                              ] else ...[
+                                Text(
+                                    "${(hKcal * (_record.timestamp) / 3600).toStringAsFixed(1)} kcal",
+                                    style: textStyle)
+                              ]
                             ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Row(
-                    children: [
-                      Container(
-                          width: 64.0,
-                          height: 64.0,
-                          margin: const EdgeInsets.only(right: 20.0),
-                          child: OutlinedButton(
-                              onPressed: () {
-                                if (_imageStatus == ImageStatus.init) {
-                                  _recordProvider
-                                      .confirmPermissionGranted()
-                                      .then((_) => _recordProvider
-                                          .getImage(ImageSource.gallery));
-                                } else if (_imageStatus ==
-                                    ImageStatus.permissionFail) {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                    content: const Text(
-                                        "사진, 파일, 마이크 접근을 허용 해주셔야 카메라 사용이 가능합니다."),
-                                    action: SnackBarAction(
-                                      label: "OK",
-                                      onPressed: () {
-                                        AppSettings.openAppSettings();
-                                      },
+                  if (_recordProvider.images.isEmpty) ...[
+                    Row(
+                      children: [
+                        Container(
+                            width: 64.0,
+                            height: 64.0,
+                            margin: const EdgeInsets.only(right: 10.0),
+                            child: OutlinedButton(
+                                onPressed: () {
+                                  if (_imageStatus == ImageStatus.init) {
+                                    _recordProvider
+                                        .confirmPermissionGranted()
+                                        .then((_) => _recordProvider
+                                            .getImage(ImageSource.gallery));
+                                  } else if (_imageStatus ==
+                                      ImageStatus.permissionFail) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: const Text(
+                                          "사진, 파일, 마이크 접근을 허용 해주셔야 카메라 사용이 가능합니다."),
+                                      action: SnackBarAction(
+                                        label: "OK",
+                                        onPressed: () {
+                                          AppSettings.openAppSettings();
+                                        },
+                                      ),
+                                    ));
+                                  } else if (_imageStatus != ImageStatus.init) {
+                                    _recordProvider.images.clear();
+                                    _recordProvider
+                                        .getImage(ImageSource.gallery);
+                                  }
+                                },
+                                style: ButtonStyle(
+                                  side: MaterialStateProperty.all(
+                                      const BorderSide(
+                                    color:
+                                        Color.fromARGB(0xFF, 0xFD, 0xD3, 0xAB),
+                                    width: 2.0,
+                                  )),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Image(
+                                      image: AssetImage(
+                                          'assets/icons/add_image.png'),
+                                      color: Color.fromARGB(255, 255, 255, 255),
                                     ),
-                                  ));
-                                } else if (_imageStatus != ImageStatus.init) {
-                                  _recordProvider.images.clear();
-                                  _recordProvider.getImage(ImageSource.gallery);
-                                }
-                              },
-                              style: ButtonStyle(
-                                side:
-                                    MaterialStateProperty.all(const BorderSide(
-                                  color: Color.fromARGB(0xFF, 0xFD, 0xD3, 0xAB),
-                                  width: 2.0,
-                                )),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Image(
-                                    image: AssetImage(
-                                        'assets/icons/add_image.png'),
-                                    color: Color.fromARGB(255, 255, 255, 255),
-                                  ),
-                                  Text(
-                                    "사진",
-                                    style: TextStyle(
-                                        color: Color.fromARGB(
-                                            0xFF, 0xDE, 0xE2, 0xE6),
-                                        fontSize: 12.0),
-                                  )
-                                ],
-                              ))),
-                      SizedBox(width: 64.0, height: 64.0, child: showImage())
-                    ],
-                  ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      "사진",
+                                      style: TextStyle(
+                                          color: Color.fromARGB(
+                                              0xFF, 0xDE, 0xE2, 0xE6),
+                                          fontSize: 12.0),
+                                    )
+                                  ],
+                                ))),
+                      ],
+                    )
+                  ] else ...[
+                    showImage()
+                  ],
                   const Divider(color: Color.fromARGB(0xFF, 0xF8, 0xF9, 0xFA)),
                   Container(
                     height: 160,
@@ -281,36 +296,41 @@ class _RecordState extends State<RecordPage> {
   // 이미지를 보여주는 위젯
   Widget showImage() {
     if (_recordProvider.imageStatus == ImageStatus.init) {
-      return const Text(
+      return const Center(
+          child: Text(
         "이미지를\n선택해주세요.",
         style: TextStyle(
-          fontSize: 14.0,
+          fontSize: 13.0,
           color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6),
         ),
         textAlign: TextAlign.center,
-      );
+      ));
     } else if (_recordProvider.imageStatus == ImageStatus.imageSuccess) {
-      return Container(
-          width: 64.0,
-          height: 64.0,
-          padding: const EdgeInsets.all(4.0),
-          decoration: BoxDecoration(
-              border: Border.all(
-                  color: const Color.fromARGB(0xFF, 0xFD, 0xD3, 0xAB),
-                  width: 2.0),
-              borderRadius: BorderRadius.circular(3.5),
-              color: Colors.transparent),
-          child: Center(
-              child: _recordProvider.images.isEmpty
-                  ? const Text(
-                      '이미지 없음',
-                      style: TextStyle(
-                        fontSize: 13.0,
-                        color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6),
-                      ),
-                      textAlign: TextAlign.center,
-                    )
-                  : Image.file(File(_recordProvider.images.first!.path))));
+      return Row(
+          children: _recordProvider.images.map((img) {
+        return InkWell(
+            onTap: () {
+              _recordProvider.images.clear();
+              _recordProvider.getImage(ImageSource.gallery);
+            },
+            child: Container(
+                width: 64.0,
+                height: 64.0,
+                margin: EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        color: const Color.fromARGB(0xFF, 0xFD, 0xD3, 0xAB),
+                        width: 2.0),
+                    borderRadius: BorderRadius.circular(3.5),
+                    color: Colors.transparent),
+                child: Center(
+                    child: Image.file(
+                  File(img!.path),
+                  width: 64,
+                  height: 64,
+                  fit: BoxFit.cover,
+                ))));
+      }).toList());
     } else {
       return const Text(
         "업로드 실패",
