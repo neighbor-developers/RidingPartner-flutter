@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 class PositionStream {
   late LocationSettings locationSettings;
   static final PositionStream _instance = PositionStream._internal();
+  late StreamSubscription<Position> _positionStream;
   static StreamController<Position> _controller =
       StreamController<Position>.broadcast();
   static const int DISTANCE = 30;
@@ -21,6 +22,7 @@ class PositionStream {
   //dispose
   void dispose() {
     _controller.close();
+    _positionStream.cancel();
   }
 
   PositionStream._internal() {
@@ -52,10 +54,12 @@ class PositionStream {
         distanceFilter: DISTANCE,
       );
     }
-    StreamSubscription<Position> positionStream =
+    _positionStream =
         Geolocator.getPositionStream(locationSettings: locationSettings)
             .listen((Position? pos) {
-      _controller.add(pos!);
+      if (pos != null) {
+        _controller.add(pos);
+      }
     });
   }
 }

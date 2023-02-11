@@ -46,17 +46,8 @@ class MyLocation {
       position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
     } catch (e) {
-      position = await Geolocator.getLastKnownPosition().timeout(
-          Duration(seconds: 3),
-          onTimeout: () => position = const Position(
-              longitude: 126.98935225645432,
-              latitude: 37.579871128849334,
-              timestamp: null,
-              accuracy: 0.0,
-              altitude: 0.0,
-              heading: 0.0,
-              speed: 0.0,
-              speedAccuracy: 0.0));
+      position = await Geolocator.getLastKnownPosition()
+          .timeout(Duration(seconds: 3), onTimeout: () => position = null);
     }
   }
 }

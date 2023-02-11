@@ -95,6 +95,9 @@ class NavigationProvider with ChangeNotifier {
     try {
       myLocation.getMyCurrentLocation();
       _position = myLocation.position;
+      if (_position == null) {
+        _searchRouteState = SearchRouteState.locationFail;
+      }
     } catch (e) {
       myLocation.checkPermission();
       _position = null;
