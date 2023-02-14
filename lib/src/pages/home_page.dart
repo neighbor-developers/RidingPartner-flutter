@@ -544,12 +544,6 @@ class _HomePageState extends State<HomePage>
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w700,
                       color: Color.fromRGBO(51, 51, 51, 1))),
-              // Text('km',
-              //     style: TextStyle(
-              //         fontSize: 12,
-              //         fontFamily: 'Pretendard',
-              //         fontWeight: FontWeight.w300,
-              //         color: Color.fromRGBO(51, 51, 51, 1))),
             ],
           ),
           Container(
@@ -582,7 +576,7 @@ class _HomePageState extends State<HomePage>
                               color: Color.fromRGBO(51, 51, 51, 1))),
                 ),
                 Container(
-                  padding: EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.only(bottom: 10),
                   child: const VerticalDivider(
                       width: 1,
                       color: Color.fromRGBO(234, 234, 234, 1),
