@@ -10,6 +10,10 @@
 .history
 .svn/
 
+#APIKEY
+#.env*
+#원래는 ignore에 넣어야하지만 private 저장소이기도하고, 일일이 공유하는게 더 힘들 것 같아 주석처리 했습니다.
+
 # IntelliJ related
 *.iml
 *.ipr
@@ -63,8 +67,6 @@ unlinked_spec.ds
 **/android/**/gradle-wrapper.jar
 .gradle/
 **/android/captures/
-**/android/gradlew
-**/android/gradlew.bat
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
 **/android/key.properties

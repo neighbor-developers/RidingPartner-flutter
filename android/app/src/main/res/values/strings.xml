@@ -1,0 +1,8 @@
+<resources>
+    <!-- <string name= "client_id">BPenPrJFNA58FMnODujH</string> -->
+    <string name= "naver_client_id">8e3d26kxv8</string>
+    <!-- <string name= "client_secret">Dh1BA99PHE</string> -->
+    <string name= "naver_client_secret">6k41yNPjeQ4fHEKRVS75hZlcJRFdK8Y2hAOW3ut1</string>
+    <string name= "client_name">a</string>
+    <string name= "google_geo_api_key">AIzaSyCj32TmD4nqA_LjVQh2ePvGMT3jFkBjJBE</string>
+</resources>
