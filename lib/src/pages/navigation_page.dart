@@ -1,9 +1,6 @@
 import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/pages/record_page.dart';
@@ -14,8 +11,6 @@ import 'package:ridingpartner_flutter/src/utils/navigation_icon.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
 import 'package:ridingpartner_flutter/src/widgets/dialog.dart';
 import 'package:wakelock/wakelock.dart';
-
-import '../utils/bytesFromAsset.dart';
 
 class NavigationPage extends StatefulWidget {
   const NavigationPage({super.key});
@@ -28,21 +23,20 @@ class _NavigationPageState extends State<NavigationPage> {
   late NavigationProvider _navigationProvider;
   late RidingProvider _ridingProvider;
 
-  Completer<GoogleMapController> _controller = Completer();
+  LocationTrackingMode _locationTrackingMode = LocationTrackingMode.None;
+  late List<Marker> _markers = [];
+  // late OverlayImage _markerIcon;
+  Completer<NaverMapController> _controller = Completer();
   LatLng initCameraPosition = const LatLng(37.37731944, 126.8050778);
-  Set<Marker> markers = {};
   late String? userProfile;
-  double bearing = 180;
-  late BitmapDescriptor myPositionIcon;
+  double floatingBtnPosition = 80;
 
   @override
   void initState() {
     super.initState();
-    FirebaseAuth auth = FirebaseAuth.instance;
-    userProfile = auth.currentUser?.photoURL;
-
     _navigationProvider =
         Provider.of<NavigationProvider>(context, listen: false);
+    Provider.of<RidingProvider>(context, listen: false).getLocation();
 
     setMapComponent();
   }
@@ -51,64 +45,85 @@ class _NavigationPageState extends State<NavigationPage> {
     await _navigationProvider.getRoute();
     setRouteMarkers();
 
-    if (_navigationProvider.position != null) {
-      initCameraPosition = LatLng(
-          (_navigationProvider.position!.latitude +
-                  double.parse(_navigationProvider.course.last.latitude!)) /
-              2,
-          ((_navigationProvider.position!.longitude) +
-                  double.parse(_navigationProvider.course.last.longitude!)) /
-              2);
-      final Uint8List markerIcon =
-          await getBytesFromAsset('assets/icons/my_location.png', 200);
+    // if (_navigationProvider.position != null) {
+    //   _markerIcon = await OverlayImage.fromAssetImage(
+    //       assetName: 'assets/icons/my_location.png');
 
-      myPositionIcon = BitmapDescriptor.fromBytes(markerIcon);
-
-      markers.add(Marker(
-        anchor: const Offset(0, 0),
-        icon: BitmapDescriptor.fromBytes(markerIcon),
-        markerId: const MarkerId("currentPosition"),
-        position: LatLng(_navigationProvider.position!.latitude,
-            _navigationProvider.position!.longitude),
-      ));
-    } else {
-      initCameraPosition = const LatLng(37.37731944, 126.8050778);
-    }
+    //   _markers.add(Marker(
+    //     icon: _markerIcon,
+    //     width: 65,
+    //     height: 65,
+    //     markerId: "currentPosition",
+    //     position: LatLng(_navigationProvider.position!.latitude,
+    //         _navigationProvider.position!.longitude),
+    //   ));
+    // }
   }
 
   Future setRouteMarkers() async {
-    final Uint8List turnMarkerIcon =
-        await getBytesFromAsset('assets/icons/marker_orange.png', 80);
-    final Uint8List startMarkerIcon =
-        await getBytesFromAsset('assets/icons/marker_start.png', 80);
-    final Uint8List destinationMarkerIcon =
-        await getBytesFromAsset('assets/icons/marker_destination.png', 80);
+    final OverlayImage turnMarkerIcon = await OverlayImage.fromAssetImage(
+        assetName: 'assets/icons/marker_orange.png');
+    final OverlayImage startMarkerIcon = await OverlayImage.fromAssetImage(
+        assetName: 'assets/icons/marker_start.png');
+    final OverlayImage destinationMarkerIcon =
+        await OverlayImage.fromAssetImage(
+            assetName: 'assets/icons/marker_destination.png');
 
-    List<Marker> markerList = _navigationProvider.course
+    _markers = _navigationProvider.course
         .map((course) => Marker(
-            icon: BitmapDescriptor.fromBytes(turnMarkerIcon),
-            markerId: MarkerId(course.title ?? ""),
+            width: 30,
+            height: 40,
+            icon: turnMarkerIcon,
+            markerId: course.title ?? "",
             position: LatLng(double.parse(course.latitude!),
                 double.parse(course.longitude!))))
         .toList();
 
-    markerList[0] = Marker(
-        icon: BitmapDescriptor.fromBytes(startMarkerIcon),
-        markerId: MarkerId(_navigationProvider.course[0].title ?? ""),
-        position: LatLng(double.parse(_navigationProvider.course[0].latitude!),
-            double.parse(_navigationProvider.course[0].longitude!)));
-
-    markerList.last = Marker(
-        icon: BitmapDescriptor.fromBytes(destinationMarkerIcon),
-        markerId: MarkerId(_navigationProvider.course.last.title ?? ""),
+    _markers.last = Marker(
+        icon: destinationMarkerIcon,
+        width: 30,
+        height: 50,
+        markerId: _navigationProvider.course.last.title ?? "",
         position: LatLng(
             double.parse(_navigationProvider.course.last.latitude!),
-            double.parse(_navigationProvider.course[0].longitude!)));
+            double.parse(_navigationProvider.course.last.longitude!)));
+    if (_navigationProvider.course.length == 1) {
+      _markers.add(Marker(
+          icon: startMarkerIcon,
+          width: 30,
+          height: 50,
+          markerId: _navigationProvider.course[0].title ?? "",
+          position: LatLng(_navigationProvider.position!.latitude,
+              _navigationProvider.position!.longitude)));
 
-    markers = markerList.toSet();
+      double lat = (_navigationProvider.position!.latitude +
+              double.parse(_navigationProvider.course.last.latitude!)) /
+          2;
+      double lon = (_navigationProvider.position!.longitude +
+              double.parse(_navigationProvider.course.last.longitude!)) /
+          2;
+      initCameraPosition = LatLng(lat, lon);
+    } else {
+      _markers[0] = Marker(
+          icon: startMarkerIcon,
+          width: 30,
+          height: 50,
+          markerId: _navigationProvider.course[0].title ?? "",
+          position: LatLng(
+              double.parse(_navigationProvider.course[0].latitude!),
+              double.parse(_navigationProvider.course[0].longitude!)));
+
+      double lat = (double.parse(_navigationProvider.course[0].latitude!) +
+              double.parse(_navigationProvider.course.last.latitude!)) /
+          2;
+      double lon = (double.parse(_navigationProvider.course[0].longitude!) +
+              double.parse(_navigationProvider.course.last.longitude!)) /
+          2;
+      initCameraPosition = LatLng(lat, lon);
+    }
   }
 
-  int polylineWidth = 5;
+  int polylineWidth = 7;
   TextStyle plainStyle = const TextStyle(
       fontSize: 12,
       fontFamily: 'Pretendard',
@@ -120,37 +135,26 @@ class _NavigationPageState extends State<NavigationPage> {
     _navigationProvider = Provider.of<NavigationProvider>(context);
     _ridingProvider = Provider.of<RidingProvider>(context);
 
-    Position? position = _navigationProvider.position;
-
-    void setController() async {
-      GoogleMapController googleMapController = await _controller.future;
-      if (position != null) {
-        if (_navigationProvider.bearingPoint != null) {
-          bearing = Geolocator.bearingBetween(
-              position.latitude,
-              position.longitude,
-              _navigationProvider.bearingPoint!.latitude,
-              _navigationProvider.bearingPoint!.longitude);
-        }
-        googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-            CameraPosition(
-                target: LatLng(position.latitude, position.longitude),
-                zoom: 19,
-                bearing: bearing)));
-
-        markers.removeWhere(
-            (element) => element.markerId.value == 'currentPosition');
-        markers.add(Marker(
-            icon: myPositionIcon,
-            markerId: const MarkerId('currentPosition'),
-            position: LatLng(position.latitude, position.longitude)));
-      }
+    if (_ridingProvider.state == RidingState.error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('사용자 위치를 불러올 수 없습니다.'),
+        ),
+      );
     }
-
-    if (_ridingProvider.state == RidingState.riding) {
-      setController();
-    }
-
+    // if (_ridingProvider.state == RidingState.riding) {
+    //   if (position != null) {
+    //     _markers = [
+    //       Marker(
+    //           anchor: AnchorPoint(0.5, 0.5),
+    //           markerId: "currentLocation",
+    //           width: 65,
+    //           height: 65,
+    //           icon: _markerIcon,
+    //           position: LatLng(position.latitude, position.longitude))
+    //     ];
+    //   }
+    // }
     Widget failMessageWidget() {
       switch (_navigationProvider.searchRouteState) {
         case SearchRouteState.loading:
@@ -205,35 +209,57 @@ class _NavigationPageState extends State<NavigationPage> {
               elevation: 10,
             ),
             body: _navigationProvider.searchRouteState ==
-                    SearchRouteState.success
+                        SearchRouteState.success &&
+                    _navigationProvider.position != null
                 ? Stack(
                     alignment: Alignment.bottomCenter,
                     children: <Widget>[
-                      GoogleMap(
-                        mapType: MapType.normal,
+                      NaverMap(
                         initialCameraPosition: CameraPosition(
-                            target: initCameraPosition, zoom: 13),
-                        polylines: {
-                          Polyline(
-                              polylineId: const PolylineId("route"),
-                              color:
-                                  const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32),
-                              width: polylineWidth,
-                              startCap: Cap.roundCap,
-                              endCap: Cap.roundCap,
-                              points: _navigationProvider.polylinePoints)
-                        },
-                        onMapCreated: (GoogleMapController controller) {
-                          _controller.complete(controller);
-                        },
-                        myLocationButtonEnabled: false,
-                        myLocationEnabled: false,
-                        markers: markers,
-                        compassEnabled: false,
+                            target: initCameraPosition, zoom: 10),
+                        onMapCreated: onMapCreated,
+                        pathOverlays:
+                            _navigationProvider.polylinePoints.length > 1
+                                ? {
+                                    PathOverlay(PathOverlayId('path'),
+                                        _navigationProvider.polylinePoints,
+                                        width: polylineWidth,
+                                        outlineWidth: 0,
+                                        color: const Color.fromARGB(
+                                            0xFF, 0xFB, 0x95, 0x32))
+                                  }
+                                : {},
+                        mapType: MapType.Basic,
+                        initLocationTrackingMode: _locationTrackingMode,
+                        locationButtonEnable: true,
+                        markers: _markers,
                       ),
                       Positioned(top: 0, child: guideWidget()),
                       Positioned(
-                          bottom: 0, child: record(_ridingProvider.state))
+                          bottom: 0, child: record(_ridingProvider.state)),
+                      Positioned(
+                        bottom: floatingBtnPosition,
+                        left: 20,
+                        child: FloatingActionButton(
+                          heroTag: 'mypos',
+                          backgroundColor: Colors.white,
+                          child: const ImageIcon(
+                              AssetImage(
+                                  'assets/icons/search_myLocation_button.png'),
+                              color: Color.fromRGBO(240, 120, 5, 1)),
+                          onPressed: () async {
+                            final controller = await _controller.future;
+                            await controller.moveCamera(
+                                CameraUpdate.toCameraPosition(CameraPosition(
+                                    target: LatLng(
+                                        _ridingProvider.position!.latitude,
+                                        _ridingProvider.position!.longitude),
+                                    zoom: 18)));
+                            controller.setLocationTrackingMode(
+                                LocationTrackingMode.Face);
+                          },
+                        ),
+                      ),
                       // changeButton(_navigationProvider.ridingState)
                     ],
                   )
@@ -246,6 +272,13 @@ class _NavigationPageState extends State<NavigationPage> {
             return backDialog(context, 2);
           }
         });
+  }
+
+  void onMapCreated(NaverMapController controller) {
+    if (_controller.isCompleted) _controller = Completer();
+    _controller.complete(controller);
+
+    setCamera();
   }
 
   Widget guideWidget() {
@@ -305,7 +338,7 @@ class _NavigationPageState extends State<NavigationPage> {
         fontWeight: FontWeight.w400,
         color: Color.fromRGBO(52, 58, 64, 1));
 
-    if (state == RidingState.before) {
+    if (state == RidingState.before || state == RidingState.error) {
       return InkWell(
         child: Container(
           color: const Color.fromRGBO(240, 120, 5, 1),
@@ -322,16 +355,30 @@ class _NavigationPageState extends State<NavigationPage> {
             textAlign: TextAlign.center,
           ),
         ),
-        onTap: () {
-          _ridingProvider.startRiding();
-          _navigationProvider.startNavigation();
-          screenKeepOn();
-          polylineWidth = 8;
+        onTap: () async {
+          try {
+            floatingBtnPosition = 200;
+            _ridingProvider.startRiding();
+            _navigationProvider.startNavigation();
+            screenKeepOn();
+            polylineWidth = 8;
+            final controller = await _controller.future;
+            controller.moveCamera(CameraUpdate.toCameraPosition(CameraPosition(
+                target: LatLng(_navigationProvider.position!.latitude,
+                    _navigationProvider.position!.longitude),
+                zoom: 17)));
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('주행을 시작하는 데에 실패했습니다'),
+              ),
+            );
+          }
         },
       );
     } else {
       return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -371,8 +418,7 @@ class _NavigationPageState extends State<NavigationPage> {
                               children: [
                                 const Text('남은거리', style: titleStyle),
                                 Text(
-                                  ("${(((_navigationProvider.remainedDistance) / 100).roundToDouble()) / 10}km")
-                                      .toString(),
+                                  ("${(((_navigationProvider.remainedDistance) / 100).roundToDouble()) / 10}km"),
                                   style: dataStyle,
                                 )
                               ],
@@ -385,7 +431,7 @@ class _NavigationPageState extends State<NavigationPage> {
                                   style: titleStyle,
                                 ),
                                 Text(
-                                  "${_ridingProvider.speed.roundToDouble()}km/h",
+                                  "${_ridingProvider.speed.toStringAsFixed(1)}km/h",
                                   style: dataStyle,
                                 )
                               ],
@@ -556,6 +602,58 @@ class _NavigationPageState extends State<NavigationPage> {
         width: 0,
       );
     }
+  }
+
+  void setCamera() async {
+    final controller = await _controller.future;
+    LatLng start;
+    LatLng end;
+    if (_navigationProvider.course.length > 1) {
+      start = LatLng(double.parse(_navigationProvider.course[0].latitude!),
+          double.parse(_navigationProvider.course[0].longitude!));
+      end = LatLng(double.parse(_navigationProvider.course.last.latitude!),
+          double.parse(_navigationProvider.course.last.longitude!));
+    } else {
+      start = LatLng(
+        _navigationProvider.position!.latitude,
+        _navigationProvider.position!.longitude,
+      );
+      end = LatLng(double.parse(_navigationProvider.course.last.latitude!),
+          double.parse(_navigationProvider.course.last.longitude!));
+    }
+    if (start.latitude <= end.latitude) {
+      LatLng temp = start;
+      start = end;
+      end = temp;
+    }
+    LatLng northEast = start;
+    LatLng southWest = end;
+
+    var nLat, nLon, sLat, sLon;
+
+    if (southWest.latitude <= northEast.latitude) {
+      sLat = southWest.latitude;
+      nLat = northEast.latitude;
+    } else {
+      sLat = northEast.latitude;
+      nLat = southWest.latitude;
+    }
+    if (southWest.longitude <= northEast.longitude) {
+      sLon = southWest.longitude;
+      nLon = northEast.longitude;
+    } else {
+      sLon = northEast.longitude;
+      nLon = southWest.longitude;
+    }
+    controller.moveCamera(
+      CameraUpdate.fitBounds(
+        LatLngBounds(
+          northeast: LatLng(nLat, nLon),
+          southwest: LatLng(sLat, sLon),
+        ),
+        padding: 48,
+      ),
+    );
   }
 
   void screenKeepOn() async {

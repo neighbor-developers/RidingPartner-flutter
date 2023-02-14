@@ -24,21 +24,29 @@ class _DayRecordPageState extends State<DayRecordPage> {
   int activeIndex = 0;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    Provider.of<RidingResultProvider>(context, listen: false).getRidingData();
+  }
+
+  static const textStyle = TextStyle(
+      fontSize: 18.5,
+      fontFamily: "Pretendard",
+      fontWeight: FontWeight.w400,
+      color: Color.fromARGB(255, 66, 66, 66));
+
+  static const recordStyle = TextStyle(
+      fontSize: 18.5,
+      fontFamily: "Pretendard",
+      fontWeight: FontWeight.w500,
+      color: Color.fromARGB(255, 66, 66, 66));
+  num speed = 0;
+  late List<String>? images = _record.images;
+  @override
   Widget build(BuildContext context) {
     _recordProvider = Provider.of<RidingResultProvider>(context);
-    num speed = 0;
-
-    const textStyle = TextStyle(
-        fontSize: 18.5,
-        fontFamily: "Pretendard",
-        fontWeight: FontWeight.w400,
-        color: Color.fromARGB(255, 66, 66, 66));
-
-    const recordStyle = TextStyle(
-        fontSize: 18.5,
-        fontFamily: "Pretendard",
-        fontWeight: FontWeight.w500,
-        color: Color.fromARGB(255, 66, 66, 66));
 
     Widget successWidget() => Scaffold(
         appBar: appBar(context),
@@ -47,33 +55,35 @@ class _DayRecordPageState extends State<DayRecordPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-               if(_record.images != null && _record.images!.length > 1)...[
-              CarouselSlider.builder(
-                options: CarouselOptions(
-                  initialPage: 0,
-                  viewportFraction: 1,
-                  enlargeCenterPage: true,
-                  onPageChanged: (index, reason) => setState(() {
-                    activeIndex = index;
-                  }),
-                ),
-                itemCount: _record.images!.length,
-                itemBuilder: (context, index, realIndex) {
-                  final path = _record.images![index];
-                  return buildImage(path, index);
-                },
-              )] else if(_record.images != null && _record.images!.length == 1)...[
-                  SizedBox(
-                  width: double.infinity,
-                  height: 240,
-                  child: Image.network(_record.images![0], fit: BoxFit.cover))
-              ] else...[
+              if (images == null) ...[
                 SizedBox(
-                  width: double.infinity,
-                  height: 240,
-                  child: Image.asset("assets/images/img_loading.png", fit: BoxFit.cover))
+                    width: double.infinity,
+                    height: 240,
+                    child: Image.asset("assets/images/img_loading.png",
+                        fit: BoxFit.cover))
+              ] else if (_recordProvider.record.images!.length == 1) ...[
+                SizedBox(
+                    width: double.infinity,
+                    height: 240,
+                    child: Image.network(_recordProvider.record.images![0],
+                        fit: BoxFit.cover))
+              ] else ...[
+                CarouselSlider.builder(
+                  options: CarouselOptions(
+                    initialPage: 0,
+                    viewportFraction: 1,
+                    enlargeCenterPage: true,
+                    onPageChanged: (index, reason) => setState(() {
+                      activeIndex = index;
+                    }),
+                  ),
+                  itemCount: images?.length,
+                  itemBuilder: (context, index, realIndex) {
+                    final path = _record.images![index];
+                    return buildImage(path);
+                  },
+                )
               ],
-
               Align(alignment: Alignment.bottomCenter, child: buildIndicator())
             ]),
             Container(
@@ -117,13 +127,26 @@ class _DayRecordPageState extends State<DayRecordPage> {
                             style: recordStyle),
                         Text(timestampToText(_record.timestamp),
                             style: recordStyle),
-                        Text("${_record.distance / _record.timestamp} km/h",
-                            style: recordStyle),
-                        Text("${_record.distance / 1000} km",
-                            style: recordStyle),
+                        if (_record.timestamp != 0) ...[
+                          Text(
+                              "${(_record.distance / _record.timestamp).toStringAsFixed(1)} km/h",
+                              style: recordStyle)
+                        ] else ...[
+                          const Text("0.0 km/h", style: recordStyle)
+                        ],
                         Text(
-                            "${(hKcal * (_record.timestamp) / 3600).toStringAsFixed(1)} kcal",
-                            style: recordStyle)
+                            "${(_record.distance / 1000).toStringAsFixed(2)} km",
+                            style: recordStyle),
+                        if (_record.distance == 0) ...[
+                          const Text(
+                            '0 kcal',
+                            style: recordStyle,
+                          )
+                        ] else ...[
+                          Text(
+                              "${(hKcal * (_record.timestamp) / 3600).toStringAsFixed(1)} kcal",
+                              style: recordStyle)
+                        ]
                       ],
                     ),
                   ),
@@ -154,7 +177,6 @@ class _DayRecordPageState extends State<DayRecordPage> {
 
     switch (_recordProvider.recordState) {
       case RecordState.loading:
-        _recordProvider.getRidingData();
         return loadingWidget();
       case RecordState.fail:
         return failWidget();
@@ -171,9 +193,10 @@ class _DayRecordPageState extends State<DayRecordPage> {
   Widget loadingWidget() => Scaffold(
       appBar: appBar(context),
       resizeToAvoidBottomInset: false,
-      body: const CircularProgressIndicator(
+      body: const Center(
+          child: CircularProgressIndicator(
         color: Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
-      ));
+      )));
 
   Widget failWidget() => Scaffold(
       appBar: appBar(context),
@@ -182,7 +205,7 @@ class _DayRecordPageState extends State<DayRecordPage> {
         child: Text('데이터를 불러오는 데에 실패했습니다'),
       ));
 
-  Widget buildImage(path, index) => Container(
+  Widget buildImage(path) => Container(
         width: double.infinity,
         height: 240,
         color: Colors.grey,

@@ -16,12 +16,12 @@
         "title": "갯골생태공원 벚꽃터널",
         "image": "assets/images/places/picture_gaetgol_ecological_park.jpg",
         "marker": "",
-        "type": "",
-        "latitude": "37.3889771",
-        "longitude": "126.7804387",
-        "jibunAddress": "경기도 시흥시 장곡동 724-10",
-        "roadAddress": "경기도 시흥시 동서로 287",
-        "description": ""
+        "type": "park",
+        "latitude": "37.390592483462605",
+        "longitude": "126.78099832254267",
+        "jibunAddress": "경기 시흥시 장곡동 724-32",
+        "roadAddress": "",
+        "description": "한국관광공사 사진 갤러리, 촬영자 박윤준"
     },
     {
         "id": "1903881322",
@@ -180,14 +180,14 @@
     {
         "id": "21805866",
         "title": "월곶역 자전거 대여소",
-        "image": "assets/images/places/gojan_station.png",
+        "image": "assets/images/places/picture_wolgot_station.JPG",
         "marker": "assets/icons/place_rental.png",
         "type": "rental",
-        "latitude": "37.3168245",
-        "longitude": "126.8234083",
-        "jibunAddress": "경기도 안산시 단원구 고잔동 453-53",
-        "roadAddress": "경기도 안산시 단원구 중앙대로 784 고잔역",
-        "description": ""
+        "latitude": "37.391705626349",
+        "longitude": "126.74264340883",
+        "jibunAddress": "경기도 시흥시 월곶동 992-8",
+        "roadAddress": "경기도 시흥시 월곶중앙로14번길 56",
+        "description": "교통평론가 한우진 - 출처 표기 요청"
     },
     {
         "id": "13491554",
@@ -221,7 +221,12 @@
         "latitude": "37.3395459",
         "longitude": "126.7579547",
         "jibunAddress": "경기도 시흥시 정왕동 2158",
+<<<<<<< HEAD
         "roadAddress": "한국관광공사",
         "description": ""
+=======
+        "roadAddress": "경기도 시흥시 역전로 50 시흥시 배드민턴장",
+        "description": "한국관광공사 정왕체육공원"
+>>>>>>> refs/remotes/origin/dev
     }
 ]

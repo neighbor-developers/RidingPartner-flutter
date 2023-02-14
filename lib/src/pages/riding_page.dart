@@ -1,21 +1,15 @@
 import 'dart:async';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/pages/record_page.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:wakelock/wakelock.dart';
-
 import '../provider/riding_result_provider.dart';
-import '../utils/bytesFromAsset.dart';
 import '../utils/timestampToText.dart';
 import '../utils/user_location.dart';
 import '../widgets/dialog.dart';
-
-// https://funncy.github.io/flutter/2020/07/21/flutter-google-map-marker/
 
 class RidingPage extends StatefulWidget {
   const RidingPage({super.key});
@@ -25,11 +19,12 @@ class RidingPage extends StatefulWidget {
 }
 
 class _RidingPageState extends State<RidingPage> {
-  Completer<GoogleMapController> _controller = Completer();
   late RidingProvider _ridingProvider;
-  LatLng initCameraPosition = const LatLng(37.37731944, 126.8050778);
-  Set<Marker> myPositionMarker = {};
-  late BitmapDescriptor myPositionIcon;
+  LocationTrackingMode _locationTrackingMode = LocationTrackingMode.Face;
+  late List<Marker> _markers = [];
+  late OverlayImage _markerIcon;
+  Completer<NaverMapController> _controller = Completer();
+  double floatingBtnPosition = 80;
 
   @override
   void initState() {
@@ -41,63 +36,52 @@ class _RidingPageState extends State<RidingPage> {
     await Provider.of<RidingProvider>(context, listen: false).getLocation();
 
     if (_ridingProvider.position != null) {
-      initCameraPosition = LatLng(_ridingProvider.position!.latitude,
-          _ridingProvider.position!.longitude);
-      final Uint8List markerIcon =
-          await getBytesFromAsset('assets/icons/my_location.png', 200);
-      myPositionIcon = BitmapDescriptor.fromBytes(markerIcon);
-
-      myPositionMarker.add(Marker(
-          markerId: const MarkerId("currentLocation"),
-          icon: BitmapDescriptor.fromBytes(markerIcon),
-          position: LatLng(_ridingProvider.position!.latitude,
-              _ridingProvider.position!.longitude)));
+      _markerIcon = await OverlayImage.fromAssetImage(
+          assetName: 'assets/icons/my_location.png');
       _ridingProvider.setMapComponent();
-    } else {
-      initCameraPosition = const LatLng(37.37731944, 126.8050778);
+
+      _markers = [
+        // Marker(
+        //     anchor: AnchorPoint(0.5, 0.5),
+        //     markerId: "currentLocation",
+        //     width: 65,
+        //     height: 65,
+        //     icon: _markerIcon,
+        //     position: LatLng(_ridingProvider.position!.latitude,
+        //         _ridingProvider.position!.longitude))
+      ];
     }
   }
 
-  final myLocation = MyLocation();
-
-  String floatBtnLabel = "일시중지";
-  IconData floatBtnIcon = Icons.pause;
-  double bearing = 180;
+  int polylineWidth = 7;
 
   @override
   Widget build(BuildContext context) {
     _ridingProvider = Provider.of<RidingProvider>(context);
     Position? position = _ridingProvider.position;
 
-    void setController() async {
-      GoogleMapController googleMapController = await _controller.future;
-      if (position != null) {
-        if (_ridingProvider.bearingPoint != null) {
-          bearing = Geolocator.bearingBetween(
-              position.latitude,
-              position.longitude,
-              _ridingProvider.bearingPoint!.latitude,
-              _ridingProvider.bearingPoint!.longitude);
-        }
-        googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-            CameraPosition(
-                target: LatLng(position.latitude, position.longitude),
-                zoom: 19,
-                bearing: bearing)));
-
-        myPositionMarker = {
-          Marker(
-              markerId: const MarkerId("currentLocation"),
-              icon: myPositionIcon,
-              position: LatLng(_ridingProvider.position!.latitude,
-                  _ridingProvider.position!.longitude))
-        };
-      }
+    if (_ridingProvider.state == RidingState.error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('사용자 위치를 불러올 수 없습니다.'),
+        ),
+      );
     }
 
-    if (_ridingProvider.state != RidingState.before) {
-      setController();
-    }
+    // if (_ridingProvider.state != RidingState.before) {
+    //   if (position != null) {
+    //     _markers = [
+    //       Marker(
+    //           anchor: AnchorPoint(0.5, 0.5),
+    //           markerId: "currentLocation",
+    //           width: 65,
+    //           height: 65,
+    //           icon: _markerIcon,
+    //           position: LatLng(_ridingProvider.position!.latitude,
+    //               _ridingProvider.position!.longitude))
+    //     ];
+    //   }
+    // }
 
     return WillPopScope(
         child: Scaffold(
@@ -128,24 +112,46 @@ class _RidingPageState extends State<RidingPage> {
             ),
             body: Stack(
               children: <Widget>[
-                GoogleMap(
-                  mapType: MapType.normal,
+                NaverMap(
+                  onMapCreated: onMapCreated,
+                  pathOverlays: _ridingProvider.polylineCoordinates.length > 1
+                      ? {
+                          PathOverlay(PathOverlayId('path'),
+                              _ridingProvider.polylineCoordinates,
+                              width: polylineWidth,
+                              outlineWidth: 0,
+                              color:
+                                  const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32))
+                        }
+                      : {},
+                  mapType: MapType.Basic,
+                  initLocationTrackingMode: LocationTrackingMode.Face,
                   initialCameraPosition: CameraPosition(
-                    target: LatLng(myLocation.position?.latitude ?? 37.0,
-                        myLocation.position?.longitude ?? 126.0),
-                    zoom: 12.6,
+                      target: LatLng(position!.latitude, position.longitude),
+                      zoom: 14),
+                  locationButtonEnable: false,
+                  markers: _markers,
+                ),
+                Positioned(
+                  bottom: floatingBtnPosition,
+                  left: 20,
+                  child: FloatingActionButton(
+                    heroTag: 'mypos',
+                    backgroundColor: Colors.white,
+                    child: const ImageIcon(
+                        AssetImage('assets/icons/search_myLocation_button.png'),
+                        color: Color.fromRGBO(240, 120, 5, 1)),
+                    onPressed: () async {
+                      final controller = await _controller.future;
+                      await controller.moveCamera(CameraUpdate.toCameraPosition(
+                          CameraPosition(
+                              target: LatLng(_ridingProvider.position!.latitude,
+                                  _ridingProvider.position!.longitude),
+                              zoom: 18)));
+                      controller
+                          .setLocationTrackingMode(LocationTrackingMode.Face);
+                    },
                   ),
-                  onMapCreated: (GoogleMapController controller) {
-                    _controller.complete(controller);
-                  },
-                  myLocationButtonEnabled: false,
-                  polylines: {
-                    Polyline(
-                        polylineId: const PolylineId("poly"),
-                        width: 5,
-                        points: _ridingProvider.polylineCoordinates),
-                  },
-                  markers: myPositionMarker,
                 ),
                 Positioned(bottom: 0, child: record(_ridingProvider.state))
               ],
@@ -160,6 +166,11 @@ class _RidingPageState extends State<RidingPage> {
         });
   }
 
+  void onMapCreated(NaverMapController controller) {
+    if (_controller.isCompleted) _controller = Completer();
+    _controller.complete(controller);
+  }
+
   Widget record(RidingState state) {
     const TextStyle titleStyle = TextStyle(
         fontFamily: 'Pretendard',
@@ -172,28 +183,43 @@ class _RidingPageState extends State<RidingPage> {
         fontWeight: FontWeight.w400,
         color: Color.fromRGBO(52, 58, 64, 1));
 
-    if (state == RidingState.before) {
+    if (state == RidingState.before || state == RidingState.error) {
       return InkWell(
-        child: Container(
-          color: const Color.fromRGBO(240, 120, 5, 1),
-          alignment: Alignment.center,
-          width: MediaQuery.of(context).size.width,
-          height: 61,
-          child: const Text(
-            '주행 시작',
-            style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w700,
-                fontSize: 18),
-            textAlign: TextAlign.center,
+          child: Container(
+            color: const Color.fromRGBO(240, 120, 5, 1),
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width,
+            height: 61,
+            child: const Text(
+              '주행 시작',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
           ),
-        ),
-        onTap: () {
-          _ridingProvider.startRiding();
-          screenKeepOn();
-        },
-      );
+          onTap: () async {
+            try {
+              floatingBtnPosition = 130;
+              _ridingProvider.startRiding();
+              screenKeepOn();
+              final controller = await _controller.future;
+              await controller.moveCamera(CameraUpdate.toCameraPosition(
+                  CameraPosition(
+                      target: LatLng(_ridingProvider.position!.latitude,
+                          _ridingProvider.position!.longitude),
+                      zoom: 18)));
+              controller.setLocationTrackingMode(LocationTrackingMode.Face);
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('주행을 시작하는 데에 실패했습니다'),
+                ),
+              );
+            }
+          });
     } else {
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
@@ -225,7 +251,8 @@ class _RidingPageState extends State<RidingPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             const Text('거리', style: titleStyle),
-                            Text("${_ridingProvider.distance}km",
+                            Text(
+                                "${((_ridingProvider.distance / 10000).roundToDouble()) * 10}km",
                                 style: dataStyle)
                           ],
                         ),
@@ -237,7 +264,7 @@ class _RidingPageState extends State<RidingPage> {
                               style: titleStyle,
                             ),
                             Text(
-                              "${_ridingProvider.speed.roundToDouble()}km/h",
+                              "${_ridingProvider.speed.toStringAsFixed(1)}km/h",
                               style: dataStyle,
                             )
                           ],

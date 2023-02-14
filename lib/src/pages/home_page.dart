@@ -1,9 +1,8 @@
-import 'dart:developer' as developer;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:line_chart/charts/line-chart.widget.dart';
 import 'package:line_chart/model/line-chart.model.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/models/place.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
@@ -49,15 +48,7 @@ class _HomePageState extends State<HomePage>
   late TabController _tabController;
   int state = 0;
 
-  List<LineChartModel> data = [
-    LineChartModel(amount: 300, date: DateTime(2020, 1, 1)),
-    LineChartModel(amount: 200, date: DateTime(2020, 1, 2)),
-    LineChartModel(amount: 300, date: DateTime(2020, 1, 3)),
-    LineChartModel(amount: 500, date: DateTime(2020, 1, 4)),
-    LineChartModel(amount: 800, date: DateTime(2020, 1, 5)),
-    LineChartModel(amount: 200, date: DateTime(2020, 1, 6)),
-    LineChartModel(amount: 120, date: DateTime(2020, 1, 7)),
-  ];
+  List<LineChartModel> data = [];
 
   // int _counter = 0;
 
@@ -76,6 +67,7 @@ class _HomePageState extends State<HomePage>
       fontSize: 14,
       fontWeight: FontWeight.w400,
       color: Color.fromARGB(185, 51, 57, 62));
+  GlobalKey _one = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -416,7 +408,9 @@ class _HomePageState extends State<HomePage>
         child: const Text('라이딩한 기록이 없습니다'),
       );
     } else {
-      Data distance = Data('거리', '${record.distance / 1000}km',
+      Data distance = Data(
+          '거리',
+          '${((record.distance / 10).roundToDouble()) / 100}km',
           'assets/icons/home_distance.png');
       Data time = Data('시간', timestampToText(record.timestamp),
           'assets/icons/home_time.png');
@@ -430,7 +424,9 @@ class _HomePageState extends State<HomePage>
       } catch (e) {
         speed = Data('평균 속도', '0km/h', 'assets/icons/home_speed.png');
       }
-      Data speedMax = Data('순간 최고 속도', '${record.topSpeed}m/s',
+      Data speedMax = Data(
+          '순간 최고 속도',
+          '${record.topSpeed.toStringAsFixed(1)} km/h',
           'assets/icons/home_max_speed.png');
 
       return Container(
@@ -608,16 +604,16 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget customLineChart() {
-    Paint circlePaint = Paint()
-      ..color = const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32);
+    Paint circlePaint = Paint()..color = ui.Color.fromARGB(109, 255, 177, 104);
 
     Paint insideCirclePaint = Paint()
-      ..color = const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32);
+      ..color = ui.Color.fromARGB(255, 255, 147, 40);
 
     Paint linePaint = Paint()
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke
       ..color = Colors.orange;
+
     return LineChart(
       width: MediaQuery.of(context).size.width - 110,
       height: 120,
@@ -637,12 +633,8 @@ class _HomePageState extends State<HomePage>
         color: Colors.deepOrange,
       ),
       insideCirclePaint: insideCirclePaint,
-      onValuePointer: (LineChartModelCallback value) {
-        print('${value.chart} ${value.percentage}');
-      },
-      onDropPointer: () {
-        print('onDropPointer');
-      },
+      onValuePointer: (LineChartModelCallback value) {},
+      onDropPointer: () {},
     );
   }
 
@@ -824,50 +816,10 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget recordRateProgress(double distance) {
-    double percent = distance / 1000;
-    if (percent > 1) {
-      percent = 1;
-    }
-    return SizedBox(
-        width: MediaQuery.of(context).size.width,
-        child: Card(
-            child: Stack(
-          children: [
-            Positioned(
-                left: 0,
-                child: Column(
-                  children: [
-                    const Text(
-                      '오늘의 목표거리 달성률',
-                      style: TextStyle(
-                          fontSize: recordFontSize, color: Colors.black54),
-                    ),
-                    Text(
-                      '${distance / 1000}km / 10km',
-                      style: const TextStyle(
-                          fontSize: recordFontSize, color: Colors.black54),
-                    )
-                  ],
-                )),
-            Positioned(
-                right: 0,
-                child: CircularPercentIndicator(
-                    percent: percent,
-                    radius: 100,
-                    backgroundColor: Colors.black12,
-                    progressColor:
-                        const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32)))
-          ],
-        )));
-  }
-
   int _getMaxDistance(List<Record> records) {
     double maxDistance = 0;
     int recoredCount = 0;
     for (var element in records) {
-      developer.log('반복 횟수${recoredCount++}');
-      developer.log(element.distance.toString());
       if (element.distance > maxDistance) {
         maxDistance = element.distance;
       }
@@ -887,14 +839,17 @@ class _HomePageState extends State<HomePage>
   }
 
   void _incrementCounter(List<Record> _records) {
-    setState(() {
-      data = [];
-      for (var element in _records) {
-        if (element.date != '') {
-          DateTime day = element.getYearMonthDay();
-          data.add(LineChartModel(amount: element.distance, date: day));
-        }
+    List<Record> dataIn7days =
+        (((_records.reversed).toList()).sublist(0, 7)).reversed.toList();
+    List<LineChartModel> model = [];
+    for (var element in dataIn7days) {
+      if (element.date != '') {
+        DateTime day = element.getYearMonthDay();
+        model.add(LineChartModel(amount: element.distance, date: day));
       }
+    }
+    setState(() {
+      data = model;
     });
   }
 

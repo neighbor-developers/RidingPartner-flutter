@@ -84,13 +84,6 @@ class NaverPlaceData {
         address!.add(Address.fromJson(v));
       });
     }
-    // if (json['all'] != null) {
-    //   all = <All>[];
-    //   json['all'].forEach((v) {
-    //     all!.add(All.fromJson(v));
-    //   });
-    //   developer.log("address 2 called");
-    // }
   }
 
   Map<String, dynamic> toJson() {

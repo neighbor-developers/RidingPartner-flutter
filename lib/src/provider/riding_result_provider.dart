@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'dart:developer' as developer;
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
 
 import '../models/result.dart';
@@ -33,8 +32,7 @@ class RidingResultProvider with ChangeNotifier {
 
   Record get record => _record;
 
-  late final List<XFile?> _images;
-
+  List<XFile?> _images = [];
   List<XFile?> get images => _images;
 
   Future<void> getRidingData() async {
@@ -61,31 +59,32 @@ class RidingResultProvider with ChangeNotifier {
   }
 
   Future<void> getImage(ImageSource imageSource) async {
-    final List<XFile> imageXFiles = await picker.pickMultiImage();
-    // picker의 사진은 최대 4장까지 선택
-    if (imageXFiles.length <= 4) {
-      if (_imageStatus == ImageStatus.init) {
-        if(imageXFiles.isNotEmpty) {
-          _images = imageXFiles;
-          _imageStatus = ImageStatus.imageSuccess;
-          developer.log(_images.toString());
-        } else{
-          _imageStatus = ImageStatus.init;
-        }
-      } else if (imageXFiles.isNotEmpty && imageStatus != ImageStatus.init) {
-        if (_images.isEmpty) {
-          _images.addAll(imageXFiles);
-          _imageStatus = ImageStatus.imageSuccess;
+    try {
+      final List<XFile> imageXFiles = await picker.pickMultiImage();
+      // picker의 사진은 최대 4장까지 선택
+      if (imageXFiles.length <= 4) {
+        if (_imageStatus == ImageStatus.init) {
+          if (imageXFiles.isNotEmpty) {
+            _images = imageXFiles;
+            _imageStatus = ImageStatus.imageSuccess;
+          } else {
+            _imageStatus = ImageStatus.init;
+          }
+        } else if (imageXFiles.isNotEmpty && imageStatus != ImageStatus.init) {
+          if (_images.isEmpty) {
+            _images.addAll(imageXFiles);
+            _imageStatus = ImageStatus.imageSuccess;
+          } else {
+            _images.clear();
+          }
         } else {
           _images.clear();
         }
       } else {
         _imageStatus = ImageStatus.imageFail;
       }
-    } else {
-        Fluttertoast.showToast(msg: "사진은 최대 4장까지 선택 가능합니다.");
-    }
-    notifyListeners();
+      notifyListeners();
+    } catch (e) {}
   }
 
   Future<void> confirmPermissionGranted() async {

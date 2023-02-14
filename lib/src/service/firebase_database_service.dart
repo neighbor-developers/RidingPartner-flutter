@@ -1,4 +1,4 @@
-import 'dart:developer' as developer;
+import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -22,10 +22,8 @@ class FirebaseDatabaseService {
           "memo": record.memo,
           "kcal": record.kcal
         })
-        .then((_) => {developer.log("firebase 기록 저장 성공 $record")})
-        .catchError((onError) {
-          print(onError.toString());
-        });
+        .then((_) => {})
+        .catchError((onError) {});
     PreferenceUtils.saveRecordPref(record);
   }
 
@@ -33,10 +31,8 @@ class FirebaseDatabaseService {
     DatabaseReference ref = _database.ref("$_uId/${record.date}");
     await ref
         .set({"memo": record.memo})
-        .then((_) => {print("메모 내용: ${record.memo}")})
-        .catchError((onError) {
-          print(onError.toString());
-        });
+        .then((_) => {})
+        .catchError((onError) {});
     PreferenceUtils.saveRecordMemoPref(record);
   }
 
@@ -69,7 +65,6 @@ class FirebaseDatabaseService {
       final DataSnapshot snapshot = await ref.get();
 
       if (snapshot.exists) {
-        print("데이터 있음");
         Map<dynamic, dynamic> map = snapshot.value as Map<dynamic, dynamic>;
         // return map.values.map(Record.fromDB).toList();
         records = map.values.map((recordEl) {
@@ -89,11 +84,9 @@ class FirebaseDatabaseService {
           // .toList()
         };
       } else {
-        print("데이터 없음");
         return {'state': RecordState.none};
       }
     } catch (e) {
-      print("catch!");
       return {'state': RecordState.fail};
     }
   }

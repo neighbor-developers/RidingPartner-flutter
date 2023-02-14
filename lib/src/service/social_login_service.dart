@@ -1,8 +1,7 @@
-import 'dart:developer' as developer;
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart' as naver_flutter;
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart' as kakao_flutter;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,7 +29,9 @@ class SocialLoginService {
         saveUserInfo(user.user!);
         return user.user!;
       } catch (error) {
-        print('카카오톡 로그인 실패 $error');
+        Fluttertoast.showToast(
+            msg: "error: 해당 계정의 이메일이 네이버 혹은 구글 로그인으로 이미 등록된 이메일인지 확인해주세요.",
+            toastLength: Toast.LENGTH_LONG);
         return null;
       }
     } else {
@@ -38,7 +39,6 @@ class SocialLoginService {
         await kakao_flutter.UserApi.instance.loginWithKakaoAccount();
         kakao_flutter.User kakaoUser =
             await kakao_flutter.UserApi.instance.me();
-        developer.log('kakaoUser: $kakaoUser');
         UserCredential user = await loginWithUser({
           'platform': 'kakao',
           'uId': kakaoUser.id.toString(),
@@ -48,7 +48,9 @@ class SocialLoginService {
         saveUserInfo(user.user!);
         return user.user;
       } catch (error) {
-        developer.log('카카오톡 로그인 실패: $error');
+        Fluttertoast.showToast(
+            msg: "error: 해당 계정의 이메일이 네이버 혹은 구글 로그인으로 이미 등록된 이메일인지 확인해주세요.",
+            toastLength: Toast.LENGTH_LONG);
         return null;
       }
     }
@@ -71,7 +73,9 @@ class SocialLoginService {
       saveUserInfo(user.user!);
       return user.user;
     } catch (error) {
-      developer.log('네이버 로그인 실패: $error');
+      Fluttertoast.showToast(
+          msg: "error: 해당 계정의 이메일이 카카오톡 혹은 구글 로그인으로 이미 등록된 이메일인지 확인해주세요.",
+          toastLength: Toast.LENGTH_LONG);
       null;
     }
     return null;
@@ -84,7 +88,6 @@ class SocialLoginService {
       credencial = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: user['email'], password: user['uId']);
     } catch (error) {
-      developer.log(error.toString());
     } finally {
       credencial = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: user['email'], password: user['uId']);
@@ -136,7 +139,6 @@ class SocialLoginService {
 
   Future<void> saveUserInfo(User user) async {
     final prefs = await SharedPreferences.getInstance();
-    developer.log('save');
     prefs.setString('name', user.displayName.toString());
     prefs.setString('email', user.email.toString());
     prefs.setString('token', user.getIdToken().toString());
@@ -151,9 +153,7 @@ class SocialLoginService {
     try {
       await fAuth.currentUser?.delete();
       fAuth.signOut();
-    } catch (e) {
-      print('계정탈퇴에 실패했습니다.');
-    }
+    } catch (e) {}
     Future.delayed(const Duration(seconds: 3));
 
     return true;
@@ -164,7 +164,6 @@ class SocialLoginService {
       await fAuth.signOut();
       return true;
     } catch (e) {
-      print(e.toString());
       return false;
     }
   }

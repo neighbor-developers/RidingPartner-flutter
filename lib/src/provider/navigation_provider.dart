@@ -1,12 +1,10 @@
 import 'dart:async';
 
-import 'dart:ui' as ui;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart' as naver;
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart' as google_map;
 import 'package:latlong2/latlong.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
@@ -35,8 +33,8 @@ class NavigationProvider with ChangeNotifier {
   late List<Place> _ridingCourse;
   List<Guide> _route = [];
   List<int> _distances = [];
-  List<google_map.LatLng> _polylinePoints = [];
-  List<google_map.LatLng> get polylinePoints => _polylinePoints;
+  List<naver.LatLng> _polylinePoints = [];
+  List<naver.LatLng> get polylinePoints => _polylinePoints;
 
   late Guide _goalPoint;
   late Place _goalDestination;
@@ -97,8 +95,10 @@ class NavigationProvider with ChangeNotifier {
     try {
       myLocation.getMyCurrentLocation();
       _position = myLocation.position;
+      if (_position == null) {
+        _searchRouteState = SearchRouteState.locationFail;
+      }
     } catch (e) {
-      print(e.toString());
       myLocation.checkPermission();
       _position = null;
       _searchRouteState = SearchRouteState.locationFail;
@@ -168,19 +168,6 @@ class NavigationProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<String> getMyLocationAddress(Position position) async {
-  //   final url =
-  //       "https://dapi.kakao.com/v2/local/geo/coord2address.json?x=$lon&y=$lat&input_coord=WGS84";
-  //   Map<String, String> requestHeaders = {'Authorization': 'KakaoAK $kakaoKey'};
-  //   final response = await http.get(Uri.parse(url), headers: requestHeaders);
-  //   final address = json.decode(response.body)['documents'][0]['address']
-  //           ['address_name'] ??
-  //       '';
-  //   developer.log(address);
-
-  //   return address;
-  // }
-
   Future<void> startNavigation() async {
     setState(RidingState.riding);
     _positionStream.controller.stream.listen((pos) {
@@ -225,7 +212,7 @@ class NavigationProvider with ChangeNotifier {
             _goalPoint = _route[0]; //
             _nextPoint = null;
             if (isFirst) {
-              _polylinePoints.removeAt(0);
+              // _polylinePoints.removeAt(0);
               isFirst = false;
             }
             _remainedDistance -= _distances.last;
@@ -237,7 +224,7 @@ class NavigationProvider with ChangeNotifier {
             if (isFirst) {
               isFirst = false;
             } else {
-              _polylinePoints.removeAt(0);
+              // _polylinePoints.removeAt(0);
             }
             _remainedDistance -= _distances.last;
             _distances.removeLast();
@@ -300,12 +287,11 @@ class NavigationProvider with ChangeNotifier {
     List<PolylineWayPoint>? turnPoints = _route
         .map((route) => PolylineWayPoint(location: route.turnPoint ?? ""))
         .toList();
-    List<google_map.LatLng> pointLatLngs = [];
+    List<naver.LatLng> pointLatLngs = [];
 
     for (var element in turnPoints) {
       List<String> a = element.location.split(',');
-      pointLatLngs
-          .add(google_map.LatLng(double.parse(a[1]), double.parse(a[0])));
+      pointLatLngs.add(naver.LatLng(double.parse(a[1]), double.parse(a[0])));
     }
 
     _polylinePoints = pointLatLngs;
