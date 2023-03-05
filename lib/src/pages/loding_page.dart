@@ -15,6 +15,8 @@ import 'package:ridingpartner_flutter/src/provider/route_list_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/setting_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/sights_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
+import 'package:ridingpartner_flutter/src/widgets/permissionCheckDialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LodingPage extends StatefulWidget {
   const LodingPage({super.key});
@@ -26,9 +28,11 @@ class LodingPage extends StatefulWidget {
 class _LodingPageState extends State<LodingPage> {
   late ConnectivityResult connectivityResult;
   late AuthProvider _authProvider;
+  late SharedPreferences pref;
+  bool permission = false;
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
 
     // 인터넷 검사
@@ -38,6 +42,9 @@ class _LodingPageState extends State<LodingPage> {
 
     // 유저 초기 설정
     Provider.of<AuthProvider>(context, listen: false).prepareUser();
+
+    pref = await SharedPreferences.getInstance();
+    permission = pref.getBool('backLocationPermission') ?? false;
   }
 
   // 로딩페이지와 동시에 사용
@@ -45,32 +52,54 @@ class _LodingPageState extends State<LodingPage> {
   Widget build(BuildContext context) {
     _authProvider = Provider.of<AuthProvider>(context);
 
+    void goHomePage() async {
+      pref = await SharedPreferences.getInstance();
+      pref.setBool('backLocationPermission', true);
+
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => MultiProvider(providers: [
+                    ChangeNotifierProvider(
+                        create: (context) => SightsProvider()),
+                    ChangeNotifierProvider(
+                        create: (context) => WeatherProvider()),
+                    ChangeNotifierProvider(
+                        create: (context) => RouteListProvider()),
+                    ChangeNotifierProvider(
+                        create: (context) => BottomNavigationProvider()),
+                    ChangeNotifierProvider(
+                        create: (context) => MapSearchProvider()),
+                    ChangeNotifierProvider(
+                        create: (context) => PlaceListProvider()),
+                    ChangeNotifierProvider(
+                        create: (context) => HomeRecordProvider()),
+                    ChangeNotifierProvider(
+                        create: (context) => RecordListProvider()),
+                    ChangeNotifierProvider(
+                        create: (context) => SettingProvider())
+                  ], child: BottomNavigation())),
+          (route) => false);
+    }
+
+    Future permissionCheck() async {
+      if (!permission) {
+        bool resultPermission = await permissionDialog(context);
+
+        if (resultPermission) {
+          goHomePage();
+        } else {
+          Fluttertoast.showToast(
+              msg: "권한 동의가 필요합니다.", toastLength: Toast.LENGTH_SHORT);
+          bool resultPermission = await permissionDialog(context);
+          if (resultPermission) goHomePage();
+        }
+      }
+    }
+
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (_authProvider.user != null) {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => MultiProvider(providers: [
-                      ChangeNotifierProvider(
-                          create: (context) => SightsProvider()),
-                      ChangeNotifierProvider(
-                          create: (context) => WeatherProvider()),
-                      ChangeNotifierProvider(
-                          create: (context) => RouteListProvider()),
-                      ChangeNotifierProvider(
-                          create: (context) => BottomNavigationProvider()),
-                      ChangeNotifierProvider(
-                          create: (context) => MapSearchProvider()),
-                      ChangeNotifierProvider(
-                          create: (context) => PlaceListProvider()),
-                      ChangeNotifierProvider(
-                          create: (context) => HomeRecordProvider()),
-                      ChangeNotifierProvider(
-                          create: (context) => RecordListProvider()),
-                      ChangeNotifierProvider(
-                          create: (context) => SettingProvider())
-                    ], child: BottomNavigation())),
-            (route) => false);
+        permissionCheck();
       } else {
         if (connectivityResult == ConnectivityResult.none) {
           Fluttertoast.showToast(

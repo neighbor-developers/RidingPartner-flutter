@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:line_chart/charts/line-chart.widget.dart';
 import 'package:line_chart/model/line-chart.model.dart';
 import 'package:provider/provider.dart';
@@ -76,6 +77,10 @@ class _HomePageState extends State<HomePage>
     _settingProvider = Provider.of<SettingProvider>(context);
     _records = _homeRecordProvider.recordFor14Days;
     _incrementCounter(_records);
+
+    Fluttertoast.showToast(
+        msg: "이 앱은 트래킹을 위해 백그라운드에서 위치 수집을 할 수 있습니다.",
+        toastLength: Toast.LENGTH_SHORT);
 
     if (_weatherProvider.loadingStatus == WeatherState.searching) {
       _weatherProvider.getWeather();
