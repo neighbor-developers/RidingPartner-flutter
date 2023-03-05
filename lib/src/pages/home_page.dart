@@ -78,10 +78,6 @@ class _HomePageState extends State<HomePage>
     _records = _homeRecordProvider.recordFor14Days;
     _incrementCounter(_records);
 
-    Fluttertoast.showToast(
-        msg: "이 앱은 트래킹을 위해 백그라운드에서 위치 수집을 할 수 있습니다.",
-        toastLength: Toast.LENGTH_SHORT);
-
     if (_weatherProvider.loadingStatus == WeatherState.searching) {
       _weatherProvider.getWeather();
     }

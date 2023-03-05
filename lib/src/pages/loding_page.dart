@@ -94,6 +94,11 @@ class _LodingPageState extends State<LodingPage> {
           bool resultPermission = await permissionDialog(context);
           if (resultPermission) goHomePage();
         }
+      } else {
+        Fluttertoast.showToast(
+            msg: "이 앱은 트래킹을 위해 백그라운드에서 위치 수집을 할 수 있습니다.",
+            toastLength: Toast.LENGTH_SHORT);
+        goHomePage();
       }
     }
 
