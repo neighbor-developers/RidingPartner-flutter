@@ -32,7 +32,7 @@ class _LodingPageState extends State<LodingPage> {
   bool permission = false;
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
 
     // 인터넷 검사
@@ -42,9 +42,6 @@ class _LodingPageState extends State<LodingPage> {
 
     // 유저 초기 설정
     Provider.of<AuthProvider>(context, listen: false).prepareUser();
-
-    pref = await SharedPreferences.getInstance();
-    permission = pref.getBool('backLocationPermission') ?? false;
   }
 
   // 로딩페이지와 동시에 사용
@@ -83,6 +80,9 @@ class _LodingPageState extends State<LodingPage> {
     }
 
     Future permissionCheck() async {
+      pref = await SharedPreferences.getInstance();
+      permission = pref.getBool('backLocationPermission') ?? false;
+
       if (!permission) {
         bool resultPermission = await permissionDialog(context);
 

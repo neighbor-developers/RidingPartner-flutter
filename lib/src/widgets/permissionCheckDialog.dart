@@ -14,7 +14,8 @@ Future<bool> permissionDialog(BuildContext context) async {
                 margin: const EdgeInsets.only(top: 20),
                 child: const Text.rich(
                   TextSpan(
-                      text: '자전거 경로 트래킹을 위하여 백그라운드 위치 수집을 할 수 있습니다.\n동의하시겠습니까?',
+                      text:
+                          '자전거 경로 트래킹을 위하여 \n백그라운드 위치 수집을 할 수 있습니다.\n동의하시겠습니까?\n\n',
                       style: TextStyle(
                           color: Color.fromARGB(255, 24, 24, 1),
                           fontFamily: 'Pretendard',
