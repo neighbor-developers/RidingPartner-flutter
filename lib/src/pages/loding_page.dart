@@ -15,6 +15,7 @@ import 'package:ridingpartner_flutter/src/provider/route_list_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/setting_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/sights_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
+import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 import 'package:ridingpartner_flutter/src/widgets/permissionCheckDialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -52,6 +53,8 @@ class _LodingPageState extends State<LodingPage> {
     void goHomePage() async {
       pref = await SharedPreferences.getInstance();
       pref.setBool('backLocationPermission', true);
+
+      MyLocation();
 
       Navigator.pushAndRemoveUntil(
           context,

@@ -18,7 +18,7 @@ void main() async {
   HttpOverrides.global = NoCheckCertificateHttpOverrides();
 
   await dotenv.load(fileName: "assets/config/.env");
-  MyLocation();
+  // MyLocation();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await PreferenceUtils.init();
