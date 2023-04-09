@@ -75,6 +75,7 @@ dependencies:
   logging: ^1.1.1
   shared_preferences_ios: ^2.1.1
   flutter_naver_map: ^0.10.6
+  flutter_riverpod: ^2.3.4
 
 dev_dependencies:
   flutter_test:

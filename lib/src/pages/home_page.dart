@@ -10,6 +10,7 @@ import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/models/weather.dart';
 import 'package:ridingpartner_flutter/src/pages/navigation_page.dart';
 import 'package:ridingpartner_flutter/src/pages/record_list_page.dart';
+import 'package:ridingpartner_flutter/src/pages/splash_screen.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/record_list_provider.dart';
@@ -19,7 +20,6 @@ import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
 
 import '../provider/auth_provider.dart';
-import 'loding_page.dart';
 
 class Data {
   String key;
@@ -369,14 +369,7 @@ class _HomePageState extends State<HomePage>
           onTap: () async {
             bool result = await _settingProvider.signOut();
             if (result) {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ChangeNotifierProvider(
-                            create: (context) => AuthProvider(),
-                            child: const LodingPage(),
-                          )),
-                  ((route) => false));
+              toSplashScreen();
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -939,15 +932,7 @@ class _HomePageState extends State<HomePage>
                           ),
                           onTap: () async {
                             await _settingProvider.withdrawal();
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        ChangeNotifierProvider(
-                                          create: (context) => AuthProvider(),
-                                          child: const LodingPage(),
-                                        )),
-                                ((route) => false));
+                            toSplashScreen();
                           },
                         ))
                       ],
@@ -955,4 +940,9 @@ class _HomePageState extends State<HomePage>
               ],
             ));
   }
+
+  void toSplashScreen() => Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => SplashScreen()),
+      (route) => false);
 }

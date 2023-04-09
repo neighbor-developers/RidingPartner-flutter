@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ridingpartner_flutter/src/pages/loding_page.dart';
+import 'package:ridingpartner_flutter/src/pages/splash_screen.dart';
 import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/setting_provider.dart';
 
@@ -99,14 +99,7 @@ class _SettingPageState extends State<SettingPage> {
         onTap: () async {
           bool result = await _settingProvider.signOut();
           if (result) {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ChangeNotifierProvider(
-                          create: (context) => AuthProvider(),
-                          child: const LodingPage(),
-                        )),
-                ((route) => false));
+            toSplashScreen();
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -133,17 +126,15 @@ class _SettingPageState extends State<SettingPage> {
         ),
         onTap: () async {
           await _settingProvider.withdrawal();
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ChangeNotifierProvider(
-                        create: (context) => AuthProvider(),
-                        child: const LodingPage(),
-                      )),
-              ((route) => false));
+          toSplashScreen();
         },
       ),
       const Divider(color: Color.fromARGB(128, 193, 193, 193), thickness: 0.8),
     ]);
   }
+
+  void toSplashScreen() => Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => SplashScreen()),
+      (route) => false);
 }
