@@ -17,6 +17,8 @@ import 'package:ridingpartner_flutter/src/provider/record_list_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/setting_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/weather_provider.dart';
+import 'package:ridingpartner_flutter/src/style/palette.dart';
+import 'package:ridingpartner_flutter/src/style/textstyle.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
 
 import '../provider/auth_provider.dart';
@@ -63,11 +65,6 @@ class _HomePageState extends State<HomePage>
         length: numberOfRecentRecords, vsync: this, initialIndex: 13);
   }
 
-  final settingTextStyle = const TextStyle(
-      fontFamily: 'Pretendard',
-      fontSize: 14,
-      fontWeight: FontWeight.w400,
-      color: Color.fromARGB(185, 51, 57, 62));
   GlobalKey _one = GlobalKey();
 
   @override
@@ -328,12 +325,12 @@ class _HomePageState extends State<HomePage>
               margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text('기록 전체보기', style: settingTextStyle),
-                  const SizedBox(
+                children: const [
+                  Text('기록 전체보기', style: TextStyles.settingStyle),
+                  SizedBox(
                     width: 5,
                   ),
-                  const Icon(
+                  Icon(
                     Icons.add_chart_rounded,
                     color: Color.fromARGB(185, 51, 57, 62),
                     size: 17,
@@ -352,8 +349,7 @@ class _HomePageState extends State<HomePage>
         return const SizedBox(
             height: 100,
             child: Center(
-              child: CircularProgressIndicator(
-                  color: Color.fromARGB(0xFF, 0xFB, 0x95, 0x32)),
+              child: CircularProgressIndicator(color: Palette.appColor),
             ));
     }
   }
@@ -363,7 +359,8 @@ class _HomePageState extends State<HomePage>
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text('앱 버전 : ${_settingProvider.version}', style: settingTextStyle),
+        Text('앱 버전 : ${_settingProvider.version}',
+            style: TextStyles.settingStyle),
         const Text('   |   '),
         InkWell(
           onTap: () async {
@@ -382,12 +379,12 @@ class _HomePageState extends State<HomePage>
               );
             }
           },
-          child: Text('로그아웃', style: settingTextStyle),
+          child: const Text('로그아웃', style: TextStyles.settingStyle),
         ),
         const Text('   |   '),
         InkWell(
           onTap: () => withdrawalDialog(),
-          child: Text('계정 탈퇴', style: settingTextStyle),
+          child: const Text('계정 탈퇴', style: TextStyles.settingStyle),
         ),
       ],
     );
