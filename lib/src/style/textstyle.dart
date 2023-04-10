@@ -89,4 +89,16 @@ class TextStyles {
     fontWeight: FontWeight.w400,
     color: Color.fromARGB(224, 38, 38, 38),
   );
+
+  static const TextStyle recommendTitleTextStyle = TextStyle(
+      height: 1.4,
+      fontFamily: 'Pretendard',
+      fontSize: 24,
+      fontWeight: FontWeight.w800);
+
+  static const TextStyle recommendCardTextStyle = TextStyle(
+      fontFamily: 'Pretendard',
+      fontSize: 16,
+      color: Colors.white,
+      fontWeight: FontWeight.w600);
 }

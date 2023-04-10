@@ -6,7 +6,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 import 'package:ridingpartner_flutter/src/provider/sights_provider.dart';
-import 'package:ridingpartner_flutter/src/widgets/bottom_modal/route_bottom_modal.dart';
+import 'package:ridingpartner_flutter/src/widgets/bottom_modal/place_bottom_modal.dart';
 import '../models/place.dart';
 import '../provider/navigation_provider.dart';
 import '../provider/riding_provider.dart';
@@ -40,6 +40,7 @@ final markerListProvider = FutureProvider<List<Marker>>((ref) {
 });
 
 class SightsScreen extends ConsumerStatefulWidget {
+  const SightsScreen({Key? key}) : super(key: key);
   @override
   SightsScreenState createState() => SightsScreenState();
 }
@@ -85,7 +86,7 @@ class SightsScreenState extends ConsumerState<SightsScreen> {
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0))),
-      builder: (BuildContext context) => RouteBottomModal(place: place));
+      builder: (BuildContext context) => PlaceBottomModal(place: place));
 
   void onMapCreated(NaverMapController controller) {
     if (_controller.isCompleted) _controller = Completer();

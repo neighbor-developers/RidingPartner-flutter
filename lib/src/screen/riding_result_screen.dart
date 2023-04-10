@@ -9,7 +9,6 @@ import 'package:ridingpartner_flutter/src/widgets/appbar.dart';
 
 import '../models/record.dart';
 import '../service/firebase_database_service.dart';
-import '../service/shared_preference.dart';
 import '../style/textstyle.dart';
 
 final memoProvider = StateProvider((ref) => '');
@@ -214,7 +213,7 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
         kcal: hKcal * (recordData.asData!.value.timestamp) / 3600,
         images: image.map((e) => e.path).toList());
     FirebaseDatabaseService().saveRecordFirebaseDb(record);
-    PreferenceUtils.saveRecordMemoPref(record);
+    Record.saveRecordMemoPref(record);
   }
 }
 

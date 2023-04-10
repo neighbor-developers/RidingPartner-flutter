@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/place.dart';
 import '../../style/textstyle.dart';
 import '../../utils/get_record_place.dart';
-import '../bottom_modal/route_bottom_modal.dart';
+import '../bottom_modal/place_bottom_modal.dart';
 
 final recommendPlaceProvider = FutureProvider<List<Place>>((ref) async {
   return await getRecomendPlace();
@@ -148,5 +147,5 @@ class RecommendPlaceWidgetState extends ConsumerState<RecommendPlaceWidget> {
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0))),
-      builder: (BuildContext context) => RouteBottomModal(place: place));
+      builder: (BuildContext context) => PlaceBottomModal(place: place));
 }

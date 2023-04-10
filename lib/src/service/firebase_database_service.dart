@@ -5,7 +5,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/models/result.dart';
 import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
-import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
 
 class FirebaseDatabaseService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
@@ -25,7 +24,7 @@ class FirebaseDatabaseService {
         })
         .then((_) => {})
         .catchError((onError) {});
-    PreferenceUtils.saveRecordPref(record);
+    Record.saveRecordPref(record);
   }
 
   saveRecordMemoFirebaseDb(Record record) async {
@@ -34,7 +33,7 @@ class FirebaseDatabaseService {
         .set({"memo": record.memo})
         .then((_) => {})
         .catchError((onError) {});
-    PreferenceUtils.saveRecordMemoPref(record);
+    Record.saveRecordMemoPref(record);
   }
 
   Future<Record> getRecord(String ridingDate) async {

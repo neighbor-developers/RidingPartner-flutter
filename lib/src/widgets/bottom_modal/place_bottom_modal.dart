@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:ridingpartner_flutter/src/models/route.dart';
+import 'package:ridingpartner_flutter/src/screen/navigation_screen.dart';
 
-class RouteBottomModal extends StatelessWidget {
-  const RouteBottomModal({super.key, required this.route, required this.onTap});
+import '../../models/place.dart';
 
-  final RidingRoute route;
-  final onTap;
+class PlaceBottomModal extends StatelessWidget {
+  const PlaceBottomModal({super.key, required this.place});
+
+  final Place place;
 
   @override
   Widget build(BuildContext context) {
@@ -22,34 +21,34 @@ class RouteBottomModal extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  route.title!.replaceAll('\n', ' '),
+                  place.title!,
                   style: const TextStyle(
                       fontFamily: 'Pretendard',
                       fontSize: 24,
                       fontWeight: FontWeight.w700),
-                  textAlign: TextAlign.end,
                 ),
                 const SizedBox(
                   height: 8,
                 ),
-                Text(
-                  route.description!,
-                  style: const TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  route.route!.join(' > '),
-                  style: const TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: Color.fromRGBO(51, 51, 51, 0.5)),
-                ),
+                if (place.roadAddress == null || place.roadAddress == "") ...[
+                  Text(
+                    place.jibunAddress!,
+                    style: const TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: Color.fromRGBO(51, 51, 51, 0.5)),
+                  )
+                ] else ...[
+                  Text(
+                    place.roadAddress!,
+                    style: const TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: Color.fromRGBO(51, 51, 51, 0.5)),
+                  )
+                ],
                 const SizedBox(height: 16.0),
                 const Divider(
                   color: Color.fromRGBO(233, 236, 239, 1),
@@ -59,8 +58,8 @@ class RouteBottomModal extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child: Image.asset(
-                    route.image!,
-                    height: 160.0,
+                    place.image!,
+                    height: 180.0,
                     width: MediaQuery.of(context).size.width,
                     fit: BoxFit.fill,
                   ),
@@ -68,7 +67,12 @@ class RouteBottomModal extends StatelessWidget {
               ],
             )),
         InkWell(
-            onTap: onTap,
+            onTap: () async {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NavigationScreen(places: [place])));
+            },
             child: Container(
                 alignment: Alignment.center,
                 width: MediaQuery.of(context).size.width,

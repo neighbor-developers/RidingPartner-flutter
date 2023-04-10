@@ -10,9 +10,8 @@ import '../style/textstyle.dart';
 import '../utils/timestampToText.dart';
 
 class RecordScreen extends ConsumerStatefulWidget {
-  RecordScreen({super.key, required this.date});
-
-  String date;
+  const RecordScreen({Key? key, required this.date}) : super(key: key);
+  final String date;
 
   @override
   RecordScreenState createState() => RecordScreenState();
