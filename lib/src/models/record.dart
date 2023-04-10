@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Record {
   double distance;
@@ -34,5 +34,38 @@ class Record {
 
   DateTime getYearMonthDay() {
     return DateFormat('yyyy-MM-dd HH:mm:ss').parse(date);
+  }
+
+  static saveRecordPref(Record record) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString("date", record.date);
+    prefs.setDouble("distance", record.distance.toDouble());
+    prefs.setInt("timeStamp", record.timestamp.toInt());
+    prefs.setDouble('topSpeed', record.topSpeed);
+  }
+
+  static saveRecordMemoPref(Record record) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString("memo", record.memo!);
+  }
+
+  Future<Record?> getRecordFromPref() async {
+    final prefs = await SharedPreferences.getInstance();
+    double? distance = prefs.getDouble("distance");
+    String? date = prefs.getString("date");
+    int? time = prefs.getInt("timeStamp");
+    double? topSpeed = prefs.getDouble('topSpeed');
+    String? memo = prefs.getString("memo");
+
+    if (distance == null) {
+      return null;
+    } else {
+      return Record(
+          distance: distance,
+          date: date!,
+          timestamp: time!,
+          topSpeed: topSpeed!,
+          memo: memo);
+    }
   }
 }

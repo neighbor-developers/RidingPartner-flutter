@@ -6,7 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ridingpartner_flutter/src/network/network_helper.dart';
 import 'package:ridingpartner_flutter/src/screen/splash_screen.dart';
-import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
 import 'package:ridingpartner_flutter/src/utils/http_override.dart';
 
 import 'firebase_options.dart';
@@ -19,7 +18,6 @@ void main() async {
   // MyLocation();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await PreferenceUtils.init();
   NetworkHelper();
 
   runApp(const ProviderScope(child: MyApp()));

@@ -136,7 +136,7 @@ class RecommendPlaceWidgetState extends ConsumerState<RecommendPlaceWidget> {
                     text: '\'$title',
                     style: TextStyles.recommendPlaceTextStyle2),
                 const TextSpan(
-                    text: ' 어떠세요?', style: TextStyles.recommendPlaceTextStyle3)
+                    text: ' 어떠세요?', style: TextStyles.recommendPlaceTextStyle)
               ]),
           textAlign: TextAlign.start,
         ));

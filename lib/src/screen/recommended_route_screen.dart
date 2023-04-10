@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
-import 'package:ridingpartner_flutter/src/provider/route_list_provider.dart';
 import 'package:ridingpartner_flutter/src/screen/navigation_screen.dart';
 import 'package:ridingpartner_flutter/src/style/textstyle.dart';
 import 'package:ridingpartner_flutter/src/widgets/bottom_modal/route_bottom_modal.dart';
@@ -24,7 +23,6 @@ class RecommendedRouteScreen extends ConsumerStatefulWidget {
 
 class RecommendedRouteScreenState
     extends ConsumerState<RecommendedRouteScreen> {
-  late RouteListState state;
   @override
   Widget build(BuildContext context) {
     final routeList = ref.watch(routeListProvider);
