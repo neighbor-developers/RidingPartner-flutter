@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ridingpartner_flutter/src/pages/home_page.dart';
-import 'package:ridingpartner_flutter/src/pages/map_search_page.dart';
-import 'package:ridingpartner_flutter/src/pages/recommended_route_page.dart';
-import 'package:ridingpartner_flutter/src/pages/riding_page.dart';
-import 'package:ridingpartner_flutter/src/pages/sights_page.dart';
+import 'package:ridingpartner_flutter/src/screen/home_screen.dart';
+import 'package:ridingpartner_flutter/src/screen/map_search_screen.dart';
+import 'package:ridingpartner_flutter/src/screen/recommended_route_screen.dart';
+import 'package:ridingpartner_flutter/src/screen/riding_screen.dart';
+import 'package:ridingpartner_flutter/src/screen/sights_screen.dart';
 import 'package:ridingpartner_flutter/src/style/palette.dart';
 
 final bottomNavigationProvider = StateProvider<int>((ref) => 0);
