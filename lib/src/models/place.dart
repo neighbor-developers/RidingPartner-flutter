@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 class Place {
-  String? id;
-  String? title;
-  String? latitude;
-  String? longitude;
-  String? jibunAddress;
+  String id;
+  String title;
+  String latitude;
+  String longitude;
+  String jibunAddress;
   String? roadAddress;
   String? description;
   String? image;
@@ -13,11 +13,11 @@ class Place {
   String? type;
 
   Place(
-      {this.id,
-      this.title,
-      this.latitude,
-      this.longitude,
-      this.jibunAddress,
+      {required this.id,
+      required this.title,
+      required this.latitude,
+      required this.longitude,
+      required this.jibunAddress,
       this.roadAddress,
       this.description,
       this.image,
@@ -103,10 +103,10 @@ class NaverPlaceData {
 
 class Address {
   String? type;
-  String? id;
-  String? title;
-  String? x;
-  String? y;
+  String id;
+  String title;
+  String x;
+  String y;
   double? dist;
   double? totalScore;
   String? fullAddress;
@@ -114,26 +114,25 @@ class Address {
 
   Address(
       {this.type,
-      this.id,
-      this.title,
-      this.x,
-      this.y,
+      required this.id,
+      required this.title,
+      required this.x,
+      required this.y,
       this.dist,
       this.totalScore,
       this.fullAddress,
       this.shortAddress});
 
-  Address.fromJson(Map<String, dynamic> json) {
-    type = json['type'];
-    id = json['id'];
-    title = json['title'];
-    x = json['x'];
-    y = json['y'];
-    dist = json['dist'];
-    totalScore = json['totalScore'];
-    fullAddress = json['fullAddress'];
-    shortAddress = json['fullAddress'];
-  }
+  factory Address.fromJson(Map<String, dynamic> json) => Address(
+      type: json["type"],
+      id: json["id"],
+      title: json["title"],
+      x: json["x"],
+      y: json["y"],
+      dist: json["dist"],
+      totalScore: json["totalScore"],
+      fullAddress: json["fullAddress"],
+      shortAddress: json["shortAddress"][0]);
 }
 
 class Meta {

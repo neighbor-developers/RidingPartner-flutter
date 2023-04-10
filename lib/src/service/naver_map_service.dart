@@ -15,10 +15,8 @@ class NaverMapService {
     try {
       var place = <Place>[];
       final myLocation = MyLocation(); // 자신의 위치를 기반으로 위치 검색
-      if (myLocation.position!.latitude == null ||
-          myLocation.position!.longitude == null) {
-        await myLocation.getMyCurrentLocation();
-      }
+      await myLocation.getMyCurrentLocation();
+
       final Map<String, String> queryParams = {
         'coords':
             '${myLocation.position!.latitude},${myLocation.position!.longitude}',
@@ -38,11 +36,11 @@ class NaverMapService {
         if (placeData.place != null) {
           place = placeData.place!
               .map<Place>((place) => Place(
-                  id: place.id,
-                  title: place.title,
-                  latitude: place.y,
-                  longitude: place.x,
-                  jibunAddress: place.jibunAddress,
+                  id: place.id!,
+                  title: place.title!,
+                  latitude: place.y!,
+                  longitude: place.x!,
+                  jibunAddress: place.jibunAddress!,
                   roadAddress: place.roadAddress))
               .toList();
         }
@@ -53,7 +51,7 @@ class NaverMapService {
                   title: address.title,
                   latitude: address.y,
                   longitude: address.x,
-                  jibunAddress: address.fullAddress,
+                  jibunAddress: address.fullAddress!,
                   roadAddress: address.fullAddress))
               .toList();
         }

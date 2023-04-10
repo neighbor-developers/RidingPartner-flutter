@@ -1,85 +1,125 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ridingpartner_flutter/src/models/place.dart';
+import 'package:ridingpartner_flutter/src/models/route.dart';
+import 'package:ridingpartner_flutter/src/provider/search_place_provider.dart';
 import 'package:ridingpartner_flutter/src/screen/navigation_screen.dart';
-import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
+import 'package:ridingpartner_flutter/src/service/find_route_service.dart';
+import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
+import 'package:ridingpartner_flutter/src/style/palette.dart';
+import 'package:ridingpartner_flutter/src/utils/set_polyline_data.dart';
 import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 
-import '../provider/map_search_provider.dart';
-import '../provider/riding_provider.dart';
 import '../style/textstyle.dart';
+import '../widgets/place/highlight_text.dart';
 
-class MapSearchScreen extends StatefulWidget {
+enum SearchType { start, destination }
+
+// 선택된 장소를 저장하는 Provider
+final startPlaceProvider = StateProvider<Place?>((ref) => null);
+final destinationPlaceProvider = StateProvider<Place?>((ref) => null);
+
+// 검색된 경로를 저장하는 Provider
+final routeProvider = FutureProvider<List<Guide>>((ref) async {
+  final startPlace = ref.watch(startPlaceProvider);
+  final destinationPlace = ref.watch(destinationPlaceProvider);
+  if (startPlace != null && destinationPlace != null) {
+    return await FindRouteService().getRoute(startPlace, destinationPlace);
+  } else {
+    return [];
+  }
+});
+
+// 검색된 장소들을 저장하는 Provider
+final searchStartPlaceProvider =
+    StateNotifierProvider<SearchPlaceProvider, List<Place>>(
+        (ref) => SearchPlaceProvider());
+final searchDestinationPlaceProvider =
+    StateNotifierProvider<SearchPlaceProvider, List<Place>>(
+        (ref) => SearchPlaceProvider());
+
+// 검색된 경로의 polyline을 저장하는 Provider
+final polylineProvider = StateProvider<List<LatLng>>((ref) {
+  final route = ref.watch(routeProvider);
+
+  return route.when(
+      data: (route) {
+        List<PolylineWayPoint>? turnPoints = route
+            .map((route) => PolylineWayPoint(location: route.turnPoint ?? ""))
+            .toList();
+        List<LatLng> pointLatLngs = [];
+
+        turnPoints.forEach((element) {
+          List<String> a = element.location.split(',');
+          pointLatLngs.add(LatLng(double.parse(a[1]), double.parse(a[0])));
+        });
+
+        return pointLatLngs;
+      },
+      loading: () => [],
+      error: (e, s) => []);
+});
+
+class MapSearchScreen extends ConsumerStatefulWidget {
   const MapSearchScreen({super.key});
 
   @override
-  State<MapSearchScreen> createState() => MapSearchScreenState();
+  MapSearchScreenState createState() => MapSearchScreenState();
 }
 
-class MapSearchScreenState extends State<MapSearchScreen> {
-  final FocusNode _destinationFocusNode = FocusNode();
-  final FocusNode _startFocusNode = FocusNode();
+class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
   final _destinationTextController = TextEditingController();
   final _startTextController = TextEditingController();
   Completer<NaverMapController> _controller = Completer();
   final LocationTrackingMode _locationTrackingMode = LocationTrackingMode.None;
-  late List<Marker> _markers = [];
-  final int polylineWidth = 5;
+
+  Marker? _startMarkers;
+  Marker? _endMarkers;
+  final int polylineWidth = 8;
   bool searchboxVisible = true;
   int startMarkerId = 0;
   int endMarkerId = 0;
   int buttonsPositionAlpha = 0;
+  final FocusNode _startFocusNode = FocusNode();
+  final FocusNode _destinationFocusNode = FocusNode();
 
-  final Color _searchBoxColor = const Color.fromRGBO(245, 246, 249, 1);
-  final Color _orangeColor = const Color.fromRGBO(240, 120, 5, 1);
-
-  // var _initLocation = CameraPosition(
-  //   target: LatLng(
-  //       MyLocation().position!.latitude, MyLocation().position!.longitude),
-  //   zoom: 14.4746,
-  // );
   @override
   void initState() {
     super.initState();
-    Provider.of<MapSearchProvider>(context, listen: false).newPage();
-    _destinationFocusNode.addListener(() {
-      if (!_destinationFocusNode.hasFocus) {
-        Provider.of<MapSearchProvider>(context, listen: false)
-            .clearEndPointSearchResult();
-      }
-    });
-    _startFocusNode.addListener(() {
-      if (!_startFocusNode.hasFocus) {
-        Provider.of<MapSearchProvider>(context, listen: false)
-            .clearStartPointSearchResult();
-      }
-    });
-    Provider.of<MapSearchProvider>(context, listen: false)
-        .setInitalLocation()
-        .then((value) {
-      _startTextController.text =
-          "현재 위치: ${Provider.of<MapSearchProvider>(context, listen: false).myLocationAddress}";
 
-      _markers.clear();
-    });
+    setStartPlaceMyLocation();
+  }
+
+  void setStartPlaceMyLocation() async {
+    final address = await FindRouteService().getMyLocationAddress();
+    List<Place> result = (await NaverMapService().getPlaces(address)) ?? [];
+    Place myLocation = result[0];
+    ref.read(startPlaceProvider.notifier).state = myLocation;
+    _startTextController.text = "현재 위치: ${myLocation.title}";
   }
 
   @override
   void dispose() {
     super.dispose();
+    _destinationTextController.clear();
+    _startTextController.clear();
     _startFocusNode.dispose();
     _destinationFocusNode.dispose();
-    _startTextController.dispose();
-    _destinationTextController.dispose();
   }
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
-    final mapSearchProvider = Provider.of<MapSearchProvider>(context);
+    final polylinePoint = ref.watch(polylineProvider);
+    final startPlaceList = ref.watch(searchStartPlaceProvider);
+    final destinationPlaceList = ref.watch(searchDestinationPlaceProvider);
     return Scaffold(
+      key: _scaffoldKey,
       body: Stack(
         children: <Widget>[
           NaverMap(
@@ -87,15 +127,17 @@ class MapSearchScreenState extends State<MapSearchScreen> {
             mapType: MapType.Basic,
             locationButtonEnable: false,
             initLocationTrackingMode: _locationTrackingMode,
-            markers: _markers,
+            markers: [
+              if (_startMarkers != null) _startMarkers!,
+              if (_endMarkers != null) _endMarkers!,
+            ],
             onMapTap: (latLng) {
               _startFocusNode.unfocus();
               _destinationFocusNode.unfocus();
             },
-            pathOverlays: mapSearchProvider.polylinePoints.length > 1
+            pathOverlays: polylinePoint.length > 1
                 ? {
-                    PathOverlay(
-                        PathOverlayId('path'), mapSearchProvider.polylinePoints,
+                    PathOverlay(PathOverlayId('path'), polylinePoint,
                         width: polylineWidth,
                         outlineWidth: 0,
                         color: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32))
@@ -103,34 +145,26 @@ class MapSearchScreenState extends State<MapSearchScreen> {
                 : {},
           ),
           Visibility(
-            visible: searchboxVisible,
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 40, horizontal: 35),
-              alignment: Alignment.topLeft,
-              padding:
-                  const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
-              child: Column(
-                children: <Widget>[
-                  searchBox(mapSearchProvider, "출발지", _startTextController,
-                      _startFocusNode),
-                  searchBox(mapSearchProvider, "도착지",
-                      _destinationTextController, _destinationFocusNode),
-                ],
-              ),
-            ),
-          ),
+              visible: searchboxVisible,
+              child: SearchBoxWidget(
+                textControllerForStart: _startTextController,
+                textControllerForEnd: _destinationTextController,
+                startFocusNode: _startFocusNode,
+                destinationFocusNode: _destinationFocusNode,
+                onClickClear: (SearchType type) => onClickClear(type),
+              )),
           Container(
               alignment: Alignment.topLeft,
               width: MediaQuery.of(context).size.width - 40,
               margin: const EdgeInsets.only(top: 109.3, left: 35, right: 35),
               child: Visibility(
-                visible: mapSearchProvider.isStartSearching,
+                visible: startPlaceList.isNotEmpty,
                 child: Column(children: [
-                  placeList(
-                      mapSearchProvider,
-                      "출발지",
-                      mapSearchProvider.startPointSearchResult,
-                      _startTextController)
+                  SearchListWidget(
+                      list: startPlaceList,
+                      type: SearchType.start,
+                      textController: _startTextController,
+                      onPlaceItemTab: onPlaceItemTab),
                 ]),
               )),
           Container(
@@ -138,13 +172,13 @@ class MapSearchScreenState extends State<MapSearchScreen> {
               width: MediaQuery.of(context).size.width - 40,
               margin: const EdgeInsets.only(top: 189.5, left: 35, right: 35),
               child: Visibility(
-                visible: mapSearchProvider.isEndSearching,
+                visible: destinationPlaceList.isNotEmpty,
                 child: Column(children: [
-                  placeList(
-                      mapSearchProvider,
-                      "도착지",
-                      mapSearchProvider.destinationSearchResult,
-                      _destinationTextController)
+                  SearchListWidget(
+                      list: destinationPlaceList,
+                      type: SearchType.destination,
+                      textController: _destinationTextController,
+                      onPlaceItemTab: onPlaceItemTab),
                 ]),
               )),
           Positioned(
@@ -153,9 +187,9 @@ class MapSearchScreenState extends State<MapSearchScreen> {
             child: FloatingActionButton(
               heroTag: 'mypos',
               backgroundColor: Colors.white,
-              child: ImageIcon(
-                  const AssetImage('assets/icons/search_myLocation_button.png'),
-                  color: _orangeColor),
+              child: const ImageIcon(
+                  AssetImage('assets/icons/search_myLocation_button.png'),
+                  color: Palette.orangeColor),
               onPressed: () {
                 _initLoaction();
               },
@@ -166,19 +200,45 @@ class MapSearchScreenState extends State<MapSearchScreen> {
             left: 20,
             child: FloatingActionButton(
               backgroundColor: Colors.white,
-              child: ImageIcon(const AssetImage('assets/icons/search.png'),
-                  color: _orangeColor),
+              child: const ImageIcon(AssetImage('assets/icons/search.png'),
+                  color: Palette.orangeColor),
               onPressed: () {
-                _changeSearchBoxVisibility(mapSearchProvider);
+                Place? destinationPoint =
+                    ref.read(destinationPlaceProvider.notifier).state;
+                if (destinationPoint == null) {
+                  showToastMessage("출발지와 도착지를 입력해주세요");
+                  return;
+                } else {
+                  setState(() {
+                    searchboxVisible = !searchboxVisible;
+                  });
+                }
               },
             ),
           ),
           Visibility(
               visible: !searchboxVisible,
-              child: Positioned(bottom: 0, child: startNav(mapSearchProvider)))
+              child: Positioned(bottom: 0, child: startNavButton()))
         ],
       ),
     );
+  }
+
+  void showToastMessage(String message) =>
+      Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_SHORT);
+
+  void onClickClear(SearchType type) {
+    if (type == SearchType.start) {
+      _startTextController.clear();
+      ref.read(startPlaceProvider.notifier).state = null;
+      ref.read(searchStartPlaceProvider.notifier).clearRoute();
+      _startMarkers = null;
+    } else {
+      _destinationTextController.clear();
+      ref.read(destinationPlaceProvider.notifier).state = null;
+      ref.read(searchDestinationPlaceProvider.notifier).clearRoute();
+      _endMarkers = null;
+    }
   }
 
   void onMapCreated(NaverMapController controller) {
@@ -186,150 +246,7 @@ class MapSearchScreenState extends State<MapSearchScreen> {
     _controller.complete(controller);
   }
 
-  Widget placeList(MapSearchProvider mapSearchProvider, String type,
-      List<Place> list, TextEditingController textController) {
-    return Flexible(
-      child: ListView.builder(
-        itemCount: list.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Card(
-              borderOnForeground: true,
-              margin: const EdgeInsets.symmetric(vertical: 0.3),
-              child: ListTile(
-                  title: Row(
-                    children: [
-                      const ImageIcon(
-                          AssetImage('assets/icons/search_marker.png'),
-                          size: 18),
-                      highlightedText("  ${list[index].title!}",
-                          textController.text, "title"),
-                    ],
-                  ),
-                  subtitle: highlightedText(list[index].jibunAddress ?? '',
-                      textController.text, "subtitle"),
-                  textColor: Colors.black,
-                  tileColor: _searchBoxColor,
-                  onTap: () async {
-                    final NaverMapController controller =
-                        await _controller.future;
-
-                    // if (index == 0) {
-                    //   textController.text =
-                    //       '${list[index].title!}: ${list[index].jibunAddress!}';
-                    // } else {
-                    textController.text = list[index].title!;
-                    // }
-                    if (type == "출발지") {
-                      FocusScope.of(context)
-                          .requestFocus(_destinationFocusNode);
-                    } else {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                    }
-                    controller.moveCamera(
-                      CameraUpdate.toCameraPosition(CameraPosition(
-                        target: LatLng(double.parse(list[index].latitude!),
-                            double.parse(list[index].longitude!)),
-                      )),
-                    );
-
-                    _updatePosition(list[index], type, mapSearchProvider);
-                    if (type == "출발지") {
-                      mapSearchProvider.setStartPoint(list[index]);
-                      mapSearchProvider.clearStartPointSearchResult();
-                    } else {
-                      mapSearchProvider.setEndPoint(list[index]);
-                      mapSearchProvider.clearEndPointSearchResult();
-                    }
-
-                    if (mapSearchProvider.startPoint != null &&
-                        mapSearchProvider.destination != null) {
-                      _changeSearchBoxVisibility(mapSearchProvider);
-                      _drawPolyline(
-                          mapSearchProvider,
-                          mapSearchProvider.startPoint!,
-                          mapSearchProvider.destination!);
-                    }
-                  }));
-        },
-      ),
-    );
-  }
-
-  Widget highlightedText(String text, String highlight, String type) {
-    highlight = highlight.replaceAll(" ", "");
-    final List<String> splitText = text.split(highlight);
-    final List<TextSpan> children = [];
-    if (type == "title") {
-      for (int i = 0; i < splitText.length; i++) {
-        children.add(
-            TextSpan(text: splitText[i], style: TextStyles.searchBoxTextStyle));
-        if (i != splitText.length - 1) {
-          children.add(TextSpan(
-            text: highlight,
-            style: TextStyles.searchBoxHighlightStyle,
-          ));
-        }
-      }
-    }
-    if (type == "subtitle") {
-      for (int i = 0; i < splitText.length; i++) {
-        children
-            .add(TextSpan(text: splitText[i], style: TextStyles.subTextStyle));
-        if (i != splitText.length - 1) {
-          children.add(TextSpan(
-            text: highlight,
-            style: TextStyles.subHighlightStyle,
-          ));
-        }
-      }
-    }
-    return Text.rich(TextSpan(children: children), textAlign: TextAlign.start);
-  }
-
-  Widget searchBox(MapSearchProvider mapSearchProvider, String type,
-      TextEditingController textController, FocusNode focusNode) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      decoration: const BoxDecoration(boxShadow: [
-        BoxShadow(
-            spreadRadius: 5,
-            blurRadius: 10,
-            color: Color.fromRGBO(0, 0, 0, 0.07))
-      ]),
-      width: MediaQuery.of(context).size.width - 60,
-      height: 60,
-      child: TextField(
-        style: TextStyles.searchBoxTextStyle,
-        focusNode: focusNode,
-        onChanged: (value) => mapSearchProvider.searchPlace(value, type),
-        controller: textController,
-        decoration: InputDecoration(
-          hintStyle: TextStyles.hintTextStyle,
-          hintText: "$type를 입력해주세요",
-          prefixIcon: const Icon(Icons.search),
-          suffixIcon: _xMarkBtn(mapSearchProvider, type, textController),
-          filled: true,
-          fillColor: _searchBoxColor,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide.none,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _xMarkBtn(MapSearchProvider mapSearchProvider, String type,
-      TextEditingController textController) {
-    return IconButton(
-        icon: Image.asset(
-          'assets/icons/xmark.png',
-          scale: 3.5,
-        ),
-        onPressed: () => _clearText(textController, type, mapSearchProvider));
-  }
-
-  Widget startNav(MapSearchProvider mapSearchProvider) {
+  Widget startNavButton() {
     return SizedBox(
         width: MediaQuery.of(context).size.width,
         height: 60,
@@ -344,7 +261,8 @@ class MapSearchScreenState extends State<MapSearchScreen> {
                 const BeveledRectangleBorder(borderRadius: BorderRadius.zero),
             elevation: 10,
             onPressed: () {
-              if (mapSearchProvider.destination == null) {
+              final des = ref.read(destinationPlaceProvider);
+              if (des == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('목적지를 입력해주세요.'),
@@ -355,145 +273,83 @@ class MapSearchScreenState extends State<MapSearchScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MultiProvider(
-                            providers: [
-                              ChangeNotifierProvider(
-                                  create: (context) => NavigationProvider(
-                                      [mapSearchProvider.destination!])),
-                              ChangeNotifierProvider(
-                                  create: (context) => RidingProvider())
-                            ],
-                            child: const NavigationPage(),
-                          )),
+                      builder: (context) => NavigationScreen(places: [des])),
                 );
               }
             },
             materialTapTargetSize: MaterialTapTargetSize.padded,
-            backgroundColor: _orangeColor));
+            backgroundColor: Palette.orangeColor));
   }
 
-  void clearMarker(String type, MapSearchProvider mapSearchProvider) {
-    if (type == "출발지" &&
-        mapSearchProvider.startPoint != null &&
-        _markers.length > 1) {
-      _markers.removeAt(0);
-    } else if (type == "도착지" && mapSearchProvider.destination != null) {
-      _markers.removeAt(_markers.length - 1);
+  void onPlaceItemTab(
+      TextEditingController textController, Place item, SearchType type) async {
+    final NaverMapController controller = await _controller.future;
+    textController.text = item.title!;
+    controller.moveCamera(
+      CameraUpdate.toCameraPosition(CameraPosition(
+        target:
+            LatLng(double.parse(item.latitude!), double.parse(item.longitude!)),
+      )),
+    );
+    Place? startPoint = ref.read(startPlaceProvider.notifier).state;
+    Place? destinationPoint = ref.read(destinationPlaceProvider.notifier).state;
+
+    updateMarkerPosition(item, type);
+    if (type == SearchType.start) {
+      ref.read(startPlaceProvider.notifier).state = item;
+      ref.read(searchStartPlaceProvider.notifier).clearRoute();
+    } else {
+      ref.read(destinationPlaceProvider.notifier).state = item;
+      ref.read(searchDestinationPlaceProvider.notifier).clearRoute();
+    }
+
+    if (startPoint != null && destinationPoint != null) {
+      setState(() {
+        !searchboxVisible;
+      });
+      _drawPolyline(
+        startPoint,
+        destinationPoint,
+      );
     }
   }
 
-  Future<void> _updatePosition(
-      Place position, String type, MapSearchProvider mapSearchProvider) async {
+  Future<void> updateMarkerPosition(Place position, SearchType type) async {
     final customIcon = await OverlayImage.fromAssetImage(
         assetName: 'assets/icons/search_riding_marker.png');
-    int index;
-    if (type == "출발지") {
-      index = 0;
+    if (type == SearchType.start) {
+      setState(() {
+        _startMarkers = Marker(
+          width: 30,
+          height: 40,
+          icon: customIcon,
+          markerId: '${position.latitude!}${position.longitude!}',
+          position: LatLng(double.parse(position.latitude!),
+              double.parse(position.longitude!)),
+        );
+      });
     } else {
-      index = 1;
+      setState(() {
+        _endMarkers = Marker(
+          width: 30,
+          height: 40,
+          icon: customIcon,
+          markerId: '${position.latitude!}${position.longitude!}',
+          position: LatLng(double.parse(position.latitude!),
+              double.parse(position.longitude!)),
+        );
+      });
     }
-
-    if (index == 0) {
-      _markers.insert(
-          index,
-          Marker(
-            width: 30,
-            height: 40,
-            icon: customIcon,
-            markerId: '${position.latitude!}${position.longitude!}',
-            position: LatLng(double.parse(position.latitude!),
-                double.parse(position.longitude!)),
-          ));
-      if (_markers.length > 2) {
-        _markers.removeAt(1);
-      }
-      setState(() {});
-      return;
-    }
-    if (_markers.length == 2) {
-      _markers.removeAt(index);
-    } else if (mapSearchProvider.startPoint == null) {
-      _markers.clear();
-    }
-    _markers.add(
-        // 출발지와 도착지 마커를 구분하기 위해 index를 사용
-        Marker(
-      icon: customIcon,
-      width: 30,
-      height: 40,
-      markerId: '${position.latitude!}${position.longitude!}',
-      position: LatLng(
-          double.parse(position.latitude!), double.parse(position.longitude!)),
-    ));
-
-    setState(() {});
   }
 
-  void _clearText(TextEditingController textController, String type,
-      MapSearchProvider mapSearchProvider) {
-    clearMarker(type, mapSearchProvider);
-    mapSearchProvider.clearPolyLine();
-    if (type == "출발지") {
-      mapSearchProvider.clearStartPointSearchResult();
-      mapSearchProvider.removeStartPoint();
-    } else {
-      mapSearchProvider.clearEndPointSearchResult();
-      mapSearchProvider.removeDestination();
-    }
-    textController.clear();
-  }
-
-  void _changeSearchBoxVisibility(MapSearchProvider mapSearchProvider) {
-    setState(() {
-      if (searchboxVisible) {
-        buttonsPositionAlpha = 50;
-        mapSearchProvider.isEndSearching = false;
-        mapSearchProvider.isStartSearching = false;
-      } else {
-        buttonsPositionAlpha = 0;
-      }
-      searchboxVisible = !searchboxVisible;
-    });
-  }
-
-  void _drawPolyline(MapSearchProvider mapSearchProvider, Place startPlace,
-      Place finalDestination) async {
+  void _drawPolyline(Place startPlace, Place finalDestination) async {
     final NaverMapController controller = await _controller.future;
-    mapSearchProvider.polyline(startPlace, finalDestination);
-    LatLng start = LatLng(double.parse(startPlace.latitude!),
-        double.parse(startPlace.longitude!));
-    LatLng end = LatLng(double.parse(finalDestination.latitude!),
-        double.parse(finalDestination.longitude!));
-
-    if (start.latitude <= end.latitude) {
-      LatLng temp = start;
-      start = end;
-      end = temp;
-    }
-    LatLng northEast = start;
-    LatLng southWest = end;
-
-    var nLat, nLon, sLat, sLon;
-
-    if (southWest.latitude <= northEast.latitude) {
-      sLat = southWest.latitude;
-      nLat = northEast.latitude;
-    } else {
-      sLat = northEast.latitude;
-      nLat = southWest.latitude;
-    }
-    if (southWest.longitude <= northEast.longitude) {
-      sLon = southWest.longitude;
-      nLon = northEast.longitude;
-    } else {
-      sLon = northEast.longitude;
-      nLon = southWest.longitude;
-    }
+    final List<LatLng> points = setPolylineData(startPlace, finalDestination);
     controller.moveCamera(
       CameraUpdate.fitBounds(
         LatLngBounds(
-          northeast: LatLng(nLat, nLon),
-          southwest: LatLng(sLat, sLon),
+          northeast: points[0],
+          southwest: points[1],
         ),
         padding: 48,
       ),
@@ -508,5 +364,159 @@ class MapSearchScreenState extends State<MapSearchScreen> {
           MyLocation().position!.latitude, MyLocation().position!.longitude),
       zoom: 14.4746,
     )));
+  }
+}
+
+class SearchBoxWidget extends ConsumerStatefulWidget {
+  const SearchBoxWidget(
+      {super.key,
+      required this.textControllerForStart,
+      required this.textControllerForEnd,
+      required this.startFocusNode,
+      required this.destinationFocusNode,
+      required this.onClickClear});
+
+  final TextEditingController textControllerForStart;
+  final TextEditingController textControllerForEnd;
+  final FocusNode startFocusNode;
+  final FocusNode destinationFocusNode;
+  final Function(SearchType) onClickClear;
+
+  @override
+  SearchBoxWidgetState createState() => SearchBoxWidgetState();
+}
+
+class SearchBoxWidgetState extends ConsumerState<SearchBoxWidget> {
+  @override
+  void initState() {
+    super.initState();
+    widget.destinationFocusNode.addListener(() {
+      if (!widget.destinationFocusNode.hasFocus) {
+        ref.read(searchDestinationPlaceProvider.notifier).clearRoute();
+      }
+    });
+    widget.startFocusNode.addListener(() {
+      if (!widget.startFocusNode.hasFocus) {
+        ref.read(searchStartPlaceProvider.notifier).clearRoute();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 40, horizontal: 35),
+      alignment: Alignment.topLeft,
+      padding: const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
+      child: Column(
+        children: <Widget>[
+          searchBox(SearchType.start, widget.textControllerForStart),
+          searchBox(SearchType.destination, widget.textControllerForEnd),
+        ],
+      ),
+    );
+  }
+
+  Widget searchBox(SearchType type, TextEditingController textController) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      decoration: const BoxDecoration(boxShadow: [
+        BoxShadow(
+            spreadRadius: 5,
+            blurRadius: 10,
+            color: Color.fromRGBO(0, 0, 0, 0.07))
+      ]),
+      width: MediaQuery.of(context).size.width - 60,
+      height: 60,
+      child: TextField(
+        style: TextStyles.searchBoxTextStyle,
+        focusNode: type == SearchType.start
+            ? widget.startFocusNode
+            : widget.destinationFocusNode,
+        onChanged: (value) {
+          if (value != "") {
+            if (type == SearchType.start) {
+              ref.read(searchStartPlaceProvider.notifier).getPlaces(value);
+            } else {
+              ref
+                  .read(searchDestinationPlaceProvider.notifier)
+                  .getPlaces(value);
+            }
+          }
+        },
+        controller: textController,
+        decoration: InputDecoration(
+          hintStyle: TextStyles.hintTextStyle,
+          hintText: type == SearchType.start ? "출발지를 입력해주세요" : "도착지를 입력해주세요",
+          prefixIcon: const Icon(Icons.search),
+          suffixIcon: IconButton(
+              icon: Image.asset(
+                'assets/icons/xmark.png',
+                scale: 3.5,
+              ),
+              onPressed: () {
+                textController.clear();
+                widget.onClickClear(type);
+              }),
+          filled: true,
+          fillColor: Palette.searchBoxColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide.none,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SearchListWidget extends ConsumerStatefulWidget {
+  const SearchListWidget(
+      {super.key,
+      required this.list,
+      required this.textController,
+      required this.type,
+      required this.onPlaceItemTab});
+
+  final List<Place> list;
+  final TextEditingController textController;
+  final SearchType type;
+  final Function(TextEditingController, Place, SearchType) onPlaceItemTab;
+
+  @override
+  SearchListWidgetState createState() => SearchListWidgetState();
+}
+
+class SearchListWidgetState extends ConsumerState<SearchListWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      child: ListView.builder(
+        itemCount: widget.list.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Card(
+              borderOnForeground: true,
+              margin: const EdgeInsets.symmetric(vertical: 0.3),
+              child: ListTile(
+                  title: Row(
+                    children: [
+                      const ImageIcon(
+                          AssetImage('assets/icons/search_marker.png'),
+                          size: 18),
+                      highlightedText("  ${widget.list[index].title!}",
+                          widget.textController.text, "title"),
+                    ],
+                  ),
+                  subtitle: highlightedText(
+                      widget.list[index].jibunAddress ?? '',
+                      widget.textController.text,
+                      "subtitle"),
+                  textColor: Colors.black,
+                  tileColor: Palette.searchBoxColor,
+                  onTap: () => widget.onPlaceItemTab(
+                      widget.textController, widget.list[index], widget.type)));
+        },
+      ),
+    );
   }
 }
