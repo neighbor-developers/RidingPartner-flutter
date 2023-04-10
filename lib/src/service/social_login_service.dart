@@ -10,6 +10,12 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'firebase_database_service.dart';
 
 class SocialLoginService {
+  static final SocialLoginService _socialLoginService =
+      SocialLoginService._internal();
+  factory SocialLoginService() {
+    return _socialLoginService;
+  }
+  SocialLoginService._internal();
   // kakao
   Future<User?> signInWithKakao() async {
     kakao_flutter.KakaoSdk.init(
@@ -29,9 +35,7 @@ class SocialLoginService {
         saveUserInfo(user.user!);
         return user.user!;
       } catch (error) {
-        Fluttertoast.showToast(
-            msg: "error: 해당 계정의 이메일이 네이버 혹은 구글 로그인으로 이미 등록된 이메일인지 확인해주세요.",
-            toastLength: Toast.LENGTH_LONG);
+        showEmailCheckToast();
         return null;
       }
     } else {
@@ -48,13 +52,10 @@ class SocialLoginService {
         saveUserInfo(user.user!);
         return user.user;
       } catch (error) {
-        Fluttertoast.showToast(
-            msg: "error: 해당 계정의 이메일이 네이버 혹은 구글 로그인으로 이미 등록된 이메일인지 확인해주세요.",
-            toastLength: Toast.LENGTH_LONG);
+        showEmailCheckToast();
         return null;
       }
     }
-    return null;
   }
 
   // naver
@@ -73,9 +74,7 @@ class SocialLoginService {
       saveUserInfo(user.user!);
       return user.user;
     } catch (error) {
-      Fluttertoast.showToast(
-          msg: "error: 해당 계정의 이메일이 카카오톡 혹은 구글 로그인으로 이미 등록된 이메일인지 확인해주세요.",
-          toastLength: Toast.LENGTH_LONG);
+      showEmailCheckToast();
       null;
     }
     return null;
@@ -153,7 +152,9 @@ class SocialLoginService {
     try {
       await fAuth.currentUser?.delete();
       fAuth.signOut();
-    } catch (e) {}
+    } catch (e) {
+      return false;
+    }
     Future.delayed(const Duration(seconds: 3));
 
     return true;
@@ -167,4 +168,8 @@ class SocialLoginService {
       return false;
     }
   }
+
+  void showEmailCheckToast() => Fluttertoast.showToast(
+      msg: "error: 해당 계정의 이메일이 카카오톡 혹은 구글 로그인으로 이미 등록된 이메일인지 확인해주세요.",
+      toastLength: Toast.LENGTH_LONG);
 }
