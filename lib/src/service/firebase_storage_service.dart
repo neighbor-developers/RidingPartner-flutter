@@ -5,6 +5,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 class FirebaseStorageService {
   final _imageRef = FirebaseStorage.instance.ref().child("images");
 
+  saveImage(List<File> images) {
+    images.map((e) => uploadImage(e.path, e));
+  }
+
   Future<String> uploadImage(String path, File file) async {
     try {
       final pathRef = _imageRef.child(path);

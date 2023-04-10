@@ -37,16 +37,16 @@ class FirebaseDatabaseService {
     PreferenceUtils.saveRecordMemoPref(record);
   }
 
-  Future<Result> getRecord(String ridingDate) async {
+  Future<Record> getRecord(String ridingDate) async {
     try {
       DatabaseReference ref = _database.ref("$_uId/$ridingDate");
       final DataSnapshot snapshot = await ref.get();
       if (snapshot.exists) {
-        return Result(isSuccess: true, response: Record.fromDB(snapshot.value));
+        return Record.fromDB(snapshot.value);
       }
       throw Exception("getRecord: snapshot not exist");
     } catch (e) {
-      return Result(isSuccess: false, response: e.toString());
+      throw Exception("getRecord: snapshot not exist");
     }
   }
 
