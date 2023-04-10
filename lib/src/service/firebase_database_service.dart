@@ -59,36 +59,25 @@ class FirebaseDatabaseService {
     }
   }
 
-  Future<Map<String, dynamic>> getAllRecords() async {
+  Future<List<Record>> getAllRecords() async {
     try {
-      List<Record> records = [];
       DatabaseReference ref = _database.ref("$_uId");
       final DataSnapshot snapshot = await ref.get();
 
       if (snapshot.exists) {
         Map<dynamic, dynamic> map = snapshot.value as Map<dynamic, dynamic>;
-        // return map.values.map(Record.fromDB).toList();
-        records = map.values.map((recordEl) {
+        return map.values.map((recordEl) {
           try {
             return Record.fromDB(recordEl);
           } catch (e) {
             return Record(distance: 0.0, date: '', timestamp: 0, topSpeed: 0.0);
           }
         }).toList();
-
-        return {
-          'state': RecordState.success,
-          'data': records
-          // .where((record) =>
-          //     record !=
-          //     Record(distance: 0.0, date: '', timestamp: 0, topSpeed: 0.0))
-          // .toList()
-        };
       } else {
-        return {'state': RecordState.none};
+        return [];
       }
     } catch (e) {
-      return {'state': RecordState.fail};
+      throw Exception("getAllRecords: snapshot not exist");
     }
   }
 }

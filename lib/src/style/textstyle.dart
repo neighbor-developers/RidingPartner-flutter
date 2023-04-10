@@ -82,4 +82,11 @@ class TextStyles {
       fontSize: 40.0,
       fontFamily: "Pretendard",
       fontWeight: FontWeight.w700);
+
+  static const TextStyle detailStyle = TextStyle(
+    fontFamily: 'Pretendard',
+    fontSize: 18,
+    fontWeight: FontWeight.w400,
+    color: Color.fromARGB(224, 38, 38, 38),
+  );
 }
