@@ -30,28 +30,38 @@ class RecordListScreenState extends ConsumerState<RecordListScreen> {
     final recordList = ref.watch(recordListProvider);
 
     return recordList.when(
-        data: (data) => Scaffold(
-            appBar: appBar(context),
-            backgroundColor: Colors.white,
-            body: SizedBox(
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          recordItem(data.elementAt(index)),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: const Divider(
-                                height: 1,
-                                color: Color.fromARGB(128, 193, 193, 193),
-                                thickness: 0.8),
-                          )
-                        ],
-                      );
-                    }))),
+        data: (data) {
+          if (data.isEmpty) {
+            return Scaffold(
+                appBar: appBar(context),
+                backgroundColor: Colors.white,
+                body: const Center(child: Text('기록이 없습니다.')));
+          } else {
+            return Scaffold(
+                appBar: appBar(context),
+                backgroundColor: Colors.white,
+                body: SizedBox(
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              recordItem(data.elementAt(index)),
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 15),
+                                child: const Divider(
+                                    height: 1,
+                                    color: Color.fromARGB(128, 193, 193, 193),
+                                    thickness: 0.8),
+                              )
+                            ],
+                          );
+                        })));
+          }
+        },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => const Center(child: Text('데이터를 불러올 수 없습니다.')));
   }
