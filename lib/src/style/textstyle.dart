@@ -5,7 +5,7 @@ class TextStyles {
       fontFamily: 'Pretendard',
       fontSize: 14,
       fontWeight: FontWeight.w400,
-      color: const Color.fromARGB(185, 51, 57, 62));
+      color: Color.fromARGB(185, 51, 57, 62));
 
   static const TextStyle weatherTextStyle = TextStyle(
       fontSize: 14,
@@ -106,4 +106,79 @@ class TextStyles {
       fontFamily: 'Pretendard',
       fontWeight: FontWeight.w700,
       color: Color.fromRGBO(51, 51, 51, 1));
+  static const TextStyle ridingRecordTextStyle = TextStyle(
+      fontSize: 16.0,
+      fontFamily: "Pretendard",
+      fontWeight: FontWeight.w500,
+      color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6));
+
+  static const TextStyle dialogTextStyle = TextStyle(
+      color: Color.fromARGB(255, 24, 24, 1),
+      fontFamily: 'Pretendard',
+      fontWeight: FontWeight.w600,
+      fontSize: 17);
+
+  static const TextStyle dialogTextStyle2 = TextStyle(
+      color: Color.fromARGB(150, 24, 24, 1),
+      fontFamily: 'Pretendard',
+      height: 1.5,
+      fontWeight: FontWeight.w600,
+      fontSize: 13);
+
+  static const TextStyle dialogCancelBtnTextStyle = TextStyle(
+      color: Color.fromRGBO(102, 102, 102, 1),
+      fontFamily: 'Pretendard',
+      fontWeight: FontWeight.w700,
+      fontSize: 16);
+
+  static const TextStyle dialogConfirmBtnTextStyle = TextStyle(
+      color: Colors.white,
+      fontFamily: 'Pretendard',
+      fontWeight: FontWeight.w700,
+      fontSize: 16);
+  static const TextStyle recordDescriptionTextStyle = TextStyle(
+      fontFamily: 'Pretendard',
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      color: Color.fromARGB(185, 51, 57, 62));
+
+  static const TextStyle recordTabLabelTextStyle = TextStyle(
+      fontSize: 14, fontFamily: 'Pretendard', fontWeight: FontWeight.w700);
+
+  static const TextStyle recordCardTitleTextStyle = TextStyle(
+      fontSize: 12,
+      fontFamily: 'Pretendard',
+      fontWeight: FontWeight.w500,
+      color: Color.fromRGBO(17, 17, 17, 1));
+
+  static const TextStyle recordCardDataTextStyle = TextStyle(
+      fontSize: 24,
+      fontFamily: 'Pretendard',
+      fontWeight: FontWeight.w300,
+      color: Colors.black);
+
+  static const TextStyle modalTitleTextStyle = TextStyle(
+      fontFamily: 'Pretendard', fontSize: 24, fontWeight: FontWeight.w700);
+
+  static const TextStyle modalSubTextStyle = TextStyle(
+      fontFamily: 'Pretendard',
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      color: Color.fromRGBO(51, 51, 51, 0.5));
+
+  static const TextStyle modalButtonTextStyle = TextStyle(
+      fontFamily: 'Pretendard',
+      color: Colors.white,
+      fontSize: 18,
+      fontWeight: FontWeight.w700);
+
+  static const TextStyle memoWidgetTextStyle = TextStyle(
+      fontSize: 14.0,
+      fontWeight: FontWeight.w400,
+      color: Color.fromARGB(79, 47, 47, 47));
+
+  static const TextStyle recordSaveBtnTextStyle = TextStyle(
+      fontSize: 16.0,
+      fontWeight: FontWeight.w700,
+      color: Color.fromARGB(0xFF, 0xF0, 0x78, 0x05));
 }

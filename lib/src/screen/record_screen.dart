@@ -61,6 +61,7 @@ class RecordScreenState extends ConsumerState<RecordScreen> {
             )));
   }
 
+  // 기록 상세 화면의 기록 부분
   Widget recordWidget(Record record) {
     return Container(
         margin: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30),
@@ -126,6 +127,7 @@ class RecordScreenState extends ConsumerState<RecordScreen> {
         ]));
   }
 
+  // 기록 상세 화면의 메모 부분
   Widget memoWidget(String memo) {
     return Container(
         width: double.infinity,
@@ -139,26 +141,23 @@ class RecordScreenState extends ConsumerState<RecordScreen> {
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 12.0),
         child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            child: Text(memo,
-                style: TextStyle(
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w400,
-                  color: const Color(0x00333333).withOpacity(0.6),
-                ))));
+            child: Text(memo, style: TextStyles.memoWidgetTextStyle)));
   }
 }
 
+// 기록 상세 화면의 이미지 슬라이더 인덱스
 final activeIndexProvider = StateProvider((ref) => 0);
 
 class ImageSlider extends ConsumerWidget {
-  ImageSlider({super.key, required this.images});
+  const ImageSlider({super.key, required this.images});
 
-  List<String>? images;
+  final List<String>? images;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeIndex = ref.watch(activeIndexProvider);
 
+    // 이미지 위젯
     Widget buildImage(path) => Container(
           width: double.infinity,
           height: 240,
@@ -166,6 +165,7 @@ class ImageSlider extends ConsumerWidget {
           child: Image.network(path, fit: BoxFit.cover),
         );
 
+    // 이미지 슬라이더의 인디케이터
     Widget buildIndicator() => Container(
         margin: const EdgeInsets.only(bottom: 20.0),
         alignment: Alignment.bottomCenter,
@@ -192,6 +192,7 @@ class ImageSlider extends ConsumerWidget {
             height: 240,
             child: Image.network(images![0], fit: BoxFit.cover))
       ] else ...[
+        // 이미지 슬라이더
         CarouselSlider.builder(
           options: CarouselOptions(
               initialPage: 0,

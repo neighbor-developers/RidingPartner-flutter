@@ -5,11 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_chart/charts/line-chart.widget.dart';
 import 'package:line_chart/model/line-chart.model.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
-import 'package:ridingpartner_flutter/src/screen/home/widget/home_record_tab.dart';
-import 'package:ridingpartner_flutter/src/screen/home/widget/recommend_place_widget.dart';
-import 'package:ridingpartner_flutter/src/screen/home/widget/setting_widget.dart';
-import 'package:ridingpartner_flutter/src/screen/home/widget/weather_widget.dart';
 import 'package:ridingpartner_flutter/src/style/textstyle.dart';
+
+import '../widgets/home/home_record_tab.dart';
+import '../widgets/home/recommend_place_widget.dart';
+import '../widgets/home/setting_widget.dart';
+import '../widgets/home/weather_widget.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});

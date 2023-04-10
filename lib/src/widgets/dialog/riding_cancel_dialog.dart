@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ridingpartner_flutter/src/style/textstyle.dart';
 
 class RidingCancelDialog extends StatelessWidget {
   const RidingCancelDialog(
@@ -24,20 +25,11 @@ class RidingCancelDialog extends StatelessWidget {
           child: Text.rich(
             TextSpan(
                 text: text,
-                style: const TextStyle(
-                    color: Color.fromARGB(255, 24, 24, 1),
-                    fontFamily: 'Pretendard',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 17),
+                style: TextStyles.dialogTextStyle,
                 children: const <TextSpan>[
                   TextSpan(
                     text: '(기록이 삭제될 수 있습니다)',
-                    style: TextStyle(
-                        color: Color.fromARGB(150, 24, 24, 1),
-                        fontFamily: 'Pretendard',
-                        height: 1.5,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13),
+                    style: TextStyles.dialogTextStyle2,
                   )
                 ]),
             textAlign: TextAlign.center,
@@ -60,11 +52,7 @@ class RidingCancelDialog extends StatelessWidget {
                     ),
                     child: const Text(
                       '취소',
-                      style: TextStyle(
-                          color: Color.fromRGBO(102, 102, 102, 1),
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16),
+                      style: TextStyles.dialogCancelBtnTextStyle,
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -75,7 +63,7 @@ class RidingCancelDialog extends StatelessWidget {
                 Flexible(
                     child: InkWell(
                   child: Container(
-                    margin: EdgeInsets.fromLTRB(6, 0, 0, 0),
+                    margin: const EdgeInsets.only(left: 6),
                     alignment: Alignment.center,
                     height: 55,
                     decoration: BoxDecoration(
@@ -84,11 +72,7 @@ class RidingCancelDialog extends StatelessWidget {
                     ),
                     child: Text(
                       btnText,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16),
+                      style: TextStyles.dialogConfirmBtnTextStyle,
                       textAlign: TextAlign.center,
                     ),
                   ),

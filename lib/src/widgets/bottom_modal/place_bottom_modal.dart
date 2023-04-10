@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ridingpartner_flutter/src/screen/navigation_screen.dart';
+import 'package:ridingpartner_flutter/src/style/textstyle.dart';
 
 import '../../models/place.dart';
 
@@ -20,34 +21,14 @@ class PlaceBottomModal extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  place.title!,
-                  style: const TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700),
-                ),
+                Text(place.title, style: TextStyles.modalTitleTextStyle),
                 const SizedBox(
                   height: 8,
                 ),
                 if (place.roadAddress == null || place.roadAddress == "") ...[
-                  Text(
-                    place.jibunAddress!,
-                    style: const TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: Color.fromRGBO(51, 51, 51, 0.5)),
-                  )
+                  Text(place.jibunAddress, style: TextStyles.modalSubTextStyle)
                 ] else ...[
-                  Text(
-                    place.roadAddress!,
-                    style: const TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: Color.fromRGBO(51, 51, 51, 0.5)),
-                  )
+                  Text(place.roadAddress!, style: TextStyles.modalSubTextStyle)
                 ],
                 const SizedBox(height: 16.0),
                 const Divider(
@@ -79,11 +60,7 @@ class PlaceBottomModal extends StatelessWidget {
                 height: 60,
                 color: const Color.fromRGBO(240, 120, 5, 1),
                 child: const Text('안내 시작',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700))))
+                    style: TextStyles.modalButtonTextStyle)))
       ],
     );
   }

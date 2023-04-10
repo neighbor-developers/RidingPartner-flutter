@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:ridingpartner_flutter/src/provider/image_pick_provider.dart';
+import 'package:ridingpartner_flutter/src/screen/home_screen.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
 import 'package:ridingpartner_flutter/src/widgets/appbar.dart';
 
@@ -11,6 +12,7 @@ import '../models/record.dart';
 import '../service/firebase_database_service.dart';
 import '../style/textstyle.dart';
 
+// 주행기록의 메모 작성 Provider
 final memoProvider = StateProvider((ref) => '');
 
 class RidingResultScreen extends ConsumerStatefulWidget {
@@ -22,13 +24,6 @@ class RidingResultScreen extends ConsumerStatefulWidget {
 }
 
 class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
-  int hKcal = 550;
-  final textStyle = const TextStyle(
-      fontSize: 16.0,
-      fontFamily: "Pretendard",
-      fontWeight: FontWeight.w500,
-      color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6));
-
   late FutureProvider recordProvider;
 
   @override
@@ -122,12 +117,12 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("날짜", style: textStyle),
-              Text("주행 시간", style: textStyle),
-              Text("평균 속도", style: textStyle),
-              Text("주행 총 거리", style: textStyle),
-              Text("소모 칼로리", style: textStyle)
+            children: const [
+              Text("날짜", style: TextStyles.ridingRecordTextStyle),
+              Text("주행 시간", style: TextStyles.ridingRecordTextStyle),
+              Text("평균 속도", style: TextStyles.ridingRecordTextStyle),
+              Text("주행 총 거리", style: TextStyles.ridingRecordTextStyle),
+              Text("소모 칼로리", style: TextStyles.ridingRecordTextStyle)
             ],
           ),
         ),
@@ -139,26 +134,27 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Text(DateFormat('yyyy년 MM월 dd일').format(DateTime.now()),
-                  style: textStyle),
-              Text(timestampToText(record.timestamp), style: textStyle),
+                  style: TextStyles.ridingRecordTextStyle),
+              Text(timestampToText(record.timestamp),
+                  style: TextStyles.ridingRecordTextStyle),
               if (record.timestamp != 0) ...[
                 Text(
                     "${(record.distance / record.timestamp).toStringAsFixed(1)} km/h",
-                    style: textStyle)
+                    style: TextStyles.ridingRecordTextStyle)
               ] else ...[
-                Text("0.0 km/h", style: textStyle)
+                const Text("0.0 km/h", style: TextStyles.ridingRecordTextStyle)
               ],
               Text("${(record.distance / 1000).toStringAsFixed(2)} km",
-                  style: textStyle),
+                  style: TextStyles.ridingRecordTextStyle),
               if (record.distance == 0) ...[
-                Text(
+                const Text(
                   '0 kcal',
-                  style: textStyle,
+                  style: TextStyles.ridingRecordTextStyle,
                 )
               ] else ...[
                 Text(
-                    "${(hKcal * (record.timestamp) / 3600).toStringAsFixed(1)} kcal",
-                    style: textStyle)
+                    "${(550 * (record.timestamp) / 3600).toStringAsFixed(1)} kcal",
+                    style: TextStyles.ridingRecordTextStyle)
               ]
             ],
           ),
@@ -167,6 +163,7 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
     );
   }
 
+  // 데이터 저장 버튼
   Widget saveDataButton() {
     return SizedBox(
       width: double.infinity,
@@ -174,15 +171,18 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
       child: ElevatedButton(
         onPressed: () {
           saveData();
-          Navigator.pop(context);
-          Navigator.pop(context);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomeScreen(),
+              ));
         },
         style: ButtonStyle(
           shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
           padding:
               MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.all(13.0)),
           backgroundColor: MaterialStateProperty.all<Color>(
-              const Color.fromARGB(0xFF, 0xFF, 0xFF, 0xFF)),
+              const Color.fromARGB(0xFF, 0xF8, 0xF9, 0xFA)),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25.0),
@@ -190,10 +190,7 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
         ),
         child: const Text(
           "기록 저장하기",
-          style: TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.w700,
-              color: Color.fromARGB(0xFF, 0xF0, 0x78, 0x05)),
+          style: TextStyles.recordSaveBtnTextStyle,
         ),
       ),
     );
@@ -210,13 +207,14 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
         topSpeed: recordData.asData!.value.topSpeed,
         timestamp: recordData.asData!.value.timestamp,
         memo: memo,
-        kcal: hKcal * (recordData.asData!.value.timestamp) / 3600,
+        kcal: 550 * (recordData.asData!.value.timestamp) / 3600,
         images: image.map((e) => e.path).toList());
     FirebaseDatabaseService().saveRecordFirebaseDb(record);
     Record.saveRecordMemoPref(record);
   }
 }
 
+// 메모입력 위젯
 class MemoWidget extends ConsumerStatefulWidget {
   const MemoWidget({super.key});
 
@@ -264,9 +262,11 @@ class MemoWidgetState extends ConsumerState<MemoWidget> {
   }
 }
 
+// 갤러리 이미지 추가 Provider
 final imageProvider =
     StateNotifierProvider<ImageState, List<File>>((ref) => ImageState());
 
+// 갤러리 이미지 추가 위젯
 class ImageWidget extends ConsumerStatefulWidget {
   const ImageWidget({super.key});
 

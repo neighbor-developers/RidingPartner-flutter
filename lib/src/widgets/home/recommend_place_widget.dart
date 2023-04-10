@@ -63,12 +63,7 @@ class RecommendPlaceWidgetState extends ConsumerState<RecommendPlaceWidget> {
               ),
               child: const Text(
                 "추천 명소를\n불러오고 있습니다",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w500,
-                  color: Color.fromRGBO(51, 51, 51, 1),
-                ),
+                style: TextStyles.recordDescriptionTextStyle,
               ),
             )
           : Stack(
@@ -110,7 +105,7 @@ class RecommendPlaceWidgetState extends ConsumerState<RecommendPlaceWidget> {
                   padding: const EdgeInsets.all(15),
                   alignment: Alignment.bottomRight,
                   child: Text(
-                    "${place.title}",
+                    place.title,
                     style: TextStyles.recommendTextStyle,
                     textAlign: TextAlign.end,
                   ),

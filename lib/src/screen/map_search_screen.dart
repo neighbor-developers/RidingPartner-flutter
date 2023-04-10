@@ -81,8 +81,6 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
   Marker? _endMarkers;
   final int polylineWidth = 8;
   bool searchboxVisible = true;
-  int startMarkerId = 0;
-  int endMarkerId = 0;
   int buttonsPositionAlpha = 0;
   final FocusNode _startFocusNode = FocusNode();
   final FocusNode _destinationFocusNode = FocusNode();
@@ -118,6 +116,7 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
     final polylinePoint = ref.watch(polylineProvider);
     final startPlaceList = ref.watch(searchStartPlaceProvider);
     final destinationPlaceList = ref.watch(searchDestinationPlaceProvider);
+
     return Scaffold(
       key: _scaffoldKey,
       body: Stack(
@@ -144,6 +143,7 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
                   }
                 : {},
           ),
+          // 검색창
           Visibility(
               visible: searchboxVisible,
               child: SearchBoxWidget(
@@ -153,6 +153,7 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
                 destinationFocusNode: _destinationFocusNode,
                 onClickClear: (SearchType type) => onClickClear(type),
               )),
+          // 검색된 장소 리스트
           Container(
               alignment: Alignment.topLeft,
               width: MediaQuery.of(context).size.width - 40,
@@ -167,6 +168,7 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
                       onPlaceItemTab: onPlaceItemTab),
                 ]),
               )),
+          // 검색된 장소 리스트
           Container(
               alignment: Alignment.topLeft,
               width: MediaQuery.of(context).size.width - 40,
@@ -181,6 +183,7 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
                       onPlaceItemTab: onPlaceItemTab),
                 ]),
               )),
+          // 내 위치 버튼
           Positioned(
             bottom: buttonsPositionAlpha + 50,
             left: 20,
@@ -195,6 +198,7 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
               },
             ),
           ),
+          // 검색 버튼
           Positioned(
             bottom: buttonsPositionAlpha + 120,
             left: 20,
@@ -216,6 +220,7 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
               },
             ),
           ),
+          // 안내시작 버튼
           Visibility(
               visible: !searchboxVisible,
               child: Positioned(bottom: 0, child: startNavButton()))
@@ -227,16 +232,17 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
   void showToastMessage(String message) =>
       Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_SHORT);
 
+  // 선택되어있는 장소 제거
   void onClickClear(SearchType type) {
     if (type == SearchType.start) {
       _startTextController.clear();
       ref.read(startPlaceProvider.notifier).state = null;
-      ref.read(searchStartPlaceProvider.notifier).clearRoute();
+      ref.read(searchStartPlaceProvider.notifier).clearPlace();
       _startMarkers = null;
     } else {
       _destinationTextController.clear();
       ref.read(destinationPlaceProvider.notifier).state = null;
-      ref.read(searchDestinationPlaceProvider.notifier).clearRoute();
+      ref.read(searchDestinationPlaceProvider.notifier).clearPlace();
       _endMarkers = null;
     }
   }
@@ -246,6 +252,7 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
     _controller.complete(controller);
   }
 
+  // 안내 시작 버튼
   Widget startNavButton() {
     return SizedBox(
         width: MediaQuery.of(context).size.width,
@@ -281,10 +288,11 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
             backgroundColor: Palette.orangeColor));
   }
 
+  // 검색된 장소 리스트에서 장소 선택
   void onPlaceItemTab(
       TextEditingController textController, Place item, SearchType type) async {
     final NaverMapController controller = await _controller.future;
-    textController.text = item.title!;
+    textController.text = item.title;
     controller.moveCamera(
       CameraUpdate.toCameraPosition(CameraPosition(
         target:
@@ -294,13 +302,15 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
     Place? startPoint = ref.read(startPlaceProvider.notifier).state;
     Place? destinationPoint = ref.read(destinationPlaceProvider.notifier).state;
 
-    updateMarkerPosition(item, type);
+    updateMarkerPosition(item, type); // 마커 업데이트
     if (type == SearchType.start) {
+      // 출발지 선택 및 리스트 비우기
       ref.read(startPlaceProvider.notifier).state = item;
-      ref.read(searchStartPlaceProvider.notifier).clearRoute();
+      ref.read(searchStartPlaceProvider.notifier).clearPlace();
     } else {
+      // 도착지 선택 및 리스트 비우기
       ref.read(destinationPlaceProvider.notifier).state = item;
-      ref.read(searchDestinationPlaceProvider.notifier).clearRoute();
+      ref.read(searchDestinationPlaceProvider.notifier).clearPlace();
     }
 
     if (startPoint != null && destinationPoint != null) {
@@ -314,6 +324,7 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
     }
   }
 
+  // 마커 업데이트(출발지, 목적지)
   Future<void> updateMarkerPosition(Place position, SearchType type) async {
     final customIcon = await OverlayImage.fromAssetImage(
         assetName: 'assets/icons/search_riding_marker.png');
@@ -342,6 +353,7 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
     }
   }
 
+  // 출발지, 도착지 사이의 경로를 그림
   void _drawPolyline(Place startPlace, Place finalDestination) async {
     final NaverMapController controller = await _controller.future;
     final List<LatLng> points = setPolylineData(startPlace, finalDestination);
@@ -356,6 +368,7 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
     );
   }
 
+  // 내 위치로 포커스 이동
   void _initLoaction() async {
     final NaverMapController controller = await _controller.future;
 
@@ -391,13 +404,15 @@ class SearchBoxWidgetState extends ConsumerState<SearchBoxWidget> {
   void initState() {
     super.initState();
     widget.destinationFocusNode.addListener(() {
+      // 포커스가 해제되면 검색 결과 리스트를 비움
       if (!widget.destinationFocusNode.hasFocus) {
-        ref.read(searchDestinationPlaceProvider.notifier).clearRoute();
+        ref.read(searchDestinationPlaceProvider.notifier).clearPlace();
       }
     });
     widget.startFocusNode.addListener(() {
+      // 포커스가 해제되면 검색 결과 리스트를 비움
       if (!widget.startFocusNode.hasFocus) {
-        ref.read(searchStartPlaceProvider.notifier).clearRoute();
+        ref.read(searchStartPlaceProvider.notifier).clearPlace();
       }
     });
   }
@@ -417,6 +432,7 @@ class SearchBoxWidgetState extends ConsumerState<SearchBoxWidget> {
     );
   }
 
+  // 검색창 위젯
   Widget searchBox(SearchType type, TextEditingController textController) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -436,8 +452,10 @@ class SearchBoxWidgetState extends ConsumerState<SearchBoxWidget> {
         onChanged: (value) {
           if (value != "") {
             if (type == SearchType.start) {
+              // 출발지 검색
               ref.read(searchStartPlaceProvider.notifier).getPlaces(value);
             } else {
+              // 도착지 검색
               ref
                   .read(searchDestinationPlaceProvider.notifier)
                   .getPlaces(value);
@@ -470,6 +488,7 @@ class SearchBoxWidgetState extends ConsumerState<SearchBoxWidget> {
   }
 }
 
+// 검색 결과 리스트 위젯
 class SearchListWidget extends ConsumerStatefulWidget {
   const SearchListWidget(
       {super.key,

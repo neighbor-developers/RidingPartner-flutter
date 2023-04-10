@@ -24,10 +24,10 @@ final markerListProvider = FutureProvider<List<Marker>>((ref) {
           markers.add(Marker(
               width: 30,
               height: 40,
-              markerId: place.title ?? "marker",
+              markerId: place.title,
               icon: await OverlayImage.fromAssetImage(assetName: place.marker!),
-              position: LatLng(double.parse(place.latitude ?? ""),
-                  double.parse(place.longitude ?? "")) //예외처리해주기
+              position: LatLng(double.parse(place.latitude),
+                  double.parse(place.longitude)) //예외처리해주기
               ));
         });
         return markers;

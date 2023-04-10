@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../style/textstyle.dart';
+
 class WithDrawalDialog extends StatelessWidget {
   const WithDrawalDialog(
       {super.key, required this.onOkClicked, required this.onCancelClicked});
@@ -19,20 +21,11 @@ class WithDrawalDialog extends StatelessWidget {
           child: const Text.rich(
             TextSpan(
                 text: '계정 탈퇴하시겠습니까?\n',
-                style: TextStyle(
-                    color: Color.fromARGB(255, 24, 24, 1),
-                    fontFamily: 'Pretendard',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 17),
+                style: TextStyles.dialogTextStyle,
                 children: <TextSpan>[
                   TextSpan(
                     text: '(모든 기록이 삭제됩니다)',
-                    style: TextStyle(
-                        color: Color.fromARGB(150, 24, 24, 1),
-                        fontFamily: 'Pretendard',
-                        height: 1.5,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13),
+                    style: TextStyles.dialogTextStyle2,
                   )
                 ]),
             textAlign: TextAlign.center,
@@ -56,11 +49,7 @@ class WithDrawalDialog extends StatelessWidget {
                           ),
                           child: const Text(
                             '취소',
-                            style: TextStyle(
-                                color: Color.fromRGBO(102, 102, 102, 1),
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16),
+                            style: TextStyles.dialogCancelBtnTextStyle,
                             textAlign: TextAlign.center,
                           ),
                         ))),
@@ -77,11 +66,7 @@ class WithDrawalDialog extends StatelessWidget {
                           ),
                           child: const Text(
                             '탈퇴',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16),
+                            style: TextStyles.dialogConfirmBtnTextStyle,
                             textAlign: TextAlign.center,
                           ),
                         )))

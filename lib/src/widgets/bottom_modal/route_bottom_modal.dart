@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
+
+import '../../style/textstyle.dart';
 
 class RouteBottomModal extends StatelessWidget {
   const RouteBottomModal({super.key, required this.route, required this.onTap});
@@ -23,33 +23,18 @@ class RouteBottomModal extends StatelessWidget {
               children: [
                 Text(
                   route.title!.replaceAll('\n', ' '),
-                  style: const TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700),
+                  style: TextStyles.modalTitleTextStyle,
                   textAlign: TextAlign.end,
                 ),
                 const SizedBox(
                   height: 8,
                 ),
-                Text(
-                  route.description!,
-                  style: const TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500),
-                ),
+                Text(route.description!, style: TextStyles.modalSubTextStyle),
                 const SizedBox(
                   height: 8,
                 ),
-                Text(
-                  route.route!.join(' > '),
-                  style: const TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: Color.fromRGBO(51, 51, 51, 0.5)),
-                ),
+                Text(route.route!.join(' > '),
+                    style: TextStyles.modalSubTextStyle),
                 const SizedBox(height: 16.0),
                 const Divider(
                   color: Color.fromRGBO(233, 236, 239, 1),
@@ -75,11 +60,7 @@ class RouteBottomModal extends StatelessWidget {
                 height: 60,
                 color: const Color.fromRGBO(240, 120, 5, 1),
                 child: const Text('안내 시작',
-                    style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700))))
+                    style: TextStyles.modalButtonTextStyle)))
       ],
     );
   }

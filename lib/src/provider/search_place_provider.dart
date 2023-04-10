@@ -16,7 +16,7 @@ class SearchPlaceProvider extends StateNotifier<List<Place>> {
     state = (await naverMapService.getPlaces(title)) ?? [];
   }
 
-  void clearRoute() {
+  void clearPlace() {
     state = [];
   }
 }

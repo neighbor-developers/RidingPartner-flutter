@@ -6,7 +6,7 @@ import 'package:ridingpartner_flutter/src/screen/riding_screen.dart';
 import 'package:ridingpartner_flutter/src/screen/sights_screen.dart';
 import 'package:ridingpartner_flutter/src/style/palette.dart';
 
-import 'home/home_screen.dart';
+import 'home_screen.dart';
 
 final bottomNavigationProvider = StateProvider<int>((ref) => 2);
 

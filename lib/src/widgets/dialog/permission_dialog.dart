@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:ridingpartner_flutter/src/style/textstyle.dart';
 
 class PermissionDialog extends StatelessWidget {
   const PermissionDialog({super.key});
@@ -17,20 +18,11 @@ class PermissionDialog extends StatelessWidget {
           child: const Text.rich(
             TextSpan(
                 text: '자전거 경로 트래킹을 위하여 \n백그라운드 위치 수집을 할 수 있습니다.\n동의하시겠습니까?\n\n',
-                style: TextStyle(
-                    color: Color.fromARGB(255, 24, 24, 1),
-                    fontFamily: 'Pretendard',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 17),
+                style: TextStyles.dialogTextStyle,
                 children: <TextSpan>[
                   TextSpan(
                     text: '(이용약관에 동의하셔야 서비스를 이용하실 수 있습니다)',
-                    style: TextStyle(
-                        color: Color.fromARGB(150, 24, 24, 1),
-                        fontFamily: 'Pretendard',
-                        height: 1.5,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13),
+                    style: TextStyles.dialogTextStyle2,
                   )
                 ]),
             textAlign: TextAlign.center,
@@ -53,11 +45,7 @@ class PermissionDialog extends StatelessWidget {
                     ),
                     child: const Text(
                       '부동의',
-                      style: TextStyle(
-                          color: Color.fromRGBO(102, 102, 102, 1),
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16),
+                      style: TextStyles.dialogCancelBtnTextStyle,
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -77,11 +65,7 @@ class PermissionDialog extends StatelessWidget {
                     ),
                     child: const Text(
                       '동의',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16),
+                      style: TextStyles.dialogConfirmBtnTextStyle,
                       textAlign: TextAlign.center,
                     ),
                   ),

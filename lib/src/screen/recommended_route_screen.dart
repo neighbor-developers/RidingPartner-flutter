@@ -8,6 +8,7 @@ import 'package:ridingpartner_flutter/src/widgets/bottom_modal/route_bottom_moda
 
 import '../models/place.dart';
 
+// 저장된 라이딩 경로 리스트를 가져오는 Provider
 final routeListProvider = FutureProvider((ref) async {
   final routeFromJsonFile =
       await rootBundle.loadString('assets/json/route.json');
@@ -66,6 +67,7 @@ class RecommendedRouteScreenState
       );
 }
 
+// 라이딩 경로 리스트를 그리는 위젯
 class RouteGridWidget extends ConsumerStatefulWidget {
   const RouteGridWidget({super.key, required this.routeList});
 
@@ -99,6 +101,7 @@ class RouteGridWidgetState extends ConsumerState<RouteGridWidget> {
       ),
       child: InkWell(
           onTap: () {
+            // 라이딩 경로를 클릭하면 경로 상세 정보를 보여주는 모달을 띄움
             routeDialog(route);
           },
           child: Stack(fit: StackFit.expand, children: <Widget>[
@@ -113,6 +116,7 @@ class RouteGridWidgetState extends ConsumerState<RouteGridWidget> {
                     style: TextStyles.recommendCardTextStyle)),
           ])));
 
+  // 경로 상세 정보를 보여주는 모달
   void routeDialog(RidingRoute route) => showModalBottomSheet<void>(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -121,6 +125,7 @@ class RouteGridWidgetState extends ConsumerState<RouteGridWidget> {
       builder: (BuildContext context) =>
           RouteBottomModal(route: route, onTap: () => onTapDialog(route)));
 
+  // 경로 상세 정보를 보여주는 모달에서 라이딩 경로를 클릭시 네비게이션 화면으로 이동
   void onTapDialog(RidingRoute route) async {
     final placeStringFromJsonFile =
         await rootBundle.loadString('assets/json/place.json');

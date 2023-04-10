@@ -8,6 +8,7 @@ import '../style/textstyle.dart';
 import '../widgets/appbar.dart';
 import 'record_screen.dart';
 
+// 저장된 주행 기록을 불러오는 Provider
 final recordListProvider = FutureProvider<List<Record>>((ref) async {
   List<Record> record = await FirebaseDatabaseService().getAllRecords();
   record.sort((a, b) {
@@ -27,6 +28,7 @@ class RecordListScreenState extends ConsumerState<RecordListScreen> {
   @override
   Widget build(BuildContext context) {
     initializeDateFormatting('ko_KR', null);
+    // 주행 기록 리스트
     final recordList = ref.watch(recordListProvider);
 
     return recordList.when(
@@ -66,6 +68,7 @@ class RecordListScreenState extends ConsumerState<RecordListScreen> {
         error: (error, stack) => const Center(child: Text('데이터를 불러올 수 없습니다.')));
   }
 
+  // 주행 기록 리스트의 아이템
   Widget recordItem(Record record) {
     return InkWell(
         onTap: () => {

@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_chart/model/line-chart.model.dart';
 
-import '../../../models/record.dart';
-import '../../../service/firebase_database_service.dart';
-import '../../../style/palette.dart';
-import '../../../style/textstyle.dart';
-import '../../../utils/get_14days_record.dart';
-import '../../../utils/timestampToText.dart';
-import '../../record_list_screen.dart';
+import '../../models/record.dart';
+import '../../screen/record_list_screen.dart';
+import '../../service/firebase_database_service.dart';
+import '../../style/palette.dart';
+import '../../style/textstyle.dart';
+import '../../utils/get_14days_record.dart';
+import '../../utils/timestampToText.dart';
 
 class Data {
   String key;
@@ -68,6 +68,7 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
             child: Center(
               child: Text(
                 "라이더님의 주행 기록을 불러오는 중입니다",
+                style: TextStyles.recordDescriptionTextStyle,
                 textAlign: TextAlign.center,
               ),
             ));
@@ -77,6 +78,7 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
             child: Center(
               child: Text(
                 "아직 주행한 기록이 없습니다\n라이딩 파트너와 함께 달려보세요!",
+                style: TextStyles.recordDescriptionTextStyle,
                 textAlign: TextAlign.center,
               ),
             ));
@@ -90,6 +92,7 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
               children: const [
                 Text(
                   "최근 2주간 라이딩한 기록이 없습니다\n라이딩 파트너와 함께 달려보세요!",
+                  style: TextStyles.recordDescriptionTextStyle,
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(
@@ -97,11 +100,7 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
                 ),
                 Text(
                   '기록 전체보기',
-                  style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: Color.fromARGB(185, 51, 57, 62)),
+                  style: TextStyles.recordDescriptionTextStyle,
                 ),
               ],
             )));
@@ -110,24 +109,11 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
             height: 100,
             child: Center(
               child: Text("기록 조회에 실패했습니다\n네트워크 상태를 체크해주세요!",
+                  style: TextStyles.recordDescriptionTextStyle,
                   textAlign: TextAlign.center),
             ));
       case RecordState.success:
-        return record.when(
-            data: (data) {
-              return recordTab(data);
-            },
-            loading: () => const SizedBox(
-                height: 100,
-                child: Center(
-                  child: CircularProgressIndicator(color: Palette.appColor),
-                )),
-            error: (error, stack) => const SizedBox(
-                height: 100,
-                child: Center(
-                  child: Text("기록 조회에 실패했습니다\n네트워크 상태를 체크해주세요!",
-                      textAlign: TextAlign.center),
-                )));
+        return recordTab(record.asData!.value);
 
       default:
         return const SizedBox(
@@ -159,10 +145,7 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
           }).toList(),
           unselectedLabelColor: Colors.black54,
           labelColor: Colors.white,
-          labelStyle: const TextStyle(
-              fontSize: 14,
-              fontFamily: 'Pretendard',
-              fontWeight: FontWeight.w700),
+          labelStyle: TextStyles.recordTabLabelTextStyle,
           indicator: BoxDecoration(
             boxShadow: const [
               BoxShadow(
@@ -306,11 +289,7 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
                             width: 15, height: 15, fit: BoxFit.cover),
                         Text(
                           "  ${data.key}",
-                          style: const TextStyle(
-                              fontSize: 12,
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w500,
-                              color: Color.fromRGBO(17, 17, 17, 1)),
+                          style: TextStyles.recordCardTitleTextStyle,
                         )
                       ],
                     )),
@@ -319,11 +298,7 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
                     left: 0,
                     child: Text(
                       data.data,
-                      style: const TextStyle(
-                          fontSize: 24,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w300,
-                          color: Colors.black),
+                      style: TextStyles.recordCardDataTextStyle,
                       textAlign: TextAlign.start,
                     ))
               ],
