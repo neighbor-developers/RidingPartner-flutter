@@ -4,13 +4,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:provider/provider.dart';
 import 'package:ridingpartner_flutter/src/network/network_helper.dart';
-import 'package:ridingpartner_flutter/src/pages/splash_screen.dart';
-import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
+import 'package:ridingpartner_flutter/src/screen/splash_screen.dart';
 import 'package:ridingpartner_flutter/src/service/shared_preference.dart';
 import 'package:ridingpartner_flutter/src/utils/http_override.dart';
-import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 
 import 'firebase_options.dart';
 
@@ -25,7 +22,7 @@ void main() async {
   await PreferenceUtils.init();
   NetworkHelper();
 
-  runApp(ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

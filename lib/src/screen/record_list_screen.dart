@@ -6,7 +6,7 @@ import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/provider/record_list_provider.dart';
 
 import '../widgets/appbar.dart';
-import 'day_record_screen.dart';
+import 'record_screen.dart';
 
 class RecordListScreen extends StatefulWidget {
   const RecordListScreen({super.key});
@@ -69,11 +69,7 @@ class RecordListScreenState extends State<RecordListScreen> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ChangeNotifierProvider(
-                            create: (context) =>
-                                RidingResultProvider(record.date),
-                            child: DayRecordPage(),
-                          )))
+                      builder: (context) => RecordScreen(date: record.date)))
             },
         child: Container(
             padding:
