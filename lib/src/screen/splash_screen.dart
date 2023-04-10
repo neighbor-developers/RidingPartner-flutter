@@ -11,8 +11,8 @@ import 'package:ridingpartner_flutter/src/models/my_location.dart';
 import 'package:ridingpartner_flutter/src/widgets/dialog/permission_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final authProvider =
-    StateNotifierProvider<AuthProvider, User?>((ref) => AuthProvider());
+final authProvider = StateNotifierProvider.autoDispose<AuthProvider, User?>(
+    (ref) => AuthProvider());
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});

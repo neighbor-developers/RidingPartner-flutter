@@ -263,8 +263,8 @@ class MemoWidgetState extends ConsumerState<MemoWidget> {
 }
 
 // 갤러리 이미지 추가 Provider
-final imageProvider =
-    StateNotifierProvider<ImageState, List<File>>((ref) => ImageState());
+final imageProvider = StateNotifierProvider.autoDispose<ImageState, List<File>>(
+    (ref) => ImageState());
 
 // 갤러리 이미지 추가 위젯
 class ImageWidget extends ConsumerStatefulWidget {

@@ -9,7 +9,8 @@ import '../widgets/appbar.dart';
 import 'record_screen.dart';
 
 // 저장된 주행 기록을 불러오는 Provider
-final recordListProvider = FutureProvider<List<Record>>((ref) async {
+final recordListProvider =
+    FutureProvider.autoDispose<List<Record>>((ref) async {
   List<Record> record = await FirebaseDatabaseService().getAllRecords();
   record.sort((a, b) {
     return DateTime.parse(a.date).compareTo(DateTime.parse(b.date));

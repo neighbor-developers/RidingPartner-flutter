@@ -9,7 +9,7 @@ import 'package:ridingpartner_flutter/src/widgets/bottom_modal/route_bottom_moda
 import '../models/place.dart';
 
 // 저장된 라이딩 경로 리스트를 가져오는 Provider
-final routeListProvider = FutureProvider((ref) async {
+final routeListProvider = FutureProvider.autoDispose((ref) async {
   final routeFromJsonFile =
       await rootBundle.loadString('assets/json/route.json');
   return RouteList.fromJson(routeFromJsonFile).routes ?? <RidingRoute>[];

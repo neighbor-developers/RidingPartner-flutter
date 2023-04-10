@@ -138,11 +138,9 @@ class BottomNavigation extends ConsumerWidget {
           unselectedItemColor: Palette.bottomNavUnSelecterColor,
           onTap: (index) {
             if (index == 4) {
-              // Navigator.of(context).push(MaterialPageRoute(
-              //     builder: (context) => ChangeNotifierProvider(
-              //           create: (context) => RidingProvider(),
-              //           child: const RidingPage(),
-              //         )));
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const RidingScreen(),
+              ));
             } else {
               ref.read(bottomNavigationProvider.notifier).state = index;
             }

@@ -14,17 +14,18 @@ import 'package:ridingpartner_flutter/src/style/palette.dart';
 import 'package:ridingpartner_flutter/src/utils/set_polyline_data.dart';
 
 import '../models/my_location.dart';
-import '../style/textstyle.dart';
-import '../widgets/place/highlight_text.dart';
+import '../widgets/map_search/search_box.dart';
+import '../widgets/map_search/search_list.dart';
 
 enum SearchType { start, destination }
 
 // 선택된 장소를 저장하는 Provider
-final startPlaceProvider = StateProvider<Place?>((ref) => null);
-final destinationPlaceProvider = StateProvider<Place?>((ref) => null);
+final startPlaceProvider = StateProvider.autoDispose<Place?>((ref) => null);
+final destinationPlaceProvider =
+    StateProvider.autoDispose<Place?>((ref) => null);
 
 // 검색된 경로를 저장하는 Provider
-final routeProvider = FutureProvider<List<Guide>>((ref) async {
+final routeProvider = FutureProvider.autoDispose<List<Guide>>((ref) async {
   final startPlace = ref.watch(startPlaceProvider);
   final destinationPlace = ref.watch(destinationPlaceProvider);
   if (startPlace != null && destinationPlace != null) {
@@ -36,14 +37,14 @@ final routeProvider = FutureProvider<List<Guide>>((ref) async {
 
 // 검색된 장소들을 저장하는 Provider
 final searchStartPlaceProvider =
-    StateNotifierProvider<SearchPlaceProvider, List<Place>>(
+    StateNotifierProvider.autoDispose<SearchPlaceProvider, List<Place>>(
         (ref) => SearchPlaceProvider());
 final searchDestinationPlaceProvider =
-    StateNotifierProvider<SearchPlaceProvider, List<Place>>(
+    StateNotifierProvider.autoDispose<SearchPlaceProvider, List<Place>>(
         (ref) => SearchPlaceProvider());
 
 // 검색된 경로의 polyline을 저장하는 Provider
-final polylineProvider = StateProvider<List<LatLng>>((ref) {
+final polylineProvider = StateProvider.autoDispose<List<LatLng>>((ref) {
   final route = ref.watch(routeProvider);
 
   return route.when(
@@ -377,165 +378,5 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
           MyLocation().position!.latitude, MyLocation().position!.longitude),
       zoom: 14.4746,
     )));
-  }
-}
-
-class SearchBoxWidget extends ConsumerStatefulWidget {
-  const SearchBoxWidget(
-      {super.key,
-      required this.textControllerForStart,
-      required this.textControllerForEnd,
-      required this.startFocusNode,
-      required this.destinationFocusNode,
-      required this.onClickClear});
-
-  final TextEditingController textControllerForStart;
-  final TextEditingController textControllerForEnd;
-  final FocusNode startFocusNode;
-  final FocusNode destinationFocusNode;
-  final Function(SearchType) onClickClear;
-
-  @override
-  SearchBoxWidgetState createState() => SearchBoxWidgetState();
-}
-
-class SearchBoxWidgetState extends ConsumerState<SearchBoxWidget> {
-  @override
-  void initState() {
-    super.initState();
-    widget.destinationFocusNode.addListener(() {
-      // 포커스가 해제되면 검색 결과 리스트를 비움
-      if (!widget.destinationFocusNode.hasFocus) {
-        ref.read(searchDestinationPlaceProvider.notifier).clearPlace();
-      }
-    });
-    widget.startFocusNode.addListener(() {
-      // 포커스가 해제되면 검색 결과 리스트를 비움
-      if (!widget.startFocusNode.hasFocus) {
-        ref.read(searchStartPlaceProvider.notifier).clearPlace();
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 40, horizontal: 35),
-      alignment: Alignment.topLeft,
-      padding: const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
-      child: Column(
-        children: <Widget>[
-          searchBox(SearchType.start, widget.textControllerForStart),
-          searchBox(SearchType.destination, widget.textControllerForEnd),
-        ],
-      ),
-    );
-  }
-
-  // 검색창 위젯
-  Widget searchBox(SearchType type, TextEditingController textController) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      decoration: const BoxDecoration(boxShadow: [
-        BoxShadow(
-            spreadRadius: 5,
-            blurRadius: 10,
-            color: Color.fromRGBO(0, 0, 0, 0.07))
-      ]),
-      width: MediaQuery.of(context).size.width - 60,
-      height: 60,
-      child: TextField(
-        style: TextStyles.searchBoxTextStyle,
-        focusNode: type == SearchType.start
-            ? widget.startFocusNode
-            : widget.destinationFocusNode,
-        onChanged: (value) {
-          if (value != "") {
-            if (type == SearchType.start) {
-              // 출발지 검색
-              ref.read(searchStartPlaceProvider.notifier).getPlaces(value);
-            } else {
-              // 도착지 검색
-              ref
-                  .read(searchDestinationPlaceProvider.notifier)
-                  .getPlaces(value);
-            }
-          }
-        },
-        controller: textController,
-        decoration: InputDecoration(
-          hintStyle: TextStyles.hintTextStyle,
-          hintText: type == SearchType.start ? "출발지를 입력해주세요" : "도착지를 입력해주세요",
-          prefixIcon: const Icon(Icons.search),
-          suffixIcon: IconButton(
-              icon: Image.asset(
-                'assets/icons/xmark.png',
-                scale: 3.5,
-              ),
-              onPressed: () {
-                textController.clear();
-                widget.onClickClear(type);
-              }),
-          filled: true,
-          fillColor: Palette.searchBoxColor,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide.none,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// 검색 결과 리스트 위젯
-class SearchListWidget extends ConsumerStatefulWidget {
-  const SearchListWidget(
-      {super.key,
-      required this.list,
-      required this.textController,
-      required this.type,
-      required this.onPlaceItemTab});
-
-  final List<Place> list;
-  final TextEditingController textController;
-  final SearchType type;
-  final Function(TextEditingController, Place, SearchType) onPlaceItemTab;
-
-  @override
-  SearchListWidgetState createState() => SearchListWidgetState();
-}
-
-class SearchListWidgetState extends ConsumerState<SearchListWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Flexible(
-      child: ListView.builder(
-        itemCount: widget.list.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Card(
-              borderOnForeground: true,
-              margin: const EdgeInsets.symmetric(vertical: 0.3),
-              child: ListTile(
-                  title: Row(
-                    children: [
-                      const ImageIcon(
-                          AssetImage('assets/icons/search_marker.png'),
-                          size: 18),
-                      highlightedText("  ${widget.list[index].title!}",
-                          widget.textController.text, "title"),
-                    ],
-                  ),
-                  subtitle: highlightedText(
-                      widget.list[index].jibunAddress ?? '',
-                      widget.textController.text,
-                      "subtitle"),
-                  textColor: Colors.black,
-                  tileColor: Palette.searchBoxColor,
-                  onTap: () => widget.onPlaceItemTab(
-                      widget.textController, widget.list[index], widget.type)));
-        },
-      ),
-    );
   }
 }

@@ -8,14 +8,14 @@ import 'package:logging/logging.dart';
 import 'package:ridingpartner_flutter/src/widgets/bottom_modal/place_bottom_modal.dart';
 import '../models/place.dart';
 
-final placeListProvider = FutureProvider<List<Place>>((ref) async {
+final placeListProvider = FutureProvider.autoDispose<List<Place>>((ref) async {
   final routeFromJsonFile =
       await rootBundle.loadString('assets/json/place.json');
   final list = PlaceList.fromJson(routeFromJsonFile).places ?? <Place>[];
   return list.where((element) => element.marker != "").toList();
 });
 
-final markerListProvider = FutureProvider<List<Marker>>((ref) {
+final markerListProvider = FutureProvider.autoDispose<List<Marker>>((ref) {
   final placeList = ref.watch(placeListProvider);
   List<Marker> markers = [];
   return placeList.when(
