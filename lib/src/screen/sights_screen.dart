@@ -5,11 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
-import 'package:ridingpartner_flutter/src/provider/sights_provider.dart';
 import 'package:ridingpartner_flutter/src/widgets/bottom_modal/place_bottom_modal.dart';
 import '../models/place.dart';
-import '../provider/navigation_provider.dart';
-import '../provider/riding_provider.dart';
 
 final placeListProvider = FutureProvider<List<Place>>((ref) async {
   final routeFromJsonFile =

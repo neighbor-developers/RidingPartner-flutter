@@ -19,7 +19,7 @@ class FireStoreService {
     }
   }
 
-  Future<Place> getPlace(String title) async {
+  Future<Place?> getPlace(String title) async {
     try {
       final snapshot = await db.collection("place").doc(title).get();
 
@@ -28,7 +28,7 @@ class FireStoreService {
       }
       throw Exception("getPlace: snapshot not exist");
     } catch (e) {
-      return Place();
+      return null;
     }
   }
 

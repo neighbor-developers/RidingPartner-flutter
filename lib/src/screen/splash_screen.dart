@@ -22,18 +22,6 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class SplashScreenState extends ConsumerState<SplashScreen> {
-  late ConnectivityResult connectivityResult;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // 인터넷 검사
-    Connectivity()
-        .checkConnectivity()
-        .then((value) => connectivityResult = value);
-  }
-
   // 로딩페이지와 동시에 사용
   @override
   Widget build(BuildContext context) {
@@ -41,12 +29,15 @@ class SplashScreenState extends ConsumerState<SplashScreen> {
 
     if (authState != null) {
       Future.delayed(const Duration(milliseconds: 1500), () {
-        Navigator.pushReplacementNamed(context, '/login');
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const BottomNavigation()));
       });
     } else {
-      if (connectivityResult == ConnectivityResult.none) {
-        showToastMessage("wifi 상태를 확인해주세요");
-      }
+      Connectivity().checkConnectivity().then((value) {
+        if (value == ConnectivityResult.none) {
+          showToastMessage("wifi 상태를 확인해주세요");
+        }
+      });
     }
 
     return Container(
@@ -76,8 +67,11 @@ class SplashScreenState extends ConsumerState<SplashScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    Visibility(
-                        visible: authState == null, child: const _Body()),
+                    SizedBox(
+                      height: 280,
+                      child: Visibility(
+                          visible: authState == null, child: const _Body()),
+                    ),
                     const _Footer()
                   ],
                 ))));

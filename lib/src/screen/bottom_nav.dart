@@ -7,7 +7,7 @@ import 'package:ridingpartner_flutter/src/screen/riding_screen.dart';
 import 'package:ridingpartner_flutter/src/screen/sights_screen.dart';
 import 'package:ridingpartner_flutter/src/style/palette.dart';
 
-final bottomNavigationProvider = StateProvider<int>((ref) => 0);
+final bottomNavigationProvider = StateProvider<int>((ref) => 2);
 
 class BottomNavigation extends ConsumerWidget {
   const BottomNavigation({Key? key}) : super(key: key);
@@ -21,7 +21,9 @@ class BottomNavigation extends ConsumerWidget {
       appBar: AppBar(
         shadowColor: const Color.fromRGBO(255, 255, 255, 0.5),
         backgroundColor: Colors.white,
-        title: SizedBox(
+        leadingWidth: 0,
+        title: Container(
+            alignment: Alignment.center,
             width: MediaQuery.of(context).size.width,
             child: Image.asset(
               'assets/icons/logo.png',
@@ -101,7 +103,7 @@ class BottomNavigation extends ConsumerWidget {
                   child: Image.asset('assets/icons/bottom_nav_search.png',
                       height: 20,
                       width: 20,
-                      color: Palette.bottomNavSelecterColor)),
+                      color: Palette.bottomNavUnSelecterColor)),
               activeIcon: Container(
                   padding: itemPadding,
                   child: Image.asset(

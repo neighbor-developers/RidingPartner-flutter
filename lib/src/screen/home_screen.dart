@@ -5,15 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_chart/charts/line-chart.widget.dart';
 import 'package:line_chart/model/line-chart.model.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
-import 'package:ridingpartner_flutter/src/provider/home_record_provider.dart';
+import 'package:ridingpartner_flutter/src/screen/record_list_screen.dart';
+import 'package:ridingpartner_flutter/src/service/firebase_database_service.dart';
 import 'package:ridingpartner_flutter/src/style/palette.dart';
 import 'package:ridingpartner_flutter/src/style/textstyle.dart';
+import 'package:ridingpartner_flutter/src/utils/get_14days_record.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
 import 'package:ridingpartner_flutter/src/widgets/home/recommend_place_widget.dart';
 import 'package:ridingpartner_flutter/src/widgets/home/setting_widget.dart';
 import 'package:ridingpartner_flutter/src/widgets/home/weather_widget.dart';
-
-import '../utils/get_riding_data.dart';
 
 class Data {
   String key;
@@ -34,30 +34,11 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
-  late HomeRecordProvider _homeRecordProvider;
-  late List<Record> _records;
-  late TabController _tabController;
-  int state = 0;
-
   List<LineChartModel> data = [];
-
-  // int _counter = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    Provider.of<HomeRecordProvider>(context, listen: false).getData();
-    _tabController = TabController(
-        length: numberOfRecentRecords, vsync: this, initialIndex: 13);
-  }
-
-  GlobalKey _one = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-    final _homeRecordProvider = Provider.of<HomeRecordProvider>(context);
-    _records = _homeRecordProvider.recordFor14Days;
-    _incrementCounter(_records);
+    // _incrementCounter(record);
 
     return Scaffold(
         backgroundColor: const Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
@@ -72,7 +53,11 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                   child: Column(
                     children: [
                       const RecommendPlaceWidget(),
-                      weekWidget(),
+                      const RecordTabRow(),
+                      SizedBox(
+                          height: 330,
+                          width: MediaQuery.of(context).size.width,
+                          child: recordChart()),
                       const SettingWidget(),
                       SizedBox(
                         height: 60,
@@ -89,8 +74,189 @@ class HomeScreenState extends ConsumerState<HomeScreen>
         ));
   }
 
-  Widget weekWidget() {
-    switch (_homeRecordProvider.recordState) {
+  Widget recordChart() {
+    return Container(
+        decoration: const BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Color.fromRGBO(0, 41, 135, 0.047),
+                spreadRadius: 2,
+                blurRadius: 10,
+                offset: Offset(1, 1), // changes position of shadow
+              )
+            ],
+            borderRadius: BorderRadius.all(Radius.circular(12))),
+        padding: const EdgeInsets.all(20),
+        margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+        alignment: Alignment.topLeft,
+        width: MediaQuery.of(context).size.width,
+        height: 330,
+        child: Column(mainAxisSize: MainAxisSize.max, children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              Text('주행기록',
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w700,
+                      color: Color.fromRGBO(51, 51, 51, 1))),
+            ],
+          ),
+          // Container(
+          //   alignment: Alignment.center,
+          //   width: MediaQuery.of(context).size.width - 90,
+          //   padding: const EdgeInsets.all(10),
+          //   height: 230,
+          //   child: Stack(
+          //     children: [
+          //       Positioned(
+          //         left: 0,
+          //         top: 0,
+          //         child: Text('    ${getMaxDistance() + 1}km',
+          //             style: const TextStyle(
+          //                 fontSize: 12,
+          //                 fontFamily: 'Pretendard',
+          //                 fontWeight: FontWeight.w300,
+          //                 color: Color.fromRGBO(51, 51, 51, 1))),
+          //       ),
+          //       Positioned(
+          //         right: 0,
+          //         bottom: 20,
+          //         child:
+          //             //Text('최근 기록 \n----->',
+          //             Text('   ${getLastRecordDate(_records)}',
+          //                 style: const TextStyle(
+          //                     fontSize: 12,
+          //                     fontFamily: 'Pretendard',
+          //                     fontWeight: FontWeight.w300,
+          //                     color: Color.fromRGBO(51, 51, 51, 1))),
+          //       ),
+          //       Container(
+          //         padding: const EdgeInsets.only(bottom: 10),
+          //         child: const VerticalDivider(
+          //             width: 1,
+          //             color: Color.fromRGBO(234, 234, 234, 1),
+          //             thickness: 1.0),
+          //       ),
+          //       Column(
+          //         children: [
+          //           Container(
+          //             alignment: Alignment.center,
+          //             height: 200,
+          //             child: customLineChart(),
+          //           ),
+          //           const SizedBox(
+          //               width: 330,
+          //               height: 0,
+          //               child: Divider(
+          //                   color: Color.fromRGBO(234, 234, 234, 1),
+          //                   thickness: 1.0)),
+          //         ],
+          //       )
+          //     ],
+          //   ),
+          // )
+        ]));
+  }
+
+  Widget customLineChart() {
+    Paint circlePaint = Paint()
+      ..color = const ui.Color.fromARGB(109, 255, 177, 104);
+
+    Paint insideCirclePaint = Paint()
+      ..color = const ui.Color.fromARGB(255, 255, 147, 40);
+
+    Paint linePaint = Paint()
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke
+      ..color = Colors.orange;
+
+    return LineChart(
+      width: MediaQuery.of(context).size.width - 110,
+      height: 120,
+      insidePadding: 30,
+      data: data,
+      linePaint: linePaint,
+      circlePaint: circlePaint,
+      showPointer: true,
+      showCircles: true,
+      customDraw: (Canvas canvas, Size size) {},
+      linePointerDecoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.orange,
+      ),
+      pointerDecoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.deepOrange,
+      ),
+      insideCirclePaint: insideCirclePaint,
+      onValuePointer: (LineChartModelCallback value) {},
+      onDropPointer: () {},
+    );
+  }
+
+  void _incrementCounter(List<Record> records) {
+    List<Record> dataIn7days =
+        (((records.reversed).toList()).sublist(0, 7)).reversed.toList();
+    List<LineChartModel> model = [];
+    for (var element in dataIn7days) {
+      if (element.date != '') {
+        DateTime day = element.getYearMonthDay();
+        model.add(LineChartModel(amount: element.distance, date: day));
+      }
+    }
+    setState(() {
+      data = model;
+    });
+  }
+}
+
+final homeRecordProvider = FutureProvider((ref) async {
+  List<Record> record = await FirebaseDatabaseService().getAllRecords();
+  return Get14DaysRecordService().get14daysRecord(record);
+});
+
+final recordStateProvider = StateProvider<RecordState>((ref) {
+  final record = ref.watch(homeRecordProvider);
+  return record.when(
+      data: (data) => Get14DaysRecordService().get14daysRecordState(data),
+      loading: () => RecordState.loading,
+      error: (e, s) => RecordState.fail);
+});
+final tabIndexProvider = StateProvider((ref) => 0);
+
+class RecordTabRow extends ConsumerStatefulWidget {
+  const RecordTabRow({super.key});
+
+  @override
+  RecordTabRowState createState() => RecordTabRowState();
+}
+
+class RecordTabRowState extends ConsumerState<RecordTabRow>
+    with TickerProviderStateMixin {
+  late TabController _tabController;
+  int state = 0;
+  late List<String> tab;
+
+  List<LineChartModel> data = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(
+        length: numberOfRecentRecords, vsync: this, initialIndex: 13);
+
+    tab = Get14DaysRecordService().setDate(14);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final record = ref.watch(homeRecordProvider);
+    final recordState = ref.watch(recordStateProvider);
+
+    switch (recordState) {
       case RecordState.loading:
         return const SizedBox(
             height: 200,
@@ -142,84 +308,21 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                   textAlign: TextAlign.center),
             ));
       case RecordState.success:
-        return Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          TabBar(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 15),
-              onTap: (value) {
-                state = 1;
-                _homeRecordProvider.setIndex(_tabController.index);
-                _tabController.animateTo(value);
-              },
-              controller: _tabController,
-              isScrollable: true,
-              tabs: _homeRecordProvider.daysFor14.map((e) {
-                if (_tabController.index ==
-                    _homeRecordProvider.daysFor14.indexOf(e)) {
-                  return Tab(text: e);
-                } else {
-                  return Tab(text: e.substring(0, 2));
-                }
-              }).toList(),
-              unselectedLabelColor: Colors.black54,
-              labelColor: Colors.white,
-              labelStyle: const TextStyle(
-                  fontSize: 14,
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w700),
-              indicator: BoxDecoration(
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color.fromRGBO(0, 0, 0, 0.1),
-                    spreadRadius: 2,
-                    blurRadius: 3,
-                    offset: Offset(1, 1), // changes position of shadow
-                  )
-                ],
-                borderRadius: BorderRadius.circular(65.0),
-                gradient: const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
-                    Color.fromARGB(0xFF, 0xFF, 0xA0, 0x44),
-                  ],
-                ),
-              )),
-          SizedBox(
-              height: 220,
-              width: MediaQuery.of(context).size.width,
-              child: TabBarView(
-                  controller: _tabController,
-                  children: _records.map((e) => recordDetailView(e)).toList())),
-          InkWell(
-            // onTap: () => Navigator.of(context).push(MaterialPageRoute(
-            //     builder: (context) => ChangeNotifierProvider(
-            //           create: (context) => RecordListProvider(),
-            //           child: const RecordListPage(),
-            //         ))),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: const [
-                  Text('기록 전체보기', style: TextStyles.settingStyle),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Icon(
-                    Icons.add_chart_rounded,
-                    color: Color.fromARGB(185, 51, 57, 62),
-                    size: 17,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(
-              height: 330,
-              width: MediaQuery.of(context).size.width,
-              child: recordChart()),
-        ]);
+        return record.when(
+            data: (data) {
+              return recordTab(data);
+            },
+            loading: () => const SizedBox(
+                height: 100,
+                child: Center(
+                  child: CircularProgressIndicator(color: Palette.appColor),
+                )),
+            error: (error, stack) => const SizedBox(
+                height: 100,
+                child: Center(
+                  child: Text("기록 조회에 실패했습니다\n네트워크 상태를 체크해주세요!",
+                      textAlign: TextAlign.center),
+                )));
 
       default:
         return const SizedBox(
@@ -228,6 +331,81 @@ class HomeScreenState extends ConsumerState<HomeScreen>
               child: CircularProgressIndicator(color: Palette.appColor),
             ));
     }
+  }
+
+  Widget recordTab(List<Record> records) {
+    final tabIndex = ref.watch(tabIndexProvider);
+    return Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+      TabBar(
+          padding: const EdgeInsets.fromLTRB(0, 20, 0, 15),
+          onTap: (value) {
+            ref.read(tabIndexProvider.notifier).state = value;
+
+            _tabController.animateTo(value);
+          },
+          controller: _tabController,
+          isScrollable: true,
+          tabs: tab.map((e) {
+            if (tab.indexOf(e) == tabIndex) {
+              return Tab(text: e);
+            } else {
+              return Tab(text: e.substring(0, 2));
+            }
+          }).toList(),
+          unselectedLabelColor: Colors.black54,
+          labelColor: Colors.white,
+          labelStyle: const TextStyle(
+              fontSize: 14,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w700),
+          indicator: BoxDecoration(
+            boxShadow: const [
+              BoxShadow(
+                color: Color.fromRGBO(0, 0, 0, 0.1),
+                spreadRadius: 2,
+                blurRadius: 3,
+                offset: Offset(1, 1), // changes position of shadow
+              )
+            ],
+            borderRadius: BorderRadius.circular(65.0),
+            gradient: const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
+                Color.fromARGB(0xFF, 0xFF, 0xA0, 0x44),
+              ],
+            ),
+          )),
+      SizedBox(
+          height: 220,
+          width: MediaQuery.of(context).size.width,
+          child: TabBarView(
+              controller: _tabController,
+              children: records.map((e) => recordDetailView(e)).toList())),
+      InkWell(
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => const RecordListScreen(),
+        )),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: const [
+              Text('기록 전체보기', style: TextStyles.settingStyle),
+              SizedBox(
+                width: 5,
+              ),
+              Icon(
+                Icons.add_chart_rounded,
+                color: Color.fromARGB(185, 51, 57, 62),
+                size: 17,
+              ),
+            ],
+          ),
+        ),
+      ),
+    ]);
   }
 
   Widget recordDetailView(Record record) {
@@ -345,143 +523,5 @@ class HomeScreenState extends ConsumerState<HomeScreen>
                     ))
               ],
             )));
-  }
-
-  Widget recordChart() {
-    return Container(
-        decoration: const BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Color.fromRGBO(0, 41, 135, 0.047),
-                spreadRadius: 2,
-                blurRadius: 10,
-                offset: Offset(1, 1), // changes position of shadow
-              )
-            ],
-            borderRadius: BorderRadius.all(Radius.circular(12))),
-        padding: const EdgeInsets.all(20),
-        margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-        alignment: Alignment.topLeft,
-        width: MediaQuery.of(context).size.width,
-        height: 330,
-        child: Column(mainAxisSize: MainAxisSize.max, children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text('주행기록',
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w700,
-                      color: Color.fromRGBO(51, 51, 51, 1))),
-            ],
-          ),
-          Container(
-            alignment: Alignment.center,
-            width: MediaQuery.of(context).size.width - 90,
-            padding: const EdgeInsets.all(10),
-            height: 230,
-            child: Stack(
-              children: [
-                Positioned(
-                  left: 0,
-                  top: 0,
-                  child: Text('    ${getMaxDistance(_records) + 1}km',
-                      style: const TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w300,
-                          color: Color.fromRGBO(51, 51, 51, 1))),
-                ),
-                Positioned(
-                  right: 0,
-                  bottom: 20,
-                  child:
-                      //Text('최근 기록 \n----->',
-                      Text('   ${getLastRecordDate(_records)}',
-                          style: const TextStyle(
-                              fontSize: 12,
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w300,
-                              color: Color.fromRGBO(51, 51, 51, 1))),
-                ),
-                Container(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: const VerticalDivider(
-                      width: 1,
-                      color: Color.fromRGBO(234, 234, 234, 1),
-                      thickness: 1.0),
-                ),
-                Column(
-                  children: [
-                    Container(
-                      alignment: Alignment.center,
-                      height: 200,
-                      child: customLineChart(),
-                    ),
-                    const SizedBox(
-                        width: 330,
-                        height: 0,
-                        child: Divider(
-                            color: Color.fromRGBO(234, 234, 234, 1),
-                            thickness: 1.0)),
-                  ],
-                )
-              ],
-            ),
-          )
-        ]));
-  }
-
-  Widget customLineChart() {
-    Paint circlePaint = Paint()
-      ..color = const ui.Color.fromARGB(109, 255, 177, 104);
-
-    Paint insideCirclePaint = Paint()
-      ..color = const ui.Color.fromARGB(255, 255, 147, 40);
-
-    Paint linePaint = Paint()
-      ..strokeWidth = 1
-      ..style = PaintingStyle.stroke
-      ..color = Colors.orange;
-
-    return LineChart(
-      width: MediaQuery.of(context).size.width - 110,
-      height: 120,
-      insidePadding: 30,
-      data: data,
-      linePaint: linePaint,
-      circlePaint: circlePaint,
-      showPointer: true,
-      showCircles: true,
-      customDraw: (Canvas canvas, Size size) {},
-      linePointerDecoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.orange,
-      ),
-      pointerDecoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.deepOrange,
-      ),
-      insideCirclePaint: insideCirclePaint,
-      onValuePointer: (LineChartModelCallback value) {},
-      onDropPointer: () {},
-    );
-  }
-
-  void _incrementCounter(List<Record> records) {
-    List<Record> dataIn7days =
-        (((records.reversed).toList()).sublist(0, 7)).reversed.toList();
-    List<LineChartModel> model = [];
-    for (var element in dataIn7days) {
-      if (element.date != '') {
-        DateTime day = element.getYearMonthDay();
-        model.add(LineChartModel(amount: element.distance, date: day));
-      }
-    }
-    setState(() {
-      data = model;
-    });
   }
 }
