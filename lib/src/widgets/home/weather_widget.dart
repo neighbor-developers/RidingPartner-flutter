@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ridingpartner_flutter/src/style/textstyle.dart';
 
-import '../../models/weather.dart';
-import '../../service/wether_service.dart';
+import '../../../models/weather.dart';
+import '../../../service/wether_service.dart';
 
 final weatherProvider = FutureProvider<Weather>((ref) async {
   return await OpenWeatherService().getWeather();

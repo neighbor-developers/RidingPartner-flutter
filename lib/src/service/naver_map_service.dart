@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
-import 'package:ridingpartner_flutter/src/utils/user_location.dart';
+import 'package:ridingpartner_flutter/src/models/my_location.dart';
 
 import '../models/place.dart';
 import '../models/route.dart';

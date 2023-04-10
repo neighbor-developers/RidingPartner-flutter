@@ -101,4 +101,9 @@ class TextStyles {
       fontSize: 16,
       color: Colors.white,
       fontWeight: FontWeight.w600);
+  static const TextStyle recordChartTextStyle = TextStyle(
+      fontSize: 14,
+      fontFamily: 'Pretendard',
+      fontWeight: FontWeight.w700,
+      color: Color.fromRGBO(51, 51, 51, 1));
 }

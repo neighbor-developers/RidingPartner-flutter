@@ -12,8 +12,8 @@ import 'package:ridingpartner_flutter/src/service/find_route_service.dart';
 import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
 import 'package:ridingpartner_flutter/src/style/palette.dart';
 import 'package:ridingpartner_flutter/src/utils/set_polyline_data.dart';
-import 'package:ridingpartner_flutter/src/utils/user_location.dart';
 
+import '../models/my_location.dart';
 import '../style/textstyle.dart';
 import '../widgets/place/highlight_text.dart';
 

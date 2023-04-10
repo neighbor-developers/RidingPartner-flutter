@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:ridingpartner_flutter/src/widgets/dialog/withdrawal_dialog.dart';
 
-import '../../screen/splash_screen.dart';
-import '../../service/social_login_service.dart';
-import '../../style/textstyle.dart';
+import '../../../service/social_login_service.dart';
+import '../../../style/textstyle.dart';
+import '../../splash_screen.dart';
 
 final versionProvider = FutureProvider((ref) async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ridingpartner_flutter/src/screen/home_screen.dart';
 import 'package:ridingpartner_flutter/src/screen/map_search_screen.dart';
 import 'package:ridingpartner_flutter/src/screen/recommended_route_screen.dart';
 import 'package:ridingpartner_flutter/src/screen/riding_screen.dart';
 import 'package:ridingpartner_flutter/src/screen/sights_screen.dart';
 import 'package:ridingpartner_flutter/src/style/palette.dart';
+
+import 'home/home_screen.dart';
 
 final bottomNavigationProvider = StateProvider<int>((ref) => 2);
 
