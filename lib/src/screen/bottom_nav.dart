@@ -31,11 +31,11 @@ class BottomNavigation extends ConsumerWidget {
       ),
       body: SafeArea(
         child: [
-          SightsPage(),
-          const RecommendedRoutePage(),
-          const HomePage(),
-          const MapSearchPage(),
-          const RidingPage(),
+          SightsScreen(),
+          const RecommendedRouteScreen(),
+          const HomeScreen(),
+          const MapSearchScreen(),
+          const RidingScreen(),
         ].elementAt(bottomState),
       ),
       bottomNavigationBar: BottomNavigationBar(
