@@ -52,8 +52,11 @@ class Get14DaysRecordService {
   List<Record> get14daysRecord(List<Record> records) {
     List<Record> recordFor14Days = [];
     for (int i = 0; i < 14; i++) {
-      recordFor14Days
-          .add(Record(distance: 0.0, date: '', timestamp: 0, topSpeed: 0.0));
+      recordFor14Days.add(Record(
+        distance: 0.0,
+        date: '',
+        timestamp: 0,
+      ));
     }
     DateTime today = DateTime.now();
     int count = 0;
@@ -81,7 +84,6 @@ class Get14DaysRecordService {
               date: '',
               distance: 0.0,
               timestamp: 0,
-              topSpeed: 0.0,
               memo: '',
               images: null,
               kcal: 0)) {

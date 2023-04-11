@@ -3,17 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:ridingpartner_flutter/src/screen/record_screen.dart';
+import 'package:ridingpartner_flutter/src/screen/riding_result_screen.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
-import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/utils/navigation_icon.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
 import 'package:wakelock/wakelock.dart';
 
+import '../models/place.dart';
+import '../models/record.dart';
 import '../widgets/dialog/riding_cancel_dialog.dart';
 
 class NavigationScreen extends ConsumerStatefulWidget {
-  const NavigationScreen({super.key});
+  const NavigationScreen({super.key, required this.places});
+
+  final List<Place> places;
 
   @override
   NavigationScreenState createState() => NavigationScreenState(); //1
@@ -21,7 +24,6 @@ class NavigationScreen extends ConsumerStatefulWidget {
 
 class NavigationScreenState extends ConsumerState<NavigationScreen> {
   late NavigationProvider _navigationProvider;
-  late RidingProvider _ridingProvider;
 
   LocationTrackingMode _locationTrackingMode = LocationTrackingMode.None;
   late List<Marker> _markers = [];
@@ -135,13 +137,13 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
     // _navigationProvider = Provider.of<NavigationProvider>(context);
     // _ridingProvider = Provider.of<RidingProvider>(context);
 
-    if (_ridingProvider.state == RidingState.error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('사용자 위치를 불러올 수 없습니다.'),
-        ),
-      );
-    }
+    // if (_ridingProvider.state == RidingState.error) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(
+    //       content: Text('사용자 위치를 불러올 수 없습니다.'),
+    //     ),
+    //   );
+    // }
     // if (_ridingProvider.state == RidingState.riding) {
     //   if (position != null) {
     //     _markers = [
@@ -197,11 +199,11 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
               leadingWidth: 50,
               leading: IconButton(
                 onPressed: () {
-                  if (_navigationProvider.ridingState == RidingState.before) {
-                    Navigator.pop(context);
-                  } else {
-                    backDialog('안내를 중단하시겠습니까?\n', '안내종료');
-                  }
+                  // if (_navigationProvider.ridingState == RidingState.before) {
+                  //   Navigator.pop(context);
+                  // } else {
+                  //   backDialog('안내를 중단하시겠습니까?\n', '안내종료');
+                  // }
                 },
                 icon: const Icon(Icons.arrow_back),
                 color: const Color.fromRGBO(240, 120, 5, 1),
@@ -235,8 +237,8 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
                         markers: _markers,
                       ),
                       Positioned(top: 0, child: guideWidget()),
-                      Positioned(
-                          bottom: 0, child: record(_ridingProvider.state)),
+                      // Positioned(
+                      //     bottom: 0, child: record(_ridingProvider.state)),
                       Positioned(
                         bottom: floatingBtnPosition,
                         left: 20,
@@ -251,9 +253,10 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
                             final controller = await _controller.future;
                             await controller.moveCamera(
                                 CameraUpdate.toCameraPosition(CameraPosition(
-                                    target: LatLng(
-                                        _ridingProvider.position!.latitude,
-                                        _ridingProvider.position!.longitude),
+                                    target: LatLng(0, 0
+                                        // _ridingProvider.position!.latitude,
+                                        // _ridingProvider.position!.longitude
+                                        ),
                                     zoom: 18)));
                             controller.setLocationTrackingMode(
                                 LocationTrackingMode.Face);
@@ -303,8 +306,8 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
         'assets/icons/navigation_straight.png';
 
     return _navigationProvider.goalPoint.turn != 41 &&
-            _navigationProvider.goalPoint.turn != 48 &&
-            _ridingProvider.state == RidingState.riding
+            _navigationProvider.goalPoint.turn != 48
+        // _ridingProvider.state == RidingState.riding
         ? Container(
             margin: const EdgeInsets.all(20),
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
@@ -375,7 +378,7 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
         onTap: () async {
           try {
             floatingBtnPosition = 200;
-            _ridingProvider.startRiding();
+            // _ridingProvider.startRiding();
             _navigationProvider.startNavigation();
             screenKeepOn();
             polylineWidth = 8;
@@ -448,7 +451,8 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
                                   style: titleStyle,
                                 ),
                                 Text(
-                                  "${_ridingProvider.speed.toStringAsFixed(1)}km/h",
+                                  '',
+                                  // "${_ridingProvider.speed.toStringAsFixed(1)}km/h",
                                   style: dataStyle,
                                 )
                               ],
@@ -461,8 +465,9 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
                                   style: titleStyle,
                                 ),
                                 Text(
-                                  timestampToText(
-                                      _ridingProvider.time.inSeconds),
+                                  '',
+                                  // timestampToText(
+                                  //     _ridingProvider.time.inSeconds),
                                   style: dataStyle,
                                 )
                               ],
@@ -488,7 +493,7 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
   }
 
   Widget ridingProgress() {
-    double distance = (_ridingProvider.distance ~/ 100) / 10;
+    // double distance = (_ridingProvider.distance ~/ 100) / 10;
     double percent = (_navigationProvider.totalDistance -
             _navigationProvider.remainedDistance) /
         _navigationProvider.totalDistance;
@@ -507,7 +512,8 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
                         child: Image.asset('assets/icons/riding_character.png',
                             width: 17, height: 17, fit: BoxFit.contain)),
                     Text(
-                      '${distance}km',
+                      // '${distance}km',
+                      '',
                       style: const TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 10,
@@ -555,14 +561,14 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
         children: [
           InkWell(
               onTap: () {
-                _navigationProvider.setVisivility();
-                if (state == RidingState.riding) {
-                  _ridingProvider.pauseRiding();
-                  _navigationProvider.setState(RidingState.pause);
-                } else {
-                  _ridingProvider.startRiding();
-                  _navigationProvider.setState(RidingState.riding);
-                }
+                // _navigationProvider.setVisivility();
+                // if (state == RidingState.riding) {
+                //   _ridingProvider.pauseRiding();
+                //   _navigationProvider.setState(RidingState.pause);
+                // } else {
+                //   _ridingProvider.startRiding();
+                //   _navigationProvider.setState(RidingState.riding);
+                // }
               },
               child: Container(
                 padding:
@@ -583,16 +589,13 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
           InkWell(
             onTap: () {
               screenKeepOff();
-              _ridingProvider.stopAndSaveRiding();
-              _navigationProvider.setState(RidingState.stop);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ChangeNotifierProvider(
-                            create: (context) => RidingResultProvider(
-                                _ridingProvider.ridingDate),
-                            child: RecordPage(),
-                          )));
+              // _ridingProvider.stopAndSaveRiding();
+              // _navigationProvider.setState(RidingState.stop);
+              // Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //         builder: (context) => RidingResultScreen(
+              //             date: _ridingProvider.ridingDate)));
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

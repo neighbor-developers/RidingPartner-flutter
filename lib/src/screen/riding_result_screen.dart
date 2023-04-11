@@ -204,7 +204,6 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
     Record record = Record(
         distance: recordData.asData!.value.distance.toDouble(),
         date: recordData.asData!.value.date,
-        topSpeed: recordData.asData!.value.topSpeed,
         timestamp: recordData.asData!.value.timestamp,
         memo: memo,
         kcal: 550 * (recordData.asData!.value.timestamp) / 3600,

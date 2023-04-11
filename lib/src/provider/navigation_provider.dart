@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +8,12 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
-import 'package:ridingpartner_flutter/src/provider/riding_provider.dart';
 import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
-import 'package:ridingpartner_flutter/src/utils/user_location.dart';
+import 'package:ridingpartner_flutter/src/models/my_location.dart';
 
 import '../models/place.dart';
 import '../models/position_stream.dart';
+import '../models/record.dart';
 
 enum SearchRouteState { loading, fail, empty, success, locationFail }
 
@@ -107,11 +108,11 @@ class NavigationProvider with ChangeNotifier {
     }
 
     Place startPlace = Place(
-        id: null,
+        id: 'myLocation',
         title: "내 위치",
         latitude: _position!.latitude.toString(),
         longitude: _position!.longitude.toString(),
-        jibunAddress: null);
+        jibunAddress: '');
 
     if (_ridingCourse.length > 1) {
       num distanceToCourseStart = _calDistance.as(

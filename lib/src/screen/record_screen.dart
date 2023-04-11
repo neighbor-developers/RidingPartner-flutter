@@ -117,8 +117,7 @@ class RecordScreenState extends ConsumerState<RecordScreen> {
                     style: TextStyles.dayRecordtextStyle2,
                   )
                 ] else ...[
-                  Text(
-                      "${(550 * (record.timestamp) / 3600).toStringAsFixed(1)} kcal",
+                  Text("${record.kcal} kcal",
                       style: TextStyles.dayRecordtextStyle2)
                 ]
               ],

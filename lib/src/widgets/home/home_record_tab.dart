@@ -222,9 +222,7 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
         speed = Data('평균 속도', '0km/h', 'assets/icons/home_speed.png');
       }
       Data speedMax = Data(
-          '순간 최고 속도',
-          '${record.topSpeed.toStringAsFixed(1)} km/h',
-          'assets/icons/home_max_speed.png');
+          '소모 칼로리', '${record.kcal} kcal', 'assets/icons/home_max_speed.png');
 
       return Container(
           height: 200,

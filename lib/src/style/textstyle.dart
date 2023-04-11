@@ -181,4 +181,21 @@ class TextStyles {
       fontSize: 16.0,
       fontWeight: FontWeight.w700,
       color: Color.fromARGB(0xFF, 0xF0, 0x78, 0x05));
+
+  static const TextStyle ridingTitleStyle = TextStyle(
+      fontFamily: 'Pretendard',
+      fontSize: 12,
+      fontWeight: FontWeight.w600,
+      color: Color.fromRGBO(134, 142, 150, 1));
+  static const TextStyle ridingDataStyle = TextStyle(
+      fontFamily: 'Pretendard',
+      fontSize: 18,
+      fontWeight: FontWeight.w400,
+      color: Color.fromRGBO(52, 58, 64, 1));
+
+  static const TextStyle ridingButtonStyle = TextStyle(
+      color: Color.fromRGBO(52, 58, 64, 1),
+      fontFamily: 'Pretended',
+      fontWeight: FontWeight.w600,
+      fontSize: 16);
 }
