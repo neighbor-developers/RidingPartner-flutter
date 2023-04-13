@@ -7,12 +7,17 @@ import '../models/timer.dart';
 class TimerNotifier extends StateNotifier<TimerModel> {
   TimerNotifier() : super(_initialState);
 
-  static const int _initialDuration = 0;
   static final _initialState = TimerModel(
-    _durationString(_initialDuration),
+    _durationString(0),
     0,
     TimerState.initial,
   );
+
+  @override
+  set state(TimerModel value) {
+    // TODO: implement state
+    super.state = value;
+  }
 
   final Ticker _ticker = Ticker();
   StreamSubscription<int>? _tickerSubscription;
@@ -57,8 +62,7 @@ class TimerNotifier extends StateNotifier<TimerModel> {
   void _startTimer() {
     _tickerSubscription?.cancel();
 
-    _tickerSubscription =
-        _ticker.tick(ticks: _initialDuration).listen((duration) {
+    _tickerSubscription = _ticker.tick(ticks: 10).listen((duration) {
       state =
           TimerModel(_durationString(duration), duration, TimerState.started);
     });
@@ -68,8 +72,7 @@ class TimerNotifier extends StateNotifier<TimerModel> {
           _durationString(state.time), state.time, TimerState.finished);
     });
 
-    state =
-        TimerModel(_durationString(_initialDuration), 0, TimerState.started);
+    state = TimerModel(_durationString(0), 0, TimerState.started);
   }
 }
 
@@ -77,7 +80,7 @@ class Ticker {
   Stream<int> tick({required int ticks}) {
     return Stream.periodic(
       const Duration(seconds: 1),
-      (x) => ticks + x - 1,
+      (x) => ticks + x,
     ).take(ticks);
   }
 }

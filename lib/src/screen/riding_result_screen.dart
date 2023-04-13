@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:ridingpartner_flutter/src/provider/image_pick_provider.dart';
+import 'package:ridingpartner_flutter/src/screen/bottom_nav.dart';
 import 'package:ridingpartner_flutter/src/screen/home_screen.dart';
+import 'package:ridingpartner_flutter/src/screen/riding_screen.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
 import 'package:ridingpartner_flutter/src/widgets/appbar.dart';
 
@@ -24,14 +26,10 @@ class RidingResultScreen extends ConsumerStatefulWidget {
 }
 
 class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
-  late FutureProvider recordProvider;
-
   @override
   void initState() {
-    recordProvider = FutureProvider((ref) {
-      FirebaseDatabaseService().getRecord(widget.date);
-    });
     super.initState();
+    ref.read(recordProvider.notifier).getData(widget.date);
   }
 
   @override
@@ -46,66 +44,52 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
   @override
   Widget build(BuildContext context) {
     final record = ref.watch(recordProvider);
-    return record.when(data: (data) {
-      final recordData = data;
-      num speed = recordData.distance;
-      speed = speed / 3 * 3600;
 
-      return GestureDetector(
-          onTap: () {
-            FocusManager.instance.primaryFocus?.unfocus(); // 키보드 닫기 이벤트
-          },
-          child: Scaffold(
-              appBar: AppBar(
-                backgroundColor: const Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
-                elevation: 0.0,
-              ),
-              resizeToAvoidBottomInset: false,
-              body: Container(
-                  padding: const EdgeInsets.only(
-                      left: 34, bottom: 40, top: 10, right: 34),
-                  decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                        Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
-                        Color.fromARGB(0xFF, 0xFF, 0xA0, 0x44)
-                      ])),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const Text(
-                        "즐거운 라이딩\n되셨나요?",
-                        style: TextStyles.dayRecordtextStyle3,
-                      ),
+    return GestureDetector(
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus(); // 키보드 닫기 이벤트
+        },
+        child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: const Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
+              elevation: 0.0,
+            ),
+            resizeToAvoidBottomInset: false,
+            body: Container(
+                padding: const EdgeInsets.only(
+                    left: 34, bottom: 40, top: 10, right: 34),
+                decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                      Color.fromARGB(0xFF, 0xEE, 0x75, 0x00),
+                      Color.fromARGB(0xFF, 0xFF, 0xA0, 0x44)
+                    ])),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const Text(
+                      "즐거운 라이딩\n되셨나요?",
+                      style: TextStyles.dayRecordtextStyle3,
+                    ),
+                    if (record != null) ...[
                       Container(
                         margin: const EdgeInsets.symmetric(vertical: 15.0),
-                        child: recordWidget(recordData, speed),
+                        child: recordWidget(record, record.distance / 3 * 3600),
                       ),
-                      const ImageWidget(),
-                      const Divider(
-                          color: Color.fromARGB(0xFF, 0xF8, 0xF9, 0xFA)),
-                      const MemoWidget(),
-                      saveDataButton()
+                    ] else ...[
+                      const Text("데이터가 없습니다.",
+                          style: TextStyles.dayRecordtextStyle3)
                     ],
-                  ))));
-    }, loading: () {
-      return Scaffold(
-          appBar: appBar(context),
-          resizeToAvoidBottomInset: false,
-          body: const Center(
-            child: Text('데이터 불러오는 증'),
-          ));
-    }, error: (error, stackTrace) {
-      return Scaffold(
-          appBar: appBar(context),
-          resizeToAvoidBottomInset: false,
-          body: const Center(
-            child: Text('데이터를 불러오는 데에 실패했습니다'),
-          ));
-    });
+                    const ImageWidget(),
+                    const Divider(
+                        color: Color.fromARGB(0xFF, 0xF8, 0xF9, 0xFA)),
+                    const MemoWidget(),
+                    saveDataButton()
+                  ],
+                ))));
   }
 
   Widget recordWidget(Record record, num speed) {
@@ -174,7 +158,7 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const HomeScreen(),
+                builder: (context) => const BottomNavigation(),
               ));
         },
         style: ButtonStyle(
@@ -199,17 +183,14 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
   saveData() async {
     final image = ref.watch(imageProvider);
     final memo = ref.watch(memoProvider);
-    final recordData = ref.watch(recordProvider);
-
-    Record record = Record(
-        distance: recordData.asData!.value.distance.toDouble(),
-        date: recordData.asData!.value.date,
-        timestamp: recordData.asData!.value.timestamp,
+    final recordData = ref.read(recordProvider);
+    final record = ref.watch(recordProvider.notifier).saveData(Record(
+        distance: recordData!.distance,
+        date: recordData.date,
+        timestamp: recordData.timestamp,
         memo: memo,
-        kcal: 550 * (recordData.asData!.value.timestamp) / 3600,
-        images: image.map((e) => e.path).toList());
-    FirebaseDatabaseService().saveRecordFirebaseDb(record);
-    Record.saveRecordMemoPref(record);
+        kcal: recordData.kcal,
+        images: image.map((e) => e.path).toList()));
   }
 }
 

@@ -15,21 +15,26 @@ import 'package:ridingpartner_flutter/src/utils/cal_distance.dart';
 import 'package:wakelock/wakelock.dart';
 import '../models/position_stream.dart';
 import '../models/record.dart';
+import '../provider/record_provider.dart';
 import '../service/firebase_database_service.dart';
 import '../widgets/dialog/riding_cancel_dialog.dart';
 
+// 타이머 provider
+final timerProvider =
+    StateNotifierProvider.autoDispose<TimerNotifier, TimerModel>(
+        (ref) => TimerNotifier());
 // floating button 보여주기
-final visibilityProvider = StateProvider<bool>((ref) => false);
+final visibilityProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 // 위치 정보 스트림
 final StreamProvider<Position> positionStreamProvider =
     StreamProvider((ref) => PositionStream().controller.stream);
 
 // 주행 거리 provider
-final distanceProvider = StateProvider<double>((ref) => 0.0);
+final distanceProvider = StateProvider.autoDispose<double>((ref) => 0.0);
 
 // 거리 계산 provider
-final calProvider = Provider((ref) {
+final calProvider = Provider.autoDispose((ref) {
   final state = ref.watch(ridingStateProvider);
   final positionStream = ref.listen(positionStreamProvider, (previous, next) {
     if (state == RidingState.riding) {
@@ -41,30 +46,13 @@ final calProvider = Provider((ref) {
   });
 });
 
-// 타이머 provider
-final StateNotifierProvider<TimerNotifier, TimerModel> timerProvider =
-    StateNotifierProvider<TimerNotifier, TimerModel>((ref) => TimerNotifier());
-
 // 주행 상태 provider
-final ridingStateProvider = StateProvider((ref) => RidingState.before);
+final ridingStateProvider =
+    StateProvider.autoDispose((ref) => RidingState.before);
 
-// 주행 시간 provider
-final timeProvider = StateProvider((ref) {
-  final state = ref.watch(ridingStateProvider);
-
-  if (state == RidingState.riding) {
-    Future.delayed(Duration(milliseconds: 10),
-        () => ref.read(timerProvider.notifier).start());
-  } else if (state == RidingState.pause) {
-    Future.delayed(Duration(milliseconds: 10),
-        () => ref.read(timerProvider.notifier).pause());
-  } else if (state == RidingState.stop) {
-    Future.delayed(Duration(milliseconds: 10),
-        () => ref.read(timerProvider.notifier).reset());
-  }
-
-  // return time;
-});
+final recordProvider =
+    StateNotifierProvider.autoDispose<RecordProvider, Record?>(
+        (ref) => RecordProvider());
 
 class RidingScreen extends ConsumerStatefulWidget {
   const RidingScreen({super.key});
@@ -211,38 +199,47 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
                 ),
                 Positioned(
                     bottom: 0,
-                    child: RecordBoxWidget(
-                      onTap: () async {
-                        try {
-                          floatingBtnPosition = 130;
-                          ref.read(ridingStateProvider.notifier).state =
-                              RidingState.riding;
+                    child: ridingState == RidingState.before
+                        ? InkWell(
+                            onTap: () async {
+                              try {
+                                floatingBtnPosition = 130;
+                                ref.read(ridingStateProvider.notifier).state =
+                                    RidingState.riding;
+                                ref.read(timerProvider.notifier).start();
 
-                          final controller = await _controller.future;
-                          await controller.moveCamera(
-                              CameraUpdate.toCameraPosition(CameraPosition(
-                                  target: LatLng(
-                                      position.asData?.value.latitude ?? 0,
-                                      position.asData?.value.longitude ?? 0),
-                                  zoom: 18)));
-                          controller.setLocationTrackingMode(
-                              LocationTrackingMode.Face);
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('주행을 시작하는 데에 실패했습니다'),
+                                final controller = await _controller.future;
+                                await controller.moveCamera(CameraUpdate
+                                    .toCameraPosition(CameraPosition(
+                                        target: LatLng(
+                                            position.asData?.value.latitude ??
+                                                0,
+                                            position.asData?.value.longitude ??
+                                                0),
+                                        zoom: 18)));
+                                controller.setLocationTrackingMode(
+                                    LocationTrackingMode.Face);
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('주행을 시작하는 데에 실패했습니다'),
+                                  ),
+                                );
+                              }
+                            },
+                            child: Container(
+                              color: Palette.appColor,
+                              alignment: Alignment.center,
+                              width: MediaQuery.of(context).size.width,
+                              height: 61,
+                              child: const Text(
+                                '주행 시작',
+                                style: TextStyles.modalButtonTextStyle,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
-                          );
-                        }
-                      },
-                      onErrorTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('사용자 위치를 불러올 수 없습니다.'),
-                          ),
-                        );
-                      },
-                    ))
+                          )
+                        : const RecordBoxWidget())
               ],
             )),
         onWillPop: () async {
@@ -293,12 +290,7 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
 class RecordBoxWidget extends ConsumerStatefulWidget {
   const RecordBoxWidget({
     super.key,
-    required this.onTap,
-    required this.onErrorTap,
   });
-
-  final Function() onTap;
-  final Function() onErrorTap;
 
   @override
   RecordBoxWidgetState createState() => RecordBoxWidgetState();
@@ -308,97 +300,69 @@ class RecordBoxWidgetState extends ConsumerState<RecordBoxWidget> {
   @override
   Widget build(BuildContext context) {
     final visibility = ref.watch(visibilityProvider);
-    final ridingState = ref.watch(ridingStateProvider);
     final distance = ref.watch(distanceProvider);
     final time = ref.watch(timerProvider);
 
-    switch (ridingState) {
-      case RidingState.before:
-        return buttonContainer(Palette.appColor, '주행 시작', widget.onTap);
-
-      case RidingState.error:
-        return buttonContainer(const Color.fromARGB(255, 88, 88, 87),
-            '주행 불가(위치 정보 오류)', widget.onErrorTap);
-
-      default:
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              if (visibility) ...[const RecordButton()],
-              Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.all(20),
-                  decoration: const BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                          spreadRadius: 1,
-                          blurRadius: 3,
-                          offset: Offset(1, 1),
-                          color: Color.fromRGBO(0, 41, 135, 0.047))
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (visibility) ...[const RecordButton()],
+          Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.all(20),
+              decoration: const BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                      spreadRadius: 1,
+                      blurRadius: 3,
+                      offset: Offset(1, 1),
+                      color: Color.fromRGBO(0, 41, 135, 0.047))
+                ],
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+              child: Container(
+                  width: MediaQuery.of(context).size.width - 80,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      recordText(
+                        '거리',
+                        "${((distance / 10000).roundToDouble()) * 10}km",
+                      ),
+                      // recordText(
+                      //     '주행 속도', "${speed.toStringAsFixed(1)}km/h"),
+                      recordText('주행 시간', time.timeText),
+                      InkWell(
+                        onTap: () {
+                          ref.read(visibilityProvider.notifier).state =
+                              !ref.read(visibilityProvider);
+                        },
+                        child: SizedBox(
+                          width: 18,
+                          child: Image.asset('assets/icons/menu_bar.png',
+                              fit: BoxFit.fitWidth),
+                        ),
+                      )
                     ],
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  child: Container(
-                      width: MediaQuery.of(context).size.width - 80,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          recordText(
-                            '거리',
-                            "${((distance / 10000).roundToDouble()) * 10}km",
-                          ),
-                          // recordText(
-                          //     '주행 속도', "${speed.toStringAsFixed(1)}km/h"),
-                          recordText('주행 시간', time.timeText),
-                          InkWell(
-                            onTap: () {
-                              ref.read(visibilityProvider.notifier).state =
-                                  !visibility;
-                            },
-                            child: SizedBox(
-                              width: 18,
-                              child: Image.asset('assets/icons/menu_bar.png',
-                                  fit: BoxFit.fitWidth),
-                            ),
-                          )
-                        ],
-                      )))
-            ],
-          ),
-        );
-    }
-  }
-
-  Widget buttonContainer(Color color, String text, Function() onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        color: color,
-        alignment: Alignment.center,
-        width: MediaQuery.of(context).size.width,
-        height: 61,
-        child: Text(
-          text,
-          style: TextStyles.modalButtonTextStyle,
-          textAlign: TextAlign.center,
-        ),
+                  )))
+        ],
       ),
     );
   }
-}
 
-Widget recordText(String title, String data) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      Text(title, style: TextStyles.ridingTitleStyle),
-      Text(data, style: TextStyles.ridingDataStyle)
-    ],
-  );
+  Widget recordText(String title, String data) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(title, style: TextStyles.ridingTitleStyle),
+        Text(data, style: TextStyles.ridingDataStyle)
+      ],
+    );
+  }
 }
 
 class RecordButton extends ConsumerStatefulWidget {
@@ -412,7 +376,7 @@ class RecordButtonState extends ConsumerState<RecordButton> {
   @override
   Widget build(BuildContext context) {
     final ridingState = ref.watch(ridingStateProvider);
-    final time = ref.watch(timeProvider);
+    final time = ref.watch(timerProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -420,30 +384,33 @@ class RecordButtonState extends ConsumerState<RecordButton> {
         if (ridingState == RidingState.riding) ...[
           ridingFloatingButton(() {
             ref.read(visibilityProvider.notifier).state = false;
+            ref.read(timerProvider.notifier).pause();
             ref.read(ridingStateProvider.notifier).state = RidingState.pause;
           }, '일시중지')
         ] else ...[
           ridingFloatingButton(() {
             ref.read(visibilityProvider.notifier).state = false;
             ref.read(ridingStateProvider.notifier).state = RidingState.riding;
+            ref.read(timerProvider.notifier).start();
           }, '이어서 주행')
         ],
         ridingFloatingButton(() {
           ref.read(ridingStateProvider.notifier).state = RidingState.stop;
+          ref.read(timerProvider.notifier).reset();
           final Record record = Record(
-              distance: ref.read(distanceProvider),
+              distance: ref.read(distanceProvider).roundToDouble() ?? 0,
               date: DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()),
               timestamp: time.time,
               kcal: (550 * (time.time) / 3600).roundToDouble());
 
-          FirebaseDatabaseService().saveRecordFirebaseDb(record);
-          Record.saveRecordPref(record);
+          ref.read(recordProvider.notifier).saveData(record);
+
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => RidingResultScreen(
-                      date: DateFormat('yyyy-MM-dd hh:mm:ss')
-                          .format(DateTime.now()))));
+                        date: record.date,
+                      )));
         }, '주행 종료')
       ],
     );
@@ -454,6 +421,7 @@ class RecordButtonState extends ConsumerState<RecordButton> {
         onTap: () => onTap(),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          margin: const EdgeInsets.only(bottom: 10),
           decoration: const BoxDecoration(
             boxShadow: [
               BoxShadow(
