@@ -26,8 +26,7 @@ final markerListProvider = FutureProvider.autoDispose<List<Marker>>((ref) {
               height: 40,
               markerId: place.title,
               icon: await OverlayImage.fromAssetImage(assetName: place.marker!),
-              position: LatLng(double.parse(place.latitude),
-                  double.parse(place.longitude)) //예외처리해주기
+              position: place.location //예외처리해주기
               ));
         });
         return markers;

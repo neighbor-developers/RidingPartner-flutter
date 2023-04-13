@@ -76,19 +76,16 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
             width: 30,
             height: 40,
             icon: turnMarkerIcon,
-            markerId: course.title ?? "",
-            position: LatLng(double.parse(course.latitude!),
-                double.parse(course.longitude!))))
+            markerId: course.title,
+            position: course.location))
         .toList();
 
     _markers.last = Marker(
         icon: destinationMarkerIcon,
         width: 30,
         height: 50,
-        markerId: _navigationProvider.course.last.title ?? "",
-        position: LatLng(
-            double.parse(_navigationProvider.course.last.latitude!),
-            double.parse(_navigationProvider.course.last.longitude!)));
+        markerId: _navigationProvider.course.last.title,
+        position: _navigationProvider.course.last.location);
     if (_navigationProvider.course.length == 1) {
       _markers.add(Marker(
           icon: startMarkerIcon,
@@ -99,10 +96,10 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
               _navigationProvider.position!.longitude)));
 
       double lat = (_navigationProvider.position!.latitude +
-              double.parse(_navigationProvider.course.last.latitude!)) /
+              _navigationProvider.course.last.location.latitude) /
           2;
       double lon = (_navigationProvider.position!.longitude +
-              double.parse(_navigationProvider.course.last.longitude!)) /
+              _navigationProvider.course.last.location.longitude) /
           2;
       initCameraPosition = LatLng(lat, lon);
     } else {
@@ -110,16 +107,14 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
           icon: startMarkerIcon,
           width: 30,
           height: 50,
-          markerId: _navigationProvider.course[0].title ?? "",
-          position: LatLng(
-              double.parse(_navigationProvider.course[0].latitude!),
-              double.parse(_navigationProvider.course[0].longitude!)));
+          markerId: _navigationProvider.course[0].title,
+          position: _navigationProvider.course[0].location);
 
-      double lat = (double.parse(_navigationProvider.course[0].latitude!) +
-              double.parse(_navigationProvider.course.last.latitude!)) /
+      double lat = (_navigationProvider.course[0].location.latitude +
+              _navigationProvider.course.last.location.latitude) /
           2;
-      double lon = (double.parse(_navigationProvider.course[0].longitude!) +
-              double.parse(_navigationProvider.course.last.longitude!)) /
+      double lon = (_navigationProvider.course[0].location.longitude +
+              _navigationProvider.course.last.location.longitude) /
           2;
       initCameraPosition = LatLng(lat, lon);
     }
@@ -629,17 +624,14 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
     LatLng start;
     LatLng end;
     if (_navigationProvider.course.length > 1) {
-      start = LatLng(double.parse(_navigationProvider.course[0].latitude!),
-          double.parse(_navigationProvider.course[0].longitude!));
-      end = LatLng(double.parse(_navigationProvider.course.last.latitude!),
-          double.parse(_navigationProvider.course.last.longitude!));
+      start = _navigationProvider.course[0].location;
+      end = _navigationProvider.course.last.location;
     } else {
       start = LatLng(
         _navigationProvider.position!.latitude,
         _navigationProvider.position!.longitude,
       );
-      end = LatLng(double.parse(_navigationProvider.course.last.latitude!),
-          double.parse(_navigationProvider.course.last.longitude!));
+      end = _navigationProvider.course.last.location;
     }
     if (start.latitude <= end.latitude) {
       LatLng temp = start;

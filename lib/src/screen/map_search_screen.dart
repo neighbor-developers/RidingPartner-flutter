@@ -19,8 +19,10 @@ import '../widgets/map_search/search_list.dart';
 
 enum SearchType { start, destination }
 
-// 선택된 장소를 저장하는 Provider
+final visibilityProvider = StateProvider.autoDispose<bool>((ref) => true);
+
 final startPlaceProvider = StateProvider.autoDispose<Place?>((ref) => null);
+
 final destinationPlaceProvider =
     StateProvider.autoDispose<Place?>((ref) => null);
 
@@ -81,10 +83,8 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
   Marker? _startMarkers;
   Marker? _endMarkers;
   final int polylineWidth = 8;
-  bool searchboxVisible = true;
   int buttonsPositionAlpha = 0;
-  final FocusNode _startFocusNode = FocusNode();
-  final FocusNode _destinationFocusNode = FocusNode();
+  CameraPosition? initLocation;
 
   @override
   void initState() {
@@ -95,7 +95,7 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
 
   void setStartPlaceMyLocation() async {
     final address = await FindRouteService().getMyLocationAddress();
-    List<Place> result = (await NaverMapService().getPlaces(address)) ?? [];
+    List<Place> result = (await NaverMapService().getPlaces(address));
     Place myLocation = result[0];
     ref.read(startPlaceProvider.notifier).state = myLocation;
     _startTextController.text = "현재 위치: ${myLocation.title}";
@@ -106,8 +106,6 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
     super.dispose();
     _destinationTextController.clear();
     _startTextController.clear();
-    _startFocusNode.dispose();
-    _destinationFocusNode.dispose();
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -117,116 +115,133 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
     final polylinePoint = ref.watch(polylineProvider);
     final startPlaceList = ref.watch(searchStartPlaceProvider);
     final destinationPlaceList = ref.watch(searchDestinationPlaceProvider);
+    final searchboxVisible = ref.watch(visibilityProvider);
 
     return Scaffold(
       key: _scaffoldKey,
-      body: Stack(
-        children: <Widget>[
-          NaverMap(
-            onMapCreated: onMapCreated,
-            mapType: MapType.Basic,
-            locationButtonEnable: false,
-            initLocationTrackingMode: _locationTrackingMode,
-            markers: [
-              if (_startMarkers != null) _startMarkers!,
-              if (_endMarkers != null) _endMarkers!,
+      body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+            ref.read(searchDestinationPlaceProvider.notifier).clearPlace();
+            ref.read(searchStartPlaceProvider.notifier).clearPlace();
+          },
+          child: Stack(
+            children: <Widget>[
+              NaverMap(
+                onMapCreated: onMapCreated,
+                mapType: MapType.Basic,
+                locationButtonEnable: false,
+                initialCameraPosition: MyLocation().position == null
+                    ? const CameraPosition(
+                        target: LatLng(37.5666102, 126.9783881), zoom: 15)
+                    : CameraPosition(
+                        target: LatLng(MyLocation().position!.latitude,
+                            MyLocation().position!.longitude),
+                        zoom: 15),
+                initLocationTrackingMode: _locationTrackingMode,
+                markers: [
+                  if (_startMarkers != null) _startMarkers!,
+                  if (_endMarkers != null) _endMarkers!,
+                ],
+                onMapTap: (latLng) {
+                  FocusScope.of(context).unfocus();
+                  ref
+                      .read(searchDestinationPlaceProvider.notifier)
+                      .clearPlace();
+                  ref.read(searchStartPlaceProvider.notifier).clearPlace();
+                },
+                pathOverlays: polylinePoint.length > 1
+                    ? {
+                        PathOverlay(PathOverlayId('path'), polylinePoint,
+                            width: polylineWidth,
+                            outlineWidth: 0,
+                            color: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32))
+                      }
+                    : {},
+              ),
+              // 검색창
+              Visibility(
+                  visible: searchboxVisible,
+                  child: SearchBoxWidget(
+                    textControllerForStart: _startTextController,
+                    textControllerForEnd: _destinationTextController,
+                    onClickClear: (SearchType type) => onClickClear(type),
+                  )),
+              // 검색된 장소 리스트
+              Container(
+                  alignment: Alignment.topLeft,
+                  width: MediaQuery.of(context).size.width - 40,
+                  margin:
+                      const EdgeInsets.only(top: 109.3, left: 35, right: 35),
+                  child: Visibility(
+                    visible: startPlaceList.isNotEmpty,
+                    child: Column(children: [
+                      SearchListWidget(
+                          list: startPlaceList,
+                          type: SearchType.start,
+                          textController: _startTextController,
+                          onPlaceItemTab: onPlaceItemTab),
+                    ]),
+                  )),
+              // 검색된 장소 리스트
+              Container(
+                  alignment: Alignment.topLeft,
+                  width: MediaQuery.of(context).size.width - 40,
+                  margin:
+                      const EdgeInsets.only(top: 189.5, left: 35, right: 35),
+                  child: Visibility(
+                    visible: destinationPlaceList.isNotEmpty,
+                    child: Column(children: [
+                      SearchListWidget(
+                          list: destinationPlaceList,
+                          type: SearchType.destination,
+                          textController: _destinationTextController,
+                          onPlaceItemTab: onPlaceItemTab),
+                    ]),
+                  )),
+              // 내 위치 버튼
+              Positioned(
+                bottom: buttonsPositionAlpha + 50,
+                left: 20,
+                child: FloatingActionButton(
+                  heroTag: 'mypos',
+                  backgroundColor: Colors.white,
+                  child: const ImageIcon(
+                      AssetImage('assets/icons/search_myLocation_button.png'),
+                      color: Palette.orangeColor),
+                  onPressed: () {
+                    _initLoaction();
+                  },
+                ),
+              ),
+              // 검색 버튼
+              Positioned(
+                bottom: buttonsPositionAlpha + 120,
+                left: 20,
+                child: FloatingActionButton(
+                  backgroundColor: Colors.white,
+                  child: const ImageIcon(AssetImage('assets/icons/search.png'),
+                      color: Palette.orangeColor),
+                  onPressed: () {
+                    Place? destinationPoint =
+                        ref.read(destinationPlaceProvider.notifier).state;
+                    if (destinationPoint == null) {
+                      showToastMessage("출발지와 도착지를 입력해주세요");
+                      return;
+                    } else {
+                      ref.read(visibilityProvider.notifier).state =
+                          !ref.read(visibilityProvider);
+                      FocusScope.of(context).unfocus();
+                    }
+                  },
+                ),
+              ),
+              // 안내시작 버튼
+              Visibility(
+                  visible: !searchboxVisible,
+                  child: Positioned(bottom: 0, child: startNavButton()))
             ],
-            onMapTap: (latLng) {
-              _startFocusNode.unfocus();
-              _destinationFocusNode.unfocus();
-            },
-            pathOverlays: polylinePoint.length > 1
-                ? {
-                    PathOverlay(PathOverlayId('path'), polylinePoint,
-                        width: polylineWidth,
-                        outlineWidth: 0,
-                        color: const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32))
-                  }
-                : {},
-          ),
-          // 검색창
-          Visibility(
-              visible: searchboxVisible,
-              child: SearchBoxWidget(
-                textControllerForStart: _startTextController,
-                textControllerForEnd: _destinationTextController,
-                startFocusNode: _startFocusNode,
-                destinationFocusNode: _destinationFocusNode,
-                onClickClear: (SearchType type) => onClickClear(type),
-              )),
-          // 검색된 장소 리스트
-          Container(
-              alignment: Alignment.topLeft,
-              width: MediaQuery.of(context).size.width - 40,
-              margin: const EdgeInsets.only(top: 109.3, left: 35, right: 35),
-              child: Visibility(
-                visible: startPlaceList.isNotEmpty,
-                child: Column(children: [
-                  SearchListWidget(
-                      list: startPlaceList,
-                      type: SearchType.start,
-                      textController: _startTextController,
-                      onPlaceItemTab: onPlaceItemTab),
-                ]),
-              )),
-          // 검색된 장소 리스트
-          Container(
-              alignment: Alignment.topLeft,
-              width: MediaQuery.of(context).size.width - 40,
-              margin: const EdgeInsets.only(top: 189.5, left: 35, right: 35),
-              child: Visibility(
-                visible: destinationPlaceList.isNotEmpty,
-                child: Column(children: [
-                  SearchListWidget(
-                      list: destinationPlaceList,
-                      type: SearchType.destination,
-                      textController: _destinationTextController,
-                      onPlaceItemTab: onPlaceItemTab),
-                ]),
-              )),
-          // 내 위치 버튼
-          Positioned(
-            bottom: buttonsPositionAlpha + 50,
-            left: 20,
-            child: FloatingActionButton(
-              heroTag: 'mypos',
-              backgroundColor: Colors.white,
-              child: const ImageIcon(
-                  AssetImage('assets/icons/search_myLocation_button.png'),
-                  color: Palette.orangeColor),
-              onPressed: () {
-                _initLoaction();
-              },
-            ),
-          ),
-          // 검색 버튼
-          Positioned(
-            bottom: buttonsPositionAlpha + 120,
-            left: 20,
-            child: FloatingActionButton(
-              backgroundColor: Colors.white,
-              child: const ImageIcon(AssetImage('assets/icons/search.png'),
-                  color: Palette.orangeColor),
-              onPressed: () {
-                Place? destinationPoint =
-                    ref.read(destinationPlaceProvider.notifier).state;
-                if (destinationPoint == null) {
-                  showToastMessage("출발지와 도착지를 입력해주세요");
-                  return;
-                } else {
-                  setState(() {
-                    searchboxVisible = !searchboxVisible;
-                  });
-                }
-              },
-            ),
-          ),
-          // 안내시작 버튼
-          Visibility(
-              visible: !searchboxVisible,
-              child: Positioned(bottom: 0, child: startNavButton()))
-        ],
-      ),
+          )),
     );
   }
 
@@ -296,12 +311,10 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
     textController.text = item.title;
     controller.moveCamera(
       CameraUpdate.toCameraPosition(CameraPosition(
-        target:
-            LatLng(double.parse(item.latitude!), double.parse(item.longitude!)),
+        target: item.location,
       )),
     );
-    Place? startPoint = ref.read(startPlaceProvider.notifier).state;
-    Place? destinationPoint = ref.read(destinationPlaceProvider.notifier).state;
+    FocusScope.of(context).unfocus();
 
     updateMarkerPosition(item, type); // 마커 업데이트
     if (type == SearchType.start) {
@@ -314,10 +327,13 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
       ref.read(searchDestinationPlaceProvider.notifier).clearPlace();
     }
 
+    Place? startPoint = ref.read(startPlaceProvider);
+    Place? destinationPoint = ref.read(destinationPlaceProvider);
+
     if (startPoint != null && destinationPoint != null) {
-      setState(() {
-        !searchboxVisible;
-      });
+      ref.read(visibilityProvider.notifier).state = false;
+
+      // 출발지, 도착지 모두 선택되어있을 경우 경로 그리기
       _drawPolyline(
         startPoint,
         destinationPoint,
@@ -335,9 +351,9 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
           width: 30,
           height: 40,
           icon: customIcon,
-          markerId: '${position.latitude!}${position.longitude!}',
-          position: LatLng(double.parse(position.latitude!),
-              double.parse(position.longitude!)),
+          markerId:
+              '${position.location.latitude}${position.location.longitude}',
+          position: position.location,
         );
       });
     } else {
@@ -346,9 +362,9 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
           width: 30,
           height: 40,
           icon: customIcon,
-          markerId: '${position.latitude!}${position.longitude!}',
-          position: LatLng(double.parse(position.latitude!),
-              double.parse(position.longitude!)),
+          markerId:
+              '${position.location.latitude}${position.location.longitude}',
+          position: position.location,
         );
       });
     }

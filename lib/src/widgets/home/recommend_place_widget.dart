@@ -44,7 +44,10 @@ class RecommendPlaceWidgetState extends ConsumerState<RecommendPlaceWidget> {
         return const CircularProgressIndicator();
       },
       error: (error, stack) {
-        return const Center(child: Text('추천 명소를 불러오는데 실패하였습니다'));
+        return const Center(
+            child: Padding(
+                padding: EdgeInsets.only(top: 50),
+                child: Text('추천 명소를 불러오는데 실패하였습니다')));
       },
     );
   }

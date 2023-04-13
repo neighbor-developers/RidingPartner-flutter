@@ -10,14 +10,10 @@ class SearchBoxWidget extends ConsumerStatefulWidget {
       {super.key,
       required this.textControllerForStart,
       required this.textControllerForEnd,
-      required this.startFocusNode,
-      required this.destinationFocusNode,
       required this.onClickClear});
 
   final TextEditingController textControllerForStart;
   final TextEditingController textControllerForEnd;
-  final FocusNode startFocusNode;
-  final FocusNode destinationFocusNode;
   final Function(SearchType) onClickClear;
 
   @override
@@ -25,23 +21,6 @@ class SearchBoxWidget extends ConsumerStatefulWidget {
 }
 
 class SearchBoxWidgetState extends ConsumerState<SearchBoxWidget> {
-  @override
-  void initState() {
-    super.initState();
-    widget.destinationFocusNode.addListener(() {
-      // 포커스가 해제되면 검색 결과 리스트를 비움
-      if (!widget.destinationFocusNode.hasFocus) {
-        ref.read(searchDestinationPlaceProvider.notifier).clearPlace();
-      }
-    });
-    widget.startFocusNode.addListener(() {
-      // 포커스가 해제되면 검색 결과 리스트를 비움
-      if (!widget.startFocusNode.hasFocus) {
-        ref.read(searchStartPlaceProvider.notifier).clearPlace();
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -71,9 +50,6 @@ class SearchBoxWidgetState extends ConsumerState<SearchBoxWidget> {
       height: 60,
       child: TextField(
         style: TextStyles.searchBoxTextStyle,
-        focusNode: type == SearchType.start
-            ? widget.startFocusNode
-            : widget.destinationFocusNode,
         onChanged: (value) {
           if (value != "") {
             if (type == SearchType.start) {

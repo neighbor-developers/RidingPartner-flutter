@@ -110,22 +110,21 @@ class NavigationProvider with ChangeNotifier {
     Place startPlace = Place(
         id: 'myLocation',
         title: "내 위치",
-        latitude: _position!.latitude.toString(),
-        longitude: _position!.longitude.toString(),
+        location: naver.LatLng(_position!.latitude, _position!.longitude),
         jibunAddress: '');
 
     if (_ridingCourse.length > 1) {
       num distanceToCourseStart = _calDistance.as(
           LengthUnit.Meter,
           LatLng(_position!.latitude, _position!.longitude),
-          LatLng(double.parse(_ridingCourse.first.latitude!),
-              double.parse(_ridingCourse.first.longitude!)));
+          LatLng(_ridingCourse.first.location.latitude,
+              _ridingCourse.first.location.longitude));
 
       num distanceToCourseLast = _calDistance.as(
           LengthUnit.Meter,
           LatLng(_position!.latitude, _position!.longitude),
-          LatLng(double.parse(_ridingCourse.last.latitude!),
-              double.parse(_ridingCourse.last.longitude!)));
+          LatLng(_ridingCourse.last.location.latitude,
+              _ridingCourse.last.location.longitude));
 
       // 출발지보다 도착지가 더 가까울때 반대로 안내
       if (distanceToCourseLast < distanceToCourseStart) {
@@ -239,8 +238,8 @@ class NavigationProvider with ChangeNotifier {
     num distanceToDestination = _calDistance.as(
         LengthUnit.Meter,
         LatLng(_position!.latitude, _position!.longitude),
-        LatLng(double.parse(_goalDestination.latitude!),
-            double.parse(_goalDestination.longitude!)));
+        LatLng(_goalDestination.location.latitude,
+            _goalDestination.location.longitude));
 
     if (distanceToDestination < 10) {
       if (_ridingCourse.length == 1) {
@@ -261,14 +260,14 @@ class NavigationProvider with ChangeNotifier {
     num distanceToDestination = _calDistance.as(
         LengthUnit.Meter,
         LatLng(_position!.latitude, _position!.longitude),
-        LatLng(double.parse(_goalDestination.latitude!),
-            double.parse(_goalDestination.longitude!)));
+        LatLng(_goalDestination.location.latitude,
+            _goalDestination.location.longitude));
 
     num distanceToNextDestination = _calDistance.as(
         LengthUnit.Meter,
         LatLng(_position!.latitude, _position!.longitude),
-        LatLng(double.parse(_nextDestination!.latitude!),
-            double.parse(_nextDestination!.longitude!)));
+        LatLng(_nextDestination!.location.latitude,
+            _nextDestination!.location.longitude));
 
     if (distanceToDestination > distanceToNextDestination) {
       // 다음 경유지로 안내할까요?

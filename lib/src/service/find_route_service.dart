@@ -15,15 +15,20 @@ class FindRouteService {
   Future<String> getMyLocationAddress() async {
     final myLocation = MyLocation();
     myLocation.getMyCurrentLocation();
+    if (myLocation.position == null) return '';
     final lat = myLocation.position!.latitude;
     final lon = myLocation.position!.longitude;
     final url =
         "https://dapi.kakao.com/v2/local/geo/coord2address.json?x=$lon&y=$lat&input_coord=WGS84";
     Map<String, String> requestHeaders = {'Authorization': 'KakaoAK $kakaoKey'};
     final response = await http.get(Uri.parse(url), headers: requestHeaders);
-    return json.decode(response.body)['documents'][0]['address']
-            ['address_name'] ??
-        '';
+    if (((json.decode(response.body)['documents']) as List).isNotEmpty) {
+      return json.decode(response.body)['documents'][0]['address']
+              ['address_name'] ??
+          '';
+    } else {
+      return '';
+    }
   }
 
   Future<List<Guide>> getRoute(Place start, Place destination) async {

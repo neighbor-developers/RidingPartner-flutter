@@ -3,10 +3,8 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import '../models/place.dart';
 
 List<LatLng> setPolylineData(Place startPlace, Place finalDestination) {
-  LatLng start = LatLng(
-      double.parse(startPlace.latitude), double.parse(startPlace.longitude));
-  LatLng end = LatLng(double.parse(finalDestination.latitude),
-      double.parse(finalDestination.longitude));
+  LatLng start = startPlace.location;
+  LatLng end = finalDestination.location;
 
   if (start.latitude <= end.latitude) {
     LatLng temp = start;

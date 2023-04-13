@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/models/my_location.dart';
@@ -11,7 +12,7 @@ class NaverMapService {
   final String _naverMapUrl = "map.naver.com";
   NaverMapService();
 
-  Future<List<Place>?> getPlaces(String title) async {
+  Future<List<Place>> getPlaces(String title) async {
     try {
       var place = <Place>[];
       final myLocation = MyLocation(); // 자신의 위치를 기반으로 위치 검색
@@ -38,8 +39,8 @@ class NaverMapService {
               .map<Place>((place) => Place(
                   id: place.id!,
                   title: place.title!,
-                  latitude: place.y!,
-                  longitude: place.x!,
+                  location:
+                      LatLng(double.parse(place.y!), double.parse(place.x!)),
                   jibunAddress: place.jibunAddress!,
                   roadAddress: place.roadAddress))
               .toList();
@@ -49,8 +50,8 @@ class NaverMapService {
               .map<Place>((address) => Place(
                   id: address.id,
                   title: address.title,
-                  latitude: address.y,
-                  longitude: address.x,
+                  location:
+                      LatLng(double.parse(address.y), double.parse(address.x)),
                   jibunAddress: address.fullAddress!,
                   roadAddress: address.fullAddress))
               .toList();
@@ -73,7 +74,7 @@ class NaverMapService {
       int sumDistance = 0;
 
       String placeToParam(Place place) =>
-          '${place.longitude},${place.latitude},placeid=${place.id},name=${place.title}';
+          '${place.location.longitude},${place.location.latitude},placeid=${place.id},name=${place.title}';
 
       final Map<String, String> queryParams = {
         'start': placeToParam(start),

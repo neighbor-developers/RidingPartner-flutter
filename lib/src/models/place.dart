@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:flutter_naver_map/flutter_naver_map.dart';
+
 class Place {
   String id;
   String title;
-  String latitude;
-  String longitude;
+  LatLng location;
+
   String jibunAddress;
   String? roadAddress;
   String? description;
@@ -15,8 +17,7 @@ class Place {
   Place(
       {required this.id,
       required this.title,
-      required this.latitude,
-      required this.longitude,
+      required this.location,
       required this.jibunAddress,
       this.roadAddress,
       this.description,
@@ -27,8 +28,8 @@ class Place {
   factory Place.fromJson(Map<String, dynamic> json) => Place(
       id: json["id"],
       title: json["title"],
-      latitude: json["latitude"],
-      longitude: json["longitude"],
+      location: LatLng(
+          double.parse(json["latitude"]), double.parse(json["longitude"])),
       jibunAddress: json["jibunAddress"],
       roadAddress: json["roadAddress"],
       description: json["description"],
@@ -39,8 +40,8 @@ class Place {
   factory Place.fromDB(db) => Place(
       id: db?["id"],
       title: db?["title"],
-      latitude: db?["latitude"],
-      longitude: db?["longitude"],
+      location:
+          LatLng(double.parse(db["latitude"]), double.parse(db["longitude"])),
       jibunAddress: db?["jibunAddress"],
       roadAddress: db?["roadAddress"],
       description: db?["description"],
