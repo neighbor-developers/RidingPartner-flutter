@@ -25,7 +25,7 @@ class Record {
         timestamp: db["timestamp"],
         date: db["date"],
         memo: db["memo"],
-        kcal: db["kcal"],
+        kcal: db["kcal"].toDouble(),
         images: db?['images'] != null
             ? List<String>.from(json.decode(db?['images']))
             : null,

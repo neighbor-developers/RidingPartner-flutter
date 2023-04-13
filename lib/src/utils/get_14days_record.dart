@@ -64,7 +64,7 @@ class Get14DaysRecordService {
     for (var element in records) {
       int days = int.parse(
           today.difference(DateTime.parse(element.date)).inDays.toString());
-      if (days < records.length) {
+      if (days < 14) {
         count++;
         // 14일 이내이면 그 자리에 넣기
         recordFor14Days[days] = element;

@@ -59,13 +59,13 @@ class WeatherWidgetState extends ConsumerState<WeatherWidget> {
                 ))),
         error: (error, stack) => Container(
             decoration: BoxDecoration(
+              color: Colors.white,
               border: Border.all(
                 width: 1,
-                color: Colors.orange,
+                color: Colors.grey[200]!,
               ),
             ),
             width: MediaQuery.of(context).size.width,
-            color: Colors.white,
             child: Container(
                 padding: const EdgeInsets.all(12),
                 child: const Text(
