@@ -403,7 +403,7 @@ class RecordButtonState extends ConsumerState<RecordButton> {
           ref.read(ridingStateProvider.notifier).state = RidingState.stop;
           final Record record = Record(
               distance: ref.read(distanceProvider).roundToDouble(),
-              date: DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()),
+              date: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
               timestamp: ref.read(timerProvider),
               kcal: (550 * (time) / 3600).roundToDouble());
 
