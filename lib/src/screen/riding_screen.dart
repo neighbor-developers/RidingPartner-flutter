@@ -6,25 +6,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:ridingpartner_flutter/src/models/my_location.dart';
-import 'package:ridingpartner_flutter/src/models/timer.dart';
 import 'package:ridingpartner_flutter/src/provider/timer_provider.dart';
 import 'package:ridingpartner_flutter/src/screen/riding_result_screen.dart';
 import 'package:ridingpartner_flutter/src/style/palette.dart';
 import 'package:ridingpartner_flutter/src/style/textstyle.dart';
 import 'package:ridingpartner_flutter/src/utils/cal_distance.dart';
+import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
 import 'package:wakelock/wakelock.dart';
 import '../models/position_stream.dart';
 import '../models/record.dart';
 import '../provider/record_provider.dart';
-import '../service/firebase_database_service.dart';
 import '../widgets/dialog/riding_cancel_dialog.dart';
-
-// 타이머 provider
-final timerProvider =
-    StateNotifierProvider.autoDispose<TimerNotifier, TimerModel>(
-        (ref) => TimerNotifier());
-// floating button 보여주기
-final visibilityProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 // 위치 정보 스트림
 final StreamProvider<Position> positionStreamProvider =
@@ -46,6 +38,16 @@ final calProvider = Provider.autoDispose((ref) {
   });
 });
 
+final polylineCoordinatesProvider = StateProvider<List<LatLng>>((ref) {
+  final coordinates = <LatLng>[];
+  final positionStream = ref.watch(positionStreamProvider);
+  if (positionStream.value != null) {
+    coordinates.add(LatLng(
+        positionStream.value!.latitude, positionStream.value!.longitude));
+  }
+  return coordinates;
+});
+
 // 주행 상태 provider
 final ridingStateProvider =
     StateProvider.autoDispose((ref) => RidingState.before);
@@ -53,6 +55,9 @@ final ridingStateProvider =
 final recordProvider =
     StateNotifierProvider.autoDispose<RecordProvider, Record?>(
         (ref) => RecordProvider());
+
+final timerProvider =
+    StateNotifierProvider<TimerNotifier, int>((ref) => TimerNotifier());
 
 class RidingScreen extends ConsumerStatefulWidget {
   const RidingScreen({super.key});
@@ -62,22 +67,10 @@ class RidingScreen extends ConsumerStatefulWidget {
 }
 
 class RidingScreenState extends ConsumerState<RidingScreen> {
-  final polylineCoordinatesProvider = StateProvider<List<LatLng>>((ref) {
-    final coordinates = <LatLng>[];
-    final positionStream = ref.watch(positionStreamProvider);
-    if (positionStream.value != null) {
-      coordinates.add(LatLng(
-          positionStream.value!.latitude, positionStream.value!.longitude));
-    }
-    return coordinates;
-  });
-
   final LocationTrackingMode _locationTrackingMode = LocationTrackingMode.Face;
   late List<Marker> _markers = [];
   late OverlayImage _markerIcon;
   Completer<NaverMapController> _controller = Completer();
-  double floatingBtnPosition = 80;
-
   @override
   void initState() {
     super.initState();
@@ -112,9 +105,9 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
     ref.invalidate(positionStreamProvider);
     ref.invalidate(distanceProvider);
     ref.invalidate(ridingStateProvider);
-    ref.invalidate(timerProvider);
     ref.invalidate(calProvider);
-    ref.invalidate(visibilityProvider);
+    ref.invalidate(recordProvider);
+    ref.invalidate(timerProvider);
   }
 
   int polylineWidth = 7;
@@ -175,38 +168,41 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
                   locationButtonEnable: false,
                   markers: _markers,
                 ),
-                Positioned(
-                  bottom: floatingBtnPosition,
-                  left: 20,
-                  child: FloatingActionButton(
-                    heroTag: 'mypos',
-                    backgroundColor: Colors.white,
-                    child: const ImageIcon(
-                        AssetImage('assets/icons/search_myLocation_button.png'),
-                        color: Color.fromRGBO(240, 120, 5, 1)),
-                    onPressed: () async {
-                      final controller = await _controller.future;
-                      await controller.moveCamera(CameraUpdate.toCameraPosition(
-                          CameraPosition(
-                              target: LatLng(
-                                  position.asData?.value.latitude ?? 0,
-                                  position.asData?.value.longitude ?? 0),
-                              zoom: 18)));
-                      controller
-                          .setLocationTrackingMode(LocationTrackingMode.Face);
-                    },
-                  ),
-                ),
+                Visibility(
+                    visible: ridingState != RidingState.before,
+                    child: Positioned(
+                      bottom: 140,
+                      left: 20,
+                      child: FloatingActionButton(
+                        heroTag: 'mypos',
+                        backgroundColor: Colors.white,
+                        child: const ImageIcon(
+                            AssetImage(
+                                'assets/icons/search_myLocation_button.png'),
+                            color: Color.fromRGBO(240, 120, 5, 1)),
+                        onPressed: () async {
+                          final controller = await _controller.future;
+                          await controller.moveCamera(
+                              CameraUpdate.toCameraPosition(CameraPosition(
+                                  target: LatLng(
+                                      position.asData?.value.latitude ?? 0,
+                                      position.asData?.value.longitude ?? 0),
+                                  zoom: 18)));
+                          controller.setLocationTrackingMode(
+                              LocationTrackingMode.Face);
+                        },
+                      ),
+                    )),
                 Positioned(
                     bottom: 0,
                     child: ridingState == RidingState.before
                         ? InkWell(
                             onTap: () async {
                               try {
-                                floatingBtnPosition = 130;
                                 ref.read(ridingStateProvider.notifier).state =
                                     RidingState.riding;
                                 ref.read(timerProvider.notifier).start();
+                                ref.read(recordProvider.notifier).start();
 
                                 final controller = await _controller.future;
                                 await controller.moveCamera(CameraUpdate
@@ -244,6 +240,7 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
             )),
         onWillPop: () async {
           if (ridingState == RidingState.before) {
+            ref.refresh(ridingStateProvider);
             Navigator.pop(context);
             return true;
           } else {
@@ -297,9 +294,9 @@ class RecordBoxWidget extends ConsumerStatefulWidget {
 }
 
 class RecordBoxWidgetState extends ConsumerState<RecordBoxWidget> {
+  bool visible = false;
   @override
   Widget build(BuildContext context) {
-    final visibility = ref.watch(visibilityProvider);
     final distance = ref.watch(distanceProvider);
     final time = ref.watch(timerProvider);
 
@@ -308,10 +305,17 @@ class RecordBoxWidgetState extends ConsumerState<RecordBoxWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (visibility) ...[const RecordButton()],
+          if (visible) ...[
+            RecordButton(changeVisible: () {
+              setState(() {
+                visible = !visible;
+              });
+            })
+          ],
           Container(
               alignment: Alignment.center,
-              padding: const EdgeInsets.all(20),
+              width: MediaQuery.of(context).size.width - 40,
+              padding: const EdgeInsets.symmetric(vertical: 20),
               decoration: const BoxDecoration(
                 boxShadow: [
                   BoxShadow(
@@ -333,15 +337,14 @@ class RecordBoxWidgetState extends ConsumerState<RecordBoxWidget> {
                         '거리',
                         "${((distance / 10000).roundToDouble()) * 10}km",
                       ),
-                      // recordText(
-                      //     '주행 속도', "${speed.toStringAsFixed(1)}km/h"),
-                      recordText('주행 시간', time.timeText),
-                      InkWell(
-                        onTap: () {
-                          ref.read(visibilityProvider.notifier).state =
-                              !ref.read(visibilityProvider);
-                        },
-                        child: SizedBox(
+                      recordText('주행 속도',
+                          time == 0 ? 'km/h' : "${distance / time * 3600}km/h"),
+                      recordText('주행 시간', timestampToText(time, 1)),
+                      IconButton(
+                        onPressed: () => setState(() {
+                          visible = !visible;
+                        }),
+                        icon: SizedBox(
                           width: 18,
                           child: Image.asset('assets/icons/menu_bar.png',
                               fit: BoxFit.fitWidth),
@@ -366,7 +369,9 @@ class RecordBoxWidgetState extends ConsumerState<RecordBoxWidget> {
 }
 
 class RecordButton extends ConsumerStatefulWidget {
-  const RecordButton({super.key});
+  const RecordButton({super.key, required this.changeVisible});
+
+  final Function changeVisible;
 
   @override
   RecordButtonState createState() => RecordButtonState();
@@ -383,27 +388,31 @@ class RecordButtonState extends ConsumerState<RecordButton> {
       children: [
         if (ridingState == RidingState.riding) ...[
           ridingFloatingButton(() {
-            ref.read(visibilityProvider.notifier).state = false;
+            widget.changeVisible();
             ref.read(timerProvider.notifier).pause();
             ref.read(ridingStateProvider.notifier).state = RidingState.pause;
           }, '일시중지')
         ] else ...[
           ridingFloatingButton(() {
-            ref.read(visibilityProvider.notifier).state = false;
+            widget.changeVisible();
             ref.read(ridingStateProvider.notifier).state = RidingState.riding;
-            ref.read(timerProvider.notifier).start();
+            ref.read(timerProvider.notifier).restart();
           }, '이어서 주행')
         ],
         ridingFloatingButton(() {
           ref.read(ridingStateProvider.notifier).state = RidingState.stop;
-          ref.read(timerProvider.notifier).reset();
           final Record record = Record(
-              distance: ref.read(distanceProvider).roundToDouble() ?? 0,
+              distance: ref.read(distanceProvider).roundToDouble(),
               date: DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()),
-              timestamp: time.time,
-              kcal: (550 * (time.time) / 3600).roundToDouble());
+              timestamp: ref.read(timerProvider),
+              kcal: (550 * (time) / 3600).roundToDouble());
 
-          ref.read(recordProvider.notifier).saveData(record);
+          ref.read(recordProvider.notifier).saveData(record, []);
+          ref.refresh(ridingStateProvider);
+          ref.refresh(timerProvider);
+          ref.refresh(polylineCoordinatesProvider);
+          ref.refresh(distanceProvider);
+          ref.refresh(recordProvider);
 
           Navigator.push(
               context,

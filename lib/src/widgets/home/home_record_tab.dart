@@ -209,7 +209,7 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
           '거리',
           '${((record.distance / 10).roundToDouble()) / 100}km',
           'assets/icons/home_distance.png');
-      Data time = Data('시간', timestampToText(record.timestamp),
+      Data time = Data('시간', timestampToText(record.timestamp, 0),
           'assets/icons/home_time.png');
 
       Data speed;

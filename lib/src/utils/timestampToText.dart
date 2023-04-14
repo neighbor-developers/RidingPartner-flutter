@@ -1,10 +1,10 @@
-String timestampToText(int timestamp) {
+String timestampToText(int timestamp, int type) {
   String hour = "00";
   String minute = "00";
   String second = "00";
 
   if (timestamp ~/ 3600 < 10) {
-    hour = "0${timestamp ~/ 3600}";
+    hour = "${timestamp ~/ 3600}";
   } else {
     hour = "${timestamp ~/ 3600}";
   }
@@ -19,6 +19,13 @@ String timestampToText(int timestamp) {
   } else {
     second = "${timestamp % 60}";
   }
-
-  return '$hour:$minute:$second';
+  if (type == 0) {
+    return '$hour:$minute:$second';
+  } else {
+    if (hour == '0') {
+      return '$minute:$second';
+    } else {
+      return '$hour:$minute:$second';
+    }
+  }
 }
