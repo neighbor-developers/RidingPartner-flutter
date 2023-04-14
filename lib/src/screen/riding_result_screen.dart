@@ -214,8 +214,8 @@ class MemoWidgetState extends ConsumerState<MemoWidget> {
           maxLines: 6,
           maxLength: 300,
           style: const TextStyle(
+            color: Colors.white,
             fontSize: 14.0,
-            color: Colors.black,
           ),
           onChanged: (value) {
             ref.read(memoProvider.notifier).state = value;
@@ -229,6 +229,10 @@ class MemoWidgetState extends ConsumerState<MemoWidget> {
               borderRadius: BorderRadius.circular(12),
             ),
             focusColor: Colors.transparent,
+            counterStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 14.0,
+            ),
             hintText: "오늘의 라이딩은 어땠나요?",
             hintStyle: const TextStyle(
               color: Colors.white,

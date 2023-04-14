@@ -337,8 +337,11 @@ class RecordBoxWidgetState extends ConsumerState<RecordBoxWidget> {
                         '거리',
                         "${((distance / 10000).roundToDouble()) * 10}km",
                       ),
-                      recordText('주행 속도',
-                          time == 0 ? 'km/h' : "${distance / time * 3600}km/h"),
+                      recordText(
+                          '주행 속도',
+                          time == 0
+                              ? '0.0km/h'
+                              : "${distance / time * 3600}km/h"),
                       recordText('주행 시간', timestampToText(time, 1)),
                       IconButton(
                         onPressed: () => setState(() {

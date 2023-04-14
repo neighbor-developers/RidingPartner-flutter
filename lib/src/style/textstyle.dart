@@ -110,7 +110,7 @@ class TextStyles {
       fontSize: 16.0,
       fontFamily: "Pretendard",
       fontWeight: FontWeight.w500,
-      color: Color.fromARGB(0xFF, 0xDE, 0xE2, 0xE6));
+      color: Color.fromARGB(244, 255, 255, 255));
 
   static const TextStyle dialogTextStyle = TextStyle(
       color: Color.fromARGB(255, 24, 24, 1),
