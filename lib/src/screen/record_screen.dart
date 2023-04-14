@@ -100,7 +100,7 @@ class RecordScreenState extends ConsumerState<RecordScreen> {
                     DateFormat('yyyy년 MM월 dd일')
                         .format(DateTime.parse(record.date)),
                     style: TextStyles.dayRecordtextStyle2),
-                Text(timestampToText(record.timestamp),
+                Text(timestampToText(record.timestamp, 0),
                     style: TextStyles.dayRecordtextStyle2),
                 if (record.timestamp != 0) ...[
                   Text(
@@ -179,7 +179,7 @@ class ImageSlider extends ConsumerWidget {
         ));
 
     return Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-      if (images == null) ...[
+      if (images == null || images!.isEmpty) ...[
         SizedBox(
             width: double.infinity,
             height: 240,

@@ -5,13 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:ridingpartner_flutter/src/provider/image_pick_provider.dart';
 import 'package:ridingpartner_flutter/src/screen/bottom_nav.dart';
-import 'package:ridingpartner_flutter/src/screen/home_screen.dart';
 import 'package:ridingpartner_flutter/src/screen/riding_screen.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
-import 'package:ridingpartner_flutter/src/widgets/appbar.dart';
 
 import '../models/record.dart';
-import '../service/firebase_database_service.dart';
 import '../style/textstyle.dart';
 
 // 주행기록의 메모 작성 Provider
@@ -119,7 +116,7 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
             children: [
               Text(DateFormat('yyyy년 MM월 dd일').format(DateTime.now()),
                   style: TextStyles.ridingRecordTextStyle),
-              Text(timestampToText(record.timestamp),
+              Text(timestampToText(record.timestamp, 0),
                   style: TextStyles.ridingRecordTextStyle),
               if (record.timestamp != 0) ...[
                 Text(
@@ -155,6 +152,7 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
       child: ElevatedButton(
         onPressed: () {
           saveData();
+
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -181,16 +179,15 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
   }
 
   saveData() async {
-    final image = ref.watch(imageProvider);
-    final memo = ref.watch(memoProvider);
+    final image = ref.read(imageProvider);
+    final memo = ref.read(memoProvider);
     final recordData = ref.read(recordProvider);
-    final record = ref.watch(recordProvider.notifier).saveData(Record(
-        distance: recordData!.distance,
-        date: recordData.date,
-        timestamp: recordData.timestamp,
-        memo: memo,
-        kcal: recordData.kcal,
-        images: image.map((e) => e.path).toList()));
+
+    ref.read(recordProvider.notifier).saveData(recordData!, image);
+
+    ref.refresh(recordProvider);
+    ref.refresh(imageProvider);
+    ref.refresh(memoProvider);
   }
 }
 

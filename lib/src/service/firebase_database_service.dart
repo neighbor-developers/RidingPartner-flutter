@@ -19,9 +19,8 @@ class FirebaseDatabaseService {
           "kcal": record.kcal,
           "images": record.images != null ? json.encode(record.images) : null
         })
-        .then((_) => {})
+        .then((_) => {Record.saveRecordPref(record)})
         .catchError((onError) {});
-    Record.saveRecordPref(record);
   }
 
   saveRecordMemoFirebaseDb(Record record) async {
