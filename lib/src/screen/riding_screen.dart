@@ -5,7 +5,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
-import 'package:ridingpartner_flutter/src/models/my_location.dart';
+import 'package:ridingpartner_flutter/src/service/location_service.dart';
 import 'package:ridingpartner_flutter/src/provider/timer_provider.dart';
 import 'package:ridingpartner_flutter/src/screen/riding_result_screen.dart';
 import 'package:ridingpartner_flutter/src/style/palette.dart';

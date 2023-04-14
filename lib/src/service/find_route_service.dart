@@ -6,7 +6,7 @@ import 'package:ridingpartner_flutter/src/models/route.dart';
 import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
 
 import '../provider/navigation_provider.dart';
-import '../models/my_location.dart';
+import 'location_service.dart';
 import 'package:http/http.dart' as http;
 
 class FindRouteService {

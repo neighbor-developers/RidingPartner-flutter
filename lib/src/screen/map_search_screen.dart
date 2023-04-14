@@ -13,7 +13,7 @@ import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
 import 'package:ridingpartner_flutter/src/style/palette.dart';
 import 'package:ridingpartner_flutter/src/utils/set_polyline_data.dart';
 
-import '../models/my_location.dart';
+import '../service/location_service.dart';
 import '../widgets/map_search/search_box.dart';
 import '../widgets/map_search/search_list.dart';
 

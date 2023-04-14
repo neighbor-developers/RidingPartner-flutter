@@ -1,6 +1,6 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ridingpartner_flutter/src/network/network_helper.dart';
-import 'package:ridingpartner_flutter/src/models/my_location.dart';
+import 'package:ridingpartner_flutter/src/service/location_service.dart';
 
 import '../models/weather.dart';
 import '../utils/weather_icon.dart';

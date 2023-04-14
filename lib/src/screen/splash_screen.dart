@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ridingpartner_flutter/src/screen/bottom_nav.dart';
 import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
-import 'package:ridingpartner_flutter/src/models/my_location.dart';
+import 'package:ridingpartner_flutter/src/service/location_service.dart';
 import 'package:ridingpartner_flutter/src/widgets/dialog/permission_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

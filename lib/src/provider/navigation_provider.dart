@@ -9,7 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:ridingpartner_flutter/src/models/route.dart';
 import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
-import 'package:ridingpartner_flutter/src/models/my_location.dart';
+import 'package:ridingpartner_flutter/src/service/location_service.dart';
 
 import '../models/place.dart';
 import '../models/position_stream.dart';

@@ -113,7 +113,14 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
                   textAlign: TextAlign.center),
             ));
       case RecordState.success:
-        return recordTab(record.asData!.value);
+        return record.when(
+            data: (data) => recordTab(data),
+            loading: () => const SizedBox(
+                height: 100,
+                child: Center(
+                  child: CircularProgressIndicator(color: Palette.appColor),
+                )),
+            error: (e, s) => const SizedBox());
 
       default:
         return const SizedBox(
@@ -197,7 +204,7 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
   }
 
   Widget recordDetailView(Record record) {
-    if (record.timestamp == 0) {
+    if (record.date == '') {
       return Container(
         padding: const EdgeInsets.all(20),
         height: 50,
