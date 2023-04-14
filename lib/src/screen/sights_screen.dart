@@ -17,10 +17,11 @@ final placeListProvider = FutureProvider.autoDispose<List<Place>>((ref) async {
 
 final markerListProvider = FutureProvider.autoDispose<List<Marker>>((ref) {
   final placeList = ref.watch(placeListProvider);
-  List<Marker> markers = [];
+
   return placeList.when(
-      data: (data) {
-        Future.forEach(data, (place) async {
+      data: (data) async {
+        List<Marker> markers = [];
+        await Future.forEach(data, (place) async {
           markers.add(Marker(
               width: 30,
               height: 40,
@@ -47,30 +48,18 @@ class SightsScreenState extends ConsumerState<SightsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final markers = ref.watch(markerListProvider);
-
-    return markers.when(
+    final marker = ref.watch(markerListProvider);
+    return marker.when(
         data: (data) {
-          final markerData = data
-              .map((e) => Marker(
-                  markerId: e.markerId,
-                  position: e.position,
-                  icon: e.icon,
-                  width: e.width,
-                  height: e.height,
-                  onMarkerTab: (marker, iconSize) => _onMarkerTap(
-                      marker, ref.watch(placeListProvider).asData!.value)))
-              .toList();
           return Scaffold(
             body: NaverMap(
-              onMapCreated: onMapCreated,
-              initialCameraPosition: const CameraPosition(
-                  target: LatLng(37.349741467772, 126.76182486561), zoom: 11),
-              mapType: MapType.Basic,
-              initLocationTrackingMode: LocationTrackingMode.None,
-              locationButtonEnable: true,
-              markers: markerData,
-            ),
+                onMapCreated: onMapCreated,
+                initialCameraPosition: const CameraPosition(
+                    target: LatLng(37.349741467772, 126.76182486561), zoom: 11),
+                mapType: MapType.Basic,
+                initLocationTrackingMode: LocationTrackingMode.None,
+                locationButtonEnable: true,
+                markers: data),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
