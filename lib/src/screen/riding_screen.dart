@@ -127,6 +127,7 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
 
     return WillPopScope(
         child: Scaffold(
+            backgroundColor: Colors.white,
             appBar: AppBar(
               shadowColor: const Color.fromRGBO(255, 255, 255, 0.5),
               backgroundColor: Colors.white,

@@ -1,199 +1,132 @@
 import 'dart:async';
-import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_naver_map/flutter_naver_map.dart' as naver;
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:ridingpartner_flutter/src/models/route.dart';
-import 'package:ridingpartner_flutter/src/service/naver_map_service.dart';
-import 'package:ridingpartner_flutter/src/service/location_service.dart';
 
 import '../models/place.dart';
 import '../models/position_stream.dart';
-import '../models/record.dart';
+import '../models/route.dart';
+import '../service/find_route_service.dart';
+import '../service/naver_map_service.dart';
+import '../utils/latlng_from_guide.dart';
+
+class NavigationData {
+  final SearchRouteState state;
+  final List<Guide> guides;
+  final int sumDistance;
+  final List<int> distances;
+
+  NavigationData(
+      {required this.state,
+      required this.guides,
+      required this.sumDistance,
+      required this.distances});
+}
 
 enum SearchRouteState { loading, fail, empty, success, locationFail }
 
-class NavigationProvider with ChangeNotifier {
-  final NaverMapService _naverMapService = NaverMapService();
-  //make constructer with one Place type parameter
-  NavigationProvider(this._ridingCourse);
-  //make constructer without parameter
-  NavigationProvider.empty();
+class RouteProvider extends StateNotifier<NavigationData> {
+  RouteProvider()
+      : super(NavigationData(
+            state: SearchRouteState.loading,
+            guides: [],
+            sumDistance: 0,
+            distances: []));
 
+  final Stream<Position> _positionStream = PositionStream().controller.stream;
   Position? _position;
-  final Distance _calDistance = const Distance();
-  RidingState _ridingState = RidingState.before;
-  SearchRouteState _searchRouteState = SearchRouteState.loading;
+  final Distance calDistance = const Distance();
 
-  final PositionStream _positionStream = PositionStream();
-
-  late List<Place> _ridingCourse;
-  List<Guide> _route = [];
-  List<int> _distances = [];
-  List<naver.LatLng> _polylinePoints = [];
-  List<naver.LatLng> get polylinePoints => _polylinePoints;
-
-  late Guide _goalPoint;
-  late Place _goalDestination;
-  Guide? _nextPoint;
+  Place? _goalDestination;
+  Place? _finalDestination;
   Place? _nextDestination;
-  late Place _finalDestination;
-  Timer? _timer;
+
   int _remainedDistance = 0;
   int _totalDistance = 0;
-  bool isFirst = true;
-  bool visivility = false;
+  List<Place> _course = [];
+  late Timer timer;
 
-  LatLng? _bearingPoint;
-
-  Guide get goalPoint => _goalPoint;
-  Position? get position => _position;
-  List<Guide>? get route => _route;
-  RidingState get ridingState => _ridingState;
-  SearchRouteState get searchRouteState => _searchRouteState;
-  List<Place> get course => _ridingCourse;
-  LatLng? get bearingPoint => _bearingPoint;
   int get remainedDistance => _remainedDistance;
   int get totalDistance => _totalDistance;
-  Place? get nextDestination => _nextDestination;
+  List<Place> get course => _course;
+  // 위치 정보 스트림
 
-  bool _disposed = false;
-
-  void setState(RidingState state) {
-    _ridingState = state;
-    if (state == RidingState.pause) {
-      _timer?.cancel();
-    }
-    notifyListeners();
-  }
-
-  void setVisivility() {
-    visivility = !visivility;
-    notifyListeners();
+  @override
+  set state(NavigationData value) {
+    // TODO: implement state
+    super.state = value;
   }
 
   @override
   void dispose() {
-    _disposed = true;
-    _timer?.cancel();
-    _positionStream.dispose();
+    // TODO: implement dispose
     super.dispose();
+    timer.cancel();
   }
 
-  Future<void> getRoute() async {
-    final myLocation = MyLocation();
-    _goalDestination = _ridingCourse.first;
-    _finalDestination = _ridingCourse.last;
-    if (_ridingCourse.length > 1) {
-      _nextDestination = _ridingCourse.elementAt(1);
+  void getRoute(List<Place> places) async {
+    _course = places;
+    final address = await FindRouteService().getMyLocationAddress();
+    List<Place> result = (await NaverMapService().getPlaces(address));
+    Place myLocation = result[0];
+
+    _goalDestination = places[0];
+    if (places.length > 2) {
+      _nextDestination = places[1];
     }
-    isFirst = true;
+    _finalDestination = places.last;
 
-    try {
-      myLocation.getMyCurrentLocation();
-      _position = myLocation.position;
-      if (_position == null) {
-        _searchRouteState = SearchRouteState.locationFail;
-      }
-    } catch (e) {
-      myLocation.checkPermission();
-      _position = null;
-      _searchRouteState = SearchRouteState.locationFail;
-      notifyListeners();
-      return;
-    }
+    Map<String, dynamic> response;
 
-    Place startPlace = Place(
-        id: 'myLocation',
-        title: "내 위치",
-        location: naver.LatLng(_position!.latitude, _position!.longitude),
-        jibunAddress: '');
+    List<Place> list = <Place>[myLocation];
+    list.addAll(places);
 
-    if (_ridingCourse.length > 1) {
-      num distanceToCourseStart = _calDistance.as(
-          LengthUnit.Meter,
-          LatLng(_position!.latitude, _position!.longitude),
-          LatLng(_ridingCourse.first.location.latitude,
-              _ridingCourse.first.location.longitude));
+    response = await NaverMapService().getRoute(list);
 
-      num distanceToCourseLast = _calDistance.as(
-          LengthUnit.Meter,
-          LatLng(_position!.latitude, _position!.longitude),
-          LatLng(_ridingCourse.last.location.latitude,
-              _ridingCourse.last.location.longitude));
+    int sum = 0;
 
-      // 출발지보다 도착지가 더 가까울때 반대로 안내
-      if (distanceToCourseLast < distanceToCourseStart) {
-        _ridingCourse = List.from(_ridingCourse.reversed);
-      }
-    }
-
-    Map<String, dynamic> response = await _naverMapService
-        .getRoute(startPlace, _finalDestination, _ridingCourse)
-        .catchError((onError) {
-      return {'result': SearchRouteState.fail};
-    });
-
-    _searchRouteState = response['result'];
-
-    if (_searchRouteState == SearchRouteState.success) {
-      response = response['data'];
-
-      _route = response['guides'];
-      _remainedDistance = response['sumdistance'];
-      if (_totalDistance < response['sumdistance']) {
-        _totalDistance = response['sumdistance'];
-      }
-      _distances = response['distances'];
-
-      if (_route.length == 1) {
-        _goalPoint = _route[0];
-        _nextPoint = null;
-      } else {
-        _goalPoint = _route[0];
-        _nextPoint = _route[1];
-      }
-      _bearingPoint = latLngFromGuide(_goalPoint);
-      // _route.forEach((element) {
-      //   _remainedDistance += element.
-      // })
-      _polyline();
+    _remainedDistance = response['data']['sumdistance'];
+    if (sum < response['data']['sumdistance']) {
+      sum = response['data']['sumdistance'];
     } else {
-      _route = [];
+      sum = state.sumDistance;
     }
-    notifyListeners();
+
+    NavigationData data = NavigationData(
+        state: response['result'],
+        guides: response['data']['guides'],
+        sumDistance: sum,
+        distances: response['data']['distances']);
+
+    state = data;
   }
 
-  Future<void> startNavigation() async {
-    setState(RidingState.riding);
-    _positionStream.controller.stream.listen((pos) {
+  startNav() {
+    _positionStream.listen((pos) {
       _position = pos;
     });
 
-    _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
-      _calToPoint();
-    }));
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      calToPoint();
+      state = state;
+    });
   }
 
-  void _calToPoint() {
-    LatLng? point = latLngFromGuide(_goalPoint);
-    LatLng? nextLatLng = latLngFromGuide(_nextPoint);
-    _bearingPoint = point;
+  void calToPoint() {
+    LatLng? point = latLngFromGuide(state.guides.first);
+    LatLng? nextLatLng = latLngFromGuide(state.guides[1]);
 
     if (nextLatLng != null) {
-      num distanceToPoint = _calDistance.as(LengthUnit.Meter,
+      num distanceToPoint = calDistance.as(LengthUnit.Meter,
           LatLng(_position!.latitude, _position!.longitude), point!);
 
       // 마지막 지점이 아닐때
-      num distanceToNextPoint = _calDistance.as(LengthUnit.Meter,
+      num distanceToNextPoint = calDistance.as(LengthUnit.Meter,
           LatLng(_position!.latitude, _position!.longitude), nextLatLng);
 
       num distancePointToPoint =
-          _calDistance.as(LengthUnit.Meter, point, nextLatLng);
+          calDistance.as(LengthUnit.Meter, point, nextLatLng);
 
       if (distanceToPoint > distancePointToPoint + 10) {
         // 2의 경우
@@ -201,33 +134,22 @@ class NavigationProvider with ChangeNotifier {
         if (_nextDestination != null) {
           _calToDestination(); // 다음 경유지 계산해서 만약 다음 경유지가 더 가까우면 사용자 입력 받아서 다음경유지로 안내
         }
-        getRoute();
+        getRoute(_course);
       } else {
         if (distanceToPoint <= 10 ||
             distanceToPoint > distanceToNextPoint + 50) {
           // 턴 포인트 도착이거나 a > b일때
           _isDestination(); // 경유지인지 확인
-          if (_route.length == 2) {
-            _route.removeAt(0);
-            _goalPoint = _route[0]; //
-            _nextPoint = null;
-            if (isFirst) {
-              // _polylinePoints.removeAt(0);
-              isFirst = false;
-            }
-            _remainedDistance -= _distances.last;
-            _distances.removeLast();
+          if (state.guides.length == 2) {
+            state.guides.removeAt(0);
+
+            _remainedDistance -= state.distances.last;
+            state.distances.removeLast();
           } else {
-            _route.removeAt(0);
-            _goalPoint = _route[0]; //
-            _nextPoint = _route[1];
-            if (isFirst) {
-              isFirst = false;
-            } else {
-              // _polylinePoints.removeAt(0);
-            }
-            _remainedDistance -= _distances.last;
-            _distances.removeLast();
+            state.guides.removeAt(0);
+
+            _remainedDistance -= state.distances.last;
+            state.distances.removeLast();
           }
         }
       }
@@ -235,35 +157,35 @@ class NavigationProvider with ChangeNotifier {
   }
 
   void _isDestination() {
-    num distanceToDestination = _calDistance.as(
+    num distanceToDestination = calDistance.as(
         LengthUnit.Meter,
         LatLng(_position!.latitude, _position!.longitude),
-        LatLng(_goalDestination.location.latitude,
-            _goalDestination.location.longitude));
+        LatLng(_goalDestination!.location.latitude,
+            _goalDestination!.location.longitude));
 
     if (distanceToDestination < 10) {
-      if (_ridingCourse.length == 1) {
+      if (_course.length == 1) {
         // 최종 목적지 도착!
-      } else if (_ridingCourse.length == 2) {
-        _ridingCourse.removeAt(0);
-        _goalDestination = _ridingCourse[0];
+      } else if (_course.length == 2) {
+        _course.removeAt(0);
+        _goalDestination = _course[0];
         _nextDestination = null;
       } else {
-        _ridingCourse.removeAt(0);
-        _goalDestination = _ridingCourse[0];
-        _nextDestination = _ridingCourse[1];
+        _course.removeAt(0);
+        _goalDestination = _course[0];
+        _nextDestination = _course[1];
       }
     }
   }
 
   void _calToDestination() {
-    num distanceToDestination = _calDistance.as(
+    num distanceToDestination = calDistance.as(
         LengthUnit.Meter,
         LatLng(_position!.latitude, _position!.longitude),
-        LatLng(_goalDestination.location.latitude,
-            _goalDestination.location.longitude));
+        LatLng(_goalDestination!.location.latitude,
+            _goalDestination!.location.longitude));
 
-    num distanceToNextDestination = _calDistance.as(
+    num distanceToNextDestination = calDistance.as(
         LengthUnit.Meter,
         LatLng(_position!.latitude, _position!.longitude),
         LatLng(_nextDestination!.location.latitude,
@@ -273,43 +195,8 @@ class NavigationProvider with ChangeNotifier {
       // 다음 경유지로 안내할까요?
       // ok ->
       if (true) {
-        _ridingCourse.removeAt(0);
+        _course.removeAt(0);
       }
-    }
-  }
-
-  void stopNavigation() {
-    setState(RidingState.pause);
-    _timer?.cancel();
-  }
-
-  void _polyline() {
-    List<PolylineWayPoint>? turnPoints = _route
-        .map((route) => PolylineWayPoint(location: route.turnPoint ?? ""))
-        .toList();
-    List<naver.LatLng> pointLatLngs = [];
-
-    for (var element in turnPoints) {
-      List<String> a = element.location.split(',');
-      pointLatLngs.add(naver.LatLng(double.parse(a[1]), double.parse(a[0])));
-    }
-
-    _polylinePoints = pointLatLngs;
-    if (_disposed) return;
-    notifyListeners();
-  }
-
-  LatLng? latLngFromGuide(Guide? guide) {
-    if (guide != null) {
-      List<double>? a =
-          (guide.turnPoint?.split(','))?.map((p) => double.parse(p)).toList();
-      if (a == null) {
-        return null;
-      } else {
-        return LatLng(a.elementAt(1), a.elementAt(0));
-      }
-    } else {
-      return null;
     }
   }
 }

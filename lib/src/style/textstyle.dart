@@ -198,4 +198,12 @@ class TextStyles {
       fontFamily: 'Pretended',
       fontWeight: FontWeight.w600,
       fontSize: 16);
+
+  static const TextStyle descriptionTextStyle = TextStyle(
+      fontSize: 18,
+      fontFamily: 'Pretendard',
+      fontWeight: FontWeight.w500,
+      fontStyle: FontStyle.normal,
+      decoration: TextDecoration.none,
+      color: Color.fromRGBO(17, 17, 17, 1));
 }

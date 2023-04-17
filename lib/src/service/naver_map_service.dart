@@ -2,15 +2,20 @@ import 'dart:convert';
 
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:http/http.dart' as http;
-import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/service/location_service.dart';
 
 import '../models/place.dart';
 import '../models/route.dart';
+import '../provider/navigation_provider.dart';
 
 class NaverMapService {
   final String _naverMapUrl = "map.naver.com";
-  NaverMapService();
+
+  static final NaverMapService _naverMapService = NaverMapService._internal();
+  factory NaverMapService() {
+    return _naverMapService;
+  }
+  NaverMapService._internal();
 
   Future<List<Place>> getPlaces(String title) async {
     try {
@@ -66,8 +71,7 @@ class NaverMapService {
     }
   }
 
-  Future<Map<String, dynamic>> getRoute(
-      Place start, Place destination, List<Place>? waypoints) async {
+  Future<Map<String, dynamic>> getRoute(List<Place> places) async {
     try {
       List<Guide> guides = [];
       List<int> distances = [];
@@ -77,11 +81,12 @@ class NaverMapService {
           '${place.location.longitude},${place.location.latitude},placeid=${place.id},name=${place.title}';
 
       final Map<String, String> queryParams = {
-        'start': placeToParam(start),
-        'destination': placeToParam(destination),
+        'start': placeToParam(places[0]),
+        'destination': placeToParam(places.last),
       };
 
-      if (waypoints != null && waypoints.isNotEmpty) {
+      if (places.length > 2) {
+        final waypoints = places.sublist(1, places.length - 1);
         queryParams['waypoints'] = waypoints.map(placeToParam).join('|');
       }
 

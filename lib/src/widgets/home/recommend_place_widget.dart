@@ -109,6 +109,8 @@ class RecommendPlaceWidgetState extends ConsumerState<RecommendPlaceWidget> {
                   alignment: Alignment.bottomRight,
                   child: Text(
                     place.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyles.recommendTextStyle,
                     textAlign: TextAlign.end,
                   ),
@@ -131,7 +133,7 @@ class RecommendPlaceWidgetState extends ConsumerState<RecommendPlaceWidget> {
               style: TextStyles.recommendPlaceTextStyle,
               children: <TextSpan>[
                 TextSpan(
-                    text: '\'$title',
+                    text: '\'$title\'',
                     style: TextStyles.recommendPlaceTextStyle2),
                 const TextSpan(
                     text: ' 어떠세요?', style: TextStyles.recommendPlaceTextStyle)

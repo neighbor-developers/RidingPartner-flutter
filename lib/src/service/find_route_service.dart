@@ -32,7 +32,7 @@ class FindRouteService {
   }
 
   Future<List<Guide>> getRoute(Place start, Place destination) async {
-    final result = await NaverMapService().getRoute(start, destination, []);
+    final result = await NaverMapService().getRoute([start, destination]);
     if (result['result'] == SearchRouteState.success) {
       return result['data']['guides'];
     } else {

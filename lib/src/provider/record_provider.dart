@@ -9,8 +9,6 @@ import '../service/firebase_database_service.dart';
 class RecordProvider extends StateNotifier<Record?> {
   RecordProvider() : super(null);
 
-  final Stopwatch stopwatch = Stopwatch();
-
   @override
   set state(Record? value) {
     // TODO: implement state
@@ -28,14 +26,4 @@ class RecordProvider extends StateNotifier<Record?> {
       SaveRecordService().saveRecord(record, img);
     }
   }
-
-  start() {
-    stopwatch.start();
-  }
-
-  pause() {
-    stopwatch.stop();
-  }
-
-  int get time => stopwatch.elapsedMilliseconds;
 }

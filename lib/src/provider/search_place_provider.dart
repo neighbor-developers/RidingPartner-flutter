@@ -13,7 +13,7 @@ class SearchPlaceProvider extends StateNotifier<List<Place>> {
   }
 
   void getPlaces(String title) async {
-    state = (await naverMapService.getPlaces(title)) ?? [];
+    state = (await naverMapService.getPlaces(title));
   }
 
   void clearPlace() {

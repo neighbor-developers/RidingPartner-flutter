@@ -61,10 +61,18 @@ class RecommendedRouteScreenState
   }
 
   Widget recommendTitleWidget() => Container(
-        margin: const EdgeInsets.fromLTRB(0, 32, 0, 24),
-        child: const Text("라이딩파트너와 함께\n오늘도 달려볼까요?",
-            style: TextStyles.recommendTitleTextStyle),
-      );
+      margin: const EdgeInsets.fromLTRB(0, 32, 0, 24),
+      child: const Text.rich(
+        TextSpan(
+            text: '라이딩 파트너☀️',
+            style: TextStyles.recommendPlaceTextStyle2,
+            children: <TextSpan>[
+              TextSpan(
+                  text: '와 함께\n오늘도 달려볼까요?',
+                  style: TextStyles.recommendPlaceTextStyle),
+            ]),
+        textAlign: TextAlign.start,
+      ));
 }
 
 // 라이딩 경로 리스트를 그리는 위젯
