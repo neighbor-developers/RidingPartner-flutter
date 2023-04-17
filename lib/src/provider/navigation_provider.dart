@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:ridingpartner_flutter/src/provider/position_provider.dart';
+import 'package:ridingpartner_flutter/src/service/background_location_service.dart';
 
 import '../models/place.dart';
-import '../models/position_stream.dart';
 import '../models/route.dart';
+import '../screen/riding_screen.dart';
 import '../service/find_route_service.dart';
 import '../service/naver_map_service.dart';
 import '../utils/latlng_from_guide.dart';
@@ -34,8 +36,7 @@ class RouteProvider extends StateNotifier<NavigationData> {
             sumDistance: 0,
             distances: []));
 
-  final Stream<Position> _positionStream = PositionStream().controller.stream;
-  Position? _position;
+  // Position? pos
   final Distance calDistance = const Distance();
 
   Place? _goalDestination;
@@ -46,6 +47,8 @@ class RouteProvider extends StateNotifier<NavigationData> {
   int _totalDistance = 0;
   List<Place> _course = [];
   late Timer timer;
+
+  late Provider posProvider;
 
   int get remainedDistance => _remainedDistance;
   int get totalDistance => _totalDistance;
@@ -103,27 +106,32 @@ class RouteProvider extends StateNotifier<NavigationData> {
   }
 
   startNav() {
-    _positionStream.listen((pos) {
-      _position = pos;
-    });
+    BackgroundLocationService();
 
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      calToPoint();
+    posProvider = Provider((ref) {
+      final position = ref.watch(positionProvider);
+      if (position != null) {
+        calToPoint(position);
+      }
       state = state;
     });
+
+    // timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    //   state = state;
+    // });
   }
 
-  void calToPoint() {
+  void calToPoint(Position pos) {
     LatLng? point = latLngFromGuide(state.guides.first);
     LatLng? nextLatLng = latLngFromGuide(state.guides[1]);
 
     if (nextLatLng != null) {
-      num distanceToPoint = calDistance.as(LengthUnit.Meter,
-          LatLng(_position!.latitude, _position!.longitude), point!);
+      num distanceToPoint = calDistance.as(
+          LengthUnit.Meter, LatLng(pos.latitude, pos.longitude), point!);
 
       // 마지막 지점이 아닐때
-      num distanceToNextPoint = calDistance.as(LengthUnit.Meter,
-          LatLng(_position!.latitude, _position!.longitude), nextLatLng);
+      num distanceToNextPoint = calDistance.as(
+          LengthUnit.Meter, LatLng(pos.latitude, pos.longitude), nextLatLng);
 
       num distancePointToPoint =
           calDistance.as(LengthUnit.Meter, point, nextLatLng);
@@ -132,14 +140,15 @@ class RouteProvider extends StateNotifier<NavigationData> {
         // 2의 경우
         // c + am
         if (_nextDestination != null) {
-          _calToDestination(); // 다음 경유지 계산해서 만약 다음 경유지가 더 가까우면 사용자 입력 받아서 다음경유지로 안내
+          _calToDestination(
+              pos); // 다음 경유지 계산해서 만약 다음 경유지가 더 가까우면 사용자 입력 받아서 다음경유지로 안내
         }
         getRoute(_course);
       } else {
         if (distanceToPoint <= 10 ||
             distanceToPoint > distanceToNextPoint + 50) {
           // 턴 포인트 도착이거나 a > b일때
-          _isDestination(); // 경유지인지 확인
+          _isDestination(pos); // 경유지인지 확인
           if (state.guides.length == 2) {
             state.guides.removeAt(0);
 
@@ -156,10 +165,10 @@ class RouteProvider extends StateNotifier<NavigationData> {
     }
   }
 
-  void _isDestination() {
+  void _isDestination(Position pos) {
     num distanceToDestination = calDistance.as(
         LengthUnit.Meter,
-        LatLng(_position!.latitude, _position!.longitude),
+        LatLng(pos.latitude, pos.longitude),
         LatLng(_goalDestination!.location.latitude,
             _goalDestination!.location.longitude));
 
@@ -178,16 +187,16 @@ class RouteProvider extends StateNotifier<NavigationData> {
     }
   }
 
-  void _calToDestination() {
+  void _calToDestination(Position pos) {
     num distanceToDestination = calDistance.as(
         LengthUnit.Meter,
-        LatLng(_position!.latitude, _position!.longitude),
+        LatLng(pos.latitude, pos.longitude),
         LatLng(_goalDestination!.location.latitude,
             _goalDestination!.location.longitude));
 
     num distanceToNextDestination = calDistance.as(
         LengthUnit.Meter,
-        LatLng(_position!.latitude, _position!.longitude),
+        LatLng(pos.latitude, pos.longitude),
         LatLng(_nextDestination!.location.latitude,
             _nextDestination!.location.longitude));
 

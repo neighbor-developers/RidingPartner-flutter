@@ -5,6 +5,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:ridingpartner_flutter/src/provider/position_provider.dart';
 import 'package:ridingpartner_flutter/src/service/location_service.dart';
 import 'package:ridingpartner_flutter/src/provider/timer_provider.dart';
 import 'package:ridingpartner_flutter/src/screen/riding_result_screen.dart';
@@ -13,45 +14,46 @@ import 'package:ridingpartner_flutter/src/style/textstyle.dart';
 import 'package:ridingpartner_flutter/src/utils/cal_distance.dart';
 import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
 import 'package:wakelock/wakelock.dart';
-import '../models/position_stream.dart';
 import '../models/record.dart';
 import '../provider/record_provider.dart';
 import '../widgets/dialog/riding_cancel_dialog.dart';
-import '../widgets/navigation/riding_appbar.dart';
+import 'package:latlong2/latlong.dart' as cal;
 
 // 위치 정보 스트림
-final StreamProvider<Position> positionStreamProvider =
-    StreamProvider((ref) => PositionStream().controller.stream);
+final positionProvider = StateNotifierProvider<PositionProvider, Position?>(
+    (ref) => PositionProvider());
 
 // 주행 거리 provider
-final distanceProvider = StateProvider.autoDispose<double>((ref) => 0.0);
+final distanceProvider = StateProvider.autoDispose<double>((ref) {
+  final points = ref.watch(pointProvider);
+  return calDistanceForList(points);
+});
+
+final pointProvider = StateProvider<List<cal.LatLng>>((ref) => []);
 
 // 거리 계산 provider
-final calProvider = Provider.autoDispose((ref) {
+final calProvider = Provider((ref) {
   final state = ref.watch(ridingStateProvider);
-  final positionStream = ref.listen(positionStreamProvider, (previous, next) {
-    if (state == RidingState.riding) {
-      if (previous?.asData?.value != null) {
-        ref.read(distanceProvider.notifier).state = ref.read(distanceProvider) +
-            calDistance(previous!.asData!.value, next.asData!.value);
-      }
-    }
-  });
+  final position = ref.watch(positionProvider);
+  if (state == RidingState.riding && position != null) {
+    var list = ref.read(pointProvider);
+    list.add(cal.LatLng(position.latitude, position.longitude));
+
+    ref.read(pointProvider.notifier).state = list;
+  }
 });
 
 final polylineCoordinatesProvider = StateProvider<List<LatLng>>((ref) {
   final coordinates = <LatLng>[];
-  final positionStream = ref.watch(positionStreamProvider);
-  if (positionStream.value != null) {
-    coordinates.add(LatLng(
-        positionStream.value!.latitude, positionStream.value!.longitude));
+  final position = ref.watch(positionProvider);
+  if (position != null) {
+    coordinates.add(LatLng(position.latitude, position.longitude));
   }
   return coordinates;
 });
 
 // 주행 상태 provider
-final ridingStateProvider =
-    StateProvider.autoDispose((ref) => RidingState.before);
+final ridingStateProvider = StateProvider((ref) => RidingState.before);
 
 final recordProvider =
     StateNotifierProvider.autoDispose<RecordProvider, Record?>(
@@ -79,7 +81,7 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
     ref.refresh(polylineCoordinatesProvider);
     ref.refresh(distanceProvider);
     ref.refresh(recordProvider);
-    ref.refresh(positionStreamProvider);
+    ref.refresh(positionProvider);
     ref.refresh(calProvider);
     super.initState();
     try {
@@ -115,7 +117,7 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final position = ref.watch(positionStreamProvider);
+    final position = ref.watch(positionProvider);
     final ridingState = ref.watch(ridingStateProvider);
     final polylineCoordinates = ref.watch(polylineCoordinatesProvider);
     final distance = ref.watch(distanceProvider);
@@ -123,107 +125,112 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
     return WillPopScope(
         child: Scaffold(
             backgroundColor: Colors.white,
-            appBar: RidingAppbar(
-                state: ridingState,
-                type: 0,
-                onTap: backDialog('주행을 종료하시겠습니까?\n', '주행 종료')),
-            body: Stack(
-              children: <Widget>[
-                NaverMap(
-                  onMapCreated: onMapCreated,
-                  pathOverlays: polylineCoordinates.length > 1
-                      ? {
-                          PathOverlay(
-                              PathOverlayId('path'), polylineCoordinates,
-                              width: polylineWidth,
-                              outlineWidth: 0,
-                              color:
-                                  const Color.fromARGB(0xFF, 0xFB, 0x95, 0x32))
-                        }
-                      : {},
-                  mapType: MapType.Basic,
-                  initLocationTrackingMode: LocationTrackingMode.Face,
-                  initialCameraPosition: CameraPosition(
-                      target: LatLng(position.asData?.value.latitude ?? 0,
-                          position.asData?.value.longitude ?? 0),
-                      zoom: 14),
-                  locationButtonEnable: false,
-                  markers: _markers,
-                ),
-                Visibility(
-                    visible: ridingState != RidingState.before,
-                    child: Positioned(
-                      bottom: 140,
-                      left: 20,
-                      child: FloatingActionButton(
-                        heroTag: 'mypos',
-                        backgroundColor: Colors.white,
-                        child: const ImageIcon(
-                            AssetImage(
-                                'assets/icons/search_myLocation_button.png'),
-                            color: Color.fromRGBO(240, 120, 5, 1)),
-                        onPressed: () async {
-                          final controller = await _controller.future;
-                          await controller.moveCamera(
-                              CameraUpdate.toCameraPosition(CameraPosition(
-                                  target: LatLng(
-                                      position.asData?.value.latitude ?? 0,
-                                      position.asData?.value.longitude ?? 0),
-                                  zoom: 18)));
-                          controller.setLocationTrackingMode(
-                              LocationTrackingMode.Face);
-                        },
+            appBar: appBar(ridingState),
+            body: position != null
+                ? Stack(
+                    children: <Widget>[
+                      NaverMap(
+                        onMapCreated: onMapCreated,
+                        pathOverlays: polylineCoordinates.length > 1
+                            ? {
+                                PathOverlay(
+                                    PathOverlayId('path'), polylineCoordinates,
+                                    width: polylineWidth,
+                                    outlineWidth: 0,
+                                    color: const Color.fromARGB(
+                                        0xFF, 0xFB, 0x95, 0x32))
+                              }
+                            : {},
+                        mapType: MapType.Basic,
+                        initLocationTrackingMode: LocationTrackingMode.Face,
+                        initialCameraPosition: CameraPosition(
+                            target:
+                                LatLng(position.latitude, position.longitude),
+                            zoom: 14),
+                        locationButtonEnable: false,
+                        markers: _markers,
                       ),
-                    )),
-                Positioned(
-                    bottom: 0,
-                    child: ridingState == RidingState.before
-                        ? InkWell(
-                            onTap: () async {
-                              try {
-                                ref.read(ridingStateProvider.notifier).state =
-                                    RidingState.riding;
-                                ref.read(timerProvider.notifier).start();
-
+                      Visibility(
+                          visible: ridingState != RidingState.before,
+                          child: Positioned(
+                            bottom: 140,
+                            left: 20,
+                            child: FloatingActionButton(
+                              heroTag: 'mypos',
+                              backgroundColor: Colors.white,
+                              child: const ImageIcon(
+                                  AssetImage(
+                                      'assets/icons/search_myLocation_button.png'),
+                                  color: Color.fromRGBO(240, 120, 5, 1)),
+                              onPressed: () async {
                                 final controller = await _controller.future;
-                                await controller.moveCamera(CameraUpdate
-                                    .toCameraPosition(CameraPosition(
-                                        target: LatLng(
-                                            position.asData?.value.latitude ??
-                                                0,
-                                            position.asData?.value.longitude ??
-                                                0),
-                                        zoom: 18)));
+                                await controller.moveCamera(
+                                    CameraUpdate.toCameraPosition(
+                                        CameraPosition(
+                                            target: LatLng(position.latitude,
+                                                position.longitude),
+                                            zoom: 18)));
                                 controller.setLocationTrackingMode(
                                     LocationTrackingMode.Face);
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('주행을 시작하는 데에 실패했습니다'),
+                              },
+                            ),
+                          )),
+                      Positioned(
+                          bottom: 0,
+                          child: ridingState == RidingState.before
+                              ? InkWell(
+                                  onTap: () async {
+                                    try {
+                                      ref
+                                          .read(ridingStateProvider.notifier)
+                                          .state = RidingState.riding;
+                                      ref.read(timerProvider.notifier).start();
+
+                                      final controller =
+                                          await _controller.future;
+                                      await controller.moveCamera(
+                                          CameraUpdate.toCameraPosition(
+                                              CameraPosition(
+                                                  target: LatLng(
+                                                      position.latitude,
+                                                      position.longitude),
+                                                  zoom: 18)));
+                                      controller.setLocationTrackingMode(
+                                          LocationTrackingMode.Face);
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text('주행을 시작하는 데에 실패했습니다'),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Container(
+                                    color: Palette.appColor,
+                                    alignment: Alignment.center,
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 61,
+                                    child: const Text(
+                                      '주행 시작',
+                                      style: TextStyles.modalButtonTextStyle,
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
-                                );
-                              }
-                            },
-                            child: Container(
-                              color: Palette.appColor,
-                              alignment: Alignment.center,
-                              width: MediaQuery.of(context).size.width,
-                              height: 61,
-                              child: const Text(
-                                '주행 시작',
-                                style: TextStyles.modalButtonTextStyle,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          )
-                        : RecordBoxWidget(
-                            distanceRecord: recordText(
-                              '거리',
-                              "${((distance / 10000).roundToDouble()) * 10}km",
-                            ),
-                          ))
-              ],
-            )),
+                                )
+                              : RecordBoxWidget(
+                                  distanceRecord: recordText(
+                                    '거리',
+                                    "${((distance / 10000).roundToDouble()) * 10}km",
+                                  ),
+                                ))
+                    ],
+                  )
+                : Container(
+                    child: Center(
+                      child: Text('위치를 로드할 수 없습니다.'),
+                    ),
+                  )),
         onWillPop: () async {
           if (ridingState == RidingState.before) {
             Navigator.pop(context);
@@ -255,6 +262,32 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
               Navigator.pop(context);
             }));
   }
+
+  AppBar appBar(RidingState state) => AppBar(
+        shadowColor: const Color.fromRGBO(255, 255, 255, 0.5),
+        backgroundColor: Colors.white,
+        title: Container(
+            padding: const EdgeInsets.fromLTRB(0, 0, 50, 0),
+            width: MediaQuery.of(context).size.width,
+            alignment: Alignment.center,
+            child: Image.asset(
+              'assets/icons/logo.png',
+              height: 25,
+            )),
+        leadingWidth: 50,
+        leading: IconButton(
+          onPressed: () {
+            if (state == RidingState.before) {
+              Navigator.pop(context);
+            } else {
+              backDialog('주행을 종료하시겠습니까?\n', '주행 종료');
+            }
+          },
+          icon: const Icon(Icons.arrow_back),
+          color: const Color.fromRGBO(240, 120, 5, 1),
+        ),
+        elevation: 10,
+      );
 
   void screenKeepOn() async {
     if (!(await Wakelock.enabled)) {

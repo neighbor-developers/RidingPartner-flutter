@@ -1,33 +1,27 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 
-class PositionStream {
-  late LocationSettings locationSettings;
-  static final PositionStream _instance = PositionStream._internal();
-  late StreamSubscription<Position> _positionStream;
-  static StreamController<Position> _controller =
+class BackgroundLocationService {
+  static final BackgroundLocationService _instance =
+      BackgroundLocationService._internal();
+  StreamController<Position> _controller =
       StreamController<Position>.broadcast();
+
+  late LocationSettings _locationSettings;
+
   static const int DISTANCE = 30;
   static const int DURATION_SECNOD = 2;
 
-  StreamController<Position> get controller => _controller;
-
-  factory PositionStream() {
-    _controller = StreamController<Position>.broadcast();
+  factory BackgroundLocationService() {
     return _instance;
   }
 
-  //dispose
-  void dispose() {
-    _controller.close();
-    _positionStream.cancel();
-  }
-
-  PositionStream._internal() {
+  BackgroundLocationService._internal() {
     if (defaultTargetPlatform == TargetPlatform.android) {
-      locationSettings = AndroidSettings(
+      _locationSettings = AndroidSettings(
           accuracy: LocationAccuracy.high,
           distanceFilter: DISTANCE,
           forceLocationManager: true,
@@ -40,7 +34,7 @@ class PositionStream {
             enableWakeLock: true,
           ));
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      locationSettings = AppleSettings(
+      _locationSettings = AppleSettings(
         accuracy: LocationAccuracy.high,
         activityType: ActivityType.fitness,
         distanceFilter: DISTANCE,
@@ -49,17 +43,14 @@ class PositionStream {
         showBackgroundLocationIndicator: false,
       );
     } else {
-      locationSettings = const LocationSettings(
+      _locationSettings = const LocationSettings(
         accuracy: LocationAccuracy.high,
         distanceFilter: DISTANCE,
       );
     }
-    _positionStream =
-        Geolocator.getPositionStream(locationSettings: locationSettings)
-            .listen((Position? pos) {
-      if (pos != null) {
-        _controller.add(pos);
-      }
-    });
+  }
+
+  Stream<Position> position() {
+    return Geolocator.getPositionStream();
   }
 }

@@ -9,7 +9,6 @@ import 'package:ridingpartner_flutter/src/provider/marker_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/screen/riding_screen.dart';
 import 'package:ridingpartner_flutter/src/utils/navigation_icon.dart';
-import 'package:ridingpartner_flutter/src/widgets/navigation/riding_appbar.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../models/place.dart';
@@ -62,7 +61,7 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
     ref.refresh(polylineCoordinatesProvider);
     ref.refresh(distanceProvider);
     ref.refresh(recordProvider);
-    ref.refresh(positionStreamProvider);
+    ref.refresh(pointProvider);
     ref.refresh(calProvider);
     ref.refresh(navigationProvider);
     ref.refresh(markerProvider);
@@ -102,7 +101,7 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final position = ref.watch(positionStreamProvider);
+    final position = ref.watch(positionProvider);
     final ridingState = ref.watch(ridingStateProvider);
     final navigation = ref.watch(navigationProvider);
     final markers = ref.watch(markerProvider);
@@ -112,107 +111,113 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
       case SearchRouteState.success:
         return WillPopScope(
             child: Scaffold(
-                appBar: RidingAppbar(
-                    state: ridingState,
-                    type: 0,
-                    onTap: backDialog('안내를 중단하시겠습니까?\n', '안내종료')),
-                body: Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: <Widget>[
-                    NaverMap(
-                      initialCameraPosition:
-                          CameraPosition(target: initCameraPosition, zoom: 10),
-                      onMapCreated: onMapCreated,
-                      pathOverlays: polylinePoints.length > 1
-                          ? {
-                              PathOverlay(PathOverlayId('path'), polylinePoints,
-                                  width: polylineWidth,
-                                  outlineWidth: 0,
-                                  color: const Color.fromARGB(
-                                      0xFF, 0xFB, 0x95, 0x32))
-                            }
-                          : {},
-                      mapType: MapType.Basic,
-                      initLocationTrackingMode: _locationTrackingMode,
-                      locationButtonEnable: true,
-                      markers: markers,
-                    ),
-                    Positioned(top: 0, child: guideWidget()),
-                    if (ridingState == RidingState.before) ...[
-                      Positioned(
-                          bottom: 0,
-                          child: InkWell(
-                            onTap: () async {
-                              try {
-                                ref.read(ridingStateProvider.notifier).state =
-                                    RidingState.riding;
-                                ref.read(timerProvider.notifier).start();
+                appBar: appBar(ridingState),
+                body: position != null
+                    ? Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: <Widget>[
+                          NaverMap(
+                            initialCameraPosition: CameraPosition(
+                                target: initCameraPosition, zoom: 10),
+                            onMapCreated: onMapCreated,
+                            pathOverlays: polylinePoints.length > 1
+                                ? {
+                                    PathOverlay(
+                                        PathOverlayId('path'), polylinePoints,
+                                        width: polylineWidth,
+                                        outlineWidth: 0,
+                                        color: const Color.fromARGB(
+                                            0xFF, 0xFB, 0x95, 0x32))
+                                  }
+                                : {},
+                            mapType: MapType.Basic,
+                            initLocationTrackingMode: _locationTrackingMode,
+                            locationButtonEnable: true,
+                            markers: markers,
+                          ),
+                          Positioned(top: 0, child: guideWidget()),
+                          if (ridingState == RidingState.before) ...[
+                            Positioned(
+                                bottom: 0,
+                                child: InkWell(
+                                  onTap: () async {
+                                    try {
+                                      ref
+                                          .read(ridingStateProvider.notifier)
+                                          .state = RidingState.riding;
+                                      ref.read(timerProvider.notifier).start();
 
+                                      final controller =
+                                          await _controller.future;
+                                      await controller.moveCamera(
+                                          CameraUpdate.toCameraPosition(
+                                              CameraPosition(
+                                                  target: LatLng(
+                                                      position.latitude,
+                                                      position.longitude),
+                                                  zoom: 18)));
+                                      controller.setLocationTrackingMode(
+                                          LocationTrackingMode.Face);
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text('주행을 시작하는 데에 실패했습니다'),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Container(
+                                    color: Palette.appColor,
+                                    alignment: Alignment.center,
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 61,
+                                    child: const Text(
+                                      '주행 시작',
+                                      style: TextStyles.modalButtonTextStyle,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ))
+                          ] else ...[
+                            Positioned(
+                                bottom: 0,
+                                child: RecordBoxWidget(
+                                    distanceRecord: recordText('남은거리',
+                                        "${((ref.watch(navigationProvider.notifier).remainedDistance / 100).roundToDouble()) / 10}km"))),
+                          ],
+
+                          Positioned(
+                            bottom: floatingBtnPosition,
+                            left: 20,
+                            child: FloatingActionButton(
+                              heroTag: 'mypos2',
+                              backgroundColor: Colors.white,
+                              child: const ImageIcon(
+                                  AssetImage(
+                                      'assets/icons/search_myLocation_button.png'),
+                                  color: Color.fromRGBO(240, 120, 5, 1)),
+                              onPressed: () async {
                                 final controller = await _controller.future;
-                                await controller.moveCamera(CameraUpdate
-                                    .toCameraPosition(CameraPosition(
-                                        target: LatLng(
-                                            position.asData?.value.latitude ??
-                                                0,
-                                            position.asData?.value.longitude ??
-                                                0),
-                                        zoom: 18)));
+                                await controller.moveCamera(
+                                    CameraUpdate.toCameraPosition(
+                                        CameraPosition(
+                                            target: LatLng(position.latitude,
+                                                position.longitude),
+                                            zoom: 18)));
                                 controller.setLocationTrackingMode(
                                     LocationTrackingMode.Face);
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('주행을 시작하는 데에 실패했습니다'),
-                                  ),
-                                );
-                              }
-                            },
-                            child: Container(
-                              color: Palette.appColor,
-                              alignment: Alignment.center,
-                              width: MediaQuery.of(context).size.width,
-                              height: 61,
-                              child: const Text(
-                                '주행 시작',
-                                style: TextStyles.modalButtonTextStyle,
-                                textAlign: TextAlign.center,
-                              ),
+                              },
                             ),
-                          ))
-                    ] else ...[
-                      Positioned(
-                          bottom: 0,
-                          child: RecordBoxWidget(
-                              distanceRecord: recordText('남은거리',
-                                  "${((ref.watch(navigationProvider.notifier).remainedDistance / 100).roundToDouble()) / 10}km"))),
-                    ],
-
-                    Positioned(
-                      bottom: floatingBtnPosition,
-                      left: 20,
-                      child: FloatingActionButton(
-                        heroTag: 'mypos2',
-                        backgroundColor: Colors.white,
-                        child: const ImageIcon(
-                            AssetImage(
-                                'assets/icons/search_myLocation_button.png'),
-                            color: Color.fromRGBO(240, 120, 5, 1)),
-                        onPressed: () async {
-                          final controller = await _controller.future;
-                          await controller.moveCamera(
-                              CameraUpdate.toCameraPosition(CameraPosition(
-                                  target: LatLng(
-                                      position.asData?.value.latitude ?? 0,
-                                      position.asData?.value.longitude ?? 0),
-                                  zoom: 18)));
-                          controller.setLocationTrackingMode(
-                              LocationTrackingMode.Face);
-                        },
-                      ),
-                    ),
-                    // changeButton(_navigationProvider.ridingState)
-                  ],
-                )),
+                          ),
+                          // changeButton(_navigationProvider.ridingState)
+                        ],
+                      )
+                    : Container(
+                        child: Center(
+                          child: Text('위치를 로드할 수 없습니다.'),
+                        ),
+                      )),
             onWillPop: () async {
               if (ridingState == RidingState.before) {
                 Navigator.pop(context);
@@ -260,6 +265,32 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
               Navigator.pop(context);
             }));
   }
+
+  AppBar appBar(RidingState state) => AppBar(
+        shadowColor: const Color.fromRGBO(255, 255, 255, 0.5),
+        backgroundColor: Colors.white,
+        title: Container(
+            padding: const EdgeInsets.fromLTRB(0, 0, 50, 0),
+            width: MediaQuery.of(context).size.width,
+            alignment: Alignment.center,
+            child: Image.asset(
+              'assets/icons/logo.png',
+              height: 25,
+            )),
+        leadingWidth: 50,
+        leading: IconButton(
+          onPressed: () {
+            if (state == RidingState.before) {
+              Navigator.pop(context);
+            } else {
+              backDialog('안내를 중단하시겠습니까?\n', '안내종료');
+            }
+          },
+          icon: const Icon(Icons.arrow_back),
+          color: const Color.fromRGBO(240, 120, 5, 1),
+        ),
+        elevation: 10,
+      );
 
   void onMapCreated(NaverMapController controller) {
     if (_controller.isCompleted) _controller = Completer();
@@ -346,7 +377,7 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
 
   void setCamera() async {
     final route = ref.watch(navigationProvider.notifier);
-    final position = ref.watch(positionStreamProvider);
+    final position = ref.watch(positionProvider);
     final controller = await _controller.future;
     LatLng start;
     LatLng end;
@@ -355,8 +386,8 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
       end = route.course.last.location;
     } else {
       start = LatLng(
-        position.asData!.value.latitude,
-        position.asData!.value.longitude,
+        position!.latitude,
+        position!.longitude,
       );
       end = route.course.last.location;
     }

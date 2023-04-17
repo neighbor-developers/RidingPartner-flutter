@@ -7,3 +7,14 @@ double calDistance(Position bef, Position aft) {
   const Distance calDistance = Distance();
   return calDistance.as(LengthUnit.Meter, befP, aftP);
 }
+
+double calDistanceForList(List<LatLng> locations) {
+  const Distance calDistance = Distance();
+  double dis = 0;
+
+  for (var i; i++; i < locations.length - 1) {
+    dis + calDistance.as(LengthUnit.Meter, locations[i], locations[i + 1]);
+  }
+
+  return dis;
+}

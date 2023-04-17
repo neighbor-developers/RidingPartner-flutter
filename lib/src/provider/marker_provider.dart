@@ -14,7 +14,7 @@ class MarkerProvider extends StateNotifier<List<Marker>> {
   }
 
   void addMarker(List<Place> places) {
-    addMyLocationMarker();
+    // addMyLocationMarker();
 
     if (places.length > 2) {
       places.removeLast();
