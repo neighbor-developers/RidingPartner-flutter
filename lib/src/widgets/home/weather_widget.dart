@@ -18,6 +18,13 @@ class WeatherWidget extends ConsumerStatefulWidget {
 
 class WeatherWidgetState extends ConsumerState<WeatherWidget> {
   @override
+  void initState() {
+    // TODO: implement initState
+    ref.refresh(weatherProvider);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final weather = ref.watch(weatherProvider);
 

@@ -73,6 +73,12 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
   Completer<NaverMapController> _controller = Completer();
   @override
   void initState() {
+    ref.refresh(ridingStateProvider);
+    ref.refresh(timerProvider);
+    ref.refresh(polylineCoordinatesProvider);
+    ref.refresh(distanceProvider);
+    ref.refresh(recordProvider);
+
     super.initState();
     try {
       setPosition();
@@ -117,6 +123,7 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
     final position = ref.watch(positionStreamProvider);
     final ridingState = ref.watch(ridingStateProvider);
     final polylineCoordinates = ref.watch(polylineCoordinatesProvider);
+    final distance = ref.watch(distanceProvider);
 
     return WillPopScope(
         child: Scaffold(
@@ -202,7 +209,6 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
                                 ref.read(ridingStateProvider.notifier).state =
                                     RidingState.riding;
                                 ref.read(timerProvider.notifier).start();
-                                ref.read(recordProvider.notifier).start();
 
                                 final controller = await _controller.future;
                                 await controller.moveCamera(CameraUpdate
@@ -235,7 +241,12 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
                               ),
                             ),
                           )
-                        : const RecordBoxWidget())
+                        : RecordBoxWidget(
+                            distanceRecord: recordText(
+                              '거리',
+                              "${((distance / 10000).roundToDouble()) * 10}km",
+                            ),
+                          ))
               ],
             )),
         onWillPop: () async {
@@ -287,7 +298,10 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
 class RecordBoxWidget extends ConsumerStatefulWidget {
   const RecordBoxWidget({
     super.key,
+    required this.distanceRecord,
   });
+
+  final Widget distanceRecord;
 
   @override
   RecordBoxWidgetState createState() => RecordBoxWidgetState();
@@ -333,10 +347,7 @@ class RecordBoxWidgetState extends ConsumerState<RecordBoxWidget> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      recordText(
-                        '거리',
-                        "${((distance / 10000).roundToDouble()) * 10}km",
-                      ),
+                      widget.distanceRecord,
                       recordText(
                           '주행 속도',
                           time == 0
@@ -359,16 +370,16 @@ class RecordBoxWidgetState extends ConsumerState<RecordBoxWidget> {
       ),
     );
   }
+}
 
-  Widget recordText(String title, String data) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(title, style: TextStyles.ridingTitleStyle),
-        Text(data, style: TextStyles.ridingDataStyle)
-      ],
-    );
-  }
+Widget recordText(String title, String data) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Text(title, style: TextStyles.ridingTitleStyle),
+      Text(data, style: TextStyles.ridingDataStyle)
+    ],
+  );
 }
 
 class RecordButton extends ConsumerStatefulWidget {
@@ -411,11 +422,6 @@ class RecordButtonState extends ConsumerState<RecordButton> {
               kcal: (550 * (time) / 3600).roundToDouble());
 
           ref.read(recordProvider.notifier).saveData(record, []);
-          ref.refresh(ridingStateProvider);
-          ref.refresh(timerProvider);
-          ref.refresh(polylineCoordinatesProvider);
-          ref.refresh(distanceProvider);
-          ref.refresh(recordProvider);
 
           Navigator.push(
               context,

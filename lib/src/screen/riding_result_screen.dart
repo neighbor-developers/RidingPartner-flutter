@@ -25,7 +25,12 @@ class RidingResultScreen extends ConsumerStatefulWidget {
 class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
   @override
   void initState() {
+    ref.refresh(recordProvider);
+    ref.refresh(imageProvider);
+    ref.refresh(memoProvider);
+
     super.initState();
+
     ref.read(recordProvider.notifier).getData(widget.date);
   }
 
@@ -153,6 +158,8 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
         onPressed: () {
           saveData();
 
+          ref.read(bottomNavigationProvider.notifier).state = 2;
+
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -184,10 +191,6 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
     final recordData = ref.read(recordProvider);
 
     ref.read(recordProvider.notifier).saveData(recordData!, image);
-
-    ref.refresh(recordProvider);
-    ref.refresh(imageProvider);
-    ref.refresh(memoProvider);
   }
 }
 

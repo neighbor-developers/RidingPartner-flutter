@@ -48,19 +48,29 @@ class SightsScreenState extends ConsumerState<SightsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final marker = ref.watch(markerListProvider);
-    return marker.when(
+    final markers = ref.watch(markerListProvider);
+    final placeList = ref.watch(placeListProvider);
+    return markers.when(
         data: (data) {
           return Scaffold(
-            body: NaverMap(
-                onMapCreated: onMapCreated,
-                initialCameraPosition: const CameraPosition(
-                    target: LatLng(37.349741467772, 126.76182486561), zoom: 11),
-                mapType: MapType.Basic,
-                initLocationTrackingMode: LocationTrackingMode.None,
-                locationButtonEnable: true,
-                markers: data),
-          );
+              body: NaverMap(
+            onMapCreated: onMapCreated,
+            initialCameraPosition: const CameraPosition(
+                target: LatLng(37.349741467772, 126.76182486561), zoom: 11),
+            mapType: MapType.Basic,
+            initLocationTrackingMode: LocationTrackingMode.None,
+            locationButtonEnable: true,
+            markers: data
+                .map((e) => Marker(
+                    markerId: e.markerId,
+                    position: e.position,
+                    width: e.width,
+                    height: e.height,
+                    icon: e.icon,
+                    onMarkerTab: (marker, iconSize) =>
+                        onMarkerTap(marker, placeList.asData!.value)))
+                .toList(),
+          ));
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, s) => const Center(child: Text("error")));
@@ -78,7 +88,7 @@ class SightsScreenState extends ConsumerState<SightsScreen> {
     _controller.complete(controller);
   }
 
-  void _onMarkerTap(Marker? marker, List<Place> placeList) {
+  void onMarkerTap(Marker? marker, List<Place> placeList) {
     Place place =
         placeList.where((p) => marker?.markerId == p.title).toList().first;
     routeDialog(place);

@@ -51,6 +51,9 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
   @override
   void initState() {
     super.initState();
+
+    ref.refresh(homeRecordProvider);
+    ref.refresh(tabIndexProvider);
     _tabController = TabController(length: 14, vsync: this, initialIndex: 13);
 
     tab = Get14DaysRecordService().setDate(14);

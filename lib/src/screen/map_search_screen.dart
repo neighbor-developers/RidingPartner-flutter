@@ -90,6 +90,14 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
   void initState() {
     super.initState();
 
+    ref.refresh(searchDestinationPlaceProvider);
+    ref.refresh(searchStartPlaceProvider);
+    ref.refresh(routeProvider);
+    ref.refresh(visibilityProvider);
+    ref.refresh(startPlaceProvider);
+    ref.refresh(destinationPlaceProvider);
+    ref.refresh(polylineProvider);
+
     setStartPlaceMyLocation();
   }
 

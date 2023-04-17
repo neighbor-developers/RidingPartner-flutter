@@ -27,6 +27,13 @@ class RecordListScreen extends ConsumerStatefulWidget {
 
 class RecordListScreenState extends ConsumerState<RecordListScreen> {
   @override
+  void initState() {
+    ref.refresh(recordListProvider);
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     initializeDateFormatting('ko_KR', null);
     // 주행 기록 리스트
