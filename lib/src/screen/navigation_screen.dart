@@ -9,6 +9,7 @@ import 'package:ridingpartner_flutter/src/provider/marker_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/screen/riding_screen.dart';
 import 'package:ridingpartner_flutter/src/utils/navigation_icon.dart';
+import 'package:ridingpartner_flutter/src/widgets/navigation/riding_appbar.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../models/place.dart';
@@ -56,11 +57,15 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
 
   @override
   void initState() {
+    ref.refresh(ridingStateProvider);
+    ref.refresh(timerProvider);
+    ref.refresh(polylineCoordinatesProvider);
+    ref.refresh(distanceProvider);
+    ref.refresh(recordProvider);
+    ref.refresh(positionStreamProvider);
+    ref.refresh(calProvider);
     ref.refresh(navigationProvider);
     ref.refresh(markerProvider);
-    ref.refresh(polylineCoordinatesProvider);
-    ref.refresh(ridingStateProvider);
-    ref.refresh(positionStreamProvider);
 
     super.initState();
 
@@ -107,7 +112,10 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
       case SearchRouteState.success:
         return WillPopScope(
             child: Scaffold(
-                appBar: appBar(ridingState),
+                appBar: RidingAppbar(
+                    state: ridingState,
+                    type: 0,
+                    onTap: backDialog('안내를 중단하시겠습니까?\n', '안내종료')),
                 body: Stack(
                   alignment: Alignment.bottomCenter,
                   children: <Widget>[
@@ -235,32 +243,6 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
           child: Text(text,
               style: TextStyles.descriptionTextStyle,
               textAlign: TextAlign.center)));
-
-  AppBar appBar(RidingState state) => AppBar(
-        shadowColor: const Color.fromRGBO(255, 255, 255, 0.5),
-        backgroundColor: Colors.white,
-        title: Container(
-            padding: const EdgeInsets.fromLTRB(0, 0, 50, 0),
-            width: MediaQuery.of(context).size.width,
-            alignment: Alignment.center,
-            child: Image.asset(
-              'assets/icons/logo.png',
-              height: 25,
-            )),
-        leadingWidth: 50,
-        leading: IconButton(
-          onPressed: () {
-            if (state == RidingState.before) {
-              Navigator.pop(context);
-            } else {
-              backDialog('안내를 중단하시겠습니까?\n', '안내종료');
-            }
-          },
-          icon: const Icon(Icons.arrow_back),
-          color: const Color.fromRGBO(240, 120, 5, 1),
-        ),
-        elevation: 10,
-      );
 
   Future<bool> backDialog(String text, String btnText) async {
     return await showDialog(

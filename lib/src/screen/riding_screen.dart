@@ -17,6 +17,7 @@ import '../models/position_stream.dart';
 import '../models/record.dart';
 import '../provider/record_provider.dart';
 import '../widgets/dialog/riding_cancel_dialog.dart';
+import '../widgets/navigation/riding_appbar.dart';
 
 // 위치 정보 스트림
 final StreamProvider<Position> positionStreamProvider =
@@ -78,7 +79,8 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
     ref.refresh(polylineCoordinatesProvider);
     ref.refresh(distanceProvider);
     ref.refresh(recordProvider);
-
+    ref.refresh(positionStreamProvider);
+    ref.refresh(calProvider);
     super.initState();
     try {
       setPosition();
@@ -107,13 +109,6 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
   void dispose() {
     super.dispose();
     screenKeepOff();
-    ref.invalidate(polylineCoordinatesProvider);
-    ref.invalidate(positionStreamProvider);
-    ref.invalidate(distanceProvider);
-    ref.invalidate(ridingStateProvider);
-    ref.invalidate(calProvider);
-    ref.invalidate(recordProvider);
-    ref.invalidate(timerProvider);
   }
 
   int polylineWidth = 7;
@@ -128,31 +123,10 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
     return WillPopScope(
         child: Scaffold(
             backgroundColor: Colors.white,
-            appBar: AppBar(
-              shadowColor: const Color.fromRGBO(255, 255, 255, 0.5),
-              backgroundColor: Colors.white,
-              title: Container(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 50, 0),
-                  width: MediaQuery.of(context).size.width,
-                  alignment: Alignment.center,
-                  child: Image.asset(
-                    'assets/icons/logo.png',
-                    height: 25,
-                  )),
-              leadingWidth: 50,
-              leading: IconButton(
-                onPressed: () {
-                  if (ridingState == RidingState.before) {
-                    Navigator.pop(context);
-                  } else {
-                    backDialog('주행을 종료하시겠습니까?\n', '주행 종료');
-                  }
-                },
-                icon: const Icon(Icons.arrow_back),
-                color: const Color.fromRGBO(240, 120, 5, 1),
-              ),
-              elevation: 10,
-            ),
+            appBar: RidingAppbar(
+                state: ridingState,
+                type: 0,
+                onTap: backDialog('주행을 종료하시겠습니까?\n', '주행 종료')),
             body: Stack(
               children: <Widget>[
                 NaverMap(
@@ -252,7 +226,6 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
             )),
         onWillPop: () async {
           if (ridingState == RidingState.before) {
-            ref.refresh(ridingStateProvider);
             Navigator.pop(context);
             return true;
           } else {
