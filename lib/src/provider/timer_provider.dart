@@ -8,6 +8,13 @@ class TimerNotifier extends StateNotifier<int> {
   late StreamSubscription<int> _stream;
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    _stream.cancel();
+    super.dispose();
+  }
+
+  @override
   set state(int value) {
     super.state = value;
   }
@@ -26,6 +33,7 @@ class TimerNotifier extends StateNotifier<int> {
 
   void cancel() {
     _stream.cancel();
+    state = 0;
   }
 
   void restart() {

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:ridingpartner_flutter/src/provider/marker_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
@@ -13,10 +12,10 @@ import 'package:wakelock/wakelock.dart';
 
 import '../models/place.dart';
 import '../models/record.dart';
-import '../service/location_service.dart';
 import '../style/palette.dart';
 import '../style/textstyle.dart';
 import '../widgets/dialog/riding_cancel_dialog.dart';
+import '../widgets/text_background.dart';
 
 final navigationProvider = StateNotifierProvider<RouteProvider, NavigationData>(
     (ref) => RouteProvider());
@@ -48,7 +47,6 @@ class NavigationScreen extends ConsumerStatefulWidget {
 }
 
 class NavigationScreenState extends ConsumerState<NavigationScreen> {
-  LocationTrackingMode _locationTrackingMode = LocationTrackingMode.None;
   Completer<NaverMapController> _controller = Completer();
   LatLng initCameraPosition = const LatLng(37.37731944, 126.8050778);
   late String? userProfile;
@@ -65,31 +63,15 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
     ref.refresh(calProvider);
     ref.refresh(navigationProvider);
     ref.refresh(markerProvider);
+    ref.read(positionProvider.notifier).getPosition();
+    setMapComponent();
 
     super.initState();
-
-    try {
-      setPosition();
-    } catch (e) {
-      ref.read(ridingStateProvider.notifier).state = RidingState.error;
-      setPosition();
-    }
-
-    screenKeepOn();
   }
 
-  Future<void> setPosition() async {
-    try {
-      MyLocation().getMyCurrentLocation();
-      Position? position = MyLocation().position;
-      if (position != null) {
-        setMapComponent();
-      } else {
-        throw Exception('위치 정보를 가져올 수 없습니다.');
-      }
-    } catch (e) {
-      rethrow;
-    }
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   setMapComponent() async {
@@ -112,112 +94,101 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
         return WillPopScope(
             child: Scaffold(
                 appBar: appBar(ridingState),
-                body: position != null
-                    ? Stack(
-                        alignment: Alignment.bottomCenter,
-                        children: <Widget>[
-                          NaverMap(
-                            initialCameraPosition: CameraPosition(
-                                target: initCameraPosition, zoom: 10),
-                            onMapCreated: onMapCreated,
-                            pathOverlays: polylinePoints.length > 1
-                                ? {
-                                    PathOverlay(
-                                        PathOverlayId('path'), polylinePoints,
-                                        width: polylineWidth,
-                                        outlineWidth: 0,
-                                        color: const Color.fromARGB(
-                                            0xFF, 0xFB, 0x95, 0x32))
-                                  }
-                                : {},
-                            mapType: MapType.Basic,
-                            initLocationTrackingMode: _locationTrackingMode,
-                            locationButtonEnable: true,
-                            markers: markers,
-                          ),
-                          Positioned(top: 0, child: guideWidget()),
-                          if (ridingState == RidingState.before) ...[
-                            Positioned(
-                                bottom: 0,
-                                child: InkWell(
-                                  onTap: () async {
-                                    try {
-                                      ref
-                                          .read(ridingStateProvider.notifier)
-                                          .state = RidingState.riding;
-                                      ref.read(timerProvider.notifier).start();
+                body: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: <Widget>[
+                    NaverMap(
+                      initialCameraPosition:
+                          CameraPosition(target: initCameraPosition, zoom: 10),
+                      onMapCreated: onMapCreated,
+                      pathOverlays: polylinePoints.length > 1
+                          ? {
+                              PathOverlay(PathOverlayId('path'), polylinePoints,
+                                  width: polylineWidth,
+                                  outlineWidth: 0,
+                                  color: const Color.fromARGB(
+                                      0xFF, 0xFB, 0x95, 0x32))
+                            }
+                          : {},
+                      mapType: MapType.Basic,
+                      initLocationTrackingMode: LocationTrackingMode.None,
+                      locationButtonEnable: true,
+                      markers: markers,
+                    ),
+                    Positioned(top: 0, child: guideWidget()),
+                    if (ridingState == RidingState.before) ...[
+                      Positioned(
+                          bottom: 0,
+                          child: InkWell(
+                            onTap: () async {
+                              try {
+                                screenKeepOn();
+                                ref.read(ridingStateProvider.notifier).state =
+                                    RidingState.riding;
+                                ref.read(timerProvider.notifier).start();
+                                ref
+                                    .read(navigationProvider.notifier)
+                                    .startNav();
 
-                                      final controller =
-                                          await _controller.future;
-                                      await controller.moveCamera(
-                                          CameraUpdate.toCameraPosition(
-                                              CameraPosition(
-                                                  target: LatLng(
-                                                      position.latitude,
-                                                      position.longitude),
-                                                  zoom: 18)));
-                                      controller.setLocationTrackingMode(
-                                          LocationTrackingMode.Face);
-                                    } catch (e) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text('주행을 시작하는 데에 실패했습니다'),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  child: Container(
-                                    color: Palette.appColor,
-                                    alignment: Alignment.center,
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 61,
-                                    child: const Text(
-                                      '주행 시작',
-                                      style: TextStyles.modalButtonTextStyle,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ))
-                          ] else ...[
-                            Positioned(
-                                bottom: 0,
-                                child: RecordBoxWidget(
-                                    distanceRecord: recordText('남은거리',
-                                        "${((ref.watch(navigationProvider.notifier).remainedDistance / 100).roundToDouble()) / 10}km"))),
-                          ],
-
-                          Positioned(
-                            bottom: floatingBtnPosition,
-                            left: 20,
-                            child: FloatingActionButton(
-                              heroTag: 'mypos2',
-                              backgroundColor: Colors.white,
-                              child: const ImageIcon(
-                                  AssetImage(
-                                      'assets/icons/search_myLocation_button.png'),
-                                  color: Color.fromRGBO(240, 120, 5, 1)),
-                              onPressed: () async {
                                 final controller = await _controller.future;
+
                                 await controller.moveCamera(
                                     CameraUpdate.toCameraPosition(
                                         CameraPosition(
-                                            target: LatLng(position.latitude,
+                                            target: LatLng(position!.latitude,
                                                 position.longitude),
                                             zoom: 18)));
+
                                 controller.setLocationTrackingMode(
                                     LocationTrackingMode.Face);
-                              },
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('주행을 시작하는 데에 실패했습니다'),
+                                  ),
+                                );
+                              }
+                            },
+                            child: Container(
+                              color: Palette.appColor,
+                              alignment: Alignment.center,
+                              width: MediaQuery.of(context).size.width,
+                              height: 61,
+                              child: const Text(
+                                '주행 시작',
+                                style: TextStyles.modalButtonTextStyle,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
-                          ),
-                          // changeButton(_navigationProvider.ridingState)
-                        ],
-                      )
-                    : Container(
-                        child: Center(
-                          child: Text('위치를 로드할 수 없습니다.'),
-                        ),
-                      )),
+                          ))
+                    ] else ...[
+                      Positioned(
+                          bottom: 0,
+                          child: RecordBoxWidget(
+                            type: 1,
+                          )),
+                    ],
+
+                    Positioned(
+                      bottom: floatingBtnPosition,
+                      left: 20,
+                      child: FloatingActionButton(
+                        heroTag: 'mypos2',
+                        backgroundColor: Colors.white,
+                        child: const ImageIcon(
+                            AssetImage(
+                                'assets/icons/search_myLocation_button.png'),
+                            color: Color.fromRGBO(240, 120, 5, 1)),
+                        onPressed: () async {
+                          final controller = await _controller.future;
+                          controller.setLocationTrackingMode(
+                              LocationTrackingMode.Face);
+                        },
+                      ),
+                    ),
+                    // changeButton(_navigationProvider.ridingState)
+                  ],
+                )),
             onWillPop: () async {
               if (ridingState == RidingState.before) {
                 Navigator.pop(context);
@@ -227,27 +198,18 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
               }
             });
       case SearchRouteState.loading:
-        return textContainer('경로를 검색중입니다');
+        return loadingBackground('경로 검색중');
       case SearchRouteState.empty:
-        return textContainer('원하는 경로가 없어요!\n다시 검색해주세요');
+        return errorBackground('원하는 경로가 없어요!\n다시 검색해주세요');
       case SearchRouteState.fail:
-        return textContainer('경로를 불러오는데에 실패했습니다\n네트워크 상태를 체크해주세요');
+        return errorBackground('경로를 불러오는데에 실패했습니다\n네트워크 상태를 체크해주세요');
       case SearchRouteState.locationFail:
-        return textContainer('GPS 상태가 원활하지 않습니다.');
+        return errorBackground('GPS 상태가 원활하지 않습니다.');
 
       default:
-        return textContainer('loading...');
+        return loadingBackground('경로 검색중');
     }
   }
-
-  Widget textContainer(String text) => Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      color: Colors.white,
-      child: Center(
-          child: Text(text,
-              style: TextStyles.descriptionTextStyle,
-              textAlign: TextAlign.center)));
 
   Future<bool> backDialog(String text, String btnText) async {
     return await showDialog(
@@ -387,7 +349,7 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
     } else {
       start = LatLng(
         position!.latitude,
-        position!.longitude,
+        position.longitude,
       );
       end = route.course.last.location;
     }
