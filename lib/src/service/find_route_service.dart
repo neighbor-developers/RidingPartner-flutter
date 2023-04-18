@@ -13,11 +13,10 @@ class FindRouteService {
   final kakaoKey = dotenv.env['KAKAO_REST_API_KEY'];
 
   Future<String> getMyLocationAddress() async {
-    final myLocation = MyLocation();
-    myLocation.getMyCurrentLocation();
-    if (myLocation.position == null) return '';
-    final lat = myLocation.position!.latitude;
-    final lon = myLocation.position!.longitude;
+    final position = MyLocation().position;
+    if (position == null) return '';
+    final lat = position.latitude;
+    final lon = position.longitude;
     final url =
         "https://dapi.kakao.com/v2/local/geo/coord2address.json?x=$lon&y=$lat&input_coord=WGS84";
     Map<String, String> requestHeaders = {'Authorization': 'KakaoAK $kakaoKey'};

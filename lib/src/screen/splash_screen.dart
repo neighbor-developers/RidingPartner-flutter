@@ -105,7 +105,6 @@ class SplashScreenState extends ConsumerState<SplashScreen> {
       Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_SHORT);
 
   void toMainScreen() {
-    MyLocation();
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => BottomNavigation()),

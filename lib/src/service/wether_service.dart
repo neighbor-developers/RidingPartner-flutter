@@ -1,4 +1,5 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:ridingpartner_flutter/src/network/network_helper.dart';
 import 'package:ridingpartner_flutter/src/service/location_service.dart';
 
@@ -9,17 +10,13 @@ class OpenWeatherService {
   final String _apiKey = dotenv.env['openWeatherApiKey']!;
   final String _baseUrl = dotenv.env['openWeatherApiBaseUrl']!;
 
-  Future<Weather> getWeather() async {
-    MyLocation myLocation = MyLocation();
+  Position? _position;
 
-    try {
-      await myLocation.getMyCurrentLocation().timeout(Duration(seconds: 3));
-    } catch (e) {
-      print(e);
-    }
+  Future<Weather> getWeather() async {
+    _position = MyLocation().position;
 
     final result = await NetworkHelper().getData(
-        '$_baseUrl?lat=${myLocation.position?.latitude}&lon=${myLocation.position?.longitude}&appid=$_apiKey&units=metric');
+        '$_baseUrl?lat=${_position?.latitude}&lon=${_position?.longitude}&appid=$_apiKey&units=metric');
 
     final weatherData = result.response;
     Weather weather = Weather();

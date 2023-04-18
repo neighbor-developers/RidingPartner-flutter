@@ -7,7 +7,7 @@ class RouteBottomModal extends StatelessWidget {
   const RouteBottomModal({super.key, required this.route, required this.onTap});
 
   final RidingRoute route;
-  final onTap;
+  final Function() onTap;
 
   @override
   Widget build(BuildContext context) {
