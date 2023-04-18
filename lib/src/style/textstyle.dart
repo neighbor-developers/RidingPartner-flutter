@@ -200,7 +200,7 @@ class TextStyles {
       fontSize: 16);
 
   static const TextStyle descriptionTextStyle = TextStyle(
-      fontSize: 18,
+      fontSize: 17,
       fontFamily: 'Pretendard',
       fontWeight: FontWeight.w500,
       fontStyle: FontStyle.normal,

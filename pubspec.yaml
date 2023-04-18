@@ -77,6 +77,8 @@ dependencies:
   flutter_naver_map: ^0.10.6
   flutter_riverpod: ^2.3.4
 
+  lottie: ^2.3.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
