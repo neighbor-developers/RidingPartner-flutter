@@ -1,5 +1,4 @@
-
-
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 
 class MyLocation {
@@ -10,12 +9,12 @@ class MyLocation {
     return _instance;
   }
 
-  initLocation() async {
+  init() async {
     await checkPermission();
   }
 
   MyLocation._internal() {
-    initLocation();
+    init();
   }
 
   Future<void> checkPermission() async {
@@ -43,13 +42,14 @@ class MyLocation {
     }
   }
 
-  Future<void> getMyCurrentLocation() async {
+  Future<Position?> getMyCurrentLocation() async {
     try {
       position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
+
+      return position;
     } catch (e) {
-      position = await Geolocator.getLastKnownPosition()
-          .timeout(Duration(seconds: 3), onTimeout: () => position = null);
+      return null;
     }
   }
 }

@@ -34,7 +34,7 @@ class BottomNavigation extends ConsumerWidget {
       ),
       body: SafeArea(
         child: [
-          SightsScreen(),
+          const SightsScreen(),
           const RecommendedRouteScreen(),
           const HomeScreen(),
           const MapSearchScreen(),

@@ -20,8 +20,15 @@ class WeatherWidgetState extends ConsumerState<WeatherWidget> {
   @override
   void initState() {
     // TODO: implement initState
-    ref.refresh(weatherProvider);
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    ref.invalidate(weatherProvider);
+    super.dispose();
   }
 
   @override
@@ -76,7 +83,7 @@ class WeatherWidgetState extends ConsumerState<WeatherWidget> {
             child: Container(
                 padding: const EdgeInsets.all(12),
                 child: const Text(
-                  '날씨를 불러오지 못했습니다,',
+                  '날씨를 불러오지 못했습니다.',
                   style: TextStyles.weatherTextStyle,
                 ))));
   }

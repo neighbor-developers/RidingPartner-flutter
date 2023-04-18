@@ -25,10 +25,6 @@ class RidingResultScreen extends ConsumerStatefulWidget {
 class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
   @override
   void initState() {
-    ref.refresh(recordProvider);
-    ref.refresh(imageProvider);
-    ref.refresh(memoProvider);
-
     super.initState();
 
     ref.read(recordProvider.notifier).getData(widget.date);

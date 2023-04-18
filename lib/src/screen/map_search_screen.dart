@@ -56,10 +56,10 @@ final polylineProvider = StateProvider.autoDispose<List<LatLng>>((ref) {
             .toList();
         List<LatLng> pointLatLngs = [];
 
-        turnPoints.forEach((element) {
+        for (var element in turnPoints) {
           List<String> a = element.location.split(',');
           pointLatLngs.add(LatLng(double.parse(a[1]), double.parse(a[0])));
-        });
+        }
 
         return pointLatLngs;
       },

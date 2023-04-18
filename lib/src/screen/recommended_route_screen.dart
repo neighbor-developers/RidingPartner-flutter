@@ -144,12 +144,14 @@ class RouteGridWidgetState extends ConsumerState<RouteGridWidget> {
         .toList();
 
     if (!mounted) return;
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => NavigationScreen(
-            places: placeList,
-          ),
-        ));
+    toNavigationScreen(placeList);
   }
+
+  void toNavigationScreen(List<Place> placeList) => Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NavigationScreen(
+          places: placeList,
+        ),
+      ));
 }

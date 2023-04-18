@@ -20,12 +20,10 @@ class NaverMapService {
   Future<List<Place>> getPlaces(String title) async {
     try {
       var place = <Place>[];
-      final myLocation = MyLocation(); // 자신의 위치를 기반으로 위치 검색
-      await myLocation.getMyCurrentLocation();
+      final position = MyLocation().position; // 자신의 위치를 기반으로 위치 검색
 
       final Map<String, String> queryParams = {
-        'coords':
-            '${myLocation.position!.latitude},${myLocation.position!.longitude}',
+        'coords': '${position!.latitude},${position!.longitude}',
         'query': title,
       };
 
