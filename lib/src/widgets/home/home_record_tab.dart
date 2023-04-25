@@ -223,7 +223,7 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
     } else {
       Data distance = Data(
           '거리',
-          '${((record.distance / 10).roundToDouble()) / 100}km',
+          '${(record.distance / 1000).toStringAsFixed(1)}km',
           'assets/icons/home_distance.png');
       Data time = Data('시간', timestampToText(record.timestamp, 0),
           'assets/icons/home_time.png');
@@ -232,8 +232,11 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
       try {
         speed = Data(
             '평균 속도',
-            '${((record.distance / 1000 / record.timestamp / 3600 * 10).toInt()) / 10}km/h',
+            '${(record.distance / record.timestamp * 3.6).toStringAsFixed(1)}km/h',
             'assets/icons/home_speed.png');
+        if (speed.data == 'NaNkm/h') {
+          speed = Data('평균 속도', '0km/h', 'assets/icons/home_speed.png');
+        }
       } catch (e) {
         speed = Data('평균 속도', '0km/h', 'assets/icons/home_speed.png');
       }
