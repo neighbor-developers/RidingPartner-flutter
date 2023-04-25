@@ -150,7 +150,9 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
                                 controller.setLocationTrackingMode(
                                     LocationTrackingMode.Face);
                               } catch (e) {
-                                print(e);
+                                ref.read(ridingStateProvider.notifier).state =
+                                    RidingState.before;
+                                ref.read(timerProvider.notifier).cancel();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('주행을 시작하는 데에 실패했습니다'),
