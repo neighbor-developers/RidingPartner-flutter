@@ -5,12 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class TimerNotifier extends StateNotifier<int> {
   TimerNotifier() : super(0);
 
-  late StreamSubscription<int> _stream;
+  StreamSubscription<int>? _stream;
 
   @override
   void dispose() {
     // TODO: implement dispose
-    _stream.cancel();
+    _stream?.cancel();
     super.dispose();
   }
 
@@ -28,15 +28,15 @@ class TimerNotifier extends StateNotifier<int> {
   }
 
   void pause() {
-    _stream.pause();
+    _stream?.pause();
   }
 
   void cancel() {
-    _stream.cancel();
+    _stream?.cancel();
     state = 0;
   }
 
   void restart() {
-    _stream.resume();
+    _stream?.resume();
   }
 }

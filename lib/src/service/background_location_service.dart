@@ -7,19 +7,23 @@ import 'package:geolocator/geolocator.dart';
 class BackgroundLocationService {
   static final BackgroundLocationService _instance =
       BackgroundLocationService._internal();
-  StreamController<Position> _controller =
-      StreamController<Position>.broadcast();
 
   late LocationSettings _locationSettings;
 
   static const int DISTANCE = 30;
   static const int DURATION_SECNOD = 2;
 
+  Stream<Position>? positionStream;
+
   factory BackgroundLocationService() {
     return _instance;
   }
 
   BackgroundLocationService._internal() {
+    setlocationSettings();
+  }
+
+  void setlocationSettings() {
     if (defaultTargetPlatform == TargetPlatform.android) {
       _locationSettings = AndroidSettings(
           accuracy: LocationAccuracy.high,
@@ -50,7 +54,7 @@ class BackgroundLocationService {
     }
   }
 
-  Stream<Position> position() {
-    return Geolocator.getPositionStream();
+  setStream() {
+    positionStream = Geolocator.getPositionStream();
   }
 }

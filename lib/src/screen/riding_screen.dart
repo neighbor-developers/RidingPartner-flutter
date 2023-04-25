@@ -22,32 +22,11 @@ import 'package:latlong2/latlong.dart' as cal;
 final positionProvider = StateNotifierProvider<PositionProvider, Position?>(
     (ref) => PositionProvider());
 
-// 주행 거리 provider
-final distanceProvider = StateProvider.autoDispose<double>((ref) {
-  final points = ref.watch(pointProvider);
-  return calDistanceForList(points);
-});
-
-final pointProvider = StateProvider<List<cal.LatLng>>((ref) => []);
-final polylineCoordinatesProvider = StateProvider<List<LatLng>>((ref) => []);
-// 거리 계산 provider
-final calProvider = Provider((ref) {
-  final state = ref.watch(ridingStateProvider);
-  final position = ref.watch(positionProvider);
-  if (state == RidingState.riding && position != null) {
-    var list = ref.read(pointProvider);
-    list.add(cal.LatLng(position.latitude, position.longitude));
-
-    ref.read(pointProvider.notifier).state = list;
-
-    var polylist = ref.read(polylineCoordinatesProvider);
-    polylist.add(LatLng(position.latitude, position.longitude));
-    ref.read(polylineCoordinatesProvider.notifier).state = polylist;
-  }
-});
-
 // 주행 상태 provider
 final ridingStateProvider = StateProvider((ref) => RidingState.before);
+
+// 주행 거리 provider
+final distanceProvider = StateProvider.autoDispose<double>((ref) => 0);
 
 final recordProvider =
     StateNotifierProvider.autoDispose<RecordProvider, Record?>(
@@ -65,19 +44,18 @@ class RidingScreen extends ConsumerStatefulWidget {
 
 class RidingScreenState extends ConsumerState<RidingScreen> {
   final LocationTrackingMode _locationTrackingMode = LocationTrackingMode.Face;
-  late List<Marker> _markers = [];
-  late OverlayImage _markerIcon;
+  late final List<Marker> _markers = [];
   Completer<NaverMapController> _controller = Completer();
+  final List<LatLng> _polylineCoordinates = [];
+  final List<cal.LatLng> _calPoints = [];
 
   @override
   void initState() {
     ref.refresh(ridingStateProvider);
     ref.refresh(timerProvider);
-    ref.refresh(polylineCoordinatesProvider);
     ref.refresh(distanceProvider);
     ref.refresh(recordProvider);
     ref.refresh(positionProvider);
-    ref.refresh(calProvider);
 
     ref.read(positionProvider.notifier).getPosition();
 
@@ -96,8 +74,16 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
   Widget build(BuildContext context) {
     final position = ref.watch(positionProvider);
     final ridingState = ref.watch(ridingStateProvider);
-    final polylineCoordinates = ref.watch(polylineCoordinatesProvider);
-    final distance = ref.watch(distanceProvider);
+
+    if (ridingState == RidingState.riding && position != null) {
+      _polylineCoordinates.add(LatLng(position.latitude, position.longitude));
+
+      _calPoints.add(cal.LatLng(position.latitude, position.longitude));
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(distanceProvider.notifier).state =
+            calDistanceForList(_calPoints);
+      });
+    }
 
     return WillPopScope(
         child: Scaffold(
@@ -107,10 +93,10 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
               children: <Widget>[
                 NaverMap(
                   onMapCreated: onMapCreated,
-                  pathOverlays: polylineCoordinates.length > 1
+                  pathOverlays: _polylineCoordinates.length > 1
                       ? {
                           PathOverlay(
-                              PathOverlayId('path'), polylineCoordinates,
+                              PathOverlayId('path'), _polylineCoordinates,
                               width: polylineWidth,
                               outlineWidth: 0,
                               color:
@@ -164,6 +150,7 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
                                 controller.setLocationTrackingMode(
                                     LocationTrackingMode.Face);
                               } catch (e) {
+                                print(e);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('주행을 시작하는 데에 실패했습니다'),
@@ -183,7 +170,7 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
                               ),
                             ),
                           )
-                        : RecordBoxWidget(
+                        : const RecordBoxWidget(
                             type: 0,
                           ))
               ],
@@ -276,8 +263,6 @@ class RecordBoxWidgetState extends ConsumerState<RecordBoxWidget> {
   @override
   Widget build(BuildContext context) {
     final distance = ref.watch(distanceProvider);
-    // final remainDistance =
-    //     ref.watch(navigationProvider.notifier).remainedDistance;
     final time = ref.watch(timerProvider);
 
     return Container(
@@ -318,12 +303,12 @@ class RecordBoxWidgetState extends ConsumerState<RecordBoxWidget> {
                           widget.type == 1
                               // ? "${((remainDistance / 100).roundToDouble()) / 10}km"
                               ? ''
-                              : "${((distance / 10000).roundToDouble()) * 10}km"),
+                              : "${(distance / 1000).toStringAsFixed(1)}km"),
                       recordText(
                           '주행 속도',
                           time == 0
                               ? '0.0km/h'
-                              : "${distance / time * 3600}km/h"),
+                              : "${(distance / time * 3.6).toStringAsFixed(1)}km/h"),
                       recordText('주행 시간', timestampToText(time, 1)),
                       IconButton(
                         onPressed: () => setState(() {

@@ -12,8 +12,8 @@ double calDistanceForList(List<LatLng> locations) {
   const Distance calDistance = Distance();
   double dis = 0;
 
-  for (var i; i++; i < locations.length - 1) {
-    dis + calDistance.as(LengthUnit.Meter, locations[i], locations[i + 1]);
+  for (var i = 0; i < locations.length - 1; i++) {
+    dis += calDistance.as(LengthUnit.Meter, locations[i], locations[i + 1]);
   }
 
   return dis;

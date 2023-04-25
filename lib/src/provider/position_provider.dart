@@ -17,12 +17,13 @@ class PositionProvider extends StateNotifier<Position?> {
 
   @override
   set state(Position? value) {
-    // TODO: implement state
     super.state = value;
   }
 
   void getPosition() {
-    _positionStream = BackgroundLocationService().position().listen((event) {
+    BackgroundLocationService().setStream();
+    _positionStream =
+        BackgroundLocationService().positionStream?.listen((event) {
       state = event;
     });
   }
