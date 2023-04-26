@@ -59,20 +59,29 @@ class Get14DaysRecordService {
       ));
     }
     DateTime today = DateTime.now();
-    int count = 0;
 
     for (var element in records) {
       int days = int.parse(
           today.difference(DateTime.parse(element.date)).inDays.toString());
       if (days < 14) {
-        count++;
         // 14일 이내이면 그 자리에 넣기
         if (days == 0) {
           if (DateTime.parse(element.date).day != today.day) {
             days = 1;
           }
         }
-        recordFor14Days[days] = element;
+        if (recordFor14Days[days] !=
+            Record(
+              distance: 0.0,
+              date: '',
+              timestamp: 0,
+            )) {
+          if (recordFor14Days[days].distance < element.distance) {
+            recordFor14Days[days] = element;
+          }
+        } else {
+          recordFor14Days[days] = element;
+        }
         // 30, 31, 1, 2, 3 ~ 으로 흐를 경우 날짜 순서를 구분하기 위해 map과 리스트 동시 사용
         // 순서는 리스트로, 기록은 Map으로
       }
