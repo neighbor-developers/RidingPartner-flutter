@@ -18,6 +18,8 @@ import '../provider/record_provider.dart';
 import '../widgets/dialog/riding_cancel_dialog.dart';
 import 'package:latlong2/latlong.dart' as cal;
 
+import 'navigation_screen.dart';
+
 // 위치 정보 스트림
 final positionProvider = StateNotifierProvider<PositionProvider, Position?>(
     (ref) => PositionProvider());
@@ -266,6 +268,7 @@ class RecordBoxWidgetState extends ConsumerState<RecordBoxWidget> {
   Widget build(BuildContext context) {
     final distance = ref.watch(distanceProvider);
     final time = ref.watch(timerProvider);
+    final remain = ref.watch(remainDistanceProvider);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
@@ -303,11 +306,10 @@ class RecordBoxWidgetState extends ConsumerState<RecordBoxWidget> {
                       recordText(
                           widget.type == 1 ? '남은거리' : '거리',
                           widget.type == 1
-                              // ? "${((remainDistance / 100).roundToDouble()) / 10}km"
-                              ? ''
+                              ? '${(remain / 1000).toStringAsFixed(1)}km'
                               : "${(distance / 1000).toStringAsFixed(1)}km"),
                       recordText(
-                          '주행 속도',
+                          '평균 속도',
                           time == 0
                               ? '0.0km/h'
                               : "${(distance / time * 3.6).toStringAsFixed(1)}km/h"),
@@ -330,13 +332,22 @@ class RecordBoxWidgetState extends ConsumerState<RecordBoxWidget> {
   }
 
   Widget recordText(String title, String data) {
-    return Column(
+    return Flexible(
+        child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(title, style: TextStyles.ridingTitleStyle),
-        Text(data, style: TextStyles.ridingDataStyle)
+        Text(
+          title,
+          style: TextStyles.ridingTitleStyle,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        Text(data,
+            style: TextStyles.ridingDataStyle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis)
       ],
-    );
+    ));
   }
 }
 
