@@ -3,13 +3,10 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:ridingpartner_flutter/src/screen/navigation_screen.dart';
 import 'package:ridingpartner_flutter/src/service/background_location_service.dart';
 
 import '../models/place.dart';
-import '../models/record.dart';
 import '../models/route.dart';
-import '../screen/riding_screen.dart';
 import '../service/find_route_service.dart';
 import '../service/naver_map_service.dart';
 import '../utils/latlng_from_guide.dart';

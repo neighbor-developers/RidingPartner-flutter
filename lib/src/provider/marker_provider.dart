@@ -1,4 +1,3 @@
-import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ridingpartner_flutter/src/models/place.dart';
 

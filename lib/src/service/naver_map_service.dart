@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:ridingpartner_flutter/src/service/location_service.dart';
 
@@ -23,7 +22,7 @@ class NaverMapService {
       final position = MyLocation().position; // 자신의 위치를 기반으로 위치 검색
 
       final Map<String, String> queryParams = {
-        'coords': '${position!.latitude},${position!.longitude}',
+        'coords': '${position!.latitude},${position.longitude}',
         'query': title,
       };
 

@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,7 +26,7 @@ class RecommendPlaceWidgetState extends ConsumerState<RecommendPlaceWidget> {
       data: (data) {
         return Column(
           children: [
-            recommendPlaceText(data[0].title!),
+            recommendPlaceText(data[0].title),
             Container(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: Row(children: [

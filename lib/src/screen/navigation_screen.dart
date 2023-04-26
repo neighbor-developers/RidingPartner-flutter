@@ -76,6 +76,7 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
 
   @override
   void dispose() {
+    ref.refresh(markerProvider);
     super.dispose();
   }
 

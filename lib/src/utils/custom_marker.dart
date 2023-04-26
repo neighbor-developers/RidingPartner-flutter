@@ -1,12 +1,6 @@
-import 'dart:developer';
-import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:file/src/interface/file.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 
 class CustomMarker {
   // 마커 asset 아이콘으로 넣기, width로 사이즈 조절

@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ridingpartner_flutter/src/screen/bottom_nav.dart';
 import 'package:ridingpartner_flutter/src/provider/auth_provider.dart';
-import 'package:ridingpartner_flutter/src/service/location_service.dart';
 import 'package:ridingpartner_flutter/src/widgets/dialog/permission_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -121,7 +120,7 @@ class SplashScreenState extends ConsumerState<SplashScreen> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({super.key});
+  const _Header();
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +135,7 @@ class _Header extends StatelessWidget {
 }
 
 class _Footer extends StatelessWidget {
-  const _Footer({super.key});
+  const _Footer();
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +174,7 @@ class _Footer extends StatelessWidget {
 }
 
 class _Body extends ConsumerWidget {
-  const _Body({super.key});
+  const _Body();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

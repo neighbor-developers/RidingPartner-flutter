@@ -40,7 +40,7 @@ class SearchListWidgetState extends ConsumerState<SearchListWidget> {
                       const ImageIcon(
                           AssetImage('assets/icons/search_marker.png'),
                           size: 18),
-                      highlightedText("  ${widget.list[index].title!}",
+                      highlightedText("  ${widget.list[index].title}",
                           widget.textController.text, "title"),
                     ],
                   ),

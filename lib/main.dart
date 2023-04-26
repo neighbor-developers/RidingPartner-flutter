@@ -6,7 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ridingpartner_flutter/src/network/network_helper.dart';
 import 'package:ridingpartner_flutter/src/screen/splash_screen.dart';
-import 'package:ridingpartner_flutter/src/service/location_service.dart';
 import 'package:ridingpartner_flutter/src/utils/http_override.dart';
 import 'package:stack_trace/stack_trace.dart' as stack_trace;
 

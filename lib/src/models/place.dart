@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter_naver_map/flutter_naver_map.dart';
 
 class Place {
   String id;
@@ -243,8 +242,8 @@ class Review {
 
 class All {
   NaverPlace? place;
-  Null? address;
-  Null? bus;
+  Null address;
+  Null bus;
 
   All({this.place, this.address, this.bus});
 
