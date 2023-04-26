@@ -89,16 +89,14 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
   @override
   void initState() {
     super.initState();
-
-    ref.refresh(searchDestinationPlaceProvider);
-    ref.refresh(searchStartPlaceProvider);
-    ref.refresh(routeProvider);
-    ref.refresh(visibilityProvider);
-    ref.refresh(startPlaceProvider);
-    ref.refresh(destinationPlaceProvider);
-    ref.refresh(polylineProvider);
-
     setStartPlaceMyLocation();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _destinationTextController.clear();
+    _startTextController.clear();
   }
 
   void setStartPlaceMyLocation() async {
@@ -107,13 +105,6 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
     Place myLocation = result[0];
     ref.read(startPlaceProvider.notifier).state = myLocation;
     _startTextController.text = "현재 위치: ${myLocation.title}";
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _destinationTextController.clear();
-    _startTextController.clear();
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -227,6 +218,7 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
                 bottom: buttonsPositionAlpha + 120,
                 left: 20,
                 child: FloatingActionButton(
+                  heroTag: 'search',
                   backgroundColor: Colors.white,
                   child: const ImageIcon(AssetImage('assets/icons/search.png'),
                       color: Palette.orangeColor),

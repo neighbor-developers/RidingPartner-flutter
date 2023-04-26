@@ -28,11 +28,10 @@ final positionProvider = StateNotifierProvider<PositionProvider, Position?>(
 final ridingStateProvider = StateProvider((ref) => RidingState.before);
 
 // 주행 거리 provider
-final distanceProvider = StateProvider.autoDispose<double>((ref) => 0);
+final distanceProvider = StateProvider<double>((ref) => 0);
 
 final recordProvider =
-    StateNotifierProvider.autoDispose<RecordProvider, Record?>(
-        (ref) => RecordProvider());
+    StateNotifierProvider<RecordProvider, Record?>((ref) => RecordProvider());
 
 final timerProvider =
     StateNotifierProvider<TimerNotifier, int>((ref) => TimerNotifier());
@@ -50,14 +49,16 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
   Completer<NaverMapController> _controller = Completer();
   final List<LatLng> _polylineCoordinates = [];
   final List<cal.LatLng> _calPoints = [];
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
-    ref.refresh(ridingStateProvider);
-    ref.refresh(timerProvider);
-    ref.refresh(distanceProvider);
-    ref.refresh(recordProvider);
-    ref.refresh(positionProvider);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.refresh(timerProvider);
+      ref.refresh(ridingStateProvider);
+      ref.refresh(recordProvider);
+      ref.refresh(distanceProvider);
+    });
 
     ref.read(positionProvider.notifier).getPosition();
 
@@ -66,8 +67,8 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     screenKeepOff();
+    super.dispose();
   }
 
   int polylineWidth = 7;
@@ -89,6 +90,7 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
 
     return WillPopScope(
         child: Scaffold(
+            key: _scaffoldKey,
             backgroundColor: Colors.white,
             appBar: appBar(ridingState),
             body: Stack(
@@ -174,8 +176,10 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
                               ),
                             ),
                           )
-                        : const RecordBoxWidget(
+                        : RecordBoxWidget(
                             type: 0,
+                            onStop: () {},
+                            onResume: () {},
                           ))
               ],
             )),
@@ -196,7 +200,7 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
 
   Future<bool> backDialog(String text, String btnText) async {
     return await showDialog(
-        context: context,
+        context: _scaffoldKey.currentContext!,
         barrierDismissible: false,
         useRootNavigator: false,
         builder: (BuildContext context) => RidingCancelDialog(
@@ -254,9 +258,13 @@ class RecordBoxWidget extends ConsumerStatefulWidget {
   const RecordBoxWidget({
     super.key,
     required this.type,
+    required this.onStop,
+    required this.onResume,
   });
 
   final int type;
+  final Function() onStop;
+  final Function() onResume;
 
   @override
   RecordBoxWidgetState createState() => RecordBoxWidgetState();
@@ -264,6 +272,7 @@ class RecordBoxWidget extends ConsumerStatefulWidget {
 
 class RecordBoxWidgetState extends ConsumerState<RecordBoxWidget> {
   bool visible = false;
+
   @override
   Widget build(BuildContext context) {
     final distance = ref.watch(distanceProvider);
@@ -276,11 +285,14 @@ class RecordBoxWidgetState extends ConsumerState<RecordBoxWidget> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (visible) ...[
-            RecordButton(changeVisible: () {
-              setState(() {
-                visible = !visible;
-              });
-            })
+            RecordButton(
+                changeVisible: () {
+                  setState(() {
+                    visible = !visible;
+                  });
+                },
+                onStop: widget.onStop,
+                onResume: widget.onResume),
           ],
           Container(
               alignment: Alignment.center,
@@ -352,9 +364,15 @@ class RecordBoxWidgetState extends ConsumerState<RecordBoxWidget> {
 }
 
 class RecordButton extends ConsumerStatefulWidget {
-  const RecordButton({super.key, required this.changeVisible});
+  const RecordButton(
+      {super.key,
+      required this.changeVisible,
+      required this.onStop,
+      required this.onResume});
 
   final Function changeVisible;
+  final Function() onStop;
+  final Function() onResume;
 
   @override
   RecordButtonState createState() => RecordButtonState();
@@ -372,12 +390,14 @@ class RecordButtonState extends ConsumerState<RecordButton> {
         if (ridingState == RidingState.riding) ...[
           ridingFloatingButton(() {
             widget.changeVisible();
+            widget.onStop();
             ref.read(timerProvider.notifier).pause();
             ref.read(ridingStateProvider.notifier).state = RidingState.pause;
           }, '일시중지')
         ] else ...[
           ridingFloatingButton(() {
             widget.changeVisible();
+            widget.onResume();
             ref.read(ridingStateProvider.notifier).state = RidingState.riding;
             ref.read(timerProvider.notifier).restart();
           }, '이어서 주행')
@@ -391,6 +411,7 @@ class RecordButtonState extends ConsumerState<RecordButton> {
               kcal: (550 * (time) / 3600).roundToDouble());
 
           ref.read(recordProvider.notifier).saveData(record, []);
+          widget.onStop();
 
           Navigator.push(
               context,

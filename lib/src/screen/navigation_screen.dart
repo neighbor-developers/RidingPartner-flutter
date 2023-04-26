@@ -9,16 +9,19 @@ import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/screen/riding_screen.dart';
 import 'package:ridingpartner_flutter/src/utils/navigation_icon.dart';
 import 'package:wakelock/wakelock.dart';
+import 'package:latlong2/latlong.dart' as cal;
 
 import '../models/place.dart';
 import '../models/record.dart';
 import '../style/palette.dart';
 import '../style/textstyle.dart';
+import '../utils/cal_distance.dart';
 import '../widgets/dialog/riding_cancel_dialog.dart';
 import '../widgets/text_background.dart';
 
 final navigationProvider = StateNotifierProvider<RouteProvider, NavigationData>(
     (ref) => RouteProvider());
+
 final markerProvider = StateNotifierProvider<MarkerProvider, List<Marker>>(
     (ref) => MarkerProvider());
 
@@ -37,6 +40,8 @@ final polylineCoordinatesProvider = StateProvider<List<LatLng>>((ref) {
   return pointLatLngs;
 });
 
+final remainDistanceProvider = StateProvider<double>((ref) => 0.0);
+
 class NavigationScreen extends ConsumerStatefulWidget {
   const NavigationScreen({super.key, required this.places});
 
@@ -51,19 +56,19 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
   LatLng initCameraPosition = const LatLng(37.37731944, 126.8050778);
   late String? userProfile;
   double floatingBtnPosition = 140;
+  final List<cal.LatLng> _calPoints = [];
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
-    ref.refresh(ridingStateProvider);
-    ref.refresh(timerProvider);
-    ref.refresh(polylineCoordinatesProvider);
-    ref.refresh(distanceProvider);
-    ref.refresh(recordProvider);
-    ref.refresh(pointProvider);
-    ref.refresh(calProvider);
-    ref.refresh(navigationProvider);
-    ref.refresh(markerProvider);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.refresh(timerProvider);
+      ref.refresh(ridingStateProvider);
+      ref.refresh(recordProvider);
+      ref.refresh(distanceProvider);
+    });
     ref.read(positionProvider.notifier).getPosition();
+
     setMapComponent();
 
     super.initState();
@@ -89,10 +94,22 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
     final markers = ref.watch(markerProvider);
     final polylinePoints = ref.watch(polylineCoordinatesProvider);
 
+    if (ridingState == RidingState.riding && position != null) {
+      _calPoints.add(cal.LatLng(position.latitude, position.longitude));
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        int sumDistance = ref.read(navigationProvider).sumDistance;
+        ref.read(remainDistanceProvider.notifier).state =
+            sumDistance - calDistanceForList(_calPoints);
+        ref.read(distanceProvider.notifier).state =
+            calDistanceForList(_calPoints);
+      });
+    }
+
     switch (navigation.state) {
       case SearchRouteState.success:
         return WillPopScope(
             child: Scaffold(
+                key: _scaffoldKey,
                 appBar: appBar(ridingState),
                 body: Stack(
                   alignment: Alignment.bottomCenter,
@@ -166,6 +183,12 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
                           bottom: 0,
                           child: RecordBoxWidget(
                             type: 1,
+                            onStop: () {
+                              ref.read(navigationProvider.notifier).stopNav();
+                            },
+                            onResume: () {
+                              ref.read(navigationProvider.notifier).startNav();
+                            },
                           )),
                     ],
 
@@ -213,7 +236,7 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
 
   Future<bool> backDialog(String text, String btnText) async {
     return await showDialog(
-        context: context,
+        context: _scaffoldKey.currentContext!,
         barrierDismissible: false,
         useRootNavigator: false,
         builder: (BuildContext context) => RidingCancelDialog(
@@ -272,6 +295,7 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
             margin: const EdgeInsets.all(20),
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
             alignment: Alignment.center,
+            height: MediaQuery.of(context).size.height * 0.1,
             decoration: const BoxDecoration(
               boxShadow: [
                 BoxShadow(
@@ -287,15 +311,23 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(iconRoute,
-                    width: 55, height: 55, fit: BoxFit.cover),
+                    width: MediaQuery.of(context).size.height * 0.1 - 34,
+                    height: MediaQuery.of(context).size.height * 0.1 - 34,
+                    fit: BoxFit.fitHeight),
                 const SizedBox(
                   width: 10,
                 ),
                 Text(
-                  route.guides.first.content ?? "-",
+                  route.guides.first.content == null ||
+                          route.guides.first.content == ''
+                      ? "dsadasdasdasd"
+                      : route.guides.first.content!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                       fontFamily: 'Pretendard',
-                      fontSize: 32,
+                      fontSize: 28,
+                      color: Colors.black87,
                       fontWeight: FontWeight.w600),
                 )
               ],

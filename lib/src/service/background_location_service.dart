@@ -55,6 +55,6 @@ class BackgroundLocationService {
   }
 
   setStream() {
-    positionStream = Geolocator.getPositionStream();
+    positionStream = Geolocator.getPositionStream().asBroadcastStream();
   }
 }

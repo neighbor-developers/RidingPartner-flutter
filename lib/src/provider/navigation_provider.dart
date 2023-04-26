@@ -3,10 +3,11 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:ridingpartner_flutter/src/provider/position_provider.dart';
+import 'package:ridingpartner_flutter/src/screen/navigation_screen.dart';
 import 'package:ridingpartner_flutter/src/service/background_location_service.dart';
 
 import '../models/place.dart';
+import '../models/record.dart';
 import '../models/route.dart';
 import '../screen/riding_screen.dart';
 import '../service/find_route_service.dart';
@@ -28,6 +29,8 @@ class NavigationData {
 
 enum SearchRouteState { loading, fail, empty, success, locationFail }
 
+final remainDistance = StateProvider((ref) => 0);
+
 class RouteProvider extends StateNotifier<NavigationData> {
   RouteProvider()
       : super(NavigationData(
@@ -42,18 +45,19 @@ class RouteProvider extends StateNotifier<NavigationData> {
   Place? _goalDestination;
   Place? _finalDestination;
   Place? _nextDestination;
+  Guide _currentGuide = Guide();
 
   int _remainedDistance = 0;
   int _totalDistance = 0;
   List<Place> _course = [];
-  late Timer timer;
-
-  late Provider posProvider;
 
   int get remainedDistance => _remainedDistance;
   int get totalDistance => _totalDistance;
   List<Place> get course => _course;
+  Guide get currentGuide => _currentGuide;
   // 위치 정보 스트림
+  StreamSubscription<Position>? _positionStream;
+  Timer? _timer;
 
   @override
   set state(NavigationData value) {
@@ -65,20 +69,40 @@ class RouteProvider extends StateNotifier<NavigationData> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    timer.cancel();
+  }
+
+  setLocationError() {
+    state = NavigationData(
+        state: SearchRouteState.locationFail,
+        guides: [],
+        sumDistance: 0,
+        distances: []);
   }
 
   void getRoute(List<Place> places) async {
     _course = places;
+
     final address = await FindRouteService().getMyLocationAddress();
     List<Place> result = (await NaverMapService().getPlaces(address));
-    Place myLocation = result[0];
 
-    _goalDestination = places[0];
-    if (places.length > 2) {
-      _nextDestination = places[1];
+    if (result.isEmpty) {
+      setLocationError();
+      return;
     }
-    _finalDestination = places.last;
+    Place myLocation = result[0];
+    if (places.length == 1) {
+      // 명소, 검색
+      _goalDestination = places[0];
+    } else if (places.length == 2) {
+      // 코스
+      _goalDestination = places[0];
+      _nextDestination = places[1];
+      _finalDestination = places[1];
+    } else {
+      _goalDestination = places[0];
+      _nextDestination = places[1];
+      _finalDestination = places.last;
+    }
 
     Map<String, dynamic> response;
 
@@ -106,19 +130,17 @@ class RouteProvider extends StateNotifier<NavigationData> {
   }
 
   startNav() {
-    BackgroundLocationService();
-
-    posProvider = Provider((ref) {
-      final position = ref.watch(positionProvider);
-      if (position != null) {
-        calToPoint(position);
-      }
-      state = state;
+    Position? pos;
+    _positionStream =
+        BackgroundLocationService().positionStream!.listen((event) {
+      pos = event;
     });
 
-    // timer = Timer.periodic(Duration(seconds: 1), (timer) {
-    //   state = state;
-    // });
+    _timer = Timer.periodic(Duration(seconds: 2), (timer) {
+      if (pos != null) {
+        calToPoint(pos!);
+      }
+    });
   }
 
   void calToPoint(Position pos) {
@@ -136,7 +158,7 @@ class RouteProvider extends StateNotifier<NavigationData> {
       num distancePointToPoint =
           calDistance.as(LengthUnit.Meter, point, nextLatLng);
 
-      if (distanceToPoint > distancePointToPoint + 10) {
+      if (distanceToPoint > distancePointToPoint + 15) {
         // 2의 경우
         // c + am
         if (_nextDestination != null) {
@@ -145,21 +167,22 @@ class RouteProvider extends StateNotifier<NavigationData> {
         }
         getRoute(_course);
       } else {
+        List<Guide> guide = [...state.guides];
+        List<int> dis = [...state.distances];
         if (distanceToPoint <= 10 ||
             distanceToPoint > distanceToNextPoint + 50) {
           // 턴 포인트 도착이거나 a > b일때
           _isDestination(pos); // 경유지인지 확인
-          if (state.guides.length == 2) {
-            state.guides.removeAt(0);
+          guide.removeAt(0);
+          _currentGuide = guide.first;
 
-            _remainedDistance -= state.distances.last;
-            state.distances.removeLast();
-          } else {
-            state.guides.removeAt(0);
-
-            _remainedDistance -= state.distances.last;
-            state.distances.removeLast();
-          }
+          _remainedDistance -= dis.last;
+          dis.removeLast();
+          state = NavigationData(
+              state: SearchRouteState.success,
+              guides: guide,
+              sumDistance: state.sumDistance,
+              distances: dis);
         }
       }
     }
@@ -207,5 +230,14 @@ class RouteProvider extends StateNotifier<NavigationData> {
         _course.removeAt(0);
       }
     }
+  }
+
+  stopNav() {
+    _timer?.cancel();
+    _positionStream?.cancel();
+  }
+
+  restartNav() {
+    startNav();
   }
 }
