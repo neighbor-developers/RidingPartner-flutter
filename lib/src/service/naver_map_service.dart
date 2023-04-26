@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:ridingpartner_flutter/src/service/location_service.dart';
 
