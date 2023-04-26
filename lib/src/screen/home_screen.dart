@@ -6,16 +6,11 @@ import 'package:line_chart/charts/line-chart.widget.dart';
 import 'package:line_chart/model/line-chart.model.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 import 'package:ridingpartner_flutter/src/style/textstyle.dart';
-import 'package:ridingpartner_flutter/src/widgets/text_background.dart';
 
-import '../service/location_service.dart';
 import '../widgets/home/home_record_tab.dart';
 import '../widgets/home/recommend_place_widget.dart';
 import '../widgets/home/setting_widget.dart';
 import '../widgets/home/weather_widget.dart';
-
-final locationLoadProvider =
-    FutureProvider((ref) => MyLocation().getMyCurrentLocation());
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -35,46 +30,38 @@ class HomeScreenState extends ConsumerState<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final load = ref.watch(locationLoadProvider);
-
-    return load.when(data: ((data) {
-      return Scaffold(
-          backgroundColor: const Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
-          body: Stack(
-            children: [
-              SizedBox(
+    return Scaffold(
+        backgroundColor: const Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
+        body: Stack(
+          children: [
+            SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: SingleChildScrollView(
+                    child: SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  child: SingleChildScrollView(
-                      child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      children: [
-                        const RecommendPlaceWidget(),
-                        const RecordTabRow(),
-                        SizedBox(
-                            height: 330,
-                            width: MediaQuery.of(context).size.width,
-                            child: recordChart()),
-                        const SettingWidget(),
-                        SizedBox(
-                          height: 60,
+                  child: Column(
+                    children: [
+                      const RecommendPlaceWidget(),
+                      const RecordTabRow(),
+                      SizedBox(
+                          height: 330,
                           width: MediaQuery.of(context).size.width,
-                        )
-                      ],
-                    ),
-                  ))),
-              const Positioned(
-                bottom: 0,
-                child: WeatherWidget(),
-              )
-            ],
-          ));
-    }), loading: () {
-      return loadingBackground('사용자의 위치 정보를 불러오는 중입니다');
-    }, error: (e, s) {
-      return errorBackground('위치정보를 불러오지 못했습니다.');
-    });
+                          child: recordChart()),
+                      const SettingWidget(),
+                      SizedBox(
+                        height: 60,
+                        width: MediaQuery.of(context).size.width,
+                      )
+                    ],
+                  ),
+                ))),
+            const Positioned(
+              bottom: 0,
+              child: WeatherWidget(),
+            )
+          ],
+        ));
   }
 
   Widget recordChart() {
