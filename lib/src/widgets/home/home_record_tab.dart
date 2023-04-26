@@ -9,7 +9,7 @@ import '../../service/firebase_database_service.dart';
 import '../../style/palette.dart';
 import '../../style/textstyle.dart';
 import '../../utils/get_14days_record.dart';
-import '../../utils/timestampToText.dart';
+import '../../utils/timestamp_to_text.dart';
 
 class Data {
   String key;
@@ -59,7 +59,6 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
 
   @override
   void dispose() {
-    // TODO: implement dispose
     ref.invalidate(homeRecordProvider);
     ref.invalidate(tabIndexProvider);
     super.dispose();
@@ -92,13 +91,13 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
               ),
             ));
       case RecordState.empty:
-        return SizedBox(
+        return const SizedBox(
             height: 200,
             child: Center(
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
+              children: [
                 Text(
                   "최근 2주간 라이딩한 기록이 없습니다\n라이딩 파트너와 함께 달려보세요!",
                   style: TextStyles.recordDescriptionTextStyle,
@@ -193,9 +192,9 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
         )),
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
-          child: Row(
+          child: const Row(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: const [
+            children: [
               Text('기록 전체보기', style: TextStyles.settingStyle),
               SizedBox(
                 width: 5,

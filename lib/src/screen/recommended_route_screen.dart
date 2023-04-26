@@ -46,7 +46,7 @@ class RecommendedRouteScreenState
         alignment: Alignment.center,
         child: const Text(
           'Loading...',
-          style: const TextStyle(fontSize: 30),
+          style: TextStyle(fontSize: 30),
         ),
       ),
       error: (e, s) => Container(
@@ -54,7 +54,7 @@ class RecommendedRouteScreenState
         alignment: Alignment.center,
         child: const Text(
           'Error!',
-          style: const TextStyle(fontSize: 30),
+          style: TextStyle(fontSize: 30),
         ),
       ),
     );

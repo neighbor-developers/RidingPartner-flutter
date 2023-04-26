@@ -29,7 +29,6 @@ class RecordListScreenState extends ConsumerState<RecordListScreen> {
   @override
   void initState() {
     ref.refresh(recordListProvider);
-    // TODO: implement initState
     super.initState();
   }
 

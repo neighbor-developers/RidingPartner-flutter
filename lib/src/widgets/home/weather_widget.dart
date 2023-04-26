@@ -18,15 +18,7 @@ class WeatherWidget extends ConsumerStatefulWidget {
 
 class WeatherWidgetState extends ConsumerState<WeatherWidget> {
   @override
-  void initState() {
-    // TODO: implement initState
-
-    super.initState();
-  }
-
-  @override
   void dispose() {
-    // TODO: implement dispose
     ref.invalidate(weatherProvider);
     super.dispose();
   }

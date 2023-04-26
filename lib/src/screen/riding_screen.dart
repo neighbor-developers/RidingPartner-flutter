@@ -11,7 +11,7 @@ import 'package:ridingpartner_flutter/src/screen/riding_result_screen.dart';
 import 'package:ridingpartner_flutter/src/style/palette.dart';
 import 'package:ridingpartner_flutter/src/style/textstyle.dart';
 import 'package:ridingpartner_flutter/src/utils/cal_distance.dart';
-import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
+import 'package:ridingpartner_flutter/src/utils/timestamp_to_text.dart';
 import 'package:wakelock/wakelock.dart';
 import '../models/record.dart';
 import '../provider/record_provider.dart';

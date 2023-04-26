@@ -9,10 +9,10 @@ class RidingCancelDialog extends StatelessWidget {
       required this.onOkClicked,
       required this.onCancelClicked});
 
-  final text;
-  final btnText;
-  final onOkClicked;
-  final onCancelClicked;
+  final String text;
+  final String btnText;
+  final Function() onOkClicked;
+  final Function() onCancelClicked;
 
   @override
   Widget build(BuildContext context) {

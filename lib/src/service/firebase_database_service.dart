@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:logger/logger.dart';
 import 'package:ridingpartner_flutter/src/models/record.dart';
 
 class FirebaseDatabaseService {
@@ -20,15 +21,18 @@ class FirebaseDatabaseService {
           "images": record.images != null ? json.encode(record.images) : null
         })
         .then((_) => {Record.saveRecordPref(record)})
-        .catchError((onError) {});
+        .catchError((onError) {
+          final logger = Logger();
+          logger.e(onError);
+        });
   }
 
   saveRecordMemoFirebaseDb(Record record) async {
     DatabaseReference ref = _database.ref("$_uId/${record.date}");
-    await ref
-        .set({"memo": record.memo})
-        .then((_) => {})
-        .catchError((onError) {});
+    await ref.set({"memo": record.memo}).then((_) => {}).catchError((onError) {
+          final logger = Logger();
+          logger.e(onError);
+        });
     Record.saveRecordMemoPref(record);
   }
 

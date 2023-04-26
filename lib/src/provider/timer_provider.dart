@@ -9,7 +9,6 @@ class TimerNotifier extends StateNotifier<int> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _stream?.cancel();
     super.dispose();
   }
@@ -20,7 +19,7 @@ class TimerNotifier extends StateNotifier<int> {
   }
 
   void start() {
-    _stream = Stream.periodic(Duration(seconds: 1), (x) => x).listen((x) {
+    _stream = Stream.periodic(const Duration(seconds: 1), (x) => x).listen((x) {
       if (mounted) {
         state = x;
       }

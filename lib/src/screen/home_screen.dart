@@ -82,10 +82,10 @@ class HomeScreenState extends ConsumerState<HomeScreen>
         alignment: Alignment.topLeft,
         width: MediaQuery.of(context).size.width,
         height: 330,
-        child: Column(mainAxisSize: MainAxisSize.max, children: [
+        child: const Column(mainAxisSize: MainAxisSize.max, children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text('주행기록', style: TextStyles.recordChartTextStyle),
             ],
           ),

@@ -9,7 +9,6 @@ class MarkerProvider extends StateNotifier<List<Marker>> {
 
   @override
   set state(List<Marker> value) {
-    // TODO: implement state
     super.state = value;
   }
 

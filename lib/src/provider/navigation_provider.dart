@@ -40,16 +40,13 @@ class RouteProvider extends StateNotifier<NavigationData> {
   final Distance calDistance = const Distance();
 
   Place? _goalDestination;
-  Place? _finalDestination;
   Place? _nextDestination;
   Guide _currentGuide = Guide();
 
   int _remainedDistance = 0;
-  int _totalDistance = 0;
   List<Place> _course = [];
 
   int get remainedDistance => _remainedDistance;
-  int get totalDistance => _totalDistance;
   List<Place> get course => _course;
   Guide get currentGuide => _currentGuide;
   // 위치 정보 스트림
@@ -58,14 +55,7 @@ class RouteProvider extends StateNotifier<NavigationData> {
 
   @override
   set state(NavigationData value) {
-    // TODO: implement state
     super.state = value;
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
   }
 
   setLocationError() {
@@ -94,11 +84,9 @@ class RouteProvider extends StateNotifier<NavigationData> {
       // 코스
       _goalDestination = places[0];
       _nextDestination = places[1];
-      _finalDestination = places[1];
     } else {
       _goalDestination = places[0];
       _nextDestination = places[1];
-      _finalDestination = places.last;
     }
 
     Map<String, dynamic> response;
@@ -133,7 +121,7 @@ class RouteProvider extends StateNotifier<NavigationData> {
       pos = event;
     });
 
-    _timer = Timer.periodic(Duration(seconds: 2), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       if (pos != null) {
         calToPoint(pos!);
       }

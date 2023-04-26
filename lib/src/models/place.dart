@@ -243,8 +243,8 @@ class Review {
 
 class All {
   NaverPlace? place;
-  Null address;
-  Null bus;
+  dynamic address;
+  dynamic bus;
 
   All({this.place, this.address, this.bus});
 

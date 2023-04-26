@@ -53,7 +53,7 @@ class PermissionDialog extends StatelessWidget {
                 Flexible(
                     child: InkWell(
                   child: Container(
-                    margin: EdgeInsets.fromLTRB(6, 0, 0, 0),
+                    margin: const EdgeInsets.fromLTRB(6, 0, 0, 0),
                     alignment: Alignment.center,
                     height: 55,
                     decoration: BoxDecoration(

@@ -8,11 +8,13 @@ import 'package:ridingpartner_flutter/src/utils/permission_camera.dart';
 class CameraExample extends StatefulWidget {
   static const routeName = '/getimage';
 
+  const CameraExample({super.key});
+
   @override
-  _CameraExampleState createState() => _CameraExampleState();
+  CameraExampleState createState() => CameraExampleState();
 }
 
-class _CameraExampleState extends State<CameraExample> {
+class CameraExampleState extends State<CameraExample> {
   File? _image;
   final picker = ImagePicker();
 
@@ -50,9 +52,9 @@ class _CameraExampleState extends State<CameraExample> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 25.0),
+            const SizedBox(height: 25.0),
             showImage(),
-            SizedBox(
+            const SizedBox(
               height: 50.0,
             ),
             Row(
@@ -60,20 +62,20 @@ class _CameraExampleState extends State<CameraExample> {
               children: <Widget>[
                 // 카메라 촬영 버튼
                 FloatingActionButton(
-                  child: Icon(Icons.add_a_photo),
                   tooltip: 'pick Iamge',
                   onPressed: () {
                     getImage(ImageSource.camera);
                   },
+                  child: const Icon(Icons.add_a_photo),
                 ),
 
                 // 갤러리에서 이미지를 가져오는 버튼
                 FloatingActionButton(
-                  child: Icon(Icons.wallpaper),
                   tooltip: 'pick Iamge',
                   onPressed: () {
                     getImage(ImageSource.gallery);
                   },
+                  child: const Icon(Icons.wallpaper),
                 ),
               ],
             )

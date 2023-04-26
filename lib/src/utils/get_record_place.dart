@@ -11,8 +11,6 @@ Future<List<Place>> getRecomendPlace() async {
       await rootBundle.loadString('assets/json/place.json');
   List<Place> places =
       PlaceList.fromJson(placeFromJsonFile).places ?? <Place>[];
-  for (var element in places) {}
-
   // List<Place> places = await _fireStoreService.getPlaces();
   int num1 = random.nextInt(places.length);
   while (num1 == 14 || num1 == 16) {

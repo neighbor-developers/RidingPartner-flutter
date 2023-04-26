@@ -86,13 +86,12 @@ class SocialLoginService {
     try {
       credencial = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: user['email'], password: user['uId']);
-    } catch (error) {
     } finally {
       credencial = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: user['email'], password: user['uId']);
       credencial.user!.updateDisplayName(user['name']);
-      return credencial;
     }
+    return credencial;
   }
 
   Future<User?> siginInwithGoogle() async {

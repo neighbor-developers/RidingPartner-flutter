@@ -106,7 +106,7 @@ class SplashScreenState extends ConsumerState<SplashScreen> {
   void toMainScreen() {
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => BottomNavigation()),
+        MaterialPageRoute(builder: (context) => const BottomNavigation()),
         (route) => false);
   }
 

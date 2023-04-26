@@ -7,7 +7,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../models/record.dart';
 import '../service/firebase_database_service.dart';
 import '../style/textstyle.dart';
-import '../utils/timestampToText.dart';
+import '../utils/timestamp_to_text.dart';
 
 class RecordScreen extends ConsumerStatefulWidget {
   const RecordScreen({Key? key, required this.date}) : super(key: key);
@@ -66,12 +66,12 @@ class RecordScreenState extends ConsumerState<RecordScreen> {
     return Container(
         margin: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30),
         child: Row(children: [
-          SizedBox(
+          const SizedBox(
             height: 140.0,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
+              children: [
                 Text(
                   "날짜",
                   style: TextStyles.dayRecordtextStyle,

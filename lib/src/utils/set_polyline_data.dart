@@ -14,7 +14,7 @@ List<LatLng> setPolylineData(Place startPlace, Place finalDestination) {
   LatLng northEast = start;
   LatLng southWest = end;
 
-  var nLat, nLon, sLat, sLon;
+  double nLat, nLon, sLat, sLon;
 
   if (southWest.latitude <= northEast.latitude) {
     sLat = southWest.latitude;

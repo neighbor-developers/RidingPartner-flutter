@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:ridingpartner_flutter/src/provider/image_pick_provider.dart';
 import 'package:ridingpartner_flutter/src/screen/bottom_nav.dart';
 import 'package:ridingpartner_flutter/src/screen/riding_screen.dart';
-import 'package:ridingpartner_flutter/src/utils/timestampToText.dart';
+import 'package:ridingpartner_flutter/src/utils/timestamp_to_text.dart';
 
 import '../models/record.dart';
 import '../style/textstyle.dart';
@@ -32,7 +32,6 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     ref.invalidate(imageProvider);
     ref.invalidate(memoProvider);
@@ -93,13 +92,13 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
   Widget recordWidget(Record record, num speed) {
     return Row(
       children: [
-        SizedBox(
+        const SizedBox(
           width: 100.0,
           height: 120.0,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text("날짜", style: TextStyles.ridingRecordTextStyle),
               Text("주행 시간", style: TextStyles.ridingRecordTextStyle),
               Text("평균 속도", style: TextStyles.ridingRecordTextStyle),
@@ -185,8 +184,9 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
     final image = ref.read(imageProvider);
     final memo = ref.read(memoProvider);
     final recordData = ref.read(recordProvider);
+    recordData!.memo = memo;
 
-    ref.read(recordProvider.notifier).saveData(recordData!, image);
+    ref.read(recordProvider.notifier).saveData(recordData, image);
   }
 }
 
@@ -275,9 +275,9 @@ class ImageWidgetState extends ConsumerState<ImageWidget> {
                           width: 2.0,
                         )),
                       ),
-                      child: Column(
+                      child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Image(
                             image: AssetImage('assets/icons/add_image.png'),
                             color: Color.fromARGB(255, 255, 255, 255),

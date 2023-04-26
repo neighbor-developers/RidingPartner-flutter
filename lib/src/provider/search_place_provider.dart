@@ -8,7 +8,6 @@ class SearchPlaceProvider extends StateNotifier<List<Place>> {
   NaverMapService naverMapService = NaverMapService();
   @override
   set state(List<Place> value) {
-    // TODO: implement state
     super.state = value;
   }
 

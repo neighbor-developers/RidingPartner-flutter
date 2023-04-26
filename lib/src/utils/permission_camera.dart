@@ -6,10 +6,10 @@ import 'package:ridingpartner_flutter/src/utils/get_camera.dart';
 void startCamera(BuildContext context) async {
   if (await confirmPermissionGranted(context)) {
     //Navigator.of(context).pushNamed("/camera");
-    CameraExample();
+    const CameraExample();
   } else {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("사진, 파일, 마이크 접근을 허용 해주셔야 카메라 사용이 가능합니다."),
+      content: const Text("사진, 파일, 마이크 접근을 허용 해주셔야 카메라 사용이 가능합니다."),
       action: SnackBarAction(
         label: "OK",
         onPressed: () {

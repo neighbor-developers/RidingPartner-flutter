@@ -11,7 +11,6 @@ class RecordProvider extends StateNotifier<Record?> {
 
   @override
   set state(Record? value) {
-    // TODO: implement state
     super.state = value;
   }
 

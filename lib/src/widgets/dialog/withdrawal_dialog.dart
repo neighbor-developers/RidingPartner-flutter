@@ -6,8 +6,8 @@ class WithDrawalDialog extends StatelessWidget {
   const WithDrawalDialog(
       {super.key, required this.onOkClicked, required this.onCancelClicked});
 
-  final onOkClicked;
-  final onCancelClicked;
+  final Function() onOkClicked;
+  final Function() onCancelClicked;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class WithDrawalDialog extends StatelessWidget {
                     child: InkWell(
                         onTap: onOkClicked,
                         child: Container(
-                          margin: EdgeInsets.fromLTRB(6, 0, 0, 0),
+                          margin: const EdgeInsets.fromLTRB(6, 0, 0, 0),
                           alignment: Alignment.center,
                           height: 55,
                           decoration: BoxDecoration(

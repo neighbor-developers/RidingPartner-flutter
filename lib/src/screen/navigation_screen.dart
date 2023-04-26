@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:ridingpartner_flutter/src/provider/marker_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/screen/riding_screen.dart';
@@ -339,37 +338,6 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
           );
   }
 
-  Widget ridingProgress() {
-    final navigation = ref.watch(navigationProvider.notifier);
-
-    double percent = (navigation.totalDistance - navigation.remainedDistance) /
-        navigation.totalDistance;
-    return SizedBox(
-        width: MediaQuery.of(context).size.width - 80,
-        height: 40,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width - 80,
-              alignment: FractionalOffset(percent, 1 - percent),
-              child: FractionallySizedBox(
-                  child: Image.asset('assets/icons/riding_character.png',
-                      width: 17, height: 17, fit: BoxFit.contain)),
-            ),
-            LinearPercentIndicator(
-              padding: EdgeInsets.zero,
-              percent: percent,
-              lineHeight: 5,
-              barRadius: const Radius.circular(15.0),
-              backgroundColor: const Color.fromRGBO(241, 243, 245, 1),
-              progressColor: const Color.fromRGBO(240, 120, 5, 1),
-              width: MediaQuery.of(context).size.width - 80,
-            )
-          ],
-        ));
-  }
-
   void setCamera() async {
     final route = ref.watch(navigationProvider.notifier);
     final position = ref.watch(positionProvider);
@@ -394,7 +362,7 @@ class NavigationScreenState extends ConsumerState<NavigationScreen> {
     LatLng northEast = start;
     LatLng southWest = end;
 
-    var nLat, nLon, sLat, sLon;
+    double nLat, nLon, sLat, sLon;
 
     if (southWest.latitude <= northEast.latitude) {
       sLat = southWest.latitude;

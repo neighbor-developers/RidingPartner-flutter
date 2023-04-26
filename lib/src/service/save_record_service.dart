@@ -13,10 +13,10 @@ class SaveRecordService {
   }
 
   getImgUrl(List<File> image, String date) async {
-    final String? _uId = FirebaseAuth.instance.currentUser?.uid;
+    final String? uId = FirebaseAuth.instance.currentUser?.uid;
 
     Map<String, File> img = image
-        .map((e) => {'${date}/$_uId${image.indexOf(e)}}': e})
+        .map((e) => {'$date/$uId${image.indexOf(e)}}': e})
         .reduce((value, element) => value..addAll(element));
 
     return await FirebaseStorageService().saveImage(img);

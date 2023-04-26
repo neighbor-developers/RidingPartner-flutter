@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class ImagePickerService {
@@ -26,7 +27,8 @@ class ImagePickerService {
         return [];
       }
     } catch (e) {
-      print('ImagePickerService: $e');
+      final logger = Logger();
+      logger.d('ImagePickerService: $e');
       return [];
     }
   }
@@ -44,7 +46,8 @@ class ImagePickerService {
         return null;
       }
     } catch (e) {
-      print('ImagePickerService: $e');
+      final logger = Logger();
+      logger.d('ImagePickerService: $e');
       return null;
     }
   }

@@ -44,10 +44,8 @@ class SearchListWidgetState extends ConsumerState<SearchListWidget> {
                           widget.textController.text, "title"),
                     ],
                   ),
-                  subtitle: highlightedText(
-                      widget.list[index].jibunAddress ?? '',
-                      widget.textController.text,
-                      "subtitle"),
+                  subtitle: highlightedText(widget.list[index].jibunAddress,
+                      widget.textController.text, "subtitle"),
                   textColor: Colors.black,
                   tileColor: Palette.searchBoxColor,
                   onTap: () => widget.onPlaceItemTab(
