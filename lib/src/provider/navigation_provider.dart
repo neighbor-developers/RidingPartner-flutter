@@ -155,12 +155,7 @@ class RouteProvider extends StateNotifier<NavigationData> {
       num distanceToNextPoint = calDistance.as(
           LengthUnit.Meter, LatLng(pos.latitude, pos.longitude), nextLatLng);
 
-      num distancePointToPoint =
-          calDistance.as(LengthUnit.Meter, point, nextLatLng);
-
-      if (distanceToPoint > distancePointToPoint + 15) {
-        // 2의 경우
-        // c + am
+      if (distanceToPoint > distanceToNextPoint + 15) {
         if (_nextDestination != null) {
           _calToDestination(
               pos); // 다음 경유지 계산해서 만약 다음 경유지가 더 가까우면 사용자 입력 받아서 다음경유지로 안내
@@ -169,7 +164,7 @@ class RouteProvider extends StateNotifier<NavigationData> {
       } else {
         List<Guide> guide = [...state.guides];
         List<int> dis = [...state.distances];
-        if (distanceToPoint <= 10 ||
+        if (distanceToPoint <= 5 ||
             distanceToPoint > distanceToNextPoint + 50) {
           // 턴 포인트 도착이거나 a > b일때
           _isDestination(pos); // 경유지인지 확인
@@ -196,7 +191,7 @@ class RouteProvider extends StateNotifier<NavigationData> {
             _goalDestination!.location.longitude));
 
     if (distanceToDestination < 10) {
-      if (_course.length == 1) {
+      if (_course.length < 2) {
         // 최종 목적지 도착!
       } else if (_course.length == 2) {
         _course.removeAt(0);
@@ -224,11 +219,8 @@ class RouteProvider extends StateNotifier<NavigationData> {
             _nextDestination!.location.longitude));
 
     if (distanceToDestination > distanceToNextDestination) {
-      // 다음 경유지로 안내할까요?
-      // ok ->
-      if (true) {
-        _course.removeAt(0);
-      }
+      _course.removeAt(0);
+      getRoute(_course);
     }
   }
 
