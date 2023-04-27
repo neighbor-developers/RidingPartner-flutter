@@ -30,12 +30,9 @@ final polylineCoordinatesProvider = StateProvider<List<LatLng>>((ref) {
   List<PolylineWayPoint>? turnPoints = point.guides
       .map((route) => PolylineWayPoint(location: route.turnPoint ?? ""))
       .toList();
-  List<LatLng> pointLatLngs = MyLocation().position == null
-      ? []
-      : [
-          LatLng(
-              MyLocation().position!.latitude, MyLocation().position!.longitude)
-        ];
+  final position = ref.read(positionProvider);
+  List<LatLng> pointLatLngs =
+      position == null ? [] : [LatLng(position.latitude, position!.longitude)];
   for (var element in turnPoints) {
     List<String> latlng = element.location.split(',');
     pointLatLngs.add(LatLng(double.parse(latlng[1]), double.parse(latlng[0])));

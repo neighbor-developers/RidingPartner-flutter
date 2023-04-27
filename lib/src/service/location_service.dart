@@ -2,6 +2,7 @@ import 'package:geolocator/geolocator.dart';
 
 class MyLocation {
   Position? position;
+  bool _serviceEnabled = false;
 
   static final MyLocation _instance = MyLocation._internal();
   factory MyLocation() {
@@ -11,11 +12,10 @@ class MyLocation {
   MyLocation._internal();
 
   Future<void> checkPermission() async {
-    bool serviceEnabled;
     LocationPermission permission;
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
+    _serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!_serviceEnabled) {
       return Future.error('Location services are disabled.');
     }
 
@@ -37,7 +37,10 @@ class MyLocation {
 
   Future<Position?> getMyCurrentLocation() async {
     try {
-      await checkPermission();
+      if (!_serviceEnabled) {
+        await checkPermission();
+      }
+
       position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
 
