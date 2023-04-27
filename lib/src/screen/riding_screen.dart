@@ -77,9 +77,12 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
   Widget build(BuildContext context) {
     final position = ref.watch(positionProvider);
     final ridingState = ref.watch(ridingStateProvider);
+    final timer = ref.watch(timerProvider);
 
     if (ridingState == RidingState.riding && position != null) {
-      _polylineCoordinates.add(LatLng(position.latitude, position.longitude));
+      if (timer % 3 == 0) {
+        _polylineCoordinates.add(LatLng(position.latitude, position.longitude));
+      }
 
       _calPoints.add(cal.LatLng(position.latitude, position.longitude));
       WidgetsBinding.instance.addPostFrameCallback((_) {

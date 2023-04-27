@@ -121,7 +121,7 @@ class RouteProvider extends StateNotifier<NavigationData> {
       pos = event;
     });
 
-    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (pos != null) {
         calToPoint(pos!);
       }
@@ -140,7 +140,7 @@ class RouteProvider extends StateNotifier<NavigationData> {
       num distanceToNextPoint = calDistance.as(
           LengthUnit.Meter, LatLng(pos.latitude, pos.longitude), nextLatLng);
 
-      if (distanceToPoint > distanceToNextPoint + 15) {
+      if (distanceToPoint > distanceToNextPoint) {
         if (_nextDestination != null) {
           _calToDestination(
               pos); // 다음 경유지 계산해서 만약 다음 경유지가 더 가까우면 사용자 입력 받아서 다음경유지로 안내

@@ -314,6 +314,7 @@ class MapSearchScreenState extends ConsumerState<MapSearchScreen> {
         target: item.location,
       )),
     );
+    // ignore: use_build_context_synchronously
     FocusScope.of(context).unfocus();
 
     updateMarkerPosition(item, type); // 마커 업데이트

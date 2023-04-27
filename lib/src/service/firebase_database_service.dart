@@ -21,6 +21,7 @@ class FirebaseDatabaseService {
           "images": record.images != null ? json.encode(record.images) : null
         })
         .then((_) => {Record.saveRecordPref(record)})
+        // ignore: body_might_complete_normally_catch_error
         .catchError((onError) {
           final logger = Logger();
           logger.e(onError);
@@ -29,7 +30,11 @@ class FirebaseDatabaseService {
 
   saveRecordMemoFirebaseDb(Record record) async {
     DatabaseReference ref = _database.ref("$_uId/${record.date}");
-    await ref.set({"memo": record.memo}).then((_) => {}).catchError((onError) {
+    await ref
+        .set({"memo": record.memo})
+        .then((_) => {})
+        // ignore: body_might_complete_normally_catch_error
+        .catchError((onError) {
           final logger = Logger();
           logger.e(onError);
         });

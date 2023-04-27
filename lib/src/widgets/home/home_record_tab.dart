@@ -91,13 +91,13 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
               ),
             ));
       case RecordState.empty:
-        return const SizedBox(
+        return SizedBox(
             height: 200,
             child: Center(
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
+              children: const [
                 Text(
                   "최근 2주간 라이딩한 기록이 없습니다\n라이딩 파트너와 함께 달려보세요!",
                   style: TextStyles.recordDescriptionTextStyle,
@@ -192,9 +192,9 @@ class RecordTabRowState extends ConsumerState<RecordTabRow>
         )),
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
-          child: const Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: [
+            children: const [
               Text('기록 전체보기', style: TextStyles.settingStyle),
               SizedBox(
                 width: 5,

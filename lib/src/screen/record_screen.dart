@@ -66,12 +66,12 @@ class RecordScreenState extends ConsumerState<RecordScreen> {
     return Container(
         margin: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30),
         child: Row(children: [
-          const SizedBox(
+          SizedBox(
             height: 140.0,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+              children: const [
                 Text(
                   "날짜",
                   style: TextStyles.dayRecordtextStyle,

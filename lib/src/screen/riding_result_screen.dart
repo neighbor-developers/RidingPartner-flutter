@@ -92,13 +92,13 @@ class RidingResultScreenState extends ConsumerState<RidingResultScreen> {
   Widget recordWidget(Record record, num speed) {
     return Row(
       children: [
-        const SizedBox(
+        SizedBox(
           width: 100.0,
           height: 120.0,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+            children: const [
               Text("날짜", style: TextStyles.ridingRecordTextStyle),
               Text("주행 시간", style: TextStyles.ridingRecordTextStyle),
               Text("평균 속도", style: TextStyles.ridingRecordTextStyle),
@@ -275,9 +275,9 @@ class ImageWidgetState extends ConsumerState<ImageWidget> {
                           width: 2.0,
                         )),
                       ),
-                      child: const Column(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
+                        children: const [
                           Image(
                             image: AssetImage('assets/icons/add_image.png'),
                             color: Color.fromARGB(255, 255, 255, 255),
