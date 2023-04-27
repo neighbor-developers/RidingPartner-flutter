@@ -149,8 +149,7 @@ class RouteProvider extends StateNotifier<NavigationData> {
       } else {
         List<Guide> guide = [...state.guides];
         List<int> dis = [...state.distances];
-        if (distanceToPoint <= 5 ||
-            distanceToPoint > distanceToNextPoint + 50) {
+        if (distanceToPoint <= 5) {
           // 턴 포인트 도착이거나 a > b일때
           _isDestination(pos); // 경유지인지 확인
           guide.removeAt(0);

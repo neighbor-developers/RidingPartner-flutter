@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ridingpartner_flutter/src/provider/marker_provider.dart';
 import 'package:ridingpartner_flutter/src/provider/navigation_provider.dart';
 import 'package:ridingpartner_flutter/src/screen/riding_screen.dart';
+import 'package:ridingpartner_flutter/src/service/location_service.dart';
 import 'package:ridingpartner_flutter/src/utils/navigation_icon.dart';
 import 'package:wakelock/wakelock.dart';
 import 'package:latlong2/latlong.dart' as cal;
@@ -29,8 +30,12 @@ final polylineCoordinatesProvider = StateProvider<List<LatLng>>((ref) {
   List<PolylineWayPoint>? turnPoints = point.guides
       .map((route) => PolylineWayPoint(location: route.turnPoint ?? ""))
       .toList();
-  List<LatLng> pointLatLngs = [];
-
+  List<LatLng> pointLatLngs = MyLocation().position == null
+      ? []
+      : [
+          LatLng(
+              MyLocation().position!.latitude, MyLocation().position!.longitude)
+        ];
   for (var element in turnPoints) {
     List<String> latlng = element.location.split(',');
     pointLatLngs.add(LatLng(double.parse(latlng[1]), double.parse(latlng[0])));
