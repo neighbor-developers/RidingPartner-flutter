@@ -80,7 +80,14 @@ class RidingScreenState extends ConsumerState<RidingScreen> {
     final timer = ref.watch(timerProvider);
 
     if (ridingState == RidingState.riding && position != null) {
-      if (timer % 3 == 0) {
+      if (_polylineCoordinates.isNotEmpty) {
+        final dis = calDistance(_polylineCoordinates.last,
+            LatLng(position.latitude, position.longitude));
+        if (dis > 7) {
+          _polylineCoordinates
+              .add(LatLng(position.latitude, position.longitude));
+        }
+      } else {
         _polylineCoordinates.add(LatLng(position.latitude, position.longitude));
       }
 

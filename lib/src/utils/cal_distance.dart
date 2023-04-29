@@ -1,7 +1,8 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart' as nav;
 
-double calDistance(Position bef, Position aft) {
+double calDistance(nav.LatLng bef, nav.LatLng aft) {
   final befP = LatLng(bef.latitude, bef.longitude);
   final aftP = LatLng(aft.latitude, aft.longitude);
   const Distance calDistance = Distance();

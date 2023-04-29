@@ -32,7 +32,7 @@ final polylineCoordinatesProvider = StateProvider<List<LatLng>>((ref) {
       .toList();
   final position = ref.read(positionProvider);
   List<LatLng> pointLatLngs =
-      position == null ? [] : [LatLng(position.latitude, position!.longitude)];
+      position == null ? [] : [LatLng(position.latitude, position.longitude)];
   for (var element in turnPoints) {
     List<String> latlng = element.location.split(',');
     pointLatLngs.add(LatLng(double.parse(latlng[1]), double.parse(latlng[0])));
