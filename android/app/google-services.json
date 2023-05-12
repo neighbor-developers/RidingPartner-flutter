@@ -8,12 +8,136 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:93312283448:android:17b2f99ff05448da4107cd",
+        "android_client_info": {
+          "package_name": "com.neighbor.ridingpartner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "93312283448-2t1jj32if4lru3p5os2l9jl822vj7oi6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neighbor.ridingpartner",
+            "certificate_hash": "fbe140c16b630303234ea0b94aee238a6b384f99"
+          }
+        },
+        {
+          "client_id": "93312283448-4dtb63p1qpgijkgrk1p081mnsv843dag.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neighbor.ridingpartner",
+            "certificate_hash": "af3ee35592e7c123bd6118a177e6c5f27b2ab4a7"
+          }
+        },
+        {
+          "client_id": "93312283448-6p9jt0i0vv9pr5n248njlh2l1gcq6s4i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neighbor.ridingpartner",
+            "certificate_hash": "405b9ba7687fe3532c70cb4a11adf9a5ed0894b4"
+          }
+        },
+        {
+          "client_id": "93312283448-bffegnfgbf98dpjj416gocbpatqqqv44.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neighbor.ridingpartner",
+            "certificate_hash": "9cb39d34df23b9353fca0a42ac287f3d62b1a598"
+          }
+        },
+        {
+          "client_id": "93312283448-cj73rqoiciu5vpiutnpc7t36jpc9dofv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neighbor.ridingpartner",
+            "certificate_hash": "06f632fdac04fe899d33b15202419aaa2792bc2c"
+          }
+        },
+        {
+          "client_id": "93312283448-d1s6ovcrim6v6jmap47jjtvd2u53k0mt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neighbor.ridingpartner",
+            "certificate_hash": "837b61863029c12c295c714d2d303494edd58eff"
+          }
+        },
+        {
+          "client_id": "93312283448-dcd6t122a2ctg1binjh87ncgo5l33huc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neighbor.ridingpartner",
+            "certificate_hash": "ce97042d9cbf204aab2b0a90b4de9b941aaece3d"
+          }
+        },
+        {
+          "client_id": "93312283448-ep66me70s94ml1vsolqh3i1515q5uri3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neighbor.ridingpartner",
+            "certificate_hash": "31bafde32252a8cf7375de77dd5478bfce9b1fcb"
+          }
+        },
+        {
+          "client_id": "93312283448-jgh3kqu9g4uovj6ol7l7qa4r5q1uctdt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neighbor.ridingpartner",
+            "certificate_hash": "b48a0535a3f2afdd06e41f63a8203c6eb5f3d8ec"
+          }
+        },
+        {
+          "client_id": "93312283448-tbdl8m1nvlk3kt5n2qt4vbfqcnilck25.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neighbor.ridingpartner",
+            "certificate_hash": "7c30e1a9a294f28efcfe7c03c4cb47d19888a033"
+          }
+        },
+        {
+          "client_id": "93312283448-ljeoavo51oqtfmq5prsplb6ab0c9fesm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4CVWEZ-Vs-NUFLmoNDwGuoD4_Z4vd46w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "93312283448-ljeoavo51oqtfmq5prsplb6ab0c9fesm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "93312283448-78dimjfpvokduhv244k8i07fd2b0qfrc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.neighbor.ridingpartner.ridingpartnerFlutter"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:93312283448:android:4860c82a321623b54107cd",
         "android_client_info": {
           "package_name": "com.neighbor.ridingpartner.ridingpartner_flutter"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "93312283448-04p77qmrdmkvsmjh31fgntkqqnfkbk02.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neighbor.ridingpartner.ridingpartner_flutter",
+            "certificate_hash": "eae69362fa31f007d972d6b212fb2c57cc632d6f"
+          }
+        },
         {
           "client_id": "93312283448-26i7napgb7r6tvj7dkkmjdj5p2md1bq1.apps.googleusercontent.com",
           "client_type": 1,
@@ -36,6 +160,14 @@
           "android_info": {
             "package_name": "com.neighbor.ridingpartner.ridingpartner_flutter",
             "certificate_hash": "405b9ba7687fe3532c70cb4a11adf9a5ed0894b4"
+          }
+        },
+        {
+          "client_id": "93312283448-h9tssnjf8nde55ak0cu1fctm6jdo36sh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neighbor.ridingpartner.ridingpartner_flutter",
+            "certificate_hash": "ce97042d9cbf204aab2b0a90b4de9b941aaece3d"
           }
         },
         {
@@ -76,6 +208,22 @@
           "android_info": {
             "package_name": "com.neighbor.ridingpartner.ridingpartner_flutter",
             "certificate_hash": "31bafde32252a8cf7375de77dd5478bfce9b1fcb"
+          }
+        },
+        {
+          "client_id": "93312283448-ufpf5qnrnbtjvrnh3gj8kvpgfbvhj8k2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neighbor.ridingpartner.ridingpartner_flutter",
+            "certificate_hash": "06f632fdac04fe899d33b15202419aaa2792bc2c"
+          }
+        },
+        {
+          "client_id": "93312283448-v95jtgp7eirg1mt0djickllj5r16sjm4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neighbor.ridingpartner.ridingpartner_flutter",
+            "certificate_hash": "7b21a66308033d3e69a1ec6b3a884e7d3c7849c0"
           }
         },
         {
