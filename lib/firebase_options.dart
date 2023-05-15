@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -49,26 +43,46 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB4CVWEZ-Vs-NUFLmoNDwGuoD4_Z4vd46w',
-    appId: '1:93312283448:android:4860c82a321623b54107cd',
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBv_86iQ0rgxYTNg3vAxU5PBt-eXla8q1w',
+    appId: '1:93312283448:web:ca183b701def46b64107cd',
     messagingSenderId: '93312283448',
     projectId: 'riding-partner-flutter',
+    authDomain: 'riding-partner-flutter.firebaseapp.com',
+    databaseURL: 'https://riding-partner-flutter-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'riding-partner-flutter.appspot.com',
+    measurementId: 'G-5JT3M4K9C0',
+  );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyB4CVWEZ-Vs-NUFLmoNDwGuoD4_Z4vd46w',
+    appId: '1:93312283448:android:994d176c6e50301e4107cd',
+    messagingSenderId: '93312283448',
+    projectId: 'riding-partner-flutter',
+    databaseURL: 'https://riding-partner-flutter-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'riding-partner-flutter.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBn1JwEpwqkM0oj9ZBNQXlZ3nOsv7yVXPg',
+    appId: '1:93312283448:ios:7e84bc79d44000a54107cd',
+    messagingSenderId: '93312283448',
+    projectId: 'riding-partner-flutter',
+    databaseURL: 'https://riding-partner-flutter-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'riding-partner-flutter.appspot.com',
+    androidClientId: '93312283448-0rmtj9psqt5agq5evi50p6ivd29dp2ki.apps.googleusercontent.com',
+    iosClientId: '93312283448-umnkpg0cqanrksa12brshebh4fgumlqh.apps.googleusercontent.com',
+    iosBundleId: 'com.neighbor.ridingpartner',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBn1JwEpwqkM0oj9ZBNQXlZ3nOsv7yVXPg',
     appId: '1:93312283448:ios:8d58951ef8bcd8ce4107cd',
     messagingSenderId: '93312283448',
     projectId: 'riding-partner-flutter',
-    databaseURL:
-        'https://riding-partner-flutter-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL: 'https://riding-partner-flutter-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'riding-partner-flutter.appspot.com',
-    androidClientId:
-        '93312283448-26i7napgb7r6tvj7dkkmjdj5p2md1bq1.apps.googleusercontent.com',
-    iosClientId:
-        '93312283448-78dimjfpvokduhv244k8i07fd2b0qfrc.apps.googleusercontent.com',
+    androidClientId: '93312283448-0rmtj9psqt5agq5evi50p6ivd29dp2ki.apps.googleusercontent.com',
     iosBundleId: 'com.neighbor.ridingpartner.ridingpartnerFlutter',
   );
 }
